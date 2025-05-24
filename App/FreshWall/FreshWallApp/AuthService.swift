@@ -21,6 +21,15 @@ final class AuthService: ObservableObject {
 
     /// Starts listening for Firebase authentication state changes.
     init() {
+#if DEBUG
+        let settings = Firestore.firestore().settings
+        settings.host = "localhost:8080"
+        settings.isSSLEnabled = false
+        settings.isPersistenceEnabled = false
+        Firestore.firestore().settings = settings
+
+        Auth.auth().useEmulator(withHost: "localhost", port: 9099)
+#endif
         authStateHandle = auth.addStateDidChangeListener { [weak self] _, user in
             self?.userSession = user
             if let user = user {
@@ -43,15 +52,12 @@ final class AuthService: ObservableObject {
     /// - Parameters:
     ///   - email: Email address used for sign-in.
     ///   - password: Password for authentication.
-    ///   - completion: Closure called with an optional error after sign-in attempt.
     func signIn(
         email: String,
-        password: String,
-        completion: @escaping (Error?) -> Void
-    ) {
-        auth.signIn(withEmail: email, password: password) { _, error in
-            completion(error)
-        }
+        password: String
+    ) async throws {
+        try await auth.signIn(withEmail: email, password: password)
+
     }
 
     /// Creates a new user account, team, and Firestore user record.
@@ -61,52 +67,49 @@ final class AuthService: ObservableObject {
     ///   - password: Password for authentication.
     ///   - displayName: Name to display for the user.
     ///   - teamName: Name of the team to create.
-    ///   - completion: Closure called with an optional error after signup process.
     func signUp(
         email: String,
         password: String,
         displayName: String,
-        teamName: String,
-        completion: @escaping (Error?) -> Void
-    ) {
-        auth.createUser(withEmail: email, password: password) { [weak self] result, error in
-            if let error = error {
-                completion(error)
-                return
-            }
-            guard let self = self, let user = result?.user else {
-                let err = NSError(
-                    domain: "AuthService",
-                    code: -1,
-                    userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve user after sign-up"]
-                )
-                completion(err)
-                return
-            }
-            let teamRef = self.db.collection("teams").document()
-            let teamData: [String: Any] = [
-                "name": teamName,
-                "createdAt": Timestamp()
-            ]
-            teamRef.setData(teamData) { error in
-                if let error = error {
-                    completion(error)
-                    return
-                }
-                let userRef = teamRef.collection("users").document(user.uid)
-                var recordData: [String: Any] = [
-                    "displayName": displayName,
-                    "email": email,
-                    "role": UserRole.lead.rawValue,
-                    "isDeleted": false
-                ]
-                userRef.setData(recordData) { error in
-                    completion(error)
-                }
-            }
-        }
-    }
+        teamName: String
+    ) async throws {
+        // Step 1: Create Firebase Auth user
+        let authResult = try await auth.createUser(withEmail: email, password: password)
+        let user = authResult.user
 
+        // Step 2: Create team document
+        let teamRef = db.collection("teams").document()
+        let teamId = teamRef.documentID
+        let team = TeamGenerator.make(teamName: teamName) // You must handle teamCode & createdAt here
+
+        try teamRef.setData(from: team)
+
+        // Step 3: Create user record under the team
+        let userRef = teamRef.collection("users").document(user.uid)
+        let userData: [String: Any] = [
+            "displayName": displayName,
+            "email": email,
+            "role": UserRole.lead.rawValue,
+            "isDeleted": false,
+            "createdAt": Timestamp()
+        ]
+        try await userRef.setData(userData)
+
+        // Step 4: Cache team info locally and update session
+        UserDefaults.standard.set(teamId, forKey: "teamId")
+        self.teamId = teamId
+
+        self.userRecord = User(
+            id: nil,
+            displayName: displayName,
+            email: email,
+            role: .lead,
+            isDeleted: false,
+            deletedAt: nil
+        )
+
+        self.userSession = user
+    }
     /// Signs out the current user.
     ///
     /// - Returns: An optional error if sign-out fails.
@@ -123,41 +126,38 @@ final class AuthService: ObservableObject {
     /// Retrieves the Firestore user record and team ID for the given Firebase user.
     ///
     /// - Parameter user: The authenticated Firebase user.
-    private func fetchUserRecord(user: FirebaseAuth.User) {
-        // If you persist teamId in user defaults, settings, or elsewhere, read it here.
-        // But for now, let's fetch it using a workaround based on assumption:
-        // Each user is only in ONE team, and that team was just created on sign-up
-
+    func fetchUserRecord(user: FirebaseAuth.User) {
         db.collection("teams").getDocuments { [weak self] snapshot, error in
             guard let self = self,
                   let documents = snapshot?.documents else {
+                print("Failed to fetch teams")
                 return
             }
 
             for teamDoc in documents {
                 let userRef = teamDoc.reference.collection("users").document(user.uid)
-                userRef.getDocument { userDocSnapshot, _ in
-                    guard let userDoc = userDocSnapshot, userDoc.exists,
-                          let data = userDoc.data(),
-                          let displayName = data["displayName"] as? String,
-                          let email = data["email"] as? String,
-                          let roleRaw = data["role"] as? String,
-                          let role = UserRole(rawValue: roleRaw),
-                          let isDeleted = data["isDeleted"] as? Bool
-                    else {
-                        return
-                    }
 
-                    let deletedAt = data["deletedAt"] as? Timestamp
-                    self.userRecord = User(
-                        id: user.uid,
-                        displayName: displayName,
-                        email: email,
-                        role: role,
-                        isDeleted: isDeleted,
-                        deletedAt: deletedAt
-                    )
-                    self.teamId = teamDoc.documentID
+                userRef.getDocument { userDocSnapshot, error in
+                    // ✅ If user exists in this team, load them
+                    if let userDoc = userDocSnapshot, userDoc.exists,
+                       let data = userDoc.data(),
+                       let displayName = data["displayName"] as? String,
+                       let email = data["email"] as? String,
+                       let roleRaw = data["role"] as? String,
+                       let role = UserRole(rawValue: roleRaw),
+                       let isDeleted = data["isDeleted"] as? Bool {
+
+                        let deletedAt = data["deletedAt"] as? Timestamp
+                        self.userRecord = User(
+                            displayName: displayName,
+                            email: email,
+                            role: role,
+                            isDeleted: isDeleted,
+                            deletedAt: deletedAt
+                        )
+                        self.teamId = teamDoc.documentID
+                        UserDefaults.standard.set(teamDoc.documentID, forKey: "teamId")
+                    }
                 }
             }
         }

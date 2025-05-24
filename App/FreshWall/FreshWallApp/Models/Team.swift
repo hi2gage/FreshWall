@@ -8,6 +8,22 @@ struct Team: Codable, Identifiable {
     @DocumentID var id: String?
     /// Name of the team.
     var name: String
+    /// Identifiable code for joining an exisiting team
+    var teamCode: String
     /// Timestamp when this team was created.
     var createdAt: Timestamp
+}
+
+struct TeamGenerator {
+    static func make(
+        teamName: String,
+        teamCode: String = UUID().uuidString.prefix(6).uppercased()
+    ) -> Team {
+        .init(
+            id: nil,
+            name: teamName,
+            teamCode: teamCode,
+            createdAt: Timestamp()
+        )
+    }
 }
