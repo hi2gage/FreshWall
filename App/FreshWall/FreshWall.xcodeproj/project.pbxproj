@@ -10,6 +10,7 @@
 		1C54365D2DE224C600153F4F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1C54365C2DE224C600153F4F /* FirebaseAuth */; };
 		1C54365F2DE224C600153F4F /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 1C54365E2DE224C600153F4F /* FirebaseFirestore */; };
 		1C5436612DE224C600153F4F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1C5436602DE224C600153F4F /* FirebaseStorage */; };
+		1C5437182DE2558400153F4F /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 1C5437172DE2558400153F4F /* FirebaseFunctions */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 				1C54365D2DE224C600153F4F /* FirebaseAuth in Frameworks */,
 				1C54365F2DE224C600153F4F /* FirebaseFirestore in Frameworks */,
 				1C5436612DE224C600153F4F /* FirebaseStorage in Frameworks */,
+				1C5437182DE2558400153F4F /* FirebaseFunctions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,7 @@
 				1C5435F82DE2223F00153F4F /* FreshWallApp */,
 				1C5436072DE2224000153F4F /* FreshWallTests */,
 				1C5436112DE2224000153F4F /* FreshWallUITests */,
+				1C5437162DE2558400153F4F /* Frameworks */,
 				1C5435F72DE2223F00153F4F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -99,6 +102,13 @@
 				1C54360E2DE2224000153F4F /* FreshWallUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		1C5437162DE2558400153F4F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -124,6 +134,7 @@
 				1C54365C2DE224C600153F4F /* FirebaseAuth */,
 				1C54365E2DE224C600153F4F /* FirebaseFirestore */,
 				1C5436602DE224C600153F4F /* FirebaseStorage */,
+				1C5437172DE2558400153F4F /* FirebaseFunctions */,
 			);
 			productName = FreshWall;
 			productReference = 1C5435F62DE2223F00153F4F /* FreshWall.app */;
@@ -635,6 +646,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		1C5437172DE2558400153F4F /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
