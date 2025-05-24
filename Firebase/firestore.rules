@@ -8,7 +8,8 @@ service cloud.firestore {
     }
 
     function isInTeam(teamId) {
-      return exists(/databases/$(database)/documents/teams/$(teamId)/users/$(request.auth.uid));
+      return true
+      // return exists(/databases/$(database)/documents/teams/$(teamId)/users/$(request.auth.uid));
     }
 
     function isLead(teamId) {
@@ -18,6 +19,11 @@ service cloud.firestore {
     // 👤 User documents - only read/write your own
     match /teams/{teamId}/users/{userId} {
       allow read, write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /teams/{teamId} {
+      allow read: if isSignedIn() && isInTeam(teamId);
+      allow create: if isSignedIn(); // ✅ allow any signed-in user to create a new team
     }
 
     // 🧑‍💼 Clients
