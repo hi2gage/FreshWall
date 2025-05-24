@@ -63,7 +63,7 @@ final class AuthService: ObservableObject {
 
     }
 
-    /// Creates a new user account, team, and Firestore user record.
+    /// Creates a new user account, team, and Firestore user record via Cloud Function.
     ///
     /// - Parameters:
     ///   - email: Email address for new account.
@@ -76,30 +76,31 @@ final class AuthService: ObservableObject {
         displayName: String,
         teamName: String
     ) async throws {
-        // Step 1: Create Firebase Auth user
         let authResult = try await auth.createUser(withEmail: email, password: password)
         let user = authResult.user
 
-        // Step 2: Create team document
-        let teamRef = db.collection("teams").document()
-        let teamId = teamRef.documentID
-        let team = TeamGenerator.make(teamName: teamName) // You must handle teamCode & createdAt here
+        let result = try await Functions.functions()
+            .httpsCallable("createTeamCreateUser")
+            .call([
+                "email": email,
+                "teamName": teamName,
+                "displayName": displayName
+            ])
 
-        try teamRef.setData(from: team)
+        guard
+            let data = result.data as? [String: Any],
+            let teamId = data["teamId"] as? String,
+            let teamCode = data["teamCode"] as? String
+        else {
+            throw NSError(
+                domain: "AuthService",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Invalid response from createTeamCreateUser function"]
+            )
+        }
 
-        // Step 3: Create user record under the team
-        let userRef = teamRef.collection("users").document(user.uid)
-        let userData: [String: Any] = [
-            "displayName": displayName,
-            "email": email,
-            "role": UserRole.lead.rawValue,
-            "isDeleted": false,
-            "createdAt": Timestamp()
-        ]
-        try await userRef.setData(userData)
-
-        // Step 4: Cache team info locally and update session
         UserDefaults.standard.set(teamId, forKey: "teamId")
+        UserDefaults.standard.set(teamCode, forKey: "teamCode")
         self.teamId = teamId
 
         self.userRecord = User(
@@ -133,7 +134,7 @@ final class AuthService: ObservableObject {
 
         // Step 2: Call the Firebase Cloud Function to join the team
         let result = try await Functions.functions()
-            .httpsCallable("joinTeam")
+            .httpsCallable("joinTeamCreateUser")
             .call([
                 "email": email,
                 "teamCode": teamCode,
@@ -148,7 +149,7 @@ final class AuthService: ObservableObject {
             throw NSError(
                 domain: "AuthService",
                 code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid response from joinTeam function"]
+                userInfo: [NSLocalizedDescriptionKey: "Invalid response from joinTeamCreateUser function"]
             )
         }
 
