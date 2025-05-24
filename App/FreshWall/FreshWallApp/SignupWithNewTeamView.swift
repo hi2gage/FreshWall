@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// A view that allows new users to create an account and team.
-struct SignupView: View {
+struct SignupWithNewTeamView: View {
     @EnvironmentObject private var authService: AuthService
     @Environment(\.dismiss) private var dismiss
     @State private var email: String = ""
@@ -59,6 +59,6 @@ struct SignupView: View {
 }
 
 #Preview {
-    SignupView()
+    SignupWithNewTeamView()
         .environmentObject(AuthService())
 }

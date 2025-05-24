@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseFunctions
 
 /// Service that manages Firebase authentication and Firestore user records.
 final class AuthService: ObservableObject {
@@ -27,6 +28,8 @@ final class AuthService: ObservableObject {
         settings.isSSLEnabled = false
         settings.isPersistenceEnabled = false
         Firestore.firestore().settings = settings
+
+        Functions.functions().useEmulator(withHost: "localhost", port: 5001)
 
         Auth.auth().useEmulator(withHost: "localhost", port: 9099)
 #endif
@@ -110,6 +113,62 @@ final class AuthService: ObservableObject {
 
         self.userSession = user
     }
+
+    /// Creates a new user account, team, and Firestore user record. Must just an existing team
+    ///
+    /// - Parameters:
+    ///   - email: Email address for new account.
+    ///   - password: Password for authentication.
+    ///   - displayName: Name to display for the user.
+    ///   - teamName: Name of the team to create.
+    func signUp(
+        email: String,
+        password: String,
+        displayName: String,
+        teamCode: String
+    ) async throws {
+        // Step 1: Create Firebase Auth user
+        let authResult = try await auth.createUser(withEmail: email, password: password)
+        let user = authResult.user
+
+        // Step 2: Call the Firebase Cloud Function to join the team
+        let result = try await Functions.functions()
+            .httpsCallable("joinTeam")
+            .call([
+                "email": email,
+                "teamCode": teamCode,
+                "displayName": displayName
+            ])
+
+        // Step 3: Extract teamId from function response
+        guard
+            let data = result.data as? [String: Any],
+            let teamId = data["teamId"] as? String
+        else {
+            throw NSError(
+                domain: "AuthService",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Invalid response from joinTeam function"]
+            )
+        }
+
+        // Step 4: Update local app state
+        UserDefaults.standard.set(teamId, forKey: "teamId")
+        self.teamId = teamId
+
+        self.userRecord = User(
+            id: nil,
+            displayName: displayName,
+            email: email,
+            role: .member,
+            isDeleted: false,
+            deletedAt: nil
+        )
+
+        self.userSession = user
+    }
+
+
     /// Signs out the current user.
     ///
     /// - Returns: An optional error if sign-out fails.

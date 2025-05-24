@@ -22,6 +22,8 @@ final class RouterPath {
 enum RouterDestination: Hashable {
     /// Sign up screen for new users.
     case signup
+
+    case signupWithTeam
 }
 
 
@@ -30,7 +32,9 @@ extension View {
         navigationDestination(for: RouterDestination.self) { destination in
             switch destination {
             case .signup:
-                SignupView()
+                SignupWithNewTeamView()
+            case .signupWithTeam:
+                SignupWithExistingTeamView()
             }
         }
     }
