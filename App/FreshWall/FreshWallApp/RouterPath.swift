@@ -23,3 +23,15 @@ enum RouterDestination: Hashable {
     /// Sign up screen for new users.
     case signup
 }
+
+
+extension View {
+    func withAppRouter() -> some View {
+        navigationDestination(for: RouterDestination.self) { destination in
+            switch destination {
+            case .signup:
+                SignupView()
+            }
+        }
+    }
+}

@@ -38,16 +38,17 @@ struct SignupView: View {
                     .foregroundColor(.red)
             }
             Button("Create Account") {
-                authService.signUp(
-                    email: email,
-                    password: password,
-                    displayName: displayName,
-                    teamName: teamName
-                ) { error in
-                    if let error = error {
-                        errorMessage = error.localizedDescription
-                    } else {
+                Task {
+                    do {
+                        try await authService.signUp(
+                            email: email,
+                            password: password,
+                            displayName: displayName,
+                            teamName: teamName
+                        )
                         dismiss()
+                    } catch {
+                        errorMessage = error.localizedDescription
                     }
                 }
             }

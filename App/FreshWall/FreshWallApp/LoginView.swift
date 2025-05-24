@@ -3,10 +3,10 @@ import SwiftUI
 /// A view that allows existing users to log in with email and password.
 struct LoginView: View {
     @EnvironmentObject private var authService: AuthService
+    @Environment(RouterPath.self) private var routerPath
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var errorMessage: String?
-    @State private var showSignup: Bool = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -28,20 +28,17 @@ struct LoginView: View {
                     .foregroundColor(.red)
             }
             Button("Log In") {
-                authService.signIn(email: email, password: password) { error in
-                    if let error = error {
+                Task {
+                    do {
+                        try await authService.signIn(email: email, password: password)
+                    } catch {
                         errorMessage = error.localizedDescription
                     }
                 }
             }
             Button("Sign Up") {
-                showSignup = true
+                routerPath.push(.signup)
             }
-            NavigationLink(
-                destination: SignupView(),
-                isActive: $showSignup,
-                label: { EmptyView() }
-            )
             Spacer()
         }
         .padding()
