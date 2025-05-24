@@ -28,6 +28,7 @@ struct YourApp: App {
       NavigationView {
         ContentView()
       }
+      .environmentObject(AuthService())
     }
   }
 }
