@@ -1,6 +1,5 @@
+import FirebaseFirestore
 import Foundation
-import FirebaseFirestore
-import FirebaseFirestore
 
 /// Role of a user within the team.
 enum UserRole: String, Codable {

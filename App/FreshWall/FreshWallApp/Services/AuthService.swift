@@ -1,8 +1,8 @@
-import Foundation
-import Observation
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseFunctions
+import Foundation
+import Observation
 
 /// Service that manages Firebase authentication and Firestore user records.
 @Observable
@@ -18,17 +18,17 @@ final class AuthService {
 
     /// Starts listening for Firebase authentication state changes.
     init() {
-#if DEBUG
-        let settings = Firestore.firestore().settings
-        settings.host = "localhost:8080"
-        settings.isSSLEnabled = false
-        settings.isPersistenceEnabled = false
-        Firestore.firestore().settings = settings
+        #if DEBUG
+            let settings = Firestore.firestore().settings
+            settings.host = "localhost:8080"
+            settings.isSSLEnabled = false
+            settings.isPersistenceEnabled = false
+            Firestore.firestore().settings = settings
 
-        Functions.functions().useEmulator(withHost: "localhost", port: 5001)
+            Functions.functions().useEmulator(withHost: "localhost", port: 5001)
 
-        Auth.auth().useEmulator(withHost: "localhost", port: 9099)
-#endif
+            Auth.auth().useEmulator(withHost: "localhost", port: 9099)
+        #endif
         authStateHandle = auth.addStateDidChangeListener { [weak self] _, user in
             self?.userSession = user
         }
@@ -50,7 +50,6 @@ final class AuthService {
         password: String
     ) async throws {
         try await auth.signIn(withEmail: email, password: password)
-
     }
 
     /// Signs out the current user.
@@ -65,5 +64,4 @@ final class AuthService {
             return error
         }
     }
-
 }

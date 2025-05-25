@@ -1,6 +1,5 @@
+import FirebaseFirestore
 import Foundation
-import FirebaseFirestore
-import FirebaseFirestore
 
 /// A team represents a group under which all data is scoped.
 struct Team: Codable, Identifiable {
@@ -14,7 +13,7 @@ struct Team: Codable, Identifiable {
     var createdAt: Timestamp
 }
 
-struct TeamGenerator {
+enum TeamGenerator {
     static func make(
         teamName: String,
         teamCode: String = UUID().uuidString.prefix(6).uppercased()

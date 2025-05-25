@@ -1,5 +1,5 @@
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @MainActor
 @Observable
@@ -25,7 +25,6 @@ enum RouterDestination: Hashable {
 
     case signupWithTeam
 }
-
 
 extension View {
     func withAppRouter(
