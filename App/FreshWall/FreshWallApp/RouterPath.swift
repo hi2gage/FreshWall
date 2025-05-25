@@ -42,15 +42,15 @@ extension View {
             case .signupWithTeam:
                 SignupWithExistingTeamView(userService: userService)
             case .clientsList:
-                ClientsListView()
+                ClientsListView(userService: userService)
             case .clientDetail(let id):
                 ClientDetailView(clientId: id, userService: userService)
             case .incidentsList:
-                IncidentsListView()
+                IncidentsListView(userService: userService)
             case .incidentDetail(let id):
                 IncidentDetailView(incidentId: id, userService: userService)
             case .membersList:
-                MembersListView()
+                MembersListView(userService: userService)
             case .memberDetail(let id):
                 MemberDetailView(memberId: id, userService: userService)
             }
