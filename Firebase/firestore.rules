@@ -8,17 +8,17 @@ service cloud.firestore {
     }
 
     function isInTeam(teamId) {
-      return true
-      // return exists(/databases/$(database)/documents/teams/$(teamId)/users/$(request.auth.uid));
+      return exists(/databases/$(database)/documents/teams/$(teamId)/users/$(request.auth.uid));
     }
 
     function isLead(teamId) {
       return get(/databases/$(database)/documents/teams/$(teamId)/users/$(request.auth.uid)).data.role == "lead";
     }
 
-    // 👤 User documents - only read/write your own
+    // 👤 User documents - team members can read all, users can update their own
     match /teams/{teamId}/users/{userId} {
-      allow read, write: if isSignedIn() && request.auth.uid == userId;
+      allow read: if isSignedIn() && isInTeam(teamId);
+      allow write: if isSignedIn() && request.auth.uid == userId;
     }
 
     match /teams/{teamId} {
@@ -32,10 +32,17 @@ service cloud.firestore {
       allow create, update, delete: if isSignedIn() && isLead(teamId);
     }
 
-    // 🎯 Incidents
+    // 🎯 Incidents under client-specific path
     match /teams/{teamId}/clients/{clientId}/incidents/{incidentId} {
       allow read: if isSignedIn() && isInTeam(teamId);
-      allow create: if isSignedIn() && isInTeam(teamId); // team members can log
+      allow create: if isSignedIn() && isInTeam(teamId);
+      allow update, delete: if isSignedIn() && isLead(teamId);
+    }
+
+    // 🎯 Top-level incidents collection for the team
+    match /teams/{teamId}/incidents/{incidentId} {
+      allow read: if isSignedIn() && isInTeam(teamId);
+      allow create: if isSignedIn() && isInTeam(teamId);
       allow update, delete: if isSignedIn() && isLead(teamId);
     }
   }
