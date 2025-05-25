@@ -1,20 +1,23 @@
 import SwiftUI
 
 /// View for adding a new client, injecting a service conforming to `ClientServiceProtocol`.
-
 struct AddClientView: View {
     @Environment(\.dismiss) private var dismiss
-    let service: ClientServiceProtocol
-    @State private var name: String = ""
-    @State private var notes: String = ""
+    @State private var viewModel: AddClientViewModel
+
+
+    /// Initializes view with injected client service and view model.
+    init(viewModel: AddClientViewModel) {
+        _viewModel = State(wrappedValue: viewModel)
+    }
 
     var body: some View {
         Form {
             Section("Name") {
-                TextField("Client Name", text: $name)
+                TextField("Client Name", text: $viewModel.name)
             }
             Section("Notes") {
-                TextEditor(text: $notes)
+                TextEditor(text: $viewModel.notes)
                     .frame(minHeight: 100)
             }
         }
@@ -27,21 +30,18 @@ struct AddClientView: View {
                 Button("Save") {
                     Task {
                         do {
-                            let input = AddClientInput(
-                                name: name.trimmingCharacters(in: .whitespaces),
-                                notes: notes.isEmpty ? nil : notes
-                            )
-                            try await service.addClient(input)
+                            try await viewModel.save()
                             dismiss()
                         } catch {
                             // Handle error if needed
                         }
                     }
                 }
-                .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                .disabled(!viewModel.isValid)
             }
         }
     }
+
 }
 
 /// Dummy implementation of `ClientServiceProtocol` for previews.
@@ -54,7 +54,7 @@ private class PreviewClientService: ClientServiceProtocol {
 #Preview {
     FreshWallPreview {
         NavigationStack {
-            AddClientView(service: PreviewClientService())
+            AddClientView(viewModel: AddClientViewModel(service: PreviewClientService()))
         }
     }
 }

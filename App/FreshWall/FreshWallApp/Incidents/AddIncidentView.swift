@@ -5,57 +5,54 @@ import SwiftUI
 
 struct AddIncidentView: View {
     @Environment(\.dismiss) private var dismiss
-    let service: IncidentServiceProtocol
-    @State private var clientId: String = ""
-    @State private var description: String = ""
-    @State private var areaText: String = ""
-    @State private var startTime: Date = .init()
-    @State private var endTime: Date = .init()
-    @State private var billable: Bool = false
-    @State private var rateText: String = ""
-    @State private var projectName: String = ""
-    @State private var status: String = "open"
-    @State private var materialsUsed: String = ""
-    private let statusOptions = ["open", "in_progress", "completed"]
+    @State var viewModel: AddIncidentViewModel
 
     var body: some View {
         Form {
             Section(header: Text("Client ID")) {
-                TextField("Client Document ID", text: $clientId)
+                TextField("Client Document ID", text: $viewModel.clientId)
                     .autocapitalization(.none)
             }
             Section(header: Text("Description")) {
-                TextEditor(text: $description)
+                TextEditor(text: $viewModel.description)
                     .frame(minHeight: 100)
             }
             Section(header: Text("Area (sq ft)")) {
-                TextField("Area", text: $areaText)
+                TextField("Area", text: $viewModel.areaText)
                     .keyboardType(.decimalPad)
             }
             Section(header: Text("Timeframe")) {
-                DatePicker("Start Time", selection: $startTime, displayedComponents: [.date, .hourAndMinute])
-                DatePicker("End Time", selection: $endTime, displayedComponents: [.date, .hourAndMinute])
+                DatePicker(
+                    "Start Time",
+                    selection: $viewModel.startTime,
+                    displayedComponents: [.date, .hourAndMinute]
+                )
+                DatePicker(
+                    "End Time",
+                    selection: $viewModel.endTime,
+                    displayedComponents: [.date, .hourAndMinute]
+                )
             }
             Section {
-                Toggle("Billable", isOn: $billable)
-                if billable {
-                    TextField("Rate", text: $rateText)
+                Toggle("Billable", isOn: $viewModel.billable)
+                if viewModel.billable {
+                    TextField("Rate", text: $viewModel.rateText)
                         .keyboardType(.decimalPad)
                 }
             }
             Section(header: Text("Project Name")) {
-                TextField("Project Name", text: $projectName)
+                TextField("Project Name", text: $viewModel.projectName)
             }
             Section(header: Text("Status")) {
-                Picker("Status", selection: $status) {
-                    ForEach(statusOptions, id: \.self) { option in
+                Picker("Status", selection: $viewModel.status) {
+                    ForEach(viewModel.statusOptions, id: \.self) { option in
                         Text(option.capitalized).tag(option)
                     }
                 }
                 .pickerStyle(.segmented)
             }
             Section(header: Text("Materials Used")) {
-                TextEditor(text: $materialsUsed)
+                TextEditor(text: $viewModel.materialsUsed)
                     .frame(minHeight: 80)
             }
         }
@@ -68,31 +65,14 @@ struct AddIncidentView: View {
                 Button("Save") {
                     Task {
                         do {
-                            let areaValue = Double(areaText) ?? 0
-                            let rateValue = Double(rateText)
-                            let input = AddIncidentInput(
-                                clientId: clientId.trimmingCharacters(in: .whitespaces),
-                                description: description,
-                                area: areaValue,
-                                startTime: startTime,
-                                endTime: endTime,
-                                billable: billable,
-                                rate: rateValue,
-                                projectName: projectName.isEmpty ? nil : projectName,
-                                status: status,
-                                materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed
-                            )
-                            try await service.addIncident(input)
+                            try await viewModel.save()
                             dismiss()
                         } catch {
-                            // TODO: Handle error if desired
+                            // Handle error if needed
                         }
                     }
                 }
-                .disabled(
-                    clientId.trimmingCharacters(in: .whitespaces).isEmpty ||
-                        description.trimmingCharacters(in: .whitespaces).isEmpty
-                )
+                .disabled(viewModel.isValid)
             }
         }
     }
@@ -109,7 +89,7 @@ private class PreviewIncidentService: IncidentServiceProtocol {
 #Preview {
     FreshWallPreview {
         NavigationStack {
-            AddIncidentView(service: PreviewIncidentService())
+            AddIncidentView(viewModel: AddIncidentViewModel(service: PreviewIncidentService()))
         }
     }
 }
