@@ -1,5 +1,4 @@
 import FirebaseFirestore
-import FirebaseFirestoreSwift
 import Foundation
 import Observation
 
@@ -16,14 +15,16 @@ protocol IncidentServiceProtocol {
 /// Service to fetch and manage Incident entities from Firestore.
 @Observable
 final class IncidentService: IncidentServiceProtocol {
-    private let database = Firestore.firestore()
+    private let database: Firestore
     private let userService: UserService
 
     /// Published list of incidents for the current team.
     var incidents: [Incident] = []
 
     /// Initializes the service with the given UserService for team context.
-    init(userService: UserService) {
+    /// Initializes the service with a Firestore instance and UserService for team context.
+    init(firestore: Firestore, userService: UserService) {
+        database = firestore
         self.userService = userService
     }
 
@@ -44,7 +45,7 @@ final class IncidentService: IncidentServiceProtocol {
             print("IncidentService.fetchIncidents error:", error)
         }
     }
-    
+
     /// Adds a new incident document to Firestore under the current team.
     ///
     /// - Parameter incident: The `Incident` model to add (with `id == nil`).

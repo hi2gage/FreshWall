@@ -31,7 +31,7 @@ final class UserService {
             Auth.auth().useEmulator(withHost: "localhost", port: 9099)
         #endif
         authStateHandle = auth.addStateDidChangeListener { [weak self] _, user in
-            if let user = user {
+            if let user {
                 Task { await self?.fetchUserRecord(for: user) }
             } else {
                 self?.userRecord = nil

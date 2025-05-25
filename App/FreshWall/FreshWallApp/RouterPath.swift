@@ -24,16 +24,26 @@ enum RouterDestination: Hashable {
     case signup
     case signupWithTeam
     case clientsList
+    /// Screen for adding a new client.
+    case addClient
     case clientDetail(id: String)
     case incidentsList
+    /// Screen for adding a new incident.
+    case addIncident
     case incidentDetail(id: String)
     case membersList
+    /// Screen for adding a new member.
+    case addMember
     case memberDetail(id: String)
 }
 
 extension View {
+    /// Sets up routing destinations for various views, injecting necessary services.
     func withAppRouter(
-        userService: UserService
+        userService: UserService,
+        clientService: ClientServiceProtocol,
+        incidentService: IncidentServiceProtocol,
+        memberService: MemberServiceProtocol
     ) -> some View {
         navigationDestination(for: RouterDestination.self) { destination in
             switch destination {
@@ -42,15 +52,21 @@ extension View {
             case .signupWithTeam:
                 SignupWithExistingTeamView(userService: userService)
             case .clientsList:
-                ClientsListView(userService: userService)
+                ClientsListView(service: clientService)
+            case .addClient:
+                AddClientView(service: clientService)
             case let .clientDetail(id):
                 ClientDetailView(clientId: id, userService: userService)
             case .incidentsList:
-                IncidentsListView(userService: userService)
+                IncidentsListView(service: incidentService)
+            case .addIncident:
+                AddIncidentView(service: incidentService)
             case let .incidentDetail(id):
                 IncidentDetailView(incidentId: id, userService: userService)
             case .membersList:
-                MembersListView(userService: userService)
+                MembersListView(service: memberService)
+            case .addMember:
+                AddMemberView(service: memberService)
             case let .memberDetail(id):
                 MemberDetailView(memberId: id, userService: userService)
             }

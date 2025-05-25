@@ -1,14 +1,16 @@
+import FirebaseFirestore
 import SwiftUI
 
 /// A view displaying a list of team members.
 struct MembersListView: View {
-    let userService: UserService
+    let service: MemberServiceProtocol
     @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: MembersListViewModel
 
-    init(userService: UserService) {
-        self.userService = userService
-        _viewModel = State(wrappedValue: MembersListViewModel(service: MemberService(userService: userService)))
+    /// Initializes the view with a member service implementing `MemberServiceProtocol`.
+    init(service: MemberServiceProtocol) {
+        self.service = service
+        _viewModel = State(wrappedValue: MembersListViewModel(service: service))
     }
 
     var body: some View {
@@ -26,6 +28,15 @@ struct MembersListView: View {
             }
         }
         .navigationTitle("Members")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    routerPath.push(.addMember)
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
+        }
         .task {
             await viewModel.loadMembers()
         }
@@ -34,8 +45,11 @@ struct MembersListView: View {
 
 struct MembersListView_Previews: PreviewProvider {
     static var previews: some View {
+        let userService = UserService()
+        let firestore = Firestore.firestore()
+        let service = MemberService(firestore: firestore, userService: userService)
         NavigationStack {
-            MembersListView(userService: UserService())
+            MembersListView(service: service)
         }
     }
 }
