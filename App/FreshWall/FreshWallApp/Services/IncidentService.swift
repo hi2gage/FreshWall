@@ -1,5 +1,5 @@
-import Foundation
 import FirebaseFirestore
+import Foundation
 import Observation
 
 /// Service to fetch and manage Incident entities from Firestore.

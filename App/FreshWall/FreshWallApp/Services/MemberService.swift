@@ -1,6 +1,5 @@
+import FirebaseFirestore
 import Foundation
-import FirebaseFirestore
-import FirebaseFirestore
 import Observation
 
 /// Service to fetch and manage User (member) entities from Firestore.
