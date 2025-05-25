@@ -1,13 +1,16 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
+import FirebaseAuth
 import Observation
 
 /// Protocol defining operations for fetching and managing Incident entities.
 protocol IncidentServiceProtocol: Sendable {
     /// Fetches incidents for the current team.
     func fetchIncidents() async throws -> [Incident]
-    /// Adds a new incident to the current team's incidents collection.
+    /// Adds a new incident via full Incident model.
     func addIncident(_ incident: Incident) async throws
+    /// Adds a new incident using an input value object.
+    func addIncident(_ input: AddIncidentInput) async throws
 }
 
 /// Service to fetch and manage Incident entities from Firestore.
@@ -56,6 +59,52 @@ final class IncidentService: IncidentServiceProtocol {
         let newDoc = incidentsRef.document()
         var newIncident = incident
         newIncident.id = newDoc.documentID
+        try await newDoc.setData(from: newIncident)
+        try await fetchIncidents()
+    }
+    
+    /// Adds a new incident using an input value object.
+    func addIncident(_ input: AddIncidentInput) async throws {
+        guard let teamId = userService.teamId else {
+            throw NSError(domain: "IncidentService", code: -1,
+                          userInfo: [NSLocalizedDescriptionKey: "Missing team ID"])
+        }
+        let incidentsRef = database
+            .collection("teams")
+            .document(teamId)
+            .collection("incidents")
+        let newDoc = incidentsRef.document()
+        let clientRef = database
+            .collection("teams")
+            .document(teamId)
+            .collection("clients")
+            .document(input.clientId)
+        let uid = Auth.auth().currentUser?.uid ?? ""
+        let createdByRef = database
+            .collection("teams")
+            .document(teamId)
+            .collection("users")
+            .document(uid)
+        let newIncident = Incident(
+            id: newDoc.documentID,
+            clientRef: clientRef,
+            workerRefs: [],
+            description: input.description,
+            area: input.area,
+            createdAt: Timestamp(date: Date()),
+            startTime: Timestamp(date: input.startTime),
+            endTime: Timestamp(date: input.endTime),
+            beforePhotoUrls: [],
+            afterPhotoUrls: [],
+            createdBy: createdByRef,
+            lastModifiedBy: nil,
+            lastModifiedAt: nil,
+            billable: input.billable,
+            rate: input.rate,
+            projectName: input.projectName,
+            status: input.status,
+            materialsUsed: input.materialsUsed
+        )
         try await newDoc.setData(from: newIncident)
         try await fetchIncidents()
     }

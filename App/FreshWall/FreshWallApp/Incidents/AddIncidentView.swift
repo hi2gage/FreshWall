@@ -66,10 +66,33 @@ struct AddIncidentView: View {
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
-                    // TODO: Construct Incident model and call service.addIncident(incident)
-                    dismiss()
+                    Task {
+                        do {
+                            let areaValue = Double(areaText) ?? 0
+                            let rateValue = Double(rateText)
+                            let input = AddIncidentInput(
+                                clientId: clientId.trimmingCharacters(in: .whitespaces),
+                                description: description,
+                                area: areaValue,
+                                startTime: startTime,
+                                endTime: endTime,
+                                billable: billable,
+                                rate: rateValue,
+                                projectName: projectName.isEmpty ? nil : projectName,
+                                status: status,
+                                materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed
+                            )
+                            try await service.addIncident(input)
+                            dismiss()
+                        } catch {
+                            // TODO: Handle error if desired
+                        }
+                    }
                 }
-                .disabled(clientId.trimmingCharacters(in: .whitespaces).isEmpty || description.trimmingCharacters(in: .whitespaces).isEmpty)
+                .disabled(
+                    clientId.trimmingCharacters(in: .whitespaces).isEmpty ||
+                    description.trimmingCharacters(in: .whitespaces).isEmpty
+                )
             }
         }
     }
@@ -80,6 +103,7 @@ struct AddIncidentView: View {
 private class PreviewIncidentService: IncidentServiceProtocol {
     func fetchIncidents() async throws -> [Incident] { [] }
     func addIncident(_: Incident) async throws {}
+    func addIncident(_ input: AddIncidentInput) async throws {}
 }
 
 #Preview {
