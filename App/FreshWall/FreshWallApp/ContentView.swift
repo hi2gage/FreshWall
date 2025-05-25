@@ -13,6 +13,7 @@ struct ContentView: View {
     let firestore: Firestore
 
     @State private var authService: AuthService
+    
     @State private var userService: UserService
     @State private var clientService: ClientService
     @State private var incidentService: IncidentService
