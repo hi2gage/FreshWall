@@ -1,10 +1,3 @@
-//
-//  LoginManager.swift
-//  FreshWall
-//
-//  Created by Gage Halverson on 5/25/25.
-//
-
 protocol LoginManaging: Sendable {
     func signIn(
         email: String,
