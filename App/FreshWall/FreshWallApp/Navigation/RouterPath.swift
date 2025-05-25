@@ -47,19 +47,19 @@ extension View {
             case .clientsList:
                 ClientsListView(service: clientService)
             case .addClient:
-                AddClientView(service: clientService)
+                AddClientView(viewModel: AddClientViewModel(service: clientService))
             case let .clientDetail(id):
                 ClientDetailView(clientId: id)
             case .incidentsList:
                 IncidentsListView(service: incidentService)
             case .addIncident:
-                AddIncidentView(service: incidentService)
+                AddIncidentView(viewModel: AddIncidentViewModel(service: incidentService))
             case let .incidentDetail(id):
                 IncidentDetailView(incidentId: id)
             case .membersList:
                 MembersListView(service: memberService)
             case .addMember:
-                AddMemberView(service: memberService)
+                AddMemberView(viewModel: AddMemberViewModel(service: memberService))
             case let .memberDetail(id):
                 MemberDetailView(memberId: id)
             }

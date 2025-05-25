@@ -1,27 +1,26 @@
 import SwiftUI
 
 /// View for adding a new member, injecting a service conforming to `MemberServiceProtocol`.
-import SwiftUI
-
 struct AddMemberView: View {
     @Environment(\.dismiss) private var dismiss
-    let service: MemberServiceProtocol
-    @State private var displayName: String = ""
-    @State private var email: String = ""
-    @State private var role: UserRole = .member
+    @State private var viewModel: AddMemberViewModel
+
+    init(viewModel: AddMemberViewModel) {
+        _viewModel = State(wrappedValue: viewModel)
+    }
 
     var body: some View {
         Form {
             Section("Name") {
-                TextField("Full Name", text: $displayName)
+                TextField("Full Name", text: $viewModel.displayName)
             }
             Section("Email") {
-                TextField("Email Address", text: $email)
+                TextField("Email Address", text: $viewModel.email)
                     .keyboardType(.emailAddress)
                     .autocapitalization(.none)
             }
             Section("Role") {
-                Picker("Role", selection: $role) {
+                Picker("Role", selection: $viewModel.role) {
                     ForEach(UserRole.allCases, id: \ .self) { role in
                         Text(role.rawValue.capitalized).tag(role)
                     }
@@ -36,20 +35,16 @@ struct AddMemberView: View {
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
-                    let member = User(
-                        id: nil,
-                        displayName: displayName,
-                        email: email,
-                        role: role,
-                        isDeleted: false,
-                        deletedAt: nil
-                    )
                     Task {
-                        try? await service.addMember(member)
-                        dismiss()
+                        do {
+                            try await viewModel.save()
+                            dismiss()
+                        } catch {
+                            // Handle error if needed
+                        }
                     }
                 }
-                .disabled(displayName.trimmingCharacters(in: .whitespaces).isEmpty || email.trimmingCharacters(in: .whitespaces).isEmpty)
+                .disabled(!viewModel.isValid)
             }
         }
     }
@@ -58,7 +53,6 @@ struct AddMemberView: View {
 /// Dummy implementation of `MemberServiceProtocol` for previews.
 @MainActor
 private class PreviewMemberService: MemberServiceProtocol {
-    var members: [User] = []
     func fetchMembers() async throws -> [User] { [] }
     func addMember(_: User) async throws {}
 }
@@ -66,7 +60,7 @@ private class PreviewMemberService: MemberServiceProtocol {
 #Preview {
     FreshWallPreview {
         NavigationStack {
-            AddMemberView(service: PreviewMemberService())
+            AddMemberView(viewModel: AddMemberViewModel(service: PreviewMemberService()))
         }
     }
 }
