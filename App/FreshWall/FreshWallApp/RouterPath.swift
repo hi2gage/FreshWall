@@ -22,8 +22,13 @@ final class RouterPath {
 enum RouterDestination: Hashable {
     /// Sign up screen for new users.
     case signup
-
     case signupWithTeam
+    case clientsList
+    case clientDetail(id: String)
+    case incidentsList
+    case incidentDetail(id: String)
+    case membersList
+    case memberDetail(id: String)
 }
 
 extension View {
@@ -36,6 +41,18 @@ extension View {
                 SignupWithNewTeamView(userService: userService)
             case .signupWithTeam:
                 SignupWithExistingTeamView(userService: userService)
+            case .clientsList:
+                ClientsListView()
+            case .clientDetail(let id):
+                ClientDetailView(clientId: id, userService: userService)
+            case .incidentsList:
+                IncidentsListView()
+            case .incidentDetail(let id):
+                IncidentDetailView(incidentId: id, userService: userService)
+            case .membersList:
+                MembersListView()
+            case .memberDetail(let id):
+                MemberDetailView(memberId: id, userService: userService)
             }
         }
     }
