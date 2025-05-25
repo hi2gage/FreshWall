@@ -14,27 +14,19 @@ struct IncidentsListView: View {
     }
 
     var body: some View {
-        List {
-            if viewModel.incidents.isEmpty {
-                Text("No incidents available.")
-            } else {
-                ForEach(viewModel.incidents) { incident in
-                    Button(incident.description) {
-                        routerPath.push(.incidentDetail(incident: incident))
-                    }
+        GenericListView(
+            items: viewModel.incidents,
+            title: "Incidents",
+            destination: { incident in .incidentDetail(incident: incident) },
+            content: { incident in
+                VStack {
+                    Text(incident.description)
                 }
+            },
+            plusButtonAction: {
+                routerPath.push(.addIncident)
             }
-        }
-        .navigationTitle("Incidents")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    routerPath.push(.addIncident)
-                } label: {
-                    Image(systemName: "plus")
-                }
-            }
-        }
+        )
         .task {
             await viewModel.loadIncidents()
         }

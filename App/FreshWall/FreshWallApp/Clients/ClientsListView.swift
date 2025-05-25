@@ -14,27 +14,18 @@ struct ClientsListView: View {
     }
 
     var body: some View {
-        List {
-            if viewModel.clients.isEmpty {
-                Text("No clients available.")
-            } else {
-                ForEach(viewModel.clients) { client in
-                    Button(client.name) {
-                        routerPath.push(.clientDetail(client: client))
-                    }
+        GenericListView(
+            items: viewModel.clients,
+            title: "Clients",
+            destination: { clients in .clientDetail(client: clients) },
+            content: { clients in
+                VStack {
+                    Text(clients.name)
                 }
-            }
-        }
-        .navigationTitle("Clients")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    routerPath.push(.addClient)
-                } label: {
-                    Image(systemName: "plus")
-                }
-            }
-        }
+            },
+            plusButtonAction: {
+                routerPath.push(.addClient)
+            })
         .task {
             await viewModel.loadClients()
         }

@@ -14,27 +14,18 @@ struct MembersListView: View {
     }
 
     var body: some View {
-        List {
-            if viewModel.members.isEmpty {
-                Text("No members available.")
-            } else {
-                ForEach(viewModel.members) { member in
-                    Button(member.displayName) {
-                        routerPath.push(.memberDetail(member: member))
-                    }
+        GenericListView(
+            items: viewModel.members,
+            title: "Members",
+            destination: { member in .memberDetail(member: member) },
+            content: { member in
+                VStack {
+                    Text(member.displayName)
                 }
-            }
-        }
-        .navigationTitle("Members")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    routerPath.push(.addMember)
-                } label: {
-                    Image(systemName: "plus")
-                }
-            }
-        }
+            },
+            plusButtonAction: {
+                routerPath.push(.addMember)
+            })
         .task {
             await viewModel.loadMembers()
         }
