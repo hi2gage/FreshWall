@@ -1,14 +1,14 @@
 import Observation
 
-/// ViewModel driving the ClientsListView.
+/// ViewModel responsible for client list presentation and data operations.
 @Observable
 final class ClientsListViewModel {
-    /// Array of clients to display.
+    /// Clients fetched from the service.
     var clients: [Client] = []
-    private let service: ClientService
+    private let service: ClientServiceProtocol
 
-    /// Initializes with a ClientService.
-    init(service: ClientService) {
+    /// Initializes the view model with a client service conforming to `ClientServiceProtocol`.
+    init(service: ClientServiceProtocol) {
         self.service = service
     }
 
