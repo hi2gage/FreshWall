@@ -2,7 +2,7 @@ import SwiftUI
 
 /// A view that allows existing users to log in with email and password.
 struct LoginView: View {
-    @EnvironmentObject private var authService: AuthService
+    let authService: AuthService
     @Environment(RouterPath.self) private var routerPath
     @State private var email: String = ""
     @State private var password: String = ""
@@ -50,6 +50,5 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView()
-        .environmentObject(AuthService())
+    LoginView(authService: AuthService())
 }

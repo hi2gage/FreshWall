@@ -28,13 +28,15 @@ enum RouterDestination: Hashable {
 
 
 extension View {
-    func withAppRouter() -> some View {
+    func withAppRouter(
+        userService: UserService
+    ) -> some View {
         navigationDestination(for: RouterDestination.self) { destination in
             switch destination {
             case .signup:
-                SignupWithNewTeamView()
+                SignupWithNewTeamView(userService: userService)
             case .signupWithTeam:
-                SignupWithExistingTeamView()
+                SignupWithExistingTeamView(userService: userService)
             }
         }
     }
