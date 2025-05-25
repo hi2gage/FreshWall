@@ -37,6 +37,7 @@ enum RouterDestination: Hashable {
     case memberDetail(id: String)
 }
 
+// swiftlint:disable cyclomatic_complexity
 extension View {
     /// Sets up routing destinations for various views, injecting necessary services.
     func withAppRouter(
@@ -73,3 +74,4 @@ extension View {
         }
     }
 }
+// swiftlint:enable cyclomatic_complexity
