@@ -15,7 +15,7 @@ final class UserService {
     var teamCode: String?
 
     private let auth = Auth.auth()
-    private let db = Firestore.firestore()
+    private let database = Firestore.firestore()
     private let functions = Functions.functions()
     private var authStateHandle: AuthStateDidChangeListenerHandle?
 
@@ -68,7 +68,7 @@ final class UserService {
             .call([
                 "email": email,
                 "teamName": teamName,
-                "displayName": displayName,
+                "displayName": displayName
             ])
 
         guard
@@ -116,7 +116,7 @@ final class UserService {
             .call([
                 "email": email,
                 "teamCode": teamCode,
-                "displayName": displayName,
+                "displayName": displayName
             ])
 
         guard
@@ -147,7 +147,7 @@ final class UserService {
     /// - Parameter user: The authenticated Firebase user.
     func fetchUserRecord(for user: FirebaseAuth.User) async {
         do {
-            let teamsSnapshot = try await db.collection("teams").getDocuments()
+            let teamsSnapshot = try await database.collection("teams").getDocuments()
             for teamDoc in teamsSnapshot.documents {
                 let userDoc = try await teamDoc.reference
                     .collection("users")
