@@ -1,14 +1,14 @@
 import Observation
 
-/// ViewModel driving the MembersListView.
+/// ViewModel responsible for member list presentation and data operations.
 @Observable
 final class MembersListViewModel {
-    /// Array of team members to display.
+    /// Team members fetched from the service.
     var members: [User] = []
-    private let service: MemberService
+    private let service: MemberServiceProtocol
 
-    /// Initializes with a MemberService.
-    init(service: MemberService) {
+    /// Initializes the view model with a service conforming to `MemberServiceProtocol`.
+    init(service: MemberServiceProtocol) {
         self.service = service
     }
 

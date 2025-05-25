@@ -1,14 +1,14 @@
 import Observation
 
-/// ViewModel driving the IncidentsListView.
+/// ViewModel responsible for incident list presentation and data operations.
 @Observable
 final class IncidentsListViewModel {
-    /// Array of incidents to display.
+    /// Incidents fetched from the service.
     var incidents: [Incident] = []
-    private let service: IncidentService
+    private let service: IncidentServiceProtocol
 
-    /// Initializes with an IncidentService.
-    init(service: IncidentService) {
+    /// Initializes the view model with a service conforming to `IncidentServiceProtocol`.
+    init(service: IncidentServiceProtocol) {
         self.service = service
     }
 
