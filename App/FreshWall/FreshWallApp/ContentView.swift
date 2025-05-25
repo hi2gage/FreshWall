@@ -15,17 +15,8 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $routerPath.path) {
             if authService.isAuthenticated {
-                VStack(spacing: 16) {
-                    Image(systemName: "globe")
-                        .imageScale(.large)
-                        .foregroundStyle(.tint)
-                    Text("Hello, world!")
-                    Button("LogOut") {
-                        authService.signOut()
-                    }
-                }
-                .withAppRouter(userService: userService)
-                .padding()
+                MainListView(authService: authService, userService: userService)
+                    .withAppRouter(userService: userService)
             } else {
                 LoginView(authService: authService)
                     .withAppRouter(userService: userService)
