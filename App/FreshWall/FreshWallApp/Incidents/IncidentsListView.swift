@@ -1,14 +1,16 @@
+import FirebaseFirestore
 import SwiftUI
 
 /// A view displaying a list of incidents for the current team.
 struct IncidentsListView: View {
-    let userService: UserService
+    let service: IncidentServiceProtocol
     @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: IncidentsListViewModel
 
-    init(userService: UserService) {
-        self.userService = userService
-        _viewModel = State(wrappedValue: IncidentsListViewModel(service: IncidentService(userService: userService)))
+    /// Initializes the view with an incident service implementing `IncidentServiceProtocol`.
+    init(service: IncidentServiceProtocol) {
+        self.service = service
+        _viewModel = State(wrappedValue: IncidentsListViewModel(service: service))
     }
 
     var body: some View {
@@ -26,6 +28,15 @@ struct IncidentsListView: View {
             }
         }
         .navigationTitle("Incidents")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    routerPath.push(.addIncident)
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
+        }
         .task {
             await viewModel.loadIncidents()
         }
@@ -34,8 +45,11 @@ struct IncidentsListView: View {
 
 struct IncidentsListView_Previews: PreviewProvider {
     static var previews: some View {
+        let userService = UserService()
+        let firestore = Firestore.firestore()
+        let service = IncidentService(firestore: firestore, userService: userService)
         NavigationStack {
-            IncidentsListView(userService: UserService())
+            IncidentsListView(service: service)
         }
     }
 }

@@ -1,5 +1,4 @@
 import FirebaseFirestore
-import FirebaseFirestoreSwift
 import Foundation
 import Observation
 
@@ -16,14 +15,16 @@ protocol ClientServiceProtocol {
 /// Service to fetch and manage Client entities from Firestore.
 @Observable
 final class ClientService: ClientServiceProtocol {
-    private let database = Firestore.firestore()
+    private let database: Firestore
     private let userService: UserService
 
     /// Published list of clients for the current team.
     var clients: [Client] = []
 
     /// Initializes the service with the given UserService for team context.
-    init(userService: UserService) {
+    /// Initializes the service with a Firestore instance and UserService for team context.
+    init(firestore: Firestore, userService: UserService) {
+        database = firestore
         self.userService = userService
     }
 
@@ -45,7 +46,7 @@ final class ClientService: ClientServiceProtocol {
             print("ClientService.fetchClients error:", error)
         }
     }
-    
+
     /// Adds a new client document to Firestore under the current team.
     ///
     /// - Parameters:

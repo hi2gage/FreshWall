@@ -1,5 +1,4 @@
 import FirebaseFirestore
-import FirebaseFirestoreSwift
 import Foundation
 import Observation
 
@@ -16,14 +15,16 @@ protocol MemberServiceProtocol {
 /// Service to fetch and manage User (member) entities from Firestore.
 @Observable
 final class MemberService: MemberServiceProtocol {
-    private let database = Firestore.firestore()
+    private let database: Firestore
     private let userService: UserService
 
     /// Published list of members for the current team.
     var members: [User] = []
 
     /// Initializes the service with the given UserService for team context.
-    init(userService: UserService) {
+    /// Initializes the service with a Firestore instance and UserService for team context.
+    init(firestore: Firestore, userService: UserService) {
+        database = firestore
         self.userService = userService
     }
 
@@ -45,7 +46,7 @@ final class MemberService: MemberServiceProtocol {
             print("MemberService.fetchMembers error:", error)
         }
     }
-    
+
     /// Adds a new member document to Firestore under the current team.
     ///
     /// - Parameter member: The `User` model to add (with `id == nil`).
