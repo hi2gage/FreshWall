@@ -59,6 +59,7 @@ AI agents should understand and respect the separation between frontend (Swift c
 - Do not use `import FirebaseFirestoreSwift`, it's no longer used. So use `import FirebaseFirestore`
 - Do not use `PreviewProvider` for SwiftUi previews. Use `#Preview`. 
   - Also add the `FreshWallPreview {}` view builder around all SwiftUI previews
+- All ViewModels @Observable and @MainActor
 
 > AI agents must prefer functional, composable code. Avoid global state and `DispatchQueue` unless interacting with legacy APIs.
 

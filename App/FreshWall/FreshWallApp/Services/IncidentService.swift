@@ -1,7 +1,6 @@
+import FirebaseAuth
 @preconcurrency import FirebaseFirestore
 import Foundation
-import FirebaseAuth
-import Observation
 
 /// Protocol defining operations for fetching and managing Incident entities.
 protocol IncidentServiceProtocol: Sendable {
@@ -14,25 +13,22 @@ protocol IncidentServiceProtocol: Sendable {
 }
 
 /// Service to fetch and manage Incident entities from Firestore.
-@MainActor
-@Observable
-final class IncidentService: IncidentServiceProtocol {
-    private let database: Firestore
-    private let userService: UserService
+struct IncidentService: IncidentServiceProtocol {
+    private let firestore: Firestore
+    private let session: UserSession
 
     /// Initializes the service with the given UserService for team context.
     /// Initializes the service with a Firestore instance and UserService for team context.
-    init(firestore: Firestore, userService: UserService) {
-        database = firestore
-        self.userService = userService
+    init(firestore: Firestore, session: UserSession) {
+        self.firestore = firestore
+        self.session = session
     }
 
     /// Fetches active incidents for the current team from Firestore.
     func fetchIncidents() async throws -> [Incident] {
-        guard let teamId = userService.teamId else {
-            throw Errors.missingTeamId
-        }
-        let snapshot = try await database
+        let teamId = session.teamId
+
+        let snapshot = try await firestore
             .collection("teams")
             .document(teamId)
             .collection("incidents")
@@ -48,11 +44,9 @@ final class IncidentService: IncidentServiceProtocol {
     /// - Parameter incident: The `Incident` model to add (with `id == nil`).
     /// - Throws: An error if the Firestore write fails or teamId is missing.
     func addIncident(_ incident: Incident) async throws {
-        guard let teamId = userService.teamId else {
-            throw NSError(domain: "IncidentService", code: -1,
-                          userInfo: [NSLocalizedDescriptionKey: "Missing team ID"])
-        }
-        let incidentsRef = database
+        let teamId = session.teamId
+
+        let incidentsRef = firestore
             .collection("teams")
             .document(teamId)
             .collection("incidents")
@@ -60,27 +54,24 @@ final class IncidentService: IncidentServiceProtocol {
         var newIncident = incident
         newIncident.id = newDoc.documentID
         try await newDoc.setData(from: newIncident)
-        try await fetchIncidents()
     }
-    
+
     /// Adds a new incident using an input value object.
     func addIncident(_ input: AddIncidentInput) async throws {
-        guard let teamId = userService.teamId else {
-            throw NSError(domain: "IncidentService", code: -1,
-                          userInfo: [NSLocalizedDescriptionKey: "Missing team ID"])
-        }
-        let incidentsRef = database
+        let teamId = session.teamId
+
+        let incidentsRef = firestore
             .collection("teams")
             .document(teamId)
             .collection("incidents")
         let newDoc = incidentsRef.document()
-        let clientRef = database
+        let clientRef = firestore
             .collection("teams")
             .document(teamId)
             .collection("clients")
             .document(input.clientId)
         let uid = Auth.auth().currentUser?.uid ?? ""
-        let createdByRef = database
+        let createdByRef = firestore
             .collection("teams")
             .document(teamId)
             .collection("users")

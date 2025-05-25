@@ -46,7 +46,7 @@ struct ClientsListView: View {
 #Preview {
     let userService = UserService()
     let firestore = Firestore.firestore()
-    let service = ClientService(firestore: firestore, userService: userService)
+    let service = ClientService(firestore: firestore, session: .init(userId: "", teamId: ""))
     FreshWallPreview {
         NavigationStack {
             ClientsListView(service: service)

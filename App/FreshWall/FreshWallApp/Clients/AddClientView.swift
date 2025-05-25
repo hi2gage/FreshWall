@@ -48,7 +48,7 @@ struct AddClientView: View {
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
     func fetchClients() async throws -> [Client] { [] }
-    func addClient(_ input: AddClientInput) async throws {}
+    func addClient(_: AddClientInput) async throws {}
 }
 
 #Preview {

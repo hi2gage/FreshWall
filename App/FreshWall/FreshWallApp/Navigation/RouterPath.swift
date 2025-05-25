@@ -20,9 +20,6 @@ final class RouterPath {
 
 /// Destinations for navigation within the app.
 enum RouterDestination: Hashable {
-    /// Sign up screen for new users.
-    case signup
-    case signupWithTeam
     case clientsList
     /// Screen for adding a new client.
     case addClient
@@ -48,10 +45,6 @@ extension View {
     ) -> some View {
         navigationDestination(for: RouterDestination.self) { destination in
             switch destination {
-            case .signup:
-                SignupWithNewTeamView(userService: userService)
-            case .signupWithTeam:
-                SignupWithExistingTeamView(userService: userService)
             case .clientsList:
                 ClientsListView(service: clientService)
             case .addClient:
@@ -74,4 +67,5 @@ extension View {
         }
     }
 }
+
 // swiftlint:enable cyclomatic_complexity

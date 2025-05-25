@@ -2,21 +2,11 @@
 @preconcurrency import FirebaseFirestore
 @preconcurrency import FirebaseFunctions
 import Foundation
-import Observation
 
 /// Service handling user creation, team creation/joining, and user record retrieval.
-@MainActor
-@Observable
-final class UserService {
-    /// The team identifier to which the current user belongs.
-    var teamId: String?
-    /// The code used to create or join the team (if applicable).
-    var teamCode: String?
-
+struct UserService {
     private let auth = Auth.auth()
-    private let database = Firestore.firestore()
     private let functions = Functions.functions()
-    private var authStateHandle: AuthStateDidChangeListenerHandle?
 
     init() {
         #if DEBUG
@@ -29,14 +19,6 @@ final class UserService {
             Functions.functions().useEmulator(withHost: "localhost", port: 5001)
             Auth.auth().useEmulator(withHost: "localhost", port: 9099)
         #endif
-        authStateHandle = auth.addStateDidChangeListener { [weak self] _, user in
-            if let user {
-                Task { await self?.fetchUserRecord(for: user) }
-            } else {
-                self?.teamId = nil
-                self?.teamCode = nil
-            }
-        }
     }
 
     /// Creates a new Firebase Auth user, a new team, and the corresponding Firestore user record.
@@ -46,6 +28,7 @@ final class UserService {
     ///   - password: Password for authentication.
     ///   - displayName: Name to display for the user.
     ///   - teamName: Name of the team to create.
+    @discardableResult
     func signUp(
         email: String,
         password: String,
@@ -75,8 +58,6 @@ final class UserService {
             )
         }
 
-        self.teamId = teamId
-        self.teamCode = teamCode
         return User(
             id: nil,
             displayName: displayName,
@@ -94,6 +75,7 @@ final class UserService {
     ///   - password: Password for authentication.
     ///   - displayName: Name to display for the user.
     ///   - teamCode: Code of the team to join.
+    @discardableResult
     func signUp(
         email: String,
         password: String,
@@ -112,8 +94,7 @@ final class UserService {
             ])
 
         guard
-            let data = result.data as? [String: Any],
-            let teamId = data["teamId"] as? String
+            let data = result.data as? [String: Any]
         else {
             throw NSError(
                 domain: "UserService",
@@ -122,8 +103,6 @@ final class UserService {
             )
         }
 
-        self.teamId = teamId
-        self.teamCode = teamCode
         return User(
             id: nil,
             displayName: displayName,
@@ -132,42 +111,5 @@ final class UserService {
             isDeleted: false,
             deletedAt: nil
         )
-    }
-
-    /// Fetches the Firestore user record and team ID for the given Firebase user.
-    ///
-    /// - Parameter user: The authenticated Firebase user.
-    func fetchUserRecord(for user: FirebaseAuth.User) async {
-        do {
-            let teamsSnapshot = try await database.collection("teams").getDocuments()
-            for teamDoc in teamsSnapshot.documents {
-                let userDoc = try await teamDoc.reference
-                    .collection("users")
-                    .document(user.uid)
-                    .getDocument()
-                if userDoc.exists, let data = userDoc.data() {
-                    guard
-                        let displayName = data["displayName"] as? String,
-                        let email = data["email"] as? String,
-                        let roleRaw = data["role"] as? String,
-                        let role = UserRole(rawValue: roleRaw),
-                        let isDeleted = data["isDeleted"] as? Bool
-                    else { continue }
-                    let deletedAt = data["deletedAt"] as? Timestamp
-//                    userRecord = User(
-//                        id: nil,
-//                        displayName: displayName,
-//                        email: email,
-//                        role: role,
-//                        isDeleted: isDeleted,
-//                        deletedAt: deletedAt
-//                    )
-                    teamId = teamDoc.documentID
-                    break
-                }
-            }
-        } catch {
-            print("Failed to fetch user record: \(error)")
-        }
     }
 }

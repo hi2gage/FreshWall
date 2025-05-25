@@ -4,6 +4,7 @@
 //
 //  Created by Gage Halverson on 5/24/25.
 //
+import Observation
 
 @Observable
 @MainActor
@@ -15,7 +16,6 @@ class SessionStore {
     }
 
     func logout() {
-        self.session = nil
+        session = nil
     }
-
 }

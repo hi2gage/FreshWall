@@ -1,6 +1,5 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
-import Observation
 
 /// Protocol defining operations for fetching and managing Client entities.
 protocol ClientServiceProtocol: Sendable {
@@ -11,26 +10,22 @@ protocol ClientServiceProtocol: Sendable {
 }
 
 /// Service to fetch and manage Client entities from Firestore.
-@MainActor
-@Observable
-final class ClientService: ClientServiceProtocol {
-    private let database: Firestore
-    private let userService: UserService
+struct ClientService: ClientServiceProtocol {
+    private let firestore: Firestore
+    private let session: UserSession
 
     /// Initializes the service with the given UserService for team context.
     /// Initializes the service with a Firestore instance and UserService for team context.
-    init(firestore: Firestore, userService: UserService) {
-        database = firestore
-        self.userService = userService
+    init(firestore: Firestore, session: UserSession) {
+        self.firestore = firestore
+        self.session = session
     }
 
     /// Fetches active clients for the current team from Firestore.
     func fetchClients() async throws -> [Client] {
-        guard let teamId = userService.teamId else {
-            throw Errors.missingTeamId
-        }
+        let teamId = session.teamId
 
-        let snapshot = try await database
+        let snapshot = try await firestore
             .collection("teams")
             .document(teamId)
             .collection("clients")
@@ -44,14 +39,9 @@ final class ClientService: ClientServiceProtocol {
 
     /// Adds a new client using an input value object.
     func addClient(_ input: AddClientInput) async throws {
-        guard let teamId = userService.teamId else {
-            throw NSError(
-                domain: "ClientService",
-                code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Missing team ID"]
-            )
-        }
-        let clientsRef = database
+        let teamId = session.teamId
+
+        let clientsRef = firestore
             .collection("teams")
             .document(teamId)
             .collection("clients")
@@ -65,7 +55,6 @@ final class ClientService: ClientServiceProtocol {
             createdAt: Timestamp(date: Date())
         )
         try newDoc.setData(from: newClient)
-        try await fetchClients()
     }
 }
 
