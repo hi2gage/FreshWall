@@ -11,8 +11,8 @@ struct MemberDetailView: View {
     }
 }
 
-struct MemberDetailView_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview {
+    FreshWallPreview {
         NavigationStack {
             MemberDetailView(memberId: "member123", userService: UserService())
         }

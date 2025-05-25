@@ -59,5 +59,7 @@ struct SignupWithExistingTeamView: View {
 }
 
 #Preview {
-    SignupWithExistingTeamView(userService: UserService())
+    FreshWallPreview {
+        SignupWithExistingTeamView(userService: UserService())
+    }
 }

@@ -1,4 +1,4 @@
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import Foundation
 
 /// A team represents a group under which all data is scoped.

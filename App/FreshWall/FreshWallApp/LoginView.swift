@@ -50,5 +50,7 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView(authService: AuthService())
+    FreshWallPreview {
+        LoginView(authService: AuthService())
+    }
 }

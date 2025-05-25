@@ -1,5 +1,5 @@
+@preconcurrency import FirebaseFirestore
 import SwiftUI
-import FirebaseFirestore
 
 /// View for adding a new incident, injecting a service conforming to `IncidentServiceProtocol`.
 
@@ -9,8 +9,8 @@ struct AddIncidentView: View {
     @State private var clientId: String = ""
     @State private var description: String = ""
     @State private var areaText: String = ""
-    @State private var startTime: Date = Date()
-    @State private var endTime: Date = Date()
+    @State private var startTime: Date = .init()
+    @State private var endTime: Date = .init()
     @State private var billable: Bool = false
     @State private var rateText: String = ""
     @State private var projectName: String = ""
@@ -75,19 +75,17 @@ struct AddIncidentView: View {
     }
 }
 
-struct AddIncidentView_Previews: PreviewProvider {
-    static var previews: some View {
-        FreshWallPreview {
-            NavigationStack {
-                AddIncidentView(service: PreviewIncidentService())
-            }
-        }
-    }
+/// Dummy implementation of `IncidentServiceProtocol` for previews.
+@MainActor
+private class PreviewIncidentService: IncidentServiceProtocol {
+    func fetchIncidents() async throws -> [Incident] { [] }
+    func addIncident(_: Incident) async throws {}
 }
 
-/// Dummy implementation of `IncidentServiceProtocol` for previews.
-private class PreviewIncidentService: IncidentServiceProtocol {
-    var incidents: [Incident] = []
-    func fetchIncidents() async {}
-    func addIncident(_: Incident) async throws {}
+#Preview {
+    FreshWallPreview {
+        NavigationStack {
+            AddIncidentView(service: PreviewIncidentService())
+        }
+    }
 }

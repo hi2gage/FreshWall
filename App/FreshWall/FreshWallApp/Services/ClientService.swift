@@ -1,25 +1,21 @@
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import Foundation
 import Observation
 
 /// Protocol defining operations for fetching and managing Client entities.
-protocol ClientServiceProtocol {
-    /// The array of fetched clients for the current team.
-    var clients: [Client] { get }
+protocol ClientServiceProtocol: Sendable {
     /// Fetches active clients for the current team.
-    func fetchClients() async
+    func fetchClients() async throws -> [Client]
     /// Adds a new client with the given name and optional notes.
     func addClient(name: String, notes: String?) async throws
 }
 
 /// Service to fetch and manage Client entities from Firestore.
+@MainActor
 @Observable
 final class ClientService: ClientServiceProtocol {
     private let database: Firestore
     private let userService: UserService
-
-    /// Published list of clients for the current team.
-    var clients: [Client] = []
 
     /// Initializes the service with the given UserService for team context.
     /// Initializes the service with a Firestore instance and UserService for team context.
@@ -29,22 +25,21 @@ final class ClientService: ClientServiceProtocol {
     }
 
     /// Fetches active clients for the current team from Firestore.
-    func fetchClients() async {
-        guard let teamId = userService.teamId else { return }
-        do {
-            let snapshot = try await database
-                .collection("teams")
-                .document(teamId)
-                .collection("clients")
-                .whereField("isDeleted", isEqualTo: false)
-                .getDocuments()
-            let fetched: [Client] = try snapshot.documents.compactMap {
-                try $0.data(as: Client.self)
-            }
-            clients = fetched
-        } catch {
-            print("ClientService.fetchClients error:", error)
+    func fetchClients() async throws -> [Client] {
+        guard let teamId = userService.teamId else {
+            throw Errors.missingTeamId
         }
+
+        let snapshot = try await database
+            .collection("teams")
+            .document(teamId)
+            .collection("clients")
+            .whereField("isDeleted", isEqualTo: false)
+            .getDocuments()
+        let fetched: [Client] = try snapshot.documents.compactMap {
+            try $0.data(as: Client.self)
+        }
+        return fetched
     }
 
     /// Adds a new client document to Firestore under the current team.
@@ -71,7 +66,13 @@ final class ClientService: ClientServiceProtocol {
             deletedAt: nil,
             createdAt: Timestamp(date: Date())
         )
-        try await newDoc.setData(from: newClient)
-        await fetchClients()
+        try newDoc.setData(from: newClient)
+        try await fetchClients()
+    }
+}
+
+extension ClientService {
+    enum Errors: Error {
+        case missingTeamId
     }
 }

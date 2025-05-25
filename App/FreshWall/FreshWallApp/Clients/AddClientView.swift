@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// View for adding a new client, injecting a service conforming to `ClientServiceProtocol`.
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import SwiftUI
 
 struct AddClientView: View {
@@ -38,19 +38,18 @@ struct AddClientView: View {
     }
 }
 
-struct AddClientView_Previews: PreviewProvider {
-    static var previews: some View {
-        FreshWallPreview {
-            NavigationStack {
-                AddClientView(service: PreviewClientService())
-            }
-        }
-    }
-}
-
 /// Dummy implementation of `ClientServiceProtocol` for previews.
+@MainActor
 private class PreviewClientService: ClientServiceProtocol {
     var clients: [Client] = []
-    func fetchClients() async {}
+    func fetchClients() async throws -> [Client] { [] }
     func addClient(name _: String, notes _: String?) async throws {}
+}
+
+#Preview {
+    FreshWallPreview {
+        NavigationStack {
+            AddClientView(service: PreviewClientService())
+        }
+    }
 }

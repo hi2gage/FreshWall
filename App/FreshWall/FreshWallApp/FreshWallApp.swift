@@ -6,7 +6,7 @@
 //
 
 import FirebaseCore
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import SwiftUI
 
 class AppDelegate: NSObject, UIApplicationDelegate {

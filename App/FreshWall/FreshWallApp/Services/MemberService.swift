@@ -1,25 +1,21 @@
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import Foundation
 import Observation
 
 /// Protocol defining operations for fetching and managing User (team member) entities.
-protocol MemberServiceProtocol {
-    /// The array of fetched team members.
-    var members: [User] { get }
+protocol MemberServiceProtocol: Sendable {
     /// Fetches active members for the current team.
-    func fetchMembers() async
+    func fetchMembers() async throws -> [User]
     /// Adds a new team member document to Firestore.
     func addMember(_ member: User) async throws
 }
 
 /// Service to fetch and manage User (member) entities from Firestore.
+@MainActor
 @Observable
 final class MemberService: MemberServiceProtocol {
     private let database: Firestore
     private let userService: UserService
-
-    /// Published list of members for the current team.
-    var members: [User] = []
 
     /// Initializes the service with the given UserService for team context.
     /// Initializes the service with a Firestore instance and UserService for team context.
@@ -29,22 +25,21 @@ final class MemberService: MemberServiceProtocol {
     }
 
     /// Fetches active members for the current team from Firestore.
-    func fetchMembers() async {
-        guard let teamId = userService.teamId else { return }
-        do {
-            let snapshot = try await database
-                .collection("teams")
-                .document(teamId)
-                .collection("users")
-                .whereField("isDeleted", isEqualTo: false)
-                .getDocuments()
-            let fetched: [User] = try snapshot.documents.compactMap {
-                try $0.data(as: User.self)
-            }
-            members = fetched
-        } catch {
-            print("MemberService.fetchMembers error:", error)
+    func fetchMembers() async throws -> [User] {
+        guard let teamId = userService.teamId else {
+            throw Errors.missingTeamId
         }
+
+        let snapshot = try await database
+            .collection("teams")
+            .document(teamId)
+            .collection("users")
+            .whereField("isDeleted", isEqualTo: false)
+            .getDocuments()
+        let fetched: [User] = try snapshot.documents.compactMap {
+            try $0.data(as: User.self)
+        }
+        return fetched
     }
 
     /// Adds a new member document to Firestore under the current team.
@@ -63,7 +58,13 @@ final class MemberService: MemberServiceProtocol {
         let newDoc = usersRef.document()
         var newMember = member
         newMember.id = newDoc.documentID
-        try await newDoc.setData(from: newMember)
-        await fetchMembers()
+        try newDoc.setData(from: newMember)
+        try await fetchMembers()
+    }
+}
+
+extension MemberService {
+    enum Errors: Error {
+        case missingTeamId
     }
 }
