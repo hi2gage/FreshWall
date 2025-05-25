@@ -68,7 +68,7 @@ final class UserService {
             .call([
                 "email": email,
                 "teamName": teamName,
-                "displayName": displayName
+                "displayName": displayName,
             ])
 
         guard
@@ -116,7 +116,7 @@ final class UserService {
             .call([
                 "email": email,
                 "teamCode": teamCode,
-                "displayName": displayName
+                "displayName": displayName,
             ])
 
         guard
