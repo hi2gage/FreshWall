@@ -1,6 +1,5 @@
+import FirebaseFirestore
 import Foundation
-import FirebaseFirestore
-import FirebaseFirestore
 
 /// A customer or client associated with the team.
 struct Client: Codable, Identifiable {

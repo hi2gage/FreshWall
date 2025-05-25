@@ -1,8 +1,8 @@
-import Foundation
-import Observation
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseFunctions
+import Foundation
+import Observation
 
 /// Service handling user creation, team creation/joining, and user record retrieval.
 @Observable
@@ -20,16 +20,16 @@ final class UserService {
     private var authStateHandle: AuthStateDidChangeListenerHandle?
 
     init() {
-#if DEBUG
-        let settings = Firestore.firestore().settings
-        settings.host = "localhost:8080"
-        settings.isSSLEnabled = false
-        settings.isPersistenceEnabled = false
-        Firestore.firestore().settings = settings
+        #if DEBUG
+            let settings = Firestore.firestore().settings
+            settings.host = "localhost:8080"
+            settings.isSSLEnabled = false
+            settings.isPersistenceEnabled = false
+            Firestore.firestore().settings = settings
 
-        Functions.functions().useEmulator(withHost: "localhost", port: 5001)
-        Auth.auth().useEmulator(withHost: "localhost", port: 9099)
-#endif
+            Functions.functions().useEmulator(withHost: "localhost", port: 5001)
+            Auth.auth().useEmulator(withHost: "localhost", port: 9099)
+        #endif
         authStateHandle = auth.addStateDidChangeListener { [weak self] _, user in
             if let user = user {
                 Task { await self?.fetchUserRecord(for: user) }
@@ -68,7 +68,7 @@ final class UserService {
             .call([
                 "email": email,
                 "teamName": teamName,
-                "displayName": displayName
+                "displayName": displayName,
             ])
 
         guard
@@ -85,7 +85,7 @@ final class UserService {
 
         self.teamId = teamId
         self.teamCode = teamCode
-        self.userRecord = User(
+        userRecord = User(
             id: nil,
             displayName: displayName,
             email: email,
@@ -116,7 +116,7 @@ final class UserService {
             .call([
                 "email": email,
                 "teamCode": teamCode,
-                "displayName": displayName
+                "displayName": displayName,
             ])
 
         guard
@@ -132,7 +132,7 @@ final class UserService {
 
         self.teamId = teamId
         self.teamCode = teamCode
-        self.userRecord = User(
+        userRecord = User(
             id: nil,
             displayName: displayName,
             email: email,
@@ -162,7 +162,7 @@ final class UserService {
                         let isDeleted = data["isDeleted"] as? Bool
                     else { continue }
                     let deletedAt = data["deletedAt"] as? Timestamp
-                    self.userRecord = User(
+                    userRecord = User(
                         id: nil,
                         displayName: displayName,
                         email: email,
@@ -170,7 +170,7 @@ final class UserService {
                         isDeleted: isDeleted,
                         deletedAt: deletedAt
                     )
-                    self.teamId = teamDoc.documentID
+                    teamId = teamDoc.documentID
                     break
                 }
             }

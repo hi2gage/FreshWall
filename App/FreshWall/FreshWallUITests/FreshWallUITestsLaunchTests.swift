@@ -8,7 +8,6 @@
 import XCTest
 
 final class FreshWallUITestsLaunchTests: XCTestCase {
-
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }

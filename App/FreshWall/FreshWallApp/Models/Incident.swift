@@ -1,6 +1,5 @@
+import FirebaseFirestore
 import Foundation
-import FirebaseFirestore
-import FirebaseFirestore
 
 /// An incident logged for a client, including timestamps, photos, and billing info.
 struct Incident: Codable, Identifiable {
