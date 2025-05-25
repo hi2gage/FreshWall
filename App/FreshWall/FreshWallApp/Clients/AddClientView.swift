@@ -13,8 +13,10 @@ struct AddClientView: View {
 
 struct AddClientView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationStack {
-            AddClientView(service: PreviewClientService())
+        FreshWallPreview {
+            NavigationStack {
+                AddClientView(service: PreviewClientService())
+            }
         }
     }
 }
