@@ -1,6 +1,7 @@
 import Observation
 
 /// ViewModel responsible for member list presentation and data operations.
+@MainActor
 @Observable
 final class MembersListViewModel {
     /// Team members fetched from the service.
@@ -14,7 +15,6 @@ final class MembersListViewModel {
 
     /// Loads members from the service.
     func loadMembers() async {
-        await service.fetchMembers()
-        members = service.members
+        members = await (try? service.fetchMembers()) ?? []
     }
 }

@@ -1,14 +1,13 @@
-import FirebaseAuth
-import FirebaseFirestore
-import FirebaseFunctions
+@preconcurrency import FirebaseAuth
+@preconcurrency import FirebaseFirestore
+@preconcurrency import FirebaseFunctions
 import Foundation
 import Observation
 
 /// Service handling user creation, team creation/joining, and user record retrieval.
+@MainActor
 @Observable
 final class UserService {
-    /// The Firestore `User` record associated with the current session.
-    var userRecord: User?
     /// The team identifier to which the current user belongs.
     var teamId: String?
     /// The code used to create or join the team (if applicable).
@@ -34,16 +33,9 @@ final class UserService {
             if let user {
                 Task { await self?.fetchUserRecord(for: user) }
             } else {
-                self?.userRecord = nil
                 self?.teamId = nil
                 self?.teamCode = nil
             }
-        }
-    }
-
-    deinit {
-        if let handle = authStateHandle {
-            auth.removeStateDidChangeListener(handle)
         }
     }
 
@@ -59,7 +51,7 @@ final class UserService {
         password: String,
         displayName: String,
         teamName: String
-    ) async throws {
+    ) async throws -> User {
         let authResult = try await auth.createUser(withEmail: email, password: password)
         _ = authResult.user
 
@@ -85,7 +77,7 @@ final class UserService {
 
         self.teamId = teamId
         self.teamCode = teamCode
-        userRecord = User(
+        return User(
             id: nil,
             displayName: displayName,
             email: email,
@@ -107,7 +99,7 @@ final class UserService {
         password: String,
         displayName: String,
         teamCode: String
-    ) async throws {
+    ) async throws -> User {
         let authResult = try await auth.createUser(withEmail: email, password: password)
         _ = authResult.user
 
@@ -132,7 +124,7 @@ final class UserService {
 
         self.teamId = teamId
         self.teamCode = teamCode
-        userRecord = User(
+        return User(
             id: nil,
             displayName: displayName,
             email: email,
@@ -162,14 +154,14 @@ final class UserService {
                         let isDeleted = data["isDeleted"] as? Bool
                     else { continue }
                     let deletedAt = data["deletedAt"] as? Timestamp
-                    userRecord = User(
-                        id: nil,
-                        displayName: displayName,
-                        email: email,
-                        role: role,
-                        isDeleted: isDeleted,
-                        deletedAt: deletedAt
-                    )
+//                    userRecord = User(
+//                        id: nil,
+//                        displayName: displayName,
+//                        email: email,
+//                        role: role,
+//                        isDeleted: isDeleted,
+//                        deletedAt: deletedAt
+//                    )
                     teamId = teamDoc.documentID
                     break
                 }

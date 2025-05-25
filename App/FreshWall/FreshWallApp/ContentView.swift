@@ -5,7 +5,7 @@
 //  Created by Gage Halverson on 5/24/25.
 //
 
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import SwiftUI
 
 struct ContentView: View {
@@ -58,6 +58,8 @@ struct ContentView: View {
     }
 }
 
- #Preview {
-    ContentView()
- }
+#Preview {
+    FreshWallPreview {
+        ContentView()
+    }
+}

@@ -11,12 +11,10 @@ struct ClientDetailView: View {
     }
 }
 
-struct ClientDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        FreshWallPreview {
-            NavigationStack {
-                ClientDetailView(clientId: "client123", userService: UserService())
-            }
+#Preview {
+    FreshWallPreview {
+        NavigationStack {
+            ClientDetailView(clientId: "client123", userService: UserService())
         }
     }
 }

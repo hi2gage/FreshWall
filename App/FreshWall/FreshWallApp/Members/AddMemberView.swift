@@ -55,17 +55,18 @@ struct AddMemberView: View {
     }
 }
 
-struct AddMemberView_Previews: PreviewProvider {
-    static var previews: some View {
+/// Dummy implementation of `MemberServiceProtocol` for previews.
+@MainActor
+private class PreviewMemberService: MemberServiceProtocol {
+    var members: [User] = []
+    func fetchMembers() async throws -> [User] { [] }
+    func addMember(_: User) async throws {}
+}
+
+#Preview {
+    FreshWallPreview {
         NavigationStack {
             AddMemberView(service: PreviewMemberService())
         }
     }
-}
-
-/// Dummy implementation of `MemberServiceProtocol` for previews.
-private class PreviewMemberService: MemberServiceProtocol {
-    var members: [User] = []
-    func fetchMembers() async {}
-    func addMember(_: User) async throws {}
 }

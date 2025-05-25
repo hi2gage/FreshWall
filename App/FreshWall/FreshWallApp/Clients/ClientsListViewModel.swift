@@ -1,6 +1,7 @@
 import Observation
 
 /// ViewModel responsible for client list presentation and data operations.
+@MainActor
 @Observable
 final class ClientsListViewModel {
     /// Clients fetched from the service.
@@ -14,7 +15,6 @@ final class ClientsListViewModel {
 
     /// Loads clients from the service.
     func loadClients() async {
-        await service.fetchClients()
-        clients = service.clients
+        clients = await (try? service.fetchClients()) ?? []
     }
 }

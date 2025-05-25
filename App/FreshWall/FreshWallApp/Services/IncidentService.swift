@@ -1,25 +1,21 @@
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import Foundation
 import Observation
 
 /// Protocol defining operations for fetching and managing Incident entities.
-protocol IncidentServiceProtocol {
-    /// Array of fetched incidents for the current team.
-    var incidents: [Incident] { get }
+protocol IncidentServiceProtocol: Sendable {
     /// Fetches incidents for the current team.
-    func fetchIncidents() async
+    func fetchIncidents() async throws -> [Incident]
     /// Adds a new incident to the current team's incidents collection.
     func addIncident(_ incident: Incident) async throws
 }
 
 /// Service to fetch and manage Incident entities from Firestore.
+@MainActor
 @Observable
 final class IncidentService: IncidentServiceProtocol {
     private let database: Firestore
     private let userService: UserService
-
-    /// Published list of incidents for the current team.
-    var incidents: [Incident] = []
 
     /// Initializes the service with the given UserService for team context.
     /// Initializes the service with a Firestore instance and UserService for team context.
@@ -29,21 +25,19 @@ final class IncidentService: IncidentServiceProtocol {
     }
 
     /// Fetches active incidents for the current team from Firestore.
-    func fetchIncidents() async {
-        guard let teamId = userService.teamId else { return }
-        do {
-            let snapshot = try await database
-                .collection("teams")
-                .document(teamId)
-                .collection("incidents")
-                .getDocuments()
-            let fetched: [Incident] = try snapshot.documents.compactMap {
-                try $0.data(as: Incident.self)
-            }
-            incidents = fetched
-        } catch {
-            print("IncidentService.fetchIncidents error:", error)
+    func fetchIncidents() async throws -> [Incident] {
+        guard let teamId = userService.teamId else {
+            throw Errors.missingTeamId
         }
+        let snapshot = try await database
+            .collection("teams")
+            .document(teamId)
+            .collection("incidents")
+            .getDocuments()
+        let fetched: [Incident] = try snapshot.documents.compactMap {
+            try $0.data(as: Incident.self)
+        }
+        return fetched
     }
 
     /// Adds a new incident document to Firestore under the current team.
@@ -63,6 +57,12 @@ final class IncidentService: IncidentServiceProtocol {
         var newIncident = incident
         newIncident.id = newDoc.documentID
         try await newDoc.setData(from: newIncident)
-        await fetchIncidents()
+        try await fetchIncidents()
+    }
+}
+
+extension IncidentService {
+    enum Errors: Error {
+        case missingTeamId
     }
 }

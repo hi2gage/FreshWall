@@ -1,6 +1,7 @@
 import Observation
 
 /// ViewModel responsible for incident list presentation and data operations.
+@MainActor
 @Observable
 final class IncidentsListViewModel {
     /// Incidents fetched from the service.
@@ -14,7 +15,6 @@ final class IncidentsListViewModel {
 
     /// Loads incidents from the service.
     func loadIncidents() async {
-        await service.fetchIncidents()
-        incidents = service.incidents
+        incidents = await (try? service.fetchIncidents()) ?? []
     }
 }

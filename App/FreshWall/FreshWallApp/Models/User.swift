@@ -1,8 +1,8 @@
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import Foundation
 
 /// Role of a user within the team.
-enum UserRole: String, Codable {
+enum UserRole: String, Codable, CaseIterable, Sendable {
     /// Team lead with full permissions.
     case lead
     /// Regular team member.
@@ -10,7 +10,7 @@ enum UserRole: String, Codable {
 }
 
 /// A user under a team, with scoped access and role-based permissions.
-struct User: Codable, Identifiable {
+struct User: Codable, Identifiable, Sendable {
     /// Firestore-generated document identifier for the user.
     @DocumentID var id: String?
     /// Display name of the user.

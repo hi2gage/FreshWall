@@ -1,4 +1,4 @@
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import Foundation
 
 /// A customer or client associated with the team.

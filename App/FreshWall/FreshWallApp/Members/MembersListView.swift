@@ -1,4 +1,4 @@
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import SwiftUI
 
 /// A view displaying a list of team members.
@@ -43,11 +43,11 @@ struct MembersListView: View {
     }
 }
 
-struct MembersListView_Previews: PreviewProvider {
-    static var previews: some View {
-        let userService = UserService()
-        let firestore = Firestore.firestore()
-        let service = MemberService(firestore: firestore, userService: userService)
+#Preview {
+    let userService = UserService()
+    let firestore = Firestore.firestore()
+    let service = MemberService(firestore: firestore, userService: userService)
+    FreshWallPreview {
         NavigationStack {
             MembersListView(service: service)
         }

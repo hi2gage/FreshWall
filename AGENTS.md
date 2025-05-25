@@ -57,6 +57,8 @@ AI agents should understand and respect the separation between frontend (Swift c
 - Model Types must conform to `Codable` and reflect Firestore schema
 - Use `@DocumentID var id: String?` where needed for Firestore ID binding
 - Do not use `import FirebaseFirestoreSwift`, it's no longer used. So use `import FirebaseFirestore`
+- Do not use `PreviewProvider` for SwiftUi previews. Use `#Preview`. 
+  - Also add the `FreshWallPreview {}` view builder around all SwiftUI previews
 
 > AI agents must prefer functional, composable code. Avoid global state and `DispatchQueue` unless interacting with legacy APIs.
 
