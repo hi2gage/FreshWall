@@ -38,6 +38,21 @@ struct LoginManager: LoginManaging {
         self.sessionService = sessionService
     }
 
+    func restoreSessionIfAvailable() async {
+        guard let user = authService.getCurrentUser() else {
+            return // No cached session
+        }
+
+        do {
+            let session = try await sessionService.fetchUserRecord(for: user)
+            await sessionStore.startSession(session)
+        } catch {
+            print("🔒 Failed to restore session:", error)
+            // Optionally, sign out if invalid
+            try? authService.signOut()
+        }
+    }
+
     func signIn(
         email: String,
         password: String

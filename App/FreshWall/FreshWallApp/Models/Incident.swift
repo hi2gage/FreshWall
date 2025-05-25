@@ -2,7 +2,7 @@
 import Foundation
 
 /// An incident logged for a client, including timestamps, photos, and billing info.
-struct Incident: Codable, Identifiable, Sendable {
+struct Incident: Codable, Identifiable, Sendable, Hashable {
     /// Firestore-generated document identifier for the incident.
     @DocumentID var id: String?
     /// Reference to the client document associated with this incident.
@@ -39,4 +39,10 @@ struct Incident: Codable, Identifiable, Sendable {
     var status: String
     /// Materials used during the incident work (optional details).
     var materialsUsed: String?
+}
+
+extension Collection {
+    var nullIfEmpty: Self? {
+        isEmpty ? nil : self
+    }
 }

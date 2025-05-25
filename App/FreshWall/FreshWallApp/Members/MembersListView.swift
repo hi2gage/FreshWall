@@ -20,9 +20,7 @@ struct MembersListView: View {
             } else {
                 ForEach(viewModel.members) { member in
                     Button(member.displayName) {
-                        if let id = member.id {
-                            routerPath.push(.memberDetail(id: id))
-                        }
+                        routerPath.push(.memberDetail(member: member))
                     }
                 }
             }
