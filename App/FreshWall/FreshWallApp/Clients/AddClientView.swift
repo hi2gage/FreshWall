@@ -1,8 +1,6 @@
 import SwiftUI
 
 /// View for adding a new client, injecting a service conforming to `ClientServiceProtocol`.
-@preconcurrency import FirebaseFirestore
-import SwiftUI
 
 struct AddClientView: View {
     @Environment(\.dismiss) private var dismiss
@@ -28,8 +26,16 @@ struct AddClientView: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     Task {
-                        try? await service.addClient(name: name, notes: notes.isEmpty ? nil : notes)
-                        dismiss()
+                        do {
+                            let input = AddClientInput(
+                                name: name.trimmingCharacters(in: .whitespaces),
+                                notes: notes.isEmpty ? nil : notes
+                            )
+                            try await service.addClient(input)
+                            dismiss()
+                        } catch {
+                            // Handle error if needed
+                        }
                     }
                 }
                 .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -41,9 +47,8 @@ struct AddClientView: View {
 /// Dummy implementation of `ClientServiceProtocol` for previews.
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
-    var clients: [Client] = []
     func fetchClients() async throws -> [Client] { [] }
-    func addClient(name _: String, notes _: String?) async throws {}
+    func addClient(_ input: AddClientInput) async throws {}
 }
 
 #Preview {
