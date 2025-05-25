@@ -46,7 +46,14 @@ struct MembersListView: View {
 #Preview {
     let userService = UserService()
     let firestore = Firestore.firestore()
-    let service = MemberService(firestore: firestore, session: .init(userId: "", teamId: ""))
+    let service = MemberService(
+        firestore: firestore,
+        session: .init(
+            userId: "",
+            displayName: "",
+            teamId: ""
+        )
+    )
     FreshWallPreview {
         NavigationStack {
             MembersListView(service: service)

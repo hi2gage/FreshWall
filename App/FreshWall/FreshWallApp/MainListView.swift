@@ -6,10 +6,12 @@ struct MainListView: View {
     @Environment(RouterPath.self) private var routerPath
 
     /// Called when the user taps "Log Out".
-    let sessionStore: SessionStore
+    let sessionStore: AuthenticatedSessionStore
 
     var body: some View {
         List {
+            Text("Welcome \(sessionStore.session.displayName)")
+
             Section(header: Text("Clients")) {
                 Button("View Clients") {
                     routerPath.push(.clientsList)
@@ -42,7 +44,10 @@ struct MainListView: View {
     FreshWallPreview {
         NavigationStack {
             MainListView(
-                sessionStore: SessionStore()
+                sessionStore: AuthenticatedSessionStore(
+                    sessionStore: SessionStore(),
+                    session: .init(userId: "", displayName: "", teamId: "")
+                )
             )
         }
     }
