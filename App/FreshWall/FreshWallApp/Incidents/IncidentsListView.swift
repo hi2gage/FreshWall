@@ -48,8 +48,10 @@ struct IncidentsListView_Previews: PreviewProvider {
         let userService = UserService()
         let firestore = Firestore.firestore()
         let service = IncidentService(firestore: firestore, userService: userService)
-        NavigationStack {
-            IncidentsListView(service: service)
+        FreshWallPreview {
+            NavigationStack {
+                IncidentsListView(service: service)
+            }
         }
     }
 }

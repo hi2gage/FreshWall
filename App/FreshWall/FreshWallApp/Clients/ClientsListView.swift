@@ -48,8 +48,10 @@ struct ClientsListView_Previews: PreviewProvider {
         let userService = UserService()
         let firestore = Firestore.firestore()
         let service = ClientService(firestore: firestore, userService: userService)
-        NavigationStack {
-            ClientsListView(service: service)
+        FreshWallPreview {
+            NavigationStack {
+                ClientsListView(service: service)
+            }
         }
     }
 }

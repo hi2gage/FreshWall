@@ -38,8 +38,10 @@ struct MainListView: View {
 
 struct MainListView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationStack {
-            MainListView(authService: AuthService(), userService: UserService())
+        FreshWallPreview {
+            NavigationStack {
+                MainListView(authService: AuthService(), userService: UserService())
+            }
         }
     }
 }

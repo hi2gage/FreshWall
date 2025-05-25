@@ -13,8 +13,10 @@ struct IncidentDetailView: View {
 
 struct IncidentDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationStack {
-            IncidentDetailView(incidentId: "incident123", userService: UserService())
+        FreshWallPreview {
+            NavigationStack {
+                IncidentDetailView(incidentId: "incident123", userService: UserService())
+            }
         }
     }
 }
