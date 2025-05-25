@@ -10,7 +10,7 @@ enum UserRole: String, Codable, CaseIterable, Sendable {
 }
 
 /// A user under a team, with scoped access and role-based permissions.
-struct User: Codable, Identifiable, Sendable {
+struct User: Codable, Identifiable, Sendable, Hashable {
     /// Firestore-generated document identifier for the user.
     @DocumentID var id: String?
     /// Display name of the user.

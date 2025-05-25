@@ -41,4 +41,8 @@ struct AuthService {
     func signOut() throws {
         try auth.signOut()
     }
+
+    func getCurrentUser() -> FirebaseAuth.User? {
+        return auth.currentUser
+    }
 }

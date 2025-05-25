@@ -20,9 +20,7 @@ struct IncidentsListView: View {
             } else {
                 ForEach(viewModel.incidents) { incident in
                     Button(incident.description) {
-                        if let id = incident.id {
-                            routerPath.push(.incidentDetail(id: id))
-                        }
+                        routerPath.push(.incidentDetail(incident: incident))
                     }
                 }
             }

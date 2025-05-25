@@ -20,9 +20,7 @@ struct ClientsListView: View {
             } else {
                 ForEach(viewModel.clients) { client in
                     Button(client.name) {
-                        if let id = client.id {
-                            routerPath.push(.clientDetail(id: id))
-                        }
+                        routerPath.push(.clientDetail(client: client))
                     }
                 }
             }

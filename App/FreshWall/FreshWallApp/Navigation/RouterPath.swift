@@ -23,15 +23,15 @@ enum RouterDestination: Hashable {
     case clientsList
     /// Screen for adding a new client.
     case addClient
-    case clientDetail(id: String)
+    case clientDetail(client: Client)
     case incidentsList
     /// Screen for adding a new incident.
     case addIncident
-    case incidentDetail(id: String)
+    case incidentDetail(incident: Incident)
     case membersList
     /// Screen for adding a new member.
     case addMember
-    case memberDetail(id: String)
+    case memberDetail(member: User)
 }
 
 // swiftlint:disable cyclomatic_complexity
@@ -48,20 +48,20 @@ extension View {
                 ClientsListView(service: clientService)
             case .addClient:
                 AddClientView(viewModel: AddClientViewModel(service: clientService))
-            case let .clientDetail(id):
-                ClientDetailView(clientId: id)
+            case let .clientDetail(client):
+                ClientDetailView(client: client)
             case .incidentsList:
                 IncidentsListView(service: incidentService)
             case .addIncident:
                 AddIncidentView(viewModel: AddIncidentViewModel(service: incidentService))
-            case let .incidentDetail(id):
-                IncidentDetailView(incidentId: id)
+            case let .incidentDetail(incident):
+                IncidentDetailView(incident: incident)
             case .membersList:
                 MembersListView(service: memberService)
             case .addMember:
                 AddMemberView(viewModel: AddMemberViewModel(service: memberService))
-            case let .memberDetail(id):
-                MemberDetailView(memberId: id)
+            case let .memberDetail(member):
+                MemberDetailView(member: member)
             }
         }
     }
