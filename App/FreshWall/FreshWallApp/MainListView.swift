@@ -1,10 +1,12 @@
 import SwiftUI
 
 /// The main dashboard view presenting navigation to various resource lists.
+/// The main dashboard view presenting navigation to various resource lists.
 struct MainListView: View {
-    let authService: AuthService
-    let userService: UserService
     @Environment(RouterPath.self) private var routerPath
+
+    /// Called when the user taps "Log Out".
+    let sessionStore: SessionStore
 
     var body: some View {
         List {
@@ -29,7 +31,7 @@ struct MainListView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Log Out") {
-                    _ = authService.signOut()
+                    sessionStore.logout()
                 }
             }
         }
@@ -39,7 +41,9 @@ struct MainListView: View {
 #Preview {
     FreshWallPreview {
         NavigationStack {
-            MainListView(authService: AuthService(), userService: UserService())
+            MainListView(
+                sessionStore: SessionStore()
+            )
         }
     }
 }
