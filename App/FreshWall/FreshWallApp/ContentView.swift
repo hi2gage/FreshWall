@@ -29,9 +29,18 @@ struct ContentView: View {
         let userService = UserService()
         self.userService = userService
 
-        clientService = ClientService(firestore: firestore, userService: userService)
-        incidentService = IncidentService(firestore: firestore, userService: userService)
-        memberService = MemberService(firestore: firestore, userService: userService)
+        clientService = ClientService(
+            firestore: firestore,
+            userService: userService
+        )
+        incidentService = IncidentService(
+            firestore: firestore,
+            userService: userService
+        )
+        memberService = MemberService(
+            firestore: firestore,
+            userService: userService
+        )
     }
 
     var body: some View {
