@@ -1,29 +1,23 @@
+@preconcurrency import FirebaseAuth
+import FirebaseFirestore
 import SwiftUI
-import FirebaseAuth
 
 /// Authentication flow: login, signup, then callback with UserSession.
 struct AuthFlowView: View {
-    /// Called when authentication completes with valid userId and teamId.
-    @State private var sessionStore: SessionStore
+    let loginManager: LoginManager
 
-    @State private var routerPath = RouterPath()
-    @State private var authService = AuthService()
-    @State private var userService = UserService()
+    @State private var routerPath: LoginRouterPath
 
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var errorMessage: String?
 
     init(
-        sessionStore: SessionStore,
-        routerPath: RouterPath = RouterPath(),
-        authService: AuthService = AuthService(),
-        userService: UserService = UserService(),
+        loginManager: LoginManager,
+        routerPath: LoginRouterPath = LoginRouterPath()
     ) {
-        self.sessionStore = sessionStore
-        self.routerPath = routerPath
-        self.authService = authService
-        self.userService = userService
+        self.loginManager = loginManager
+        _routerPath = State(wrappedValue: routerPath)
     }
 
     var body: some View {
@@ -49,14 +43,7 @@ struct AuthFlowView: View {
                 Button("Log In") {
                     Task {
                         do {
-                            try await authService.signIn(email: email, password: password)
-                            guard let user = Auth.auth().currentUser else { return }
-                            await userService.fetchUserRecord(for: user)
-                            if let teamId = userService.teamId {
-                                sessionStore.startSession(
-                                    UserSession(userId: user.uid, teamId: teamId)
-                                )
-                            }
+                            try await loginManager.signIn(email: email, password: password)
                         } catch {
                             errorMessage = error.localizedDescription
                         }
@@ -72,23 +59,14 @@ struct AuthFlowView: View {
             }
             .padding()
             .navigationTitle("Authenticate")
-            .navigationDestination(for: RouterDestination.self) { dest in
-                switch dest {
-                case .signup:
-                    SignupWithExistingTeamView(userService: userService)
-                case .signupWithTeam:
-                    SignupWithNewTeamView(userService: userService)
-                default:
-                    EmptyView()
-                }
-            }
+            .withAppLoginRouter(loginManager: loginManager)
         }
         .environment(routerPath)
     }
 }
 
-#Preview {
-    FreshWallPreview {
-        AuthFlowView(sessionStore: SessionStore())
-    }
-}
+// #Preview {
+//    FreshWallPreview {
+//        AuthFlowView(sessionStore: SessionStore())
+//    }
+// }

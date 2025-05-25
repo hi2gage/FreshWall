@@ -1,28 +1,27 @@
-import SwiftUI
 import FirebaseFirestore
+import SwiftUI
 
 struct MainAppView: View {
-    /// Authenticated user session with team context.
-    let session: UserSession
-
-    let sessionStore: SessionStore
-
-    @State private var userService: UserService
-    @State private var clientService: ClientServiceProtocol
-    @State private var incidentService: IncidentServiceProtocol
-    @State private var memberService: MemberServiceProtocol
     @State private var routerPath = RouterPath()
 
+    /// Authenticated user session with team context.
+    let session: UserSession
+    let sessionStore: SessionStore
+
+    private var userService: UserService
+    private var clientService: ClientServiceProtocol
+    private var incidentService: IncidentServiceProtocol
+    private var memberService: MemberServiceProtocol
+
     init(session: UserSession, sessionStore: SessionStore) {
+        let firestore = Firestore.firestore()
+
         self.session = session
         self.sessionStore = sessionStore
-        let firestore = Firestore.firestore()
-        let userSvc = UserService()
-        userSvc.teamId = session.teamId
-        _userService = State(wrappedValue: userSvc)
-        _clientService = State(wrappedValue: ClientService(firestore: firestore, userService: userSvc))
-        _incidentService = State(wrappedValue: IncidentService(firestore: firestore, userService: userSvc))
-        _memberService = State(wrappedValue: MemberService(firestore: firestore, userService: userSvc))
+        userService = UserService()
+        clientService = ClientService(firestore: firestore, session: session)
+        incidentService = IncidentService(firestore: firestore, session: session)
+        memberService = MemberService(firestore: firestore, session: session)
     }
 
     var body: some View {

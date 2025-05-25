@@ -91,7 +91,7 @@ struct AddIncidentView: View {
                 }
                 .disabled(
                     clientId.trimmingCharacters(in: .whitespaces).isEmpty ||
-                    description.trimmingCharacters(in: .whitespaces).isEmpty
+                        description.trimmingCharacters(in: .whitespaces).isEmpty
                 )
             }
         }
@@ -103,7 +103,7 @@ struct AddIncidentView: View {
 private class PreviewIncidentService: IncidentServiceProtocol {
     func fetchIncidents() async throws -> [Incident] { [] }
     func addIncident(_: Incident) async throws {}
-    func addIncident(_ input: AddIncidentInput) async throws {}
+    func addIncident(_: AddIncidentInput) async throws {}
 }
 
 #Preview {

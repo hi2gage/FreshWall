@@ -2,7 +2,11 @@ import SwiftUI
 
 /// Root view that toggles between Auth and Main app flows.
 struct ContentView: View {
-    @State private var sessionStore: SessionStore = SessionStore()
+    @State private var sessionStore: SessionStore = .init()
+
+    private let authService = AuthService()
+    private let userService = UserService()
+    private let sessionService = SessionService()
 
     var body: some View {
         Group {
@@ -13,7 +17,12 @@ struct ContentView: View {
                 )
             } else {
                 AuthFlowView(
-                    sessionStore: sessionStore
+                    loginManager: LoginManager(
+                        sessionStore: sessionStore,
+                        authService: authService,
+                        userService: userService,
+                        sessionService: sessionService
+                    )
                 )
             }
         }
@@ -25,4 +34,3 @@ struct ContentView: View {
         ContentView()
     }
 }
-
