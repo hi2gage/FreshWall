@@ -2,7 +2,7 @@ import SwiftUI
 
 /// A view that allows new users to create an account and team.
 struct SignupWithNewTeamView: View {
-    @EnvironmentObject private var authService: AuthService
+    let userService: UserService
     @Environment(\.dismiss) private var dismiss
     @State private var email: String = ""
     @State private var password: String = ""
@@ -40,7 +40,7 @@ struct SignupWithNewTeamView: View {
             Button("Create Account") {
                 Task {
                     do {
-                        try await authService.signUp(
+                        try await userService.signUp(
                             email: email,
                             password: password,
                             displayName: displayName,
@@ -59,6 +59,5 @@ struct SignupWithNewTeamView: View {
 }
 
 #Preview {
-    SignupWithNewTeamView()
-        .environmentObject(AuthService())
+    SignupWithNewTeamView(userService: UserService())
 }
