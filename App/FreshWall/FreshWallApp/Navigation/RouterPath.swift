@@ -38,7 +38,6 @@ enum RouterDestination: Hashable {
 extension View {
     /// Sets up routing destinations for various views, injecting necessary services.
     func withAppRouter(
-        userService: UserService,
         clientService: ClientServiceProtocol,
         incidentService: IncidentServiceProtocol,
         memberService: MemberServiceProtocol
@@ -50,19 +49,19 @@ extension View {
             case .addClient:
                 AddClientView(service: clientService)
             case let .clientDetail(id):
-                ClientDetailView(clientId: id, userService: userService)
+                ClientDetailView(clientId: id)
             case .incidentsList:
                 IncidentsListView(service: incidentService)
             case .addIncident:
                 AddIncidentView(service: incidentService)
             case let .incidentDetail(id):
-                IncidentDetailView(incidentId: id, userService: userService)
+                IncidentDetailView(incidentId: id)
             case .membersList:
                 MembersListView(service: memberService)
             case .addMember:
                 AddMemberView(service: memberService)
             case let .memberDetail(id):
-                MemberDetailView(memberId: id, userService: userService)
+                MemberDetailView(memberId: id)
             }
         }
     }

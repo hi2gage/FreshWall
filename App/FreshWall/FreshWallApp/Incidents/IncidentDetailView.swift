@@ -3,7 +3,6 @@ import SwiftUI
 /// A view displaying detailed information for a specific incident.
 struct IncidentDetailView: View {
     let incidentId: String
-    let userService: UserService
 
     var body: some View {
         Text("Details for incident \(incidentId)")
@@ -14,7 +13,7 @@ struct IncidentDetailView: View {
 #Preview {
     FreshWallPreview {
         NavigationStack {
-            IncidentDetailView(incidentId: "incident123", userService: UserService())
+            IncidentDetailView(incidentId: "incident123")
         }
     }
 }

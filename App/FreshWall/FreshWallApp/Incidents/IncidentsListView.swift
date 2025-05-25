@@ -46,7 +46,14 @@ struct IncidentsListView: View {
 #Preview {
     let userService = UserService()
     let firestore = Firestore.firestore()
-    let service = IncidentService(firestore: firestore, session: .init(userId: "", teamId: ""))
+    let service = IncidentService(
+        firestore: firestore,
+        session: .init(
+            userId: "",
+            displayName: "",
+            teamId: ""
+        )
+    )
     FreshWallPreview {
         NavigationStack {
             IncidentsListView(service: service)

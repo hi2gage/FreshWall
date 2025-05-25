@@ -5,36 +5,29 @@ struct MainAppView: View {
     @State private var routerPath = RouterPath()
 
     /// Authenticated user session with team context.
-    let session: UserSession
-    let sessionStore: SessionStore
+    private let sessionStore: AuthenticatedSessionStore
 
-    private var userService: UserService
-    private var clientService: ClientServiceProtocol
-    private var incidentService: IncidentServiceProtocol
-    private var memberService: MemberServiceProtocol
+    private let clientService: ClientServiceProtocol
+    private let incidentService: IncidentServiceProtocol
+    private let memberService: MemberServiceProtocol
 
-    init(session: UserSession, sessionStore: SessionStore) {
-        let firestore = Firestore.firestore()
-
-        self.session = session
+    init(sessionStore: AuthenticatedSessionStore) {
         self.sessionStore = sessionStore
-        userService = UserService()
-        clientService = ClientService(firestore: firestore, session: session)
-        incidentService = IncidentService(firestore: firestore, session: session)
-        memberService = MemberService(firestore: firestore, session: session)
+
+        let firestore = Firestore.firestore()
+        clientService = ClientService(firestore: firestore, session: sessionStore.session)
+        incidentService = IncidentService(firestore: firestore, session: sessionStore.session)
+        memberService = MemberService(firestore: firestore, session: sessionStore.session)
     }
 
     var body: some View {
         NavigationStack(path: $routerPath.path) {
-            MainListView(
-                sessionStore: sessionStore
-            )
-            .withAppRouter(
-                userService: userService,
-                clientService: clientService,
-                incidentService: incidentService,
-                memberService: memberService
-            )
+            MainListView(sessionStore: sessionStore)
+                .withAppRouter(
+                    clientService: clientService,
+                    incidentService: incidentService,
+                    memberService: memberService
+                )
         }
         .environment(routerPath)
     }
@@ -43,8 +36,14 @@ struct MainAppView: View {
 #Preview {
     FreshWallPreview {
         MainAppView(
-            session: UserSession(userId: "user123", teamId: "team123"),
-            sessionStore: SessionStore()
+            sessionStore: AuthenticatedSessionStore(
+                sessionStore: SessionStore(),
+                session: UserSession(
+                    userId: "user123",
+                    displayName: "",
+                    teamId: "team123"
+                )
+            )
         )
     }
 }

@@ -12,8 +12,10 @@ struct ContentView: View {
         Group {
             if let session = sessionStore.session {
                 MainAppView(
-                    session: session,
-                    sessionStore: sessionStore
+                    sessionStore: AuthenticatedSessionStore(
+                        sessionStore: sessionStore,
+                        session: session
+                    )
                 )
             } else {
                 AuthFlowView(

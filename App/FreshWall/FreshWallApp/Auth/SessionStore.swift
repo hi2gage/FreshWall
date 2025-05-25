@@ -19,3 +19,13 @@ class SessionStore {
         session = nil
     }
 }
+
+@MainActor
+struct AuthenticatedSessionStore {
+    let sessionStore: SessionStore
+    let session: UserSession
+
+    func logout() {
+        sessionStore.logout()
+    }
+}
