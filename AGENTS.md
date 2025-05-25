@@ -56,6 +56,7 @@ AI agents should understand and respect the separation between frontend (Swift c
   - Variables and functions use `camelCase`
 - Model Types must conform to `Codable` and reflect Firestore schema
 - Use `@DocumentID var id: String?` where needed for Firestore ID binding
+- Do not use `import FirebaseFirestoreSwift`, it's no longer used. So use `import FirebaseFirestore`
 
 > AI agents must prefer functional, composable code. Avoid global state and `DispatchQueue` unless interacting with legacy APIs.
 
