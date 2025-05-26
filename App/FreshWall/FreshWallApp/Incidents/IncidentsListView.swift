@@ -19,9 +19,7 @@ struct IncidentsListView: View {
             title: "Incidents",
             destination: { incident in .incidentDetail(incident: incident) },
             content: { incident in
-                VStack {
-                    Text(incident.description)
-                }
+                IncidentListCell(incident: incident)
             },
             plusButtonAction: {
                 routerPath.push(.addIncident)

@@ -19,9 +19,7 @@ struct MembersListView: View {
             title: "Members",
             destination: { member in .memberDetail(member: member) },
             content: { member in
-                VStack {
-                    Text(member.displayName)
-                }
+                MemberListCell(member: member)
             },
             plusButtonAction: {
                 routerPath.push(.addMember)
