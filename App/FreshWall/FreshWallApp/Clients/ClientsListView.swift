@@ -18,10 +18,8 @@ struct ClientsListView: View {
             items: viewModel.clients,
             title: "Clients",
             destination: { clients in .clientDetail(client: clients) },
-            content: { clients in
-                VStack {
-                    Text(clients.name)
-                }
+            content: { client in
+                ClientListCell(client: client)
             },
             plusButtonAction: {
                 routerPath.push(.addClient)
