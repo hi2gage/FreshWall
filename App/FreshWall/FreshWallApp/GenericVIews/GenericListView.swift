@@ -45,25 +45,5 @@ struct GenericListView<Item: Identifiable, Content: View>: View {
                 }
             }
         }
-//        .foregroundStyle(Color.brandTextSecondary)
-//        .toolbar {
-//            ToolbarItem(placement: .principal) {}
-//            ToolbarItem(placement: .topBarLeading) {
-//                Menu {
-//                    Picker("Sort by", selection: toolbarPickerSelection) {
-//                        Text("Brews").tag(MainScreen.brews)
-//                        Text("Recipes").tag(MainScreen.recipes)
-//                    }
-//                } label: {
-//                    HStack {
-//                        Text(title.capitalized)
-//                            .font(.largeTitle)
-//                            .bold()
-//                        Image(systemName: "chevron.down")
-//                    }
-//                    .padding(.bottom)
-//                }
-//            }
-//        }
     }
 }
