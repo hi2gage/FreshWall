@@ -2,7 +2,7 @@
 import Foundation
 
 /// A customer or client associated with the team.
-struct Client: Codable, Identifiable, Hashable {
+struct ClientDTO: Codable, Identifiable, Hashable {
     /// Firestore-generated document identifier for the client.
     @DocumentID var id: String?
     /// Name of the client.

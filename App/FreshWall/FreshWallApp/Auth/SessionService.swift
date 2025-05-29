@@ -23,7 +23,7 @@ struct SessionService {
             let userDoc = try await userRef.getDocument()
 
             if userDoc.exists {
-                let userModel = try userDoc.data(as: User.self)
+                let userModel = try userDoc.data(as: UserDTO.self)
                 return UserSession(
                     userId: user.uid,
                     displayName: userModel.displayName,

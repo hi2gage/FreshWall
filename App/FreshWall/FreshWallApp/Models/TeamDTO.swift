@@ -2,7 +2,7 @@
 import Foundation
 
 /// A team represents a group under which all data is scoped.
-struct Team: Codable, Identifiable {
+struct TeamDTO: Codable, Identifiable {
     /// Firestore-generated document identifier for the team.
     @DocumentID var id: String?
     /// Name of the team.
@@ -17,7 +17,7 @@ enum TeamGenerator {
     static func make(
         teamName: String,
         teamCode: String = UUID().uuidString.prefix(6).uppercased()
-    ) -> Team {
+    ) -> TeamDTO {
         .init(
             id: nil,
             name: teamName,

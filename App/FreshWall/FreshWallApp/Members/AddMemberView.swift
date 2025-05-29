@@ -53,8 +53,8 @@ struct AddMemberView: View {
 /// Dummy implementation of `MemberServiceProtocol` for previews.
 @MainActor
 private class PreviewMemberService: MemberServiceProtocol {
-    func fetchMembers() async throws -> [User] { [] }
-    func addMember(_: User) async throws {}
+    func fetchMembers() async throws -> [UserDTO] { [] }
+    func addMember(_: UserDTO) async throws {}
 }
 
 #Preview {

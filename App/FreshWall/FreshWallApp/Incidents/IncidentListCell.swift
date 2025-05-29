@@ -3,7 +3,7 @@ import FirebaseFirestore
 
 /// A cell view displaying summary information for an incident.
 struct IncidentListCell: View {
-    let incident: Incident
+    let incident: IncidentDTO
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {

@@ -3,7 +3,7 @@ import FirebaseFirestore
 
 /// A view displaying detailed information for a specific incident.
 struct IncidentDetailView: View {
-    let incident: Incident
+    let incident: IncidentDTO
 
     var body: some View {
         List {

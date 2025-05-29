@@ -13,7 +13,7 @@ struct ClientRow: Identifiable, Hashable {
 
 extension ClientRow {
     /// Generates domain rows from Firestore clients and incidents, filtering out those without IDs.
-    static func makeRows(from clients: [Client], incidents: [Incident]) -> [ClientRow] {
+    static func makeRows(from clients: [ClientDTO], incidents: [IncidentDTO]) -> [ClientRow] {
         clients.compactMap { client in
             guard let id = client.id else { return nil }
             let lastDate = incidents

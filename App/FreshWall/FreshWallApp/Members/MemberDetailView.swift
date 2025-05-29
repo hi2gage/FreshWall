@@ -4,7 +4,7 @@ import FirebaseFirestore
 /// A view displaying detailed information for a specific team member.
 /// A view displaying detailed information for a specific team member.
 struct MemberDetailView: View {
-    let member: User
+    let member: UserDTO
 
     var body: some View {
         List {
@@ -41,7 +41,7 @@ struct MemberDetailView: View {
 }
 
 #Preview {
-    let sampleMember = User(
+    let sampleMember = UserDTO(
         id: "member123",
         displayName: "Jane Doe",
         email: "jane@example.com",

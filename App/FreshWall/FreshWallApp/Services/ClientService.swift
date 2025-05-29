@@ -4,7 +4,7 @@ import Foundation
 /// Protocol defining operations for fetching and managing Client entities.
 protocol ClientServiceProtocol: Sendable {
     /// Fetches active clients for the current team.
-    func fetchClients() async throws -> [Client]
+    func fetchClients() async throws -> [ClientDTO]
     /// Adds a new client using an input value object.
     func addClient(_ input: AddClientInput) async throws
 }
@@ -22,7 +22,7 @@ struct ClientService: ClientServiceProtocol {
     }
 
     /// Fetches active clients for the current team from Firestore.
-    func fetchClients() async throws -> [Client] {
+    func fetchClients() async throws -> [ClientDTO] {
         let teamId = session.teamId
 
         let snapshot = try await firestore
@@ -31,8 +31,8 @@ struct ClientService: ClientServiceProtocol {
             .collection("clients")
             .whereField("isDeleted", isEqualTo: false)
             .getDocuments()
-        let fetched: [Client] = try snapshot.documents.compactMap {
-            try $0.data(as: Client.self)
+        let fetched: [ClientDTO] = try snapshot.documents.compactMap {
+            try $0.data(as: ClientDTO.self)
         }
         return fetched
     }
@@ -46,7 +46,7 @@ struct ClientService: ClientServiceProtocol {
             .document(teamId)
             .collection("clients")
         let newDoc = clientsRef.document()
-        let newClient = Client(
+        let newClient = ClientDTO(
             id: newDoc.documentID,
             name: input.name,
             notes: input.notes,

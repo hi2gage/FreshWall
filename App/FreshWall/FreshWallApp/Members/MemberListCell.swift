@@ -2,7 +2,7 @@ import SwiftUI
 
 /// A cell view displaying summary information for a team member.
 struct MemberListCell: View {
-    let member: User
+    let member: UserDTO
 
     var body: some View {
         HStack(spacing: 12) {

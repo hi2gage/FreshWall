@@ -3,7 +3,7 @@ import FirebaseFirestore
 
 /// A view displaying detailed information for a specific client.
 struct ClientDetailView: View {
-    let client: Client
+    let client: ClientDTO
 
     var body: some View {
         List {
@@ -41,7 +41,7 @@ struct ClientDetailView: View {
 }
 
 #Preview {
-    let sampleClient = Client(
+    let sampleClient = ClientDTO(
         id: "client123",
         name: "Test Client",
         notes: "Sample notes",

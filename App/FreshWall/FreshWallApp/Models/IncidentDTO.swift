@@ -2,7 +2,7 @@
 import Foundation
 
 /// An incident logged for a client, including timestamps, photos, and billing info.
-struct Incident: Codable, Identifiable, Sendable, Hashable {
+struct IncidentDTO: Codable, Identifiable, Sendable, Hashable {
     /// Firestore-generated document identifier for the incident.
     @DocumentID var id: String?
     /// Reference to the client document associated with this incident.

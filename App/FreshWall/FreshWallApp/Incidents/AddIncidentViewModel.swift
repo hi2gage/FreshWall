@@ -28,7 +28,7 @@ final class AddIncidentViewModel {
     /// Available status options.
     let statusOptions = ["open", "in_progress", "completed"]
     /// Loaded clients for selection.
-    var clients: [Client] = []
+    var clients: [ClientDTO] = []
     private let clientService: ClientServiceProtocol
     private let service: IncidentServiceProtocol
 

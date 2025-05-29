@@ -23,15 +23,15 @@ enum RouterDestination: Hashable {
     case clientsList
     /// Screen for adding a new client.
     case addClient
-    case clientDetail(client: Client)
+    case clientDetail(client: ClientDTO)
     case incidentsList
     /// Screen for adding a new incident.
     case addIncident
-    case incidentDetail(incident: Incident)
+    case incidentDetail(incident: IncidentDTO)
     case membersList
     /// Screen for adding a new member.
     case addMember
-    case memberDetail(member: User)
+    case memberDetail(member: UserDTO)
 }
 
 // swiftlint:disable cyclomatic_complexity

@@ -25,7 +25,7 @@ final class AddMemberViewModel {
 
     /// Saves the new member via the service.
     func save() async throws {
-        let member = User(
+        let member = UserDTO(
             id: nil,
             displayName: displayName,
             email: email,

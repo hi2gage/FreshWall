@@ -5,7 +5,7 @@ import Observation
 @Observable
 final class IncidentsListViewModel {
     /// Incidents fetched from the service.
-    var incidents: [Incident] = []
+    var incidents: [IncidentDTO] = []
     private let service: IncidentServiceProtocol
 
     /// Initializes the view model with a service conforming to `IncidentServiceProtocol`.

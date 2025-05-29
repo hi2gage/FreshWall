@@ -98,14 +98,14 @@ struct AddIncidentView: View {
 /// Dummy implementations of services for previews.
 @MainActor
 private class PreviewIncidentService: IncidentServiceProtocol {
-    func fetchIncidents() async throws -> [Incident] { [] }
-    func addIncident(_: Incident) async throws {}
+    func fetchIncidents() async throws -> [IncidentDTO] { [] }
+    func addIncident(_: IncidentDTO) async throws {}
     func addIncident(_: AddIncidentInput) async throws {}
 }
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
-    func fetchClients() async throws -> [Client] {
-        [Client(
+    func fetchClients() async throws -> [ClientDTO] {
+        [ClientDTO(
             id: "client1",
             name: "Sample Client",
             notes: "Preview client",
