@@ -5,7 +5,7 @@ import Observation
 @Observable
 final class ClientsListViewModel {
     /// Clients fetched from the service.
-    var clients: [Client] = []
+    var clients: [ClientDTO] = []
     private let service: ClientServiceProtocol
 
     /// Initializes the view model with a client service conforming to `ClientServiceProtocol`.

@@ -5,9 +5,9 @@ import Foundation
 /// Protocol defining operations for fetching and managing Incident entities.
 protocol IncidentServiceProtocol: Sendable {
     /// Fetches incidents for the current team.
-    func fetchIncidents() async throws -> [Incident]
+    func fetchIncidents() async throws -> [IncidentDTO]
     /// Adds a new incident via full Incident model.
-    func addIncident(_ incident: Incident) async throws
+    func addIncident(_ incident: IncidentDTO) async throws
     /// Adds a new incident using an input value object.
     func addIncident(_ input: AddIncidentInput) async throws
 }
@@ -25,7 +25,7 @@ struct IncidentService: IncidentServiceProtocol {
     }
 
     /// Fetches active incidents for the current team from Firestore.
-    func fetchIncidents() async throws -> [Incident] {
+    func fetchIncidents() async throws -> [IncidentDTO] {
         let teamId = session.teamId
 
         let snapshot = try await firestore
@@ -33,8 +33,8 @@ struct IncidentService: IncidentServiceProtocol {
             .document(teamId)
             .collection("incidents")
             .getDocuments()
-        let fetched: [Incident] = try snapshot.documents.compactMap {
-            try $0.data(as: Incident.self)
+        let fetched: [IncidentDTO] = try snapshot.documents.compactMap {
+            try $0.data(as: IncidentDTO.self)
         }
         return fetched
     }
@@ -43,7 +43,7 @@ struct IncidentService: IncidentServiceProtocol {
     ///
     /// - Parameter incident: The `Incident` model to add (with `id == nil`).
     /// - Throws: An error if the Firestore write fails or teamId is missing.
-    func addIncident(_ incident: Incident) async throws {
+    func addIncident(_ incident: IncidentDTO) async throws {
         let teamId = session.teamId
 
         let incidentsRef = firestore
@@ -76,7 +76,7 @@ struct IncidentService: IncidentServiceProtocol {
             .document(teamId)
             .collection("users")
             .document(uid)
-        let newIncident = Incident(
+        let newIncident = IncidentDTO(
             id: newDoc.documentID,
             clientRef: clientRef,
             workerRefs: [],

@@ -8,7 +8,7 @@ struct ClientsListView: View {
     let incidentService: IncidentServiceProtocol
     @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: ClientsListViewModel
-    @State private var incidents: [Incident] = []
+    @State private var incidents: [IncidentDTO] = []
     
     /// Initializes the view with services for clients and incidents.
     init(clientService: ClientServiceProtocol, incidentService: IncidentServiceProtocol) {
@@ -39,7 +39,7 @@ struct ClientsListView: View {
     }
     
     /// Returns the latest incident date for a given client, or distantPast if none.
-    private func lastIncidentDate(for client: Client) -> Date {
+    private func lastIncidentDate(for client: ClientDTO) -> Date {
         guard let id = client.id else { return Date.distantPast }
         let dates = incidents
             .filter { $0.clientRef.documentID == id }

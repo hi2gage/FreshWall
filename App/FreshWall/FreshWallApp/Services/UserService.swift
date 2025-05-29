@@ -34,7 +34,7 @@ struct UserService {
         password: String,
         displayName: String,
         teamName: String
-    ) async throws -> User {
+    ) async throws -> UserDTO {
         let authResult = try await auth.createUser(withEmail: email, password: password)
         _ = authResult.user
 
@@ -58,7 +58,7 @@ struct UserService {
             )
         }
 
-        return User(
+        return UserDTO(
             id: nil,
             displayName: displayName,
             email: email,
@@ -81,7 +81,7 @@ struct UserService {
         password: String,
         displayName: String,
         teamCode: String
-    ) async throws -> User {
+    ) async throws -> UserDTO {
         let authResult = try await auth.createUser(withEmail: email, password: password)
         _ = authResult.user
 
@@ -103,7 +103,7 @@ struct UserService {
             )
         }
 
-        return User(
+        return UserDTO(
             id: nil,
             displayName: displayName,
             email: email,

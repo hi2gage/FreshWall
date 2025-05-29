@@ -3,7 +3,7 @@ import FirebaseFirestore
 
 /// A cell view displaying summary information for a client.
 struct ClientListCell: View {
-    let client: Client
+    let client: ClientDTO
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
