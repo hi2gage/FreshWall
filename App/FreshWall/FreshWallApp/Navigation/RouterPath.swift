@@ -45,7 +45,10 @@ extension View {
         navigationDestination(for: RouterDestination.self) { destination in
             switch destination {
             case .clientsList:
-                ClientsListView(service: clientService)
+                ClientsListView(
+                    clientService: clientService,
+                    incidentService: incidentService
+                )
             case .addClient:
                 AddClientView(viewModel: AddClientViewModel(service: clientService))
             case let .clientDetail(client):
@@ -53,7 +56,12 @@ extension View {
             case .incidentsList:
                 IncidentsListView(service: incidentService)
             case .addIncident:
-                AddIncidentView(viewModel: AddIncidentViewModel(service: incidentService))
+                AddIncidentView(
+                    viewModel: AddIncidentViewModel(
+                        service: incidentService,
+                        clientService: clientService
+                    )
+                )
             case let .incidentDetail(incident):
                 IncidentDetailView(incident: incident)
             case .membersList:
