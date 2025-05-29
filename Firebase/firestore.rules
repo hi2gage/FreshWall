@@ -29,7 +29,9 @@ service cloud.firestore {
     // 🧑‍💼 Clients
     match /teams/{teamId}/clients/{clientId} {
       allow read: if isSignedIn() && isInTeam(teamId);
-      allow create, update, delete: if isSignedIn() && isLead(teamId);
+      // Allow team members to create clients; only leads may update or delete
+      allow create: if isSignedIn() && isInTeam(teamId);
+      allow update, delete: if isSignedIn() && isLead(teamId);
     }
 
     // 🎯 Incidents under client-specific path
