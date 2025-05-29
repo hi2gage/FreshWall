@@ -5,7 +5,7 @@ import Foundation
 @MainActor
 @Observable
 final class AddIncidentViewModel {
-    /// Client document ID.
+    /// Client document ID or special tag for add-new.
     var clientId: String = ""
     /// Description of the incident.
     var description: String = ""
@@ -27,6 +27,9 @@ final class AddIncidentViewModel {
     var materialsUsed: String = ""
     /// Available status options.
     let statusOptions = ["open", "in_progress", "completed"]
+    /// Loaded clients for selection.
+    var clients: [Client] = []
+    private let clientService: ClientServiceProtocol
     private let service: IncidentServiceProtocol
 
     /// Validation: requires a clientId and description.
@@ -35,8 +38,9 @@ final class AddIncidentViewModel {
         !description.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
-    init(service: IncidentServiceProtocol) {
+    init(service: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
         self.service = service
+        self.clientService = clientService
     }
 
     /// Saves the new incident via the service.
@@ -56,5 +60,17 @@ final class AddIncidentViewModel {
             materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed
         )
         try await service.addIncident(input)
+    }
+    /// Loads available clients for the picker.
+    func loadClients() async {
+        clients = (try? await clientService.fetchClients()) ?? []
+    }
+
+    /// A list of client options with valid IDs for selection.
+    var validClients: [(id: String, name: String)] {
+        clients.compactMap { client in
+            guard let id = client.id else { return nil }
+            return (id: id, name: client.name)
+        }
     }
 }
