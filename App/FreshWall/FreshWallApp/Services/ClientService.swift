@@ -4,7 +4,7 @@ import Foundation
 /// Protocol defining operations for fetching and managing Client entities.
 protocol ClientServiceProtocol: Sendable {
     /// Fetches active clients for the current team.
-    func fetchClients() async throws -> [ClientDTO]
+    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO]
     /// Adds a new client using an input value object.
     func addClient(_ input: AddClientInput) async throws
 }
@@ -22,18 +22,22 @@ struct ClientService: ClientServiceProtocol {
     }
 
     /// Fetches active clients for the current team from Firestore.
-    func fetchClients() async throws -> [ClientDTO] {
+    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO] {
         let teamId = session.teamId
 
         let snapshot = try await firestore
             .collection("teams")
             .document(teamId)
             .collection("clients")
-            .whereField("isDeleted", isEqualTo: false)
+//            .whereField("isDeleted", isEqualTo: false)
+//            .order(by: sortOption.field, descending: sortOption.isDescending)
             .getDocuments()
+        print(snapshot)
+
         let fetched: [ClientDTO] = try snapshot.documents.compactMap {
             try $0.data(as: ClientDTO.self)
         }
+
         return fetched
     }
 
@@ -52,7 +56,8 @@ struct ClientService: ClientServiceProtocol {
             notes: input.notes,
             isDeleted: false,
             deletedAt: nil,
-            createdAt: Timestamp(date: Date())
+            createdAt: Timestamp(date: Date()),
+            lastIncidentAt: input.lastIncidentAt
         )
         try newDoc.setData(from: newClient)
     }

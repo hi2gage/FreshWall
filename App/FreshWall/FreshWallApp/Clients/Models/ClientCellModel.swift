@@ -2,7 +2,7 @@ import Foundation
 import FirebaseFirestore
 
 /// Domain model representing a client for UI display.
-struct ClientRow: Identifiable, Hashable {
+struct ClientCellModel: Identifiable, Hashable {
     let id: String
     let name: String
     let notes: String?
@@ -11,16 +11,16 @@ struct ClientRow: Identifiable, Hashable {
     let lastIncidentDate: Date
 }
 
-extension ClientRow {
+extension ClientCellModel {
     /// Generates domain rows from Firestore clients and incidents, filtering out those without IDs.
-    static func makeRows(from clients: [ClientDTO], incidents: [IncidentDTO]) -> [ClientRow] {
+    static func makeRows(from clients: [ClientDTO], incidents: [IncidentDTO]) -> [ClientCellModel] {
         clients.compactMap { client in
             guard let id = client.id else { return nil }
             let lastDate = incidents
                 .filter { $0.clientRef.documentID == id }
                 .map { $0.createdAt.dateValue() }
                 .max() ?? Date.distantPast
-            return ClientRow(
+            return ClientCellModel(
                 id: id,
                 name: client.name,
                 notes: client.notes,
