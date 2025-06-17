@@ -86,7 +86,7 @@ struct AddIncidentView: View {
                         }
                     }
                 }
-                .disabled(viewModel.isValid)
+                .disabled(!viewModel.isValid)
             }
         }
         .task {
