@@ -15,6 +15,6 @@ final class ClientsListViewModel {
 
     /// Loads clients from the service.
     func loadClients() async {
-        clients = await (try? service.fetchClients()) ?? []
+        clients = await (try? service.fetchClients(sortedBy: .createdAtAscending)) ?? []
     }
 }

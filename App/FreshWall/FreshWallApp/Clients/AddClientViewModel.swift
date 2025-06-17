@@ -24,7 +24,9 @@ final class AddClientViewModel {
     func save() async throws {
         let input = AddClientInput(
             name: name.trimmingCharacters(in: .whitespaces),
-            notes: notes.isEmpty ? nil : notes
+            notes: notes.isEmpty ? nil : notes,
+            lastIncidentAt: .init()
+
         )
         try await service.addClient(input)
     }

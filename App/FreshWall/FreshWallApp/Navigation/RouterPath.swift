@@ -52,7 +52,7 @@ extension View {
             case .addClient:
                 AddClientView(viewModel: AddClientViewModel(service: clientService))
             case let .clientDetail(client):
-                ClientDetailView(client: client)
+                ClientDetailView(client: client, incidentService: incidentService)
             case .incidentsList:
                 IncidentsListView(service: incidentService)
             case .addIncident:

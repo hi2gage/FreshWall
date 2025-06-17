@@ -15,5 +15,7 @@ struct ClientDTO: Codable, Identifiable, Hashable {
     var deletedAt: Timestamp?
     /// Timestamp when this client was created.
     var createdAt: Timestamp
+    /// Timestamp of the most recent incident for this client (denormalized).
+    var lastIncidentAt: Timestamp
 }
 
