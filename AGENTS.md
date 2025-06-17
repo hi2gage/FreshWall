@@ -94,7 +94,7 @@ AI agents should understand and respect the separation between frontend (Swift c
 
 ### iOS Tests
 
-- Use XCTest for unit tests
+- Use Swift Testing for unit tests
 - Test files must match the name of the class being tested (`XyzViewModelTests.swift`)
 - PreviewProvider usage is encouraged for SwiftUI views
 
