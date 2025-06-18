@@ -102,9 +102,10 @@ private class PreviewIncidentService: IncidentServiceProtocol {
     func addIncident(_: IncidentDTO) async throws {}
     func addIncident(_: AddIncidentInput) async throws {}
 }
+
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
-    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO] {
+    func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] {
         [ClientDTO(
             id: "client1",
             name: "Sample Client",
@@ -115,6 +116,7 @@ private class PreviewClientService: ClientServiceProtocol {
             lastIncidentAt: .init()
         )]
     }
+
     func addClient(_: AddClientInput) async throws {}
 }
 

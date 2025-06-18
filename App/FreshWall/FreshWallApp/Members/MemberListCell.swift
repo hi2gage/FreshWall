@@ -25,8 +25,8 @@ struct MemberListCell: View {
 
     private var roleColor: Color {
         switch member.role {
-        case .lead: return .blue
-        case .member: return .gray
+        case .lead: .blue
+        case .member: .gray
         }
     }
 }

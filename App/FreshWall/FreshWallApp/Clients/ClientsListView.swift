@@ -1,5 +1,5 @@
-import SwiftUI
 import FirebaseFirestore
+import SwiftUI
 
 /// A view displaying a list of clients for the current team.
 /// A view displaying a list of clients for the current team, ordered by most recent incident.
@@ -9,14 +9,14 @@ struct ClientsListView: View {
     @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: ClientsListViewModel
     @State private var incidents: [IncidentDTO] = []
-    
+
     /// Initializes the view with services for clients and incidents.
     init(clientService: ClientServiceProtocol, incidentService: IncidentServiceProtocol) {
         self.clientService = clientService
         self.incidentService = incidentService
         _viewModel = State(wrappedValue: ClientsListViewModel(service: clientService))
     }
-    
+
     var body: some View {
         // Sort clients by most recent incident date
         let sortedClients = viewModel.clients.sorted { lhs, rhs in
@@ -31,13 +31,14 @@ struct ClientsListView: View {
             content: { client in ClientListCell(client: client) },
             plusButtonAction: {
                 routerPath.push(.addClient)
-            })
+            }
+        )
         .task {
             await viewModel.loadClients()
-            incidents = (try? await incidentService.fetchIncidents()) ?? []
+            incidents = await (try? incidentService.fetchIncidents()) ?? []
         }
     }
-    
+
     /// Returns the latest incident date for a given client, or distantPast if none.
     private func lastIncidentDate(for client: ClientDTO) -> Date {
         guard let id = client.id else { return Date.distantPast }

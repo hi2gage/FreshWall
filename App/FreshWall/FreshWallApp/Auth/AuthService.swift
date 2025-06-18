@@ -43,6 +43,6 @@ struct AuthService {
     }
 
     func getCurrentUser() -> FirebaseAuth.User? {
-        return auth.currentUser
+        auth.currentUser
     }
 }

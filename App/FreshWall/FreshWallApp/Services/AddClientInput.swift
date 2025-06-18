@@ -1,5 +1,5 @@
-import Foundation
 @preconcurrency import FirebaseFirestore
+import Foundation
 
 /// Input model for creating a new client via `ClientService`.
 struct AddClientInput: Sendable {

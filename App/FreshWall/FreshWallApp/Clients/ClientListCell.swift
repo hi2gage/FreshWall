@@ -1,5 +1,5 @@
-import SwiftUI
 import FirebaseFirestore
+import SwiftUI
 
 /// A cell view displaying summary information for a client.
 struct ClientListCell: View {

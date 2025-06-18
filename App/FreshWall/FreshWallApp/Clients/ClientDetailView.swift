@@ -1,5 +1,5 @@
-import SwiftUI
 import FirebaseFirestore
+import SwiftUI
 
 /// A view displaying detailed information for a specific client.
 struct ClientDetailView: View {
@@ -60,15 +60,16 @@ struct ClientDetailView: View {
         .listStyle(.insetGrouped)
         .navigationTitle("Client Details")
         .task {
-            let all = (try? await incidentService.fetchIncidents()) ?? []
+            let all = await (try? incidentService.fetchIncidents()) ?? []
             incidents = all.filter { $0.clientRef.documentID == client.id }
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Client Details")
     }
 }
+
 //
-//#Preview {
+// #Preview {
 //    let sampleClient = ClientDTO(
 //        id: "client123",
 //        name: "Test Client",
@@ -82,4 +83,4 @@ struct ClientDetailView: View {
 //            ClientDetailView(client: sampleClient)
 //        }
 //    }
-//}
+// }

@@ -1,5 +1,5 @@
-import Observation
 import Foundation
+import Observation
 
 /// ViewModel for AddClientView, manages form state and saving.
 @MainActor
@@ -26,7 +26,6 @@ final class AddClientViewModel {
             name: name.trimmingCharacters(in: .whitespaces),
             notes: notes.isEmpty ? nil : notes,
             lastIncidentAt: .init()
-
         )
         try await service.addClient(input)
     }
