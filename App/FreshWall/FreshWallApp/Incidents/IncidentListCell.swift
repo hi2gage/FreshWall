@@ -1,5 +1,5 @@
-import SwiftUI
 import FirebaseFirestore
+import SwiftUI
 
 /// A cell view displaying summary information for an incident.
 struct IncidentListCell: View {
@@ -25,10 +25,10 @@ struct IncidentListCell: View {
 
     private var statusColor: Color {
         switch incident.status.lowercased() {
-        case "completed": return .green
-        case "in_progress": return .orange
-        case "open": return .blue
-        default: return .gray
+        case "completed": .green
+        case "in_progress": .orange
+        case "open": .blue
+        default: .gray
         }
     }
 }

@@ -21,7 +21,7 @@ struct ClientService: ClientServiceProtocol {
     }
 
     /// Fetches active clients for the current team from Firestore.
-    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO] {
+    func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] {
         let teamId = session.teamId
 
         let snapshot = try await firestore

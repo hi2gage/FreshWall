@@ -16,28 +16,28 @@ enum ClientSortOption {
     var field: String {
         switch self {
         case .nameAscending, .nameDescending:
-            return "name"
+            "name"
         case .lastIncidentAscending, .lastIncidentDescending:
-            return "lastIncidentAt"
+            "lastIncidentAt"
         case .createdAtAscending, .createdAtDescending:
-            return "createdAt"
+            "createdAt"
         }
     }
 
     var isDescending: Bool {
         switch self {
         case .nameAscending:
-            return false
+            false
         case .nameDescending:
-            return true
+            true
         case .lastIncidentAscending:
-            return false
+            false
         case .lastIncidentDescending:
-            return true
+            true
         case .createdAtAscending:
-            return false
+            false
         case .createdAtDescending:
-            return true
+            true
         }
     }
 }

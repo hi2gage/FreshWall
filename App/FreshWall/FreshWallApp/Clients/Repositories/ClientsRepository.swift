@@ -20,7 +20,7 @@ struct DefualtClientsRepository: ClientsRepository {
     func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO] {
         try await client.fetchClients(sortedBy: sortOption)
     }
-    
+
     func addClient(_ input: AddClientInput) async throws {
         try await client.addClient(input)
     }
