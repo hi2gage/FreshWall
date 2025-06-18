@@ -1,5 +1,5 @@
-import Foundation
 import FirebaseFirestore
+import Foundation
 
 /// Domain model representing a client for UI display.
 struct ClientCellModel: Identifiable, Hashable {

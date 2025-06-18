@@ -1,5 +1,5 @@
-import SwiftUI
 import FirebaseFirestore
+import SwiftUI
 
 /// A view displaying detailed information for a specific incident.
 struct IncidentDetailView: View {
@@ -79,7 +79,7 @@ struct IncidentDetailView: View {
                                     switch phase {
                                     case .empty:
                                         ProgressView()
-                                    case .success(let image):
+                                    case let .success(image):
                                         image
                                             .resizable()
                                             .scaledToFill()
@@ -109,7 +109,7 @@ struct IncidentDetailView: View {
                                     switch phase {
                                     case .empty:
                                         ProgressView()
-                                    case .success(let image):
+                                    case let .success(image):
                                         image
                                             .resizable()
                                             .scaledToFill()
@@ -149,8 +149,9 @@ struct IncidentDetailView: View {
         .navigationTitle("Incident Details")
     }
 }
+
 //
-//#Preview {
+// #Preview {
 //    let dummyRef = Firestore.firestore().document("teams/team123/clients/client123")
 //    let sampleIncident = Incident(
 //        id: "incident123",
@@ -177,4 +178,4 @@ struct IncidentDetailView: View {
 //            IncidentDetailView(incident: sampleIncident)
 //        }
 //    }
-//}
+// }

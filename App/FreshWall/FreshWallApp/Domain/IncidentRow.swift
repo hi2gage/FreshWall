@@ -1,5 +1,5 @@
-import Foundation
 import FirebaseFirestore
+import Foundation
 
 /// Domain model representing an incident for UI display.
 struct IncidentRow: Identifiable, Hashable {

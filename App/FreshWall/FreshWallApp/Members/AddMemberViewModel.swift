@@ -1,5 +1,5 @@
-import Observation
 import Foundation
+import Observation
 
 /// ViewModel for AddMemberView, manages form state and saving.
 @MainActor
@@ -16,7 +16,7 @@ final class AddMemberViewModel {
     /// Validation: displayName and email must not be empty.
     var isValid: Bool {
         !displayName.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !email.trimmingCharacters(in: .whitespaces).isEmpty
+            !email.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     init(service: MemberServiceProtocol) {

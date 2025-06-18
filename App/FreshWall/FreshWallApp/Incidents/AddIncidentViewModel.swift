@@ -1,5 +1,5 @@
-import Observation
 import Foundation
+import Observation
 
 /// ViewModel for AddIncidentView, manages form state and saving.
 @MainActor
@@ -12,9 +12,9 @@ final class AddIncidentViewModel {
     /// Area affected (as text input).
     var areaText: String = ""
     /// Start time of incident.
-    var startTime: Date = Date()
+    var startTime: Date = .init()
     /// End time of incident.
-    var endTime: Date = Date()
+    var endTime: Date = .init()
     /// Whether the incident is billable.
     var billable: Bool = false
     /// Billing rate (as text input).
@@ -35,7 +35,7 @@ final class AddIncidentViewModel {
     /// Validation: requires a clientId and description.
     var isValid: Bool {
         !clientId.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !description.trimmingCharacters(in: .whitespaces).isEmpty
+            !description.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     init(service: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
@@ -61,9 +61,10 @@ final class AddIncidentViewModel {
         )
         try await service.addIncident(input)
     }
+
     /// Loads available clients for the picker.
     func loadClients() async {
-        clients = (try? await clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+        clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
     }
 
     /// A list of client options with valid IDs for selection.
