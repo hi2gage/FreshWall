@@ -20,16 +20,14 @@ export { generateInviteCode } from "./signup/generateInviteCode";
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
 
 export const updateClientLastIncident = onDocumentWritten(
-	"teams/{teamId}/clients/{clientId}/incidents/{incidentId}",
-	async (event) => {
-		const { teamId, clientId } = event.params;
-		const clientRef = admin
-			.firestore()
-			.collection("teams")
-			.doc(teamId)
-			.collection("clients")
-			.doc(clientId);
-		const now = admin.firestore.Timestamp.now();
-		await clientRef.update({ lastIncidentAt: now });
-	},
+  "teams/{teamId}/incidents/{incidentId}",
+  async (event) => {
+    const after = event.data?.after?.data();
+    if (!after) {
+      return;
+    }
+    const clientRef = admin.firestore().doc(after.clientRef.path);
+    const createdAt = after.createdAt as admin.firestore.Timestamp;
+    await clientRef.update({ lastIncidentAt: createdAt });
+  },
 );
