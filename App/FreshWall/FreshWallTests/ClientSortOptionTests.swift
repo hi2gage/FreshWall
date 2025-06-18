@@ -19,4 +19,11 @@ struct ClientSortOptionTests {
         #expect(ClientSortOption.createdAtAscending.isDescending == false)
         #expect(ClientSortOption.createdAtDescending.isDescending == true)
     }
+
+    @Test func titlesAndSymbols() {
+        #expect(ClientSortOption.nameAscending.title == "Name")
+        #expect(ClientSortOption.nameAscending.symbolName == "arrowtriangle.up.fill")
+        #expect(ClientSortOption.nameDescending.title == "Name")
+        #expect(ClientSortOption.nameDescending.symbolName == "arrowtriangle.down.fill")
+    }
 }

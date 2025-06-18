@@ -6,6 +6,8 @@ import Observation
 final class ClientsListViewModel {
     /// Clients fetched from the service.
     var clients: [ClientDTO] = []
+    /// Currently selected sort option.
+    var sortOption: ClientSortOption = .lastIncidentDescending
     private let service: ClientServiceProtocol
 
     /// Initializes the view model with a client service conforming to `ClientServiceProtocol`.
@@ -15,6 +17,6 @@ final class ClientsListViewModel {
 
     /// Loads clients from the service.
     func loadClients() async {
-        clients = await (try? service.fetchClients(sortedBy: .createdAtAscending)) ?? []
+        clients = await (try? service.fetchClients(sortedBy: sortOption)) ?? []
     }
 }

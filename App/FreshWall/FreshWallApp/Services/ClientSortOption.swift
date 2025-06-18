@@ -5,7 +5,7 @@
 //  Created by Gage Halverson on 5/28/25.
 //
 
-enum ClientSortOption {
+enum ClientSortOption: CaseIterable, Hashable, Sendable {
     case nameAscending
     case nameDescending
     case lastIncidentAscending
@@ -38,6 +38,28 @@ enum ClientSortOption {
             false
         case .createdAtDescending:
             true
+        }
+    }
+
+    /// User facing label for displaying the sort choice.
+    var title: String {
+        switch self {
+        case .nameAscending, .nameDescending:
+            "Name"
+        case .lastIncidentAscending, .lastIncidentDescending:
+            "Last Incident"
+        case .createdAtAscending, .createdAtDescending:
+            "Created"
+        }
+    }
+
+    /// SF Symbol name indicating the sort direction.
+    var symbolName: String {
+        switch self {
+        case .nameAscending, .lastIncidentAscending, .createdAtAscending:
+            "arrowtriangle.up.fill"
+        case .nameDescending, .lastIncidentDescending, .createdAtDescending:
+            "arrowtriangle.down.fill"
         }
     }
 }

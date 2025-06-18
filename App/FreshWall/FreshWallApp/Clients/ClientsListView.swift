@@ -2,13 +2,11 @@ import FirebaseFirestore
 import SwiftUI
 
 /// A view displaying a list of clients for the current team.
-/// A view displaying a list of clients for the current team, ordered by most recent incident.
 struct ClientsListView: View {
     let clientService: ClientServiceProtocol
     let incidentService: IncidentServiceProtocol
     @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: ClientsListViewModel
-    @State private var incidents: [IncidentDTO] = []
 
     /// Initializes the view with services for clients and incidents.
     init(clientService: ClientServiceProtocol, incidentService: IncidentServiceProtocol) {
@@ -18,14 +16,8 @@ struct ClientsListView: View {
     }
 
     var body: some View {
-        // Sort clients by most recent incident date
-        let sortedClients = viewModel.clients.sorted { lhs, rhs in
-            let dateA = lastIncidentDate(for: lhs)
-            let dateB = lastIncidentDate(for: rhs)
-            return dateA > dateB
-        }
         GenericListView(
-            items: sortedClients,
+            items: viewModel.clients,
             title: "Clients",
             destination: { client in .clientDetail(client: client) },
             content: { client in ClientListCell(client: client) },
@@ -35,17 +27,21 @@ struct ClientsListView: View {
         )
         .task {
             await viewModel.loadClients()
-            incidents = await (try? incidentService.fetchIncidents()) ?? []
         }
-    }
-
-    /// Returns the latest incident date for a given client, or distantPast if none.
-    private func lastIncidentDate(for client: ClientDTO) -> Date {
-        guard let id = client.id else { return Date.distantPast }
-        let dates = incidents
-            .filter { $0.clientRef.documentID == id }
-            .map { $0.createdAt.dateValue() }
-        return dates.max() ?? Date.distantPast
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Picker("Sort", selection: $viewModel.sortOption) {
+                    ForEach(ClientSortOption.allCases, id: \ .self) { option in
+                        Label(option.title, systemImage: option.symbolName)
+                            .tag(option)
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: viewModel.sortOption) { _, _ in
+                    Task { await viewModel.loadClients() }
+                }
+            }
+        }
     }
 }
 
