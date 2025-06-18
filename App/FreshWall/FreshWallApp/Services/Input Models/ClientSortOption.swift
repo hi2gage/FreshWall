@@ -44,18 +44,22 @@ enum ClientSortOption: CaseIterable, Hashable, Sendable {
     /// User facing label for displaying the sort choice.
     var title: String {
         switch self {
-        case .nameAscending:
-            "Name \u2191"
-        case .nameDescending:
-            "Name \u2193"
-        case .lastIncidentAscending:
-            "Last Incident \u2191"
-        case .lastIncidentDescending:
-            "Last Incident \u2193"
-        case .createdAtAscending:
-            "Created \u2191"
-        case .createdAtDescending:
-            "Created \u2193"
+        case .nameAscending, .nameDescending:
+            "Name"
+        case .lastIncidentAscending, .lastIncidentDescending:
+            "Last Incident"
+        case .createdAtAscending, .createdAtDescending:
+            "Created"
+        }
+    }
+
+    /// SF Symbol name indicating the sort direction.
+    var symbolName: String {
+        switch self {
+        case .nameAscending, .lastIncidentAscending, .createdAtAscending:
+            "arrowtriangle.up.fill"
+        case .nameDescending, .lastIncidentDescending, .createdAtDescending:
+            "arrowtriangle.down.fill"
         }
     }
 }
