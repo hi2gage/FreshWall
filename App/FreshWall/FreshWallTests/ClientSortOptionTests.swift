@@ -1,3 +1,4 @@
+@testable import FreshWall
 import Testing
 
 struct ClientSortOptionTests {
