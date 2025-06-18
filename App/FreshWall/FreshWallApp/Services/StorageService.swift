@@ -11,21 +11,37 @@ protocol StorageServiceProtocol: Sendable {
 struct StorageService: StorageServiceProtocol {
     private let storage: Storage
 
-    init(storage: Storage = .storage()) {
+    init() {
+        #if DEBUG
+        let storage = Storage.storage()
+        // Connect to the emulator
+        storage.useEmulator(withHost: "localhost", port: 9199)
         self.storage = storage
+        #else
+        self.storage = Storage.storage()
+        #endif
     }
 
     func uploadData(_ data: Data, to path: String) async throws -> String {
         let ref = storage.reference(withPath: path)
-        _ = try await withCheckedThrowingContinuation { continuation in
-            ref.putData(data, metadata: nil) { _, error in
-                if let error {
-                    continuation.resume(throwing: error)
+
+        // Upload data with progress reporting
+        let metadata = try await ref.putDataAsync(data)
+
+
+        // Get download URL
+        return try await withCheckedThrowingContinuation { continuation in
+            ref.downloadURL { url, error in
+                if let url {
+                    continuation.resume(returning: url.absoluteString)
                 } else {
-                    continuation.resume(returning: ())
+                    continuation.resume(throwing: error ?? NSError(
+                        domain: "StorageService",
+                        code: -1,
+                        userInfo: [NSLocalizedDescriptionKey: "Failed to fetch download URL"]
+                    ))
                 }
             }
         }
-        return try await ref.downloadURL().absoluteString
     }
 }
