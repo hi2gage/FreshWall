@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "1043A573-D5F6-49C6-B6A9-DB3B2A5FB8C2",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:FreshWall.xcodeproj",
+        "identifier" : "1C5436032DE2224000153F4F",
+        "name" : "FreshWallTests"
+      }
+    }
+  ],
+  "version" : 1
+}
