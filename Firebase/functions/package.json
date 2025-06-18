@@ -5,7 +5,7 @@
     "lint:fix": "biome lint --apply .",
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "test": "npm run lint && npm run build && mocha -r ts-node/register test/**/*.test.ts",
+    "test": "npm run lint && npm run build && node --test test/**/*.test.js",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
@@ -13,7 +13,7 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "22"
+    "node": "18"
   },
   "main": "lib/index.js",
   "dependencies": {
@@ -30,10 +30,6 @@
     "eslint-plugin-import": "^2.25.4",
     "firebase-functions-test": "^3.1.0",
     "globals": "^16.2.0",
-    "mocha": "^10.2.0",
-    "chai": "^4.3.10",
-    "sinon": "^17.0.1",
-    "ts-node": "^10.9.1",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.34.1"
   },
