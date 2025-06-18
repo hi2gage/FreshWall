@@ -3,10 +3,32 @@ import SwiftUI
 
 /// A view displaying detailed information for a specific client.
 struct ClientDetailView: View {
-    let client: ClientDTO
+    @State private var client: ClientDTO
     let incidentService: IncidentServiceProtocol
+    let clientService: ClientServiceProtocol
     @Environment(RouterPath.self) private var routerPath
     @State private var incidents: [IncidentDTO] = []
+    @State private var showingEdit = false
+
+    init(client: ClientDTO,
+         incidentService: IncidentServiceProtocol,
+         clientService: ClientServiceProtocol)
+    {
+        _client = State(wrappedValue: client)
+        self.incidentService = incidentService
+        self.clientService = clientService
+    }
+
+    /// Reloads the client data after editing.
+    private func reloadClient() {
+        Task {
+            guard let id = client.id else { return }
+            let updatedClients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+            if let updated = updatedClients.first(where: { $0.id == id }) {
+                client = updated
+            }
+        }
+    }
 
     var body: some View {
         List {
@@ -65,6 +87,18 @@ struct ClientDetailView: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Client Details")
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Edit") { showingEdit = true }
+            }
+        }
+        .sheet(isPresented: $showingEdit, onDismiss: reloadClient) {
+            NavigationStack {
+                EditClientView(
+                    viewModel: EditClientViewModel(client: client, service: clientService)
+                )
+            }
+        }
     }
 }
 
