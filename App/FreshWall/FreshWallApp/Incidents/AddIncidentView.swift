@@ -118,6 +118,8 @@ private class PreviewClientService: ClientServiceProtocol {
     }
 
     func addClient(_: AddClientInput) async throws {}
+
+    func updateClient(_: String, with _: UpdateClientInput) async throws {}
 }
 
 #Preview {
