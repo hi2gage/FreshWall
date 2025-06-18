@@ -32,7 +32,8 @@ struct ClientsListView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 Picker("Sort", selection: $viewModel.sortOption) {
                     ForEach(ClientSortOption.allCases, id: \ .self) { option in
-                        Text(option.title).tag(option)
+                        Label(option.title, systemImage: option.symbolName)
+                            .tag(option)
                     }
                 }
                 .pickerStyle(.menu)
