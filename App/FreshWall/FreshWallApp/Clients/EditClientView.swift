@@ -1,12 +1,11 @@
 import SwiftUI
 
-/// View for adding a new client, injecting a service conforming to `ClientServiceProtocol`.
-struct AddClientView: View {
+/// View for editing an existing client, injecting a service conforming to `ClientServiceProtocol`.
+struct EditClientView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var viewModel: AddClientViewModel
+    @State private var viewModel: EditClientViewModel
 
-    /// Initializes view with injected client service and view model.
-    init(viewModel: AddClientViewModel) {
+    init(viewModel: EditClientViewModel) {
         _viewModel = State(wrappedValue: viewModel)
     }
 
@@ -20,7 +19,7 @@ struct AddClientView: View {
                     .frame(minHeight: 100)
             }
         }
-        .navigationTitle("Add Client")
+        .navigationTitle("Edit Client")
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") { dismiss() }
@@ -42,18 +41,27 @@ struct AddClientView: View {
     }
 }
 
-/// Dummy implementation of `ClientServiceProtocol` for previews.
+#Preview {
+    let sampleClient = ClientDTO(
+        id: "client123",
+        name: "Test Client",
+        notes: "Sample notes",
+        isDeleted: false,
+        deletedAt: nil,
+        createdAt: .init(),
+        lastIncidentAt: .init()
+    )
+    let service = PreviewClientService()
+    FreshWallPreview {
+        NavigationStack {
+            EditClientView(viewModel: EditClientViewModel(client: sampleClient, service: service))
+        }
+    }
+}
+
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
     func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
     func addClient(_: AddClientInput) async throws {}
     func updateClient(_: String, with _: UpdateClientInput) async throws {}
-}
-
-#Preview {
-    FreshWallPreview {
-        NavigationStack {
-            AddClientView(viewModel: AddClientViewModel(service: PreviewClientService()))
-        }
-    }
 }

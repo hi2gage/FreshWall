@@ -7,6 +7,8 @@ protocol ClientServiceProtocol: Sendable {
     func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO]
     /// Adds a new client using an input value object.
     func addClient(_ input: AddClientInput) async throws
+    /// Updates an existing client using an input value object.
+    func updateClient(_ clientId: String, with input: UpdateClientInput) async throws
 }
 
 /// Service to fetch and manage Client entities from Firestore.
@@ -59,6 +61,26 @@ struct ClientService: ClientServiceProtocol {
             lastIncidentAt: input.lastIncidentAt
         )
         try newDoc.setData(from: newClient)
+    }
+
+    /// Updates an existing client document in Firestore.
+    func updateClient(_ clientId: String, with input: UpdateClientInput) async throws {
+        let teamId = session.teamId
+
+        let clientRef = firestore
+            .collection("teams")
+            .document(teamId)
+            .collection("clients")
+            .document(clientId)
+
+        var data: [String: Any] = ["name": input.name]
+        if let notes = input.notes {
+            data["notes"] = notes
+        } else {
+            data["notes"] = FieldValue.delete()
+        }
+
+        try await clientRef.updateData(data)
     }
 }
 
