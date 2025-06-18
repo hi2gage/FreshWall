@@ -53,9 +53,9 @@ struct ClientDetailView: View {
                 }
 
                 HStack {
-                    Text("lastIncidentAt?")
+                    Text("Last Incident")
                     Spacer()
-                    Text(client.lastIncidentAt.description)
+                    Text(client.lastIncidentAt.dateValue(), style: .date)
                 }
 
                 if let deletedAt = client.deletedAt {
