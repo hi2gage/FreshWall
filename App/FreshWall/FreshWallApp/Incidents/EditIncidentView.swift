@@ -1,3 +1,4 @@
+@preconcurrency import FirebaseFirestore
 import SwiftUI
 
 /// View for editing an existing incident.
