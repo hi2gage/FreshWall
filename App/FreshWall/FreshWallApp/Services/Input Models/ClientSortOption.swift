@@ -5,7 +5,7 @@
 //  Created by Gage Halverson on 5/28/25.
 //
 
-enum ClientSortOption {
+enum ClientSortOption: CaseIterable, Hashable, Sendable {
     case nameAscending
     case nameDescending
     case lastIncidentAscending
@@ -38,6 +38,24 @@ enum ClientSortOption {
             false
         case .createdAtDescending:
             true
+        }
+    }
+
+    /// User facing label for displaying the sort choice.
+    var title: String {
+        switch self {
+        case .nameAscending:
+            "Name \u2191"
+        case .nameDescending:
+            "Name \u2193"
+        case .lastIncidentAscending:
+            "Last Incident \u2191"
+        case .lastIncidentDescending:
+            "Last Incident \u2193"
+        case .createdAtAscending:
+            "Created \u2191"
+        case .createdAtDescending:
+            "Created \u2193"
         }
     }
 }

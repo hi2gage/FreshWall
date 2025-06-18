@@ -19,4 +19,9 @@ struct ClientSortOptionTests {
         #expect(ClientSortOption.createdAtAscending.isDescending == false)
         #expect(ClientSortOption.createdAtDescending.isDescending == true)
     }
+
+    @Test func titles() {
+        #expect(ClientSortOption.nameAscending.title == "Name \u2191")
+        #expect(ClientSortOption.nameDescending.title == "Name \u2193")
+    }
 }

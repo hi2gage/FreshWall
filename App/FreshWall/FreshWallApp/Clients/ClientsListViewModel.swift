@@ -16,6 +16,8 @@ final class ClientsListViewModel {
 
     var isAscending: Bool { sort.isAscending }
 
+    var sortOption: ClientSortOption = .lastIncidentDescending
+
     private let clientService: ClientServiceProtocol
     private let incidentService: IncidentServiceProtocol
 
@@ -27,7 +29,7 @@ final class ClientsListViewModel {
 
     /// Loads clients from the service.
     func loadClients() async {
-        clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+        clients = await (try? clientService.fetchClients(sortedBy: sortOption)) ?? []
     }
 
     /// Loads incidents from the service.
