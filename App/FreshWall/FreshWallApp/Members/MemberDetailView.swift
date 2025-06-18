@@ -1,5 +1,5 @@
-import SwiftUI
 import FirebaseFirestore
+import SwiftUI
 
 /// A view displaying detailed information for a specific team member.
 /// A view displaying detailed information for a specific team member.
