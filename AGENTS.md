@@ -20,7 +20,7 @@ AI agents should understand and respect the separation between frontend (Swift c
 │   └── FreshWall/          # Xcode project, app code, UI, view models, and model definitions
 │       ├── FreshWallApp/   # Main app target
 │       ├── FreshWallTests/ # Unit and UI tests
-│       └── *.xcodeproj     # Xcode project
+│       └── FreshWall.xcodeproj     # Xcode project
 │
 ├── Firebase/               # Firebase backend (Cloud Functions, Firestore rules)
 │   ├── functions/          # Cloud Functions (TypeScript, Node.js v18+)
