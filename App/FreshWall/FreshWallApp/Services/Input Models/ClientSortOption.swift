@@ -57,9 +57,9 @@ enum ClientSortOption: CaseIterable, Hashable, Sendable {
     var symbolName: String {
         switch self {
         case .nameAscending, .lastIncidentAscending, .createdAtAscending:
-            "arrowtriangle.up.fill"
+            "arrow.up"
         case .nameDescending, .lastIncidentDescending, .createdAtDescending:
-            "arrowtriangle.down.fill"
+            "arrow.down"
         }
     }
 }
