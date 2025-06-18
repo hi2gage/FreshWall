@@ -57,6 +57,9 @@ AI agents should understand and respect the separation between frontend (Swift c
 - Model Types must conform to `Codable` and reflect Firestore schema
 - Use `@DocumentID var id: String?` where needed for Firestore ID binding
 - Do not use `import FirebaseFirestoreSwift`, it's no longer used. So use `import FirebaseFirestore`
+- Whenever you reference Firestore types such as `Firestore.firestore` you must add `@preconcurrency import FirebaseFirestore`
+- Whenever you reference `FirebaseAuth` you must add `@preconcurrency import FirebaseAuth`
+- Whenever you reference `Functions` you must add `@preconcurrency import FirebaseFunctions`
 - Do not use `PreviewProvider` for SwiftUi previews. Use `#Preview`. 
   - Also add the `FreshWallPreview {}` view builder around all SwiftUI previews
 - All ViewModels @Observable and @MainActor

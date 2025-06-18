@@ -10,6 +10,8 @@ protocol IncidentServiceProtocol: Sendable {
     func addIncident(_ incident: IncidentDTO) async throws
     /// Adds a new incident using an input value object.
     func addIncident(_ input: AddIncidentInput) async throws
+    /// Updates an existing incident using an input value object.
+    func updateIncident(_ incidentId: String, with input: UpdateIncidentInput) async throws
 }
 
 /// Service to fetch and manage Incident entities from Firestore.
@@ -97,6 +99,62 @@ struct IncidentService: IncidentServiceProtocol {
         )
         try await newDoc.setData(from: newIncident)
         try await fetchIncidents()
+    }
+
+    /// Updates an existing incident document in Firestore.
+    func updateIncident(_ incidentId: String, with input: UpdateIncidentInput) async throws {
+        let teamId = session.teamId
+
+        let incidentRef = firestore
+            .collection("teams")
+            .document(teamId)
+            .collection("incidents")
+            .document(incidentId)
+
+        let clientRef = firestore
+            .collection("teams")
+            .document(teamId)
+            .collection("clients")
+            .document(input.clientId)
+
+        let uid = Auth.auth().currentUser?.uid ?? ""
+        let modifiedByRef = firestore
+            .collection("teams")
+            .document(teamId)
+            .collection("users")
+            .document(uid)
+
+        var data: [String: Any] = [
+            "clientRef": clientRef,
+            "description": input.description,
+            "area": input.area,
+            "startTime": Timestamp(date: input.startTime),
+            "endTime": Timestamp(date: input.endTime),
+            "billable": input.billable,
+            "status": input.status,
+            "lastModifiedBy": modifiedByRef,
+            "lastModifiedAt": FieldValue.serverTimestamp(),
+        ]
+
+        if let rate = input.rate {
+            data["rate"] = rate
+        } else {
+            data["rate"] = FieldValue.delete()
+        }
+
+        if let projectName = input.projectName {
+            data["projectName"] = projectName
+        } else {
+            data["projectName"] = FieldValue.delete()
+        }
+
+        if let materialsUsed = input.materialsUsed {
+            data["materialsUsed"] = materialsUsed
+        } else {
+            data["materialsUsed"] = FieldValue.delete()
+        }
+
+        try await incidentRef.updateData(data)
     }
 }
 

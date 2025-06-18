@@ -67,7 +67,11 @@ extension View {
                     )
                 )
             case let .incidentDetail(incident):
-                IncidentDetailView(incident: incident)
+                IncidentDetailView(
+                    incident: incident,
+                    incidentService: incidentService,
+                    clientService: clientService
+                )
             case .membersList:
                 MembersListView(service: memberService)
             case .addMember:
