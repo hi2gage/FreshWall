@@ -43,8 +43,8 @@ final class AddIncidentViewModel {
         self.clientService = clientService
     }
 
-    /// Saves the new incident via the service.
-    func save() async throws {
+    /// Saves the new incident via the service along with photo data.
+    func save(beforeImages: [Data], afterImages: [Data]) async throws {
         let areaValue = Double(areaText) ?? 0
         let rateValue = Double(rateText)
         let input = AddIncidentInput(
@@ -59,7 +59,11 @@ final class AddIncidentViewModel {
             status: status,
             materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed
         )
-        try await service.addIncident(input)
+        try await service.addIncident(
+            input,
+            beforeImages: beforeImages,
+            afterImages: afterImages
+        )
     }
 
     /// Loads available clients for the picker.

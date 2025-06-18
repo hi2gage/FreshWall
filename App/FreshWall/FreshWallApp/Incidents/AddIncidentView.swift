@@ -1,3 +1,4 @@
+import PhotosUI
 import SwiftUI
 
 /// View for adding a new incident, injecting a service conforming to `IncidentServiceProtocol`.
@@ -7,6 +8,10 @@ struct AddIncidentView: View {
     @Environment(RouterPath.self) private var routerPath
     @State var viewModel: AddIncidentViewModel
     private let addNewTag = "__ADD_NEW__"
+    @State private var beforePickerItems: [PhotosPickerItem] = []
+    @State private var afterPickerItems: [PhotosPickerItem] = []
+    @State private var beforeImages: [UIImage] = []
+    @State private var afterImages: [UIImage] = []
 
     /// Initializes the view with a view model.
     init(viewModel: AddIncidentViewModel) {
@@ -72,6 +77,44 @@ struct AddIncidentView: View {
                 TextEditor(text: $viewModel.materialsUsed)
                     .frame(minHeight: 80)
             }
+            if !beforeImages.isEmpty {
+                Section("Before Photos") {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(beforeImages.indices, id: \.self) { idx in
+                                Image(uiImage: beforeImages[idx])
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 100, height: 100)
+                                    .clipped()
+                            }
+                        }
+                    }
+                    .frame(height: 120)
+                }
+            }
+            PhotosPicker(selection: $beforePickerItems, matching: .images, photoLibrary: .shared()) {
+                Label("Add Before Photos", systemImage: "photo.on.rectangle")
+            }
+            if !afterImages.isEmpty {
+                Section("After Photos") {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(afterImages.indices, id: \.self) { idx in
+                                Image(uiImage: afterImages[idx])
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 100, height: 100)
+                                    .clipped()
+                            }
+                        }
+                    }
+                    .frame(height: 120)
+                }
+            }
+            PhotosPicker(selection: $afterPickerItems, matching: .images, photoLibrary: .shared()) {
+                Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
+            }
         }
         .navigationTitle("Add Incident")
         .toolbar {
@@ -79,7 +122,9 @@ struct AddIncidentView: View {
                 Button("Save") {
                     Task {
                         do {
-                            try await viewModel.save()
+                            let beforeData = beforeImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
+                            let afterData = afterImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
+                            try await viewModel.save(beforeImages: beforeData, afterImages: afterData)
                             dismiss()
                         } catch {
                             // Handle error if needed
@@ -92,6 +137,28 @@ struct AddIncidentView: View {
         .task {
             await viewModel.loadClients()
         }
+        .onChange(of: beforePickerItems) { _, newItems in
+            Task {
+                beforeImages = []
+                for item in newItems {
+                    if let data = try? await item.loadTransferable(type: Data.self),
+                       let image = UIImage(data: data) {
+                        beforeImages.append(image)
+                    }
+                }
+            }
+        }
+        .onChange(of: afterPickerItems) { _, newItems in
+            Task {
+                afterImages = []
+                for item in newItems {
+                    if let data = try? await item.loadTransferable(type: Data.self),
+                       let image = UIImage(data: data) {
+                        afterImages.append(image)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -100,8 +167,17 @@ struct AddIncidentView: View {
 private class PreviewIncidentService: IncidentServiceProtocol {
     func fetchIncidents() async throws -> [IncidentDTO] { [] }
     func addIncident(_: IncidentDTO) async throws {}
-    func addIncident(_: AddIncidentInput) async throws {}
-    func updateIncident(_: String, with _: UpdateIncidentInput) async throws {}
+    func addIncident(
+        _ : AddIncidentInput,
+        beforeImages _: [Data],
+        afterImages _: [Data]
+    ) async throws {}
+    func updateIncident(
+        _ : String,
+        with _: UpdateIncidentInput,
+        beforeImages _: [Data],
+        afterImages _: [Data]
+    ) async throws {}
 }
 
 @MainActor

@@ -8,20 +8,35 @@ protocol IncidentServiceProtocol: Sendable {
     func fetchIncidents() async throws -> [IncidentDTO]
     /// Adds a new incident via full Incident model.
     func addIncident(_ incident: IncidentDTO) async throws
-    /// Adds a new incident using an input value object.
-    func addIncident(_ input: AddIncidentInput) async throws
-    /// Updates an existing incident using an input value object.
-    func updateIncident(_ incidentId: String, with input: UpdateIncidentInput) async throws
+    /// Adds a new incident using an input value object and optional images.
+    func addIncident(
+        _ input: AddIncidentInput,
+        beforeImages: [Data],
+        afterImages: [Data]
+    ) async throws
+    /// Updates an existing incident using an input value object and optional images.
+    func updateIncident(
+        _ incidentId: String,
+        with input: UpdateIncidentInput,
+        beforeImages: [Data],
+        afterImages: [Data]
+    ) async throws
 }
 
 /// Service to fetch and manage Incident entities from Firestore.
 struct IncidentService: IncidentServiceProtocol {
     private let firestore: Firestore
+    private let storage: StorageServiceProtocol
     private let session: UserSession
 
     /// Initializes the service with a `Firestore` instance and `UserSession` for team context.
-    init(firestore: Firestore, session: UserSession) {
+    init(
+        firestore: Firestore,
+        storage: StorageServiceProtocol = StorageService(),
+        session: UserSession
+    ) {
         self.firestore = firestore
+        self.storage = storage
         self.session = session
     }
 
@@ -57,8 +72,12 @@ struct IncidentService: IncidentServiceProtocol {
         try await newDoc.setData(from: newIncident)
     }
 
-    /// Adds a new incident using an input value object.
-    func addIncident(_ input: AddIncidentInput) async throws {
+    /// Adds a new incident using an input value object and optional images.
+    func addIncident(
+        _ input: AddIncidentInput,
+        beforeImages: [Data],
+        afterImages: [Data]
+    ) async throws {
         let teamId = session.teamId
 
         let incidentsRef = firestore
@@ -77,6 +96,20 @@ struct IncidentService: IncidentServiceProtocol {
             .document(teamId)
             .collection("users")
             .document(uid)
+        var beforeUrls: [String] = []
+        for data in beforeImages {
+            let path = "teams/\(teamId)/incidents/\(newDoc.documentID)/before/\(UUID().uuidString).jpg"
+            let url = try await storage.uploadData(data, to: path)
+            beforeUrls.append(url)
+        }
+
+        var afterUrls: [String] = []
+        for data in afterImages {
+            let path = "teams/\(teamId)/incidents/\(newDoc.documentID)/after/\(UUID().uuidString).jpg"
+            let url = try await storage.uploadData(data, to: path)
+            afterUrls.append(url)
+        }
+
         let newIncident = IncidentDTO(
             id: newDoc.documentID,
             clientRef: clientRef,
@@ -86,8 +119,8 @@ struct IncidentService: IncidentServiceProtocol {
             createdAt: Timestamp(date: Date()),
             startTime: Timestamp(date: input.startTime),
             endTime: Timestamp(date: input.endTime),
-            beforePhotoUrls: [],
-            afterPhotoUrls: [],
+            beforePhotoUrls: beforeUrls,
+            afterPhotoUrls: afterUrls,
             createdBy: createdByRef,
             lastModifiedBy: nil,
             lastModifiedAt: nil,
@@ -102,7 +135,12 @@ struct IncidentService: IncidentServiceProtocol {
     }
 
     /// Updates an existing incident document in Firestore.
-    func updateIncident(_ incidentId: String, with input: UpdateIncidentInput) async throws {
+    func updateIncident(
+        _ incidentId: String,
+        with input: UpdateIncidentInput,
+        beforeImages: [Data],
+        afterImages: [Data]
+    ) async throws {
         let teamId = session.teamId
 
         let incidentRef = firestore
@@ -152,6 +190,26 @@ struct IncidentService: IncidentServiceProtocol {
             data["materialsUsed"] = materialsUsed
         } else {
             data["materialsUsed"] = FieldValue.delete()
+        }
+
+        var newBeforeUrls: [String] = []
+        for image in beforeImages {
+            let path = "teams/\(teamId)/incidents/\(incidentId)/before/\(UUID().uuidString).jpg"
+            let url = try await storage.uploadData(image, to: path)
+            newBeforeUrls.append(url)
+        }
+        if !newBeforeUrls.isEmpty {
+            data["beforePhotoUrls"] = FieldValue.arrayUnion(newBeforeUrls)
+        }
+
+        var newAfterUrls: [String] = []
+        for image in afterImages {
+            let path = "teams/\(teamId)/incidents/\(incidentId)/after/\(UUID().uuidString).jpg"
+            let url = try await storage.uploadData(image, to: path)
+            newAfterUrls.append(url)
+        }
+        if !newAfterUrls.isEmpty {
+            data["afterPhotoUrls"] = FieldValue.arrayUnion(newAfterUrls)
         }
 
         try await incidentRef.updateData(data)
