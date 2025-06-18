@@ -12,22 +12,23 @@ import * as admin from "firebase-admin";
 
 admin.initializeApp();
 
-export { joinTeamCreateUser } from "./signup/joinTeamCreateUser";
 export { createTeamCreateUser } from "./signup/createTeamCreateUser";
+export { joinTeamCreateUser } from "./signup/joinTeamCreateUser";
+
 // Trigger to update client document with latest incident timestamp when a new incident is written
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
 
 export const updateClientLastIncident = onDocumentWritten(
-  "teams/{teamId}/clients/{clientId}/incidents/{incidentId}",
-  async (event) => {
-    const { teamId, clientId } = event.params;
-    const clientRef = admin
-      .firestore()
-      .collection("teams")
-      .doc(teamId)
-      .collection("clients")
-      .doc(clientId);
-    const now = admin.firestore.Timestamp.now();
-    await clientRef.update({ lastIncidentAt: now });
-  }
+	"teams/{teamId}/clients/{clientId}/incidents/{incidentId}",
+	async (event) => {
+		const { teamId, clientId } = event.params;
+		const clientRef = admin
+			.firestore()
+			.collection("teams")
+			.doc(teamId)
+			.collection("clients")
+			.doc(clientId);
+		const now = admin.firestore.Timestamp.now();
+		await clientRef.update({ lastIncidentAt: now });
+	},
 );
