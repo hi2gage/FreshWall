@@ -15,13 +15,11 @@ struct IncidentDetailView: View {
     }
 
     /// Reloads the incident after editing.
-    private func reloadIncident() {
-        Task {
-            guard let id = incident.id else { return }
-            let updated = await (try? incidentService.fetchIncidents()) ?? []
-            if let match = updated.first(where: { $0.id == id }) {
-                incident = match
-            }
+    private func reloadIncident() async {
+        guard let id = incident.id else { return }
+        let updated = await (try? incidentService.fetchIncidents()) ?? []
+        if let match = updated.first(where: { $0.id == id }) {
+            incident = match
         }
     }
 
@@ -172,7 +170,7 @@ struct IncidentDetailView: View {
                 Button("Edit") { showingEdit = true }
             }
         }
-        .sheet(isPresented: $showingEdit, onDismiss: reloadIncident) {
+        .asyncSheet(isPresented: $showingEdit, onDismiss: reloadIncident) {
             NavigationStack {
                 EditIncidentView(
                     viewModel: EditIncidentViewModel(

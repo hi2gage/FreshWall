@@ -20,13 +20,11 @@ struct ClientDetailView: View {
     }
 
     /// Reloads the client data after editing.
-    private func reloadClient() {
-        Task {
-            guard let id = client.id else { return }
-            let updatedClients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
-            if let updated = updatedClients.first(where: { $0.id == id }) {
-                client = updated
-            }
+    private func reloadClient() async {
+        guard let id = client.id else { return }
+        let updatedClients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+        if let updated = updatedClients.first(where: { $0.id == id }) {
+            client = updated
         }
     }
 
@@ -92,7 +90,7 @@ struct ClientDetailView: View {
                 Button("Edit") { showingEdit = true }
             }
         }
-        .sheet(isPresented: $showingEdit, onDismiss: reloadClient) {
+        .asyncSheet(isPresented: $showingEdit, onDismiss: reloadClient) {
             NavigationStack {
                 EditClientView(
                     viewModel: EditClientViewModel(client: client, service: clientService)
