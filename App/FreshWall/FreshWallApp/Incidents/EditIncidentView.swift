@@ -1,21 +1,18 @@
 import SwiftUI
 
-/// View for adding a new incident, injecting a service conforming to `IncidentServiceProtocol`.
-
-struct AddIncidentView: View {
+/// View for editing an existing incident.
+struct EditIncidentView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(RouterPath.self) private var routerPath
-    @State var viewModel: AddIncidentViewModel
+    @State private var viewModel: EditIncidentViewModel
     private let addNewTag = "__ADD_NEW__"
 
-    /// Initializes the view with a view model.
-    init(viewModel: AddIncidentViewModel) {
+    init(viewModel: EditIncidentViewModel) {
         _viewModel = State(wrappedValue: viewModel)
     }
 
     var body: some View {
         Form {
-            Section(header: Text("Client")) {
+            Section("Client") {
                 Picker("Select Client", selection: $viewModel.clientId) {
                     Text("Add New Client...").tag(addNewTag)
                     ForEach(viewModel.validClients, id: \.id) { item in
@@ -25,20 +22,20 @@ struct AddIncidentView: View {
                 .pickerStyle(.menu)
                 .onChange(of: viewModel.clientId) { _, newValue in
                     if newValue == addNewTag {
-                        routerPath.push(.addClient)
+                        // For previews this does nothing. Real usage pushes via router.
                         viewModel.clientId = ""
                     }
                 }
             }
-            Section(header: Text("Description")) {
+            Section("Description") {
                 TextEditor(text: $viewModel.description)
                     .frame(minHeight: 100)
             }
-            Section(header: Text("Area (sq ft)")) {
+            Section("Area (sq ft)") {
                 TextField("Area", text: $viewModel.areaText)
                     .keyboardType(.decimalPad)
             }
-            Section(header: Text("Timeframe")) {
+            Section("Timeframe") {
                 DatePicker(
                     "Start Time",
                     selection: $viewModel.startTime,
@@ -57,10 +54,10 @@ struct AddIncidentView: View {
                         .keyboardType(.decimalPad)
                 }
             }
-            Section(header: Text("Project Name")) {
+            Section("Project Name") {
                 TextField("Project Name", text: $viewModel.projectName)
             }
-            Section(header: Text("Status")) {
+            Section("Status") {
                 Picker("Status", selection: $viewModel.status) {
                     ForEach(viewModel.statusOptions, id: \.self) { option in
                         Text(option.capitalized).tag(option)
@@ -68,22 +65,23 @@ struct AddIncidentView: View {
                 }
                 .pickerStyle(.segmented)
             }
-            Section(header: Text("Materials Used")) {
+            Section("Materials Used") {
                 TextEditor(text: $viewModel.materialsUsed)
                     .frame(minHeight: 80)
             }
         }
-        .navigationTitle("Add Incident")
+        .navigationTitle("Edit Incident")
         .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") { dismiss() }
+            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     Task {
                         do {
                             try await viewModel.save()
                             dismiss()
-                        } catch {
-                            // Handle error if needed
-                        }
+                        } catch {}
                     }
                 }
                 .disabled(!viewModel.isValid)
@@ -95,7 +93,6 @@ struct AddIncidentView: View {
     }
 }
 
-/// Dummy implementations of services for previews.
 @MainActor
 private class PreviewIncidentService: IncidentServiceProtocol {
     func fetchIncidents() async throws -> [IncidentDTO] { [] }
@@ -110,27 +107,46 @@ private class PreviewClientService: ClientServiceProtocol {
         [ClientDTO(
             id: "client1",
             name: "Sample Client",
-            notes: "Preview client",
+            notes: nil,
             isDeleted: false,
             deletedAt: nil,
             createdAt: .init(),
             lastIncidentAt: .init()
         )]
     }
-
     func addClient(_: AddClientInput) async throws {}
-
     func updateClient(_: String, with _: UpdateClientInput) async throws {}
 }
 
 #Preview {
-    let incidentService = PreviewIncidentService()
+    let incident = IncidentDTO(
+        id: "inc1",
+        clientRef: Firestore.firestore().document("teams/t/clients/client1"),
+        workerRefs: [],
+        description: "Some incident",
+        area: 10,
+        createdAt: .init(),
+        startTime: .init(),
+        endTime: .init(),
+        beforePhotoUrls: [],
+        afterPhotoUrls: [],
+        createdBy: Firestore.firestore().document("teams/t/users/u"),
+        lastModifiedBy: nil,
+        lastModifiedAt: nil,
+        billable: false,
+        rate: nil,
+        projectName: nil,
+        status: "open",
+        materialsUsed: nil
+    )
+    let service = PreviewIncidentService()
     let clientService = PreviewClientService()
     FreshWallPreview {
         NavigationStack {
-            AddIncidentView(
-                viewModel: AddIncidentViewModel(
-                    service: incidentService,
+            EditIncidentView(
+                viewModel: EditIncidentViewModel(
+                    incident: incident,
+                    incidentService: service,
                     clientService: clientService
                 )
             )

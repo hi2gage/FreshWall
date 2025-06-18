@@ -3,7 +3,27 @@ import SwiftUI
 
 /// A view displaying detailed information for a specific incident.
 struct IncidentDetailView: View {
-    let incident: IncidentDTO
+    @State private var incident: IncidentDTO
+    let incidentService: IncidentServiceProtocol
+    let clientService: ClientServiceProtocol
+    @State private var showingEdit = false
+
+    init(incident: IncidentDTO, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
+        _incident = State(wrappedValue: incident)
+        self.incidentService = incidentService
+        self.clientService = clientService
+    }
+
+    /// Reloads the incident after editing.
+    private func reloadIncident() {
+        Task {
+            guard let id = incident.id else { return }
+            let updated = await (try? incidentService.fetchIncidents()) ?? []
+            if let match = updated.first(where: { $0.id == id }) {
+                incident = match
+            }
+        }
+    }
 
     var body: some View {
         List {
@@ -147,6 +167,22 @@ struct IncidentDetailView: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Incident Details")
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Edit") { showingEdit = true }
+            }
+        }
+        .sheet(isPresented: $showingEdit, onDismiss: reloadIncident) {
+            NavigationStack {
+                EditIncidentView(
+                    viewModel: EditIncidentViewModel(
+                        incident: incident,
+                        incidentService: incidentService,
+                        clientService: clientService
+                    )
+                )
+            }
+        }
     }
 }
 
