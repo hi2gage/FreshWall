@@ -14,7 +14,7 @@ protocol ClientsRepository {
     func addClient(_ input: AddClientInput) async throws
 }
 
-struct DefualtClientsRepository: ClientsRepository {
+struct DefaultClientsRepository: ClientsRepository {
     let client: ClientServiceProtocol
 
     func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO] {
