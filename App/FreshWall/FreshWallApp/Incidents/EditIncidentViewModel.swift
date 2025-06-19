@@ -1,6 +1,8 @@
 import FirebaseFirestore
 import Foundation
 import Observation
+import PhotosUI
+import UIKit
 
 /// ViewModel for editing an existing incident.
 @MainActor
@@ -26,6 +28,14 @@ final class EditIncidentViewModel {
     var status: String
     /// Materials used description.
     var materialsUsed: String
+    /// Picker selections for before photos.
+    var beforePickerItems: [PhotosPickerItem] = []
+    /// Picker selections for after photos.
+    var afterPickerItems: [PhotosPickerItem] = []
+    /// Images chosen for before state.
+    var beforeImages: [UIImage] = []
+    /// Images chosen for after state.
+    var afterImages: [UIImage] = []
     /// Status options for selection.
     let statusOptions = ["open", "in_progress", "completed"]
     /// Loaded clients for selection.
