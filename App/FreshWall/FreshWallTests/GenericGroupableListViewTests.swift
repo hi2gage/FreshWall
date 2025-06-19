@@ -12,6 +12,8 @@ struct GenericGroupableListViewTests {
             groups: groups,
             title: "Test",
             groupOption: .constant(.none),
+            sortField: .constant(.date),
+            isAscending: .constant(true),
             destination: { _ in .clientsList },
             content: { _ in EmptyView() },
             plusButtonAction: {}
