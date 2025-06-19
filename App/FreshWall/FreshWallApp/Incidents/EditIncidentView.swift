@@ -11,6 +11,9 @@ struct EditIncidentView: View {
     @State private var afterPickerItems: [PhotosPickerItem] = []
     @State private var beforeImages: [UIImage] = []
     @State private var afterImages: [UIImage] = []
+    @State private var viewerIndex = 0
+    @State private var viewerSources: [PhotoSource] = []
+    @State private var showingViewer = false
 
     init(viewModel: EditIncidentViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -75,16 +78,60 @@ struct EditIncidentView: View {
                 TextEditor(text: $viewModel.materialsUsed)
                     .frame(minHeight: 80)
             }
-            if !beforeImages.isEmpty {
+            if !(viewModel.beforeUrls.isEmpty && beforeImages.isEmpty) {
                 Section("Before Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(beforeImages.indices, id: \.self) { idx in
-                                Image(uiImage: beforeImages[idx])
-                                    .resizable()
-                                    .scaledToFill()
+                            ForEach(Array(viewModel.beforeUrls.enumerated()), id: \.1) { idx, url in
+                                ZStack(alignment: .topTrailing) {
+                                    AsyncImage(url: URL(string: url)) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            ProgressView()
+                                        case let .success(image):
+                                            image.resizable().scaledToFill()
+                                        case .failure:
+                                            Image(systemName: "photo")
+                                        @unknown default:
+                                            EmptyView()
+                                        }
+                                    }
                                     .frame(width: 100, height: 100)
                                     .clipped()
+                                    .onTapGesture {
+                                        viewerSources = viewModel.beforeUrls.map { PhotoSource.url($0) } + beforeImages.map { PhotoSource.uiImage($0) }
+                                        viewerIndex = idx
+                                        showingViewer = true
+                                    }
+                                    Button {
+                                        viewModel.beforeUrls.remove(at: idx)
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(.white)
+                                            .padding(4)
+                                    }
+                                }
+                            }
+                            ForEach(beforeImages.indices, id: \.self) { idx in
+                                ZStack(alignment: .topTrailing) {
+                                    Image(uiImage: beforeImages[idx])
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 100, height: 100)
+                                        .clipped()
+                                        .onTapGesture {
+                                            viewerSources = viewModel.beforeUrls.map { PhotoSource.url($0) } + beforeImages.map { PhotoSource.uiImage($0) }
+                                            viewerIndex = viewModel.beforeUrls.count + idx
+                                            showingViewer = true
+                                        }
+                                    Button {
+                                        beforeImages.remove(at: idx)
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(.white)
+                                            .padding(4)
+                                    }
+                                }
                             }
                         }
                     }
@@ -94,16 +141,60 @@ struct EditIncidentView: View {
             PhotosPicker(selection: $beforePickerItems, matching: .images, photoLibrary: .shared()) {
                 Label("Add Before Photos", systemImage: "photo.on.rectangle")
             }
-            if !afterImages.isEmpty {
+            if !(viewModel.afterUrls.isEmpty && afterImages.isEmpty) {
                 Section("After Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(afterImages.indices, id: \.self) { idx in
-                                Image(uiImage: afterImages[idx])
-                                    .resizable()
-                                    .scaledToFill()
+                            ForEach(Array(viewModel.afterUrls.enumerated()), id: \.1) { idx, url in
+                                ZStack(alignment: .topTrailing) {
+                                    AsyncImage(url: URL(string: url)) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            ProgressView()
+                                        case let .success(image):
+                                            image.resizable().scaledToFill()
+                                        case .failure:
+                                            Image(systemName: "photo")
+                                        @unknown default:
+                                            EmptyView()
+                                        }
+                                    }
                                     .frame(width: 100, height: 100)
                                     .clipped()
+                                    .onTapGesture {
+                                        viewerSources = viewModel.afterUrls.map { PhotoSource.url($0) } + afterImages.map { PhotoSource.uiImage($0) }
+                                        viewerIndex = idx
+                                        showingViewer = true
+                                    }
+                                    Button {
+                                        viewModel.afterUrls.remove(at: idx)
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(.white)
+                                            .padding(4)
+                                    }
+                                }
+                            }
+                            ForEach(afterImages.indices, id: \.self) { idx in
+                                ZStack(alignment: .topTrailing) {
+                                    Image(uiImage: afterImages[idx])
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 100, height: 100)
+                                        .clipped()
+                                        .onTapGesture {
+                                            viewerSources = viewModel.afterUrls.map { PhotoSource.url($0) } + afterImages.map { PhotoSource.uiImage($0) }
+                                            viewerIndex = viewModel.afterUrls.count + idx
+                                            showingViewer = true
+                                        }
+                                    Button {
+                                        afterImages.remove(at: idx)
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(.white)
+                                            .padding(4)
+                                    }
+                                }
                             }
                         }
                     }
@@ -157,6 +248,9 @@ struct EditIncidentView: View {
                     }
                 }
             }
+        }
+        .fullScreenCover(isPresented: $showingViewer) {
+            PhotoViewer(sources: viewerSources, index: $viewerIndex)
         }
     }
 }
