@@ -59,8 +59,10 @@ extension View {
                 )
             case .incidentsList:
                 IncidentsListView(
-                    incidentService: incidentService,
-                    clientService: clientService
+                    viewModel: IncidentsListViewModel(
+                        incidentService: incidentService,
+                        clientService: clientService
+                    )
                 )
             case .addIncident:
                 AddIncidentView(
