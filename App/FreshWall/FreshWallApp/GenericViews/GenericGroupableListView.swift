@@ -12,6 +12,10 @@ struct GenericGroupableListView<
     var title: String
     /// Currently selected grouping option.
     @Binding var groupOption: GroupOption
+    /// Field used when sorting items when grouping is `.none`.
+    @Binding var sortField: IncidentSortField
+    /// Indicates whether sorting is ascending.
+    @Binding var isAscending: Bool
     /// Produces a navigation destination for a given item.
     var destination: (Item) -> RouterDestination
     /// Creates the content view for a given item.
@@ -26,6 +30,8 @@ struct GenericGroupableListView<
         groups: [(title: String?, items: [Item])],
         title: String,
         groupOption: Binding<GroupOption>,
+        sortField: Binding<IncidentSortField>,
+        isAscending: Binding<Bool>,
         destination: @escaping (Item) -> RouterDestination,
         content: @escaping (Item) -> Content,
         plusButtonAction: @escaping @MainActor () -> Void
@@ -33,6 +39,8 @@ struct GenericGroupableListView<
         self.groups = groups
         self.title = title
         _groupOption = groupOption
+        _sortField = sortField
+        _isAscending = isAscending
         self.destination = destination
         self.content = content
         self.plusButtonAction = plusButtonAction
@@ -91,6 +99,41 @@ struct GenericGroupableListView<
                                 if option == groupOption {
                                     Image(systemName: "checkmark")
                                 }
+                            }
+                        }
+                    }
+
+                    if groupOption == .none {
+                        Button {
+                            if sortField == .alphabetical {
+                                isAscending.toggle()
+                            } else {
+                                sortField = .alphabetical
+                                isAscending = true
+                            }
+                        } label: {
+                            let arrow = sortField == .alphabetical ? (isAscending ? "arrow.up" : "arrow.down") : ""
+                            Label("Alphabetical", systemImage: arrow)
+                        }
+
+                        Button {
+                            if sortField == .date {
+                                isAscending.toggle()
+                            } else {
+                                sortField = .date
+                                isAscending = true
+                            }
+                        } label: {
+                            let arrow = sortField == .date ? (isAscending ? "arrow.up" : "arrow.down") : ""
+                            Label("By Date", systemImage: arrow)
+                        }
+                    } else {
+                        Menu("Order") {
+                            Button { isAscending = true } label: {
+                                Label("Ascending", systemImage: isAscending ? "checkmark" : "")
+                            }
+                            Button { isAscending = false } label: {
+                                Label("Descending", systemImage: isAscending ? "" : "checkmark")
                             }
                         }
                     }

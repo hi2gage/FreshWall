@@ -11,6 +11,10 @@ final class IncidentsListViewModel {
     var clients: [ClientDTO] = []
     /// Selected grouping option for incidents.
     var groupOption: IncidentGroupOption = .none
+    /// Field used when sorting incidents.
+    var sortField: IncidentSortField = .date
+    /// Determines whether sorting is ascending or descending.
+    var isAscending = false
 
     private let service: IncidentServiceProtocol
     private let clientService: ClientServiceProtocol
@@ -39,18 +43,22 @@ final class IncidentsListViewModel {
     func groupedIncidents() -> [(title: String?, items: [IncidentDTO])] {
         switch groupOption {
         case .none:
-            return [(nil, incidents)]
+            let sorted = sort(incidents)
+            return [(nil, sorted)]
         case .client:
             let groups = Dictionary(grouping: incidents) { incident in
                 incident.clientRef.documentID
             }
-            return groups.map { key, value in
-                let name = clients.first { $0.id == key }?.name ?? "Unknown"
-                return (title: name, items: value)
-            }
-            .sorted { lhs, rhs in
-                (lhs.title ?? "") < (rhs.title ?? "")
-            }
+            return groups
+                .map { key, value in
+                    let name = clients.first { $0.id == key }?.name ?? "Unknown"
+                    return (title: name, items: sort(value))
+                }
+                .sorted { lhs, rhs in
+                    let lhsName = lhs.title ?? ""
+                    let rhsName = rhs.title ?? ""
+                    return isAscending ? lhsName < rhsName : lhsName > rhsName
+                }
         case .date:
             let dayGroups = Dictionary(grouping: incidents) { incident in
                 Calendar.current.startOfDay(for: incident.startTime.dateValue())
@@ -62,9 +70,7 @@ final class IncidentsListViewModel {
                 .map { date, value in
                     (
                         title: formatter.string(from: date),
-                        items: value.sorted { lhs, rhs in
-                            lhs.startTime.dateValue() < rhs.startTime.dateValue()
-                        }
+                        items: sort(value)
                     )
                 }
                 .sorted { lhs, rhs in
@@ -72,8 +78,34 @@ final class IncidentsListViewModel {
                         let lhsDate = formatter.date(from: lhs.title ?? ""),
                         let rhsDate = formatter.date(from: rhs.title ?? "")
                     else { return false }
-                    return lhsDate < rhsDate
+                    return isAscending ? lhsDate < rhsDate : lhsDate > rhsDate
                 }
+        }
+    }
+
+    /// Sorts incidents using the current sort field and direction.
+    private func sort(_ items: [IncidentDTO]) -> [IncidentDTO] {
+        switch sortField {
+        case .alphabetical:
+            return items.sorted { lhs, rhs in
+                let lhsDesc = lhs.description
+                let rhsDesc = rhs.description
+                if isAscending {
+                    return lhsDesc < rhsDesc
+                } else {
+                    return lhsDesc > rhsDesc
+                }
+            }
+        case .date:
+            return items.sorted { lhs, rhs in
+                let lhsDate = lhs.startTime.dateValue()
+                let rhsDate = rhs.startTime.dateValue()
+                if isAscending {
+                    return lhsDate < rhsDate
+                } else {
+                    return lhsDate > rhsDate
+                }
+            }
         }
     }
 }

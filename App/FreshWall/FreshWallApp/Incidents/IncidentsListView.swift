@@ -16,6 +16,8 @@ struct IncidentsListView: View {
             groups: viewModel.groupedIncidents(),
             title: "Incidents",
             groupOption: $viewModel.groupOption,
+            sortField: $viewModel.sortField,
+            isAscending: $viewModel.isAscending,
             destination: { incident in .incidentDetail(incident: incident) },
             content: { incident in
                 IncidentListCell(incident: incident)

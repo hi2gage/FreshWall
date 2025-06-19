@@ -53,6 +53,7 @@ struct IncidentsListViewModelTests {
             ClientDTO(id: "b", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
         ]
 
+        vm.isAscending = true
         let grouped = vm.groupedIncidents()
         #expect(grouped.count == 2)
         #expect(grouped[0].title == "A")
@@ -105,6 +106,7 @@ struct IncidentsListViewModelTests {
         second.endTime = Timestamp(date: nextDay)
         vm.incidents = [first, second]
         vm.groupOption = .date
+        vm.isAscending = true
 
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -116,5 +118,83 @@ struct IncidentsListViewModelTests {
         #expect(groups[0].items.count == 1)
         #expect(groups[1].title == formatter.string(from: Calendar.current.startOfDay(for: nextDay)))
         #expect(groups[1].items.count == 1)
+    }
+
+    @Test func sortAlphabeticalAscending() {
+        let service = MockService()
+        let clientService = MockClientService()
+        let vm = IncidentsListViewModel(incidentService: service, clientService: clientService)
+        let clientRef = Firestore.firestore().document("teams/t/clients/a")
+        var first = IncidentDTO(
+            id: "1",
+            clientRef: clientRef,
+            workerRefs: [],
+            description: "B",
+            area: 1,
+            createdAt: .init(),
+            startTime: .init(),
+            endTime: .init(),
+            beforePhotoUrls: [],
+            afterPhotoUrls: [],
+            createdBy: Firestore.firestore().document("teams/t/users/u"),
+            lastModifiedBy: nil,
+            lastModifiedAt: nil,
+            billable: false,
+            rate: nil,
+            projectName: nil,
+            status: "open",
+            materialsUsed: nil
+        )
+        var second = first
+        second.id = "2"
+        second.description = "A"
+        vm.groupOption = .none
+        vm.sortField = .alphabetical
+        vm.isAscending = true
+        vm.incidents = [first, second]
+
+        let groups = vm.groupedIncidents()
+        #expect(groups.first?.items.first?.description == "A")
+    }
+
+    @Test func sortByDateDescendingGroupDate() {
+        let service = MockService()
+        let clientService = MockClientService()
+        let vm = IncidentsListViewModel(incidentService: service, clientService: clientService)
+        let clientRef = Firestore.firestore().document("teams/t/clients/a")
+        let baseDate = Date()
+        let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: baseDate)!
+        var first = IncidentDTO(
+            id: "1",
+            clientRef: clientRef,
+            workerRefs: [],
+            description: "d",
+            area: 1,
+            createdAt: Timestamp(date: baseDate),
+            startTime: Timestamp(date: baseDate),
+            endTime: Timestamp(date: baseDate),
+            beforePhotoUrls: [],
+            afterPhotoUrls: [],
+            createdBy: Firestore.firestore().document("teams/t/users/u"),
+            lastModifiedBy: nil,
+            lastModifiedAt: nil,
+            billable: false,
+            rate: nil,
+            projectName: nil,
+            status: "open",
+            materialsUsed: nil
+        )
+        var second = first
+        second.id = "2"
+        second.startTime = Timestamp(date: nextDay)
+        second.createdAt = Timestamp(date: nextDay)
+        second.endTime = Timestamp(date: nextDay)
+        vm.groupOption = .date
+        vm.isAscending = false
+        vm.incidents = [first, second]
+
+        let groups = vm.groupedIncidents()
+        #expect(groups.first?.title != groups.last?.title)
+        #expect(groups.first?.items.first?.startTime.dateValue() == nextDay)
     }
 }
