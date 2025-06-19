@@ -68,30 +68,34 @@ struct IncidentsListView: View {
     }
 }
 
+@MainActor
+private class PreviewIncidentService: IncidentServiceProtocol {
+    func fetchIncidents() async throws -> [IncidentDTO] { [] }
+    func addIncident(_: IncidentDTO) async throws {}
+    func addIncident(_: AddIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
+    func updateIncident(_: String, with _: UpdateIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
+}
+
+@MainActor
+private class PreviewClientService: ClientServiceProtocol {
+    func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] {
+        [ClientDTO(
+            id: "client1",
+            name: "Sample Client",
+            notes: "Preview client",
+            isDeleted: false,
+            deletedAt: nil,
+            createdAt: .init(),
+            lastIncidentAt: .init()
+        )]
+    }
+
+    func addClient(_: AddClientInput) async throws {}
+
+    func updateClient(_: String, with _: UpdateClientInput) async throws {}
+}
+
 #Preview {
-    @MainActor class PreviewIncidentService: IncidentServiceProtocol {
-        func fetchIncidents() async throws -> [IncidentDTO] { [] }
-        func addIncident(_: IncidentDTO) async throws {}
-        func addIncident(_ : AddIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
-        func updateIncident(_ : String, with _: UpdateIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
-    }
-
-    @MainActor class PreviewClientService: ClientServiceProtocol {
-        func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] {
-            [ClientDTO(
-                id: "client1",
-                name: "Sample Client",
-                notes: nil,
-                isDeleted: false,
-                deletedAt: nil,
-                createdAt: .init(),
-                lastIncidentAt: .init()
-            )]
-        }
-        func addClient(_: AddClientInput) async throws {}
-        func updateClient(_: String, with _: UpdateClientInput) async throws {}
-    }
-
     let incidentService = PreviewIncidentService()
     let clientService = PreviewClientService()
     FreshWallPreview {

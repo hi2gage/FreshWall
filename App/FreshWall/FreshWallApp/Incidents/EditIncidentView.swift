@@ -162,6 +162,26 @@ struct EditIncidentView: View {
 }
 
 @MainActor
+private class PreviewClientService: ClientServiceProtocol {
+    func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] {
+        [ClientDTO(
+            id: "client1",
+            name: "Sample Client",
+            notes: "Preview client",
+            isDeleted: false,
+            deletedAt: nil,
+            createdAt: .init(),
+            lastIncidentAt: .init()
+        )]
+    }
+
+    func addClient(_: AddClientInput) async throws {}
+
+    func updateClient(_: String, with _: UpdateClientInput) async throws {}
+}
+
+/// Dummy implementations of services for previews.
+@MainActor
 private class PreviewIncidentService: IncidentServiceProtocol {
     func fetchIncidents() async throws -> [IncidentDTO] { [] }
     func addIncident(_: IncidentDTO) async throws {}
@@ -176,23 +196,6 @@ private class PreviewIncidentService: IncidentServiceProtocol {
         beforeImages _: [Data],
         afterImages _: [Data]
     ) async throws {}
-}
-
-@MainActor
-private class PreviewClientService: ClientServiceProtocol {
-    func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] {
-        [ClientDTO(
-            id: "client1",
-            name: "Sample Client",
-            notes: nil,
-            isDeleted: false,
-            deletedAt: nil,
-            createdAt: .init(),
-            lastIncidentAt: .init()
-        )]
-    }
-    func addClient(_: AddClientInput) async throws {}
-    func updateClient(_: String, with _: UpdateClientInput) async throws {}
 }
 
 #Preview {
