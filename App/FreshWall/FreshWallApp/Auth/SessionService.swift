@@ -10,11 +10,22 @@
 import Foundation
 
 struct SessionService {
-    let firestore: Firestore = .firestore()
+    var firestore: Firestore {
+        Firestore.firestore()
+    }
 
-    /// Fetches the Firestore user record and team ID for the given Firebase user.
-    ///
-    /// - Parameter user: The authenticated Firebase user.
+    init() {
+        #if DEBUG
+        let settings = FirestoreSettings()
+        settings.host = "localhost:8080"
+        settings.isSSLEnabled = false
+        settings.isPersistenceEnabled = false
+        Firestore.firestore().settings = settings
+
+        Auth.auth().useEmulator(withHost: "localhost", port: 9099)
+        #endif
+    }
+
     func fetchUserRecord(for user: FirebaseAuth.User) async throws -> UserSession {
         let teamsSnapshot = try await firestore.collection("teams").getDocuments()
 
