@@ -107,41 +107,20 @@ struct GenericGroupableListView<
     @ViewBuilder
     private func groupingMenu() -> some View {
         Text("Group By")
-                .font(.caption)
-                .foregroundColor(.secondary)
-        // "None" grouping option
-        Button {
-            groupOption = nil
-        } label: {
-            Label {
-                Text("None")
-            } icon: {
-                if groupOption == nil {
-                    Image(systemName: "checkmark")
-                }
-            }
-        }
+            .font(.caption)
+            .foregroundColor(.secondary)
 
-        // Enum-based grouping options
-        ForEach(Array(GroupOption.allCases), id: \.self) { option in
-            Button {
-                groupOption = option
-            } label: {
-                Label {
-                    Text(option.rawValue)
-                } icon: {
-                    if groupOption == option {
-                        Image(systemName: "checkmark")
-                    }
-                }
+        Picker("Group By", selection: $groupOption) {
+            Text("None").tag(Optional<GroupOption>.none)
+            ForEach(Array(GroupOption.allCases), id: \.self) { option in
+                Text(option.rawValue).tag(Optional.some(option))
             }
         }
 
         Text("Order By")
-                .font(.caption)
-                .foregroundColor(.secondary)
+            .font(.caption)
+            .foregroundColor(.secondary)
 
-        // Sorting buttons (only when ungrouped)
         if groupOption == nil {
             Button {
                 if sortField == .alphabetical {
@@ -174,7 +153,6 @@ struct GenericGroupableListView<
                 Label("Order", systemImage: arrow)
             }
 
-            // Collapse/uncollapse all
             let allCollapsed = collapsedGroups.count == groups.count
             Button {
                 if allCollapsed {
