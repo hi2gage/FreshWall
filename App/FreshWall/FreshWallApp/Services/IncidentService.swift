@@ -83,8 +83,17 @@ struct IncidentService: IncidentServiceProtocol {
             .document(teamId)
             .collection("users")
             .document(uid)
-        let beforeUrls = try await photoService.uploadBeforePhotos(teamId: teamId, incidentId: newDoc.documentID, images: beforeImages)
-        let afterUrls = try await photoService.uploadAfterPhotos(teamId: teamId, incidentId: newDoc.documentID, images: afterImages)
+        let beforeUrls = try await photoService.uploadBeforePhotos(
+            teamId: teamId,
+            incidentId: newDoc.documentID,
+            images: beforeImages
+        )
+
+        let afterUrls = try await photoService.uploadAfterPhotos(
+            teamId: teamId,
+            incidentId: newDoc.documentID,
+            images: afterImages
+        )
 
         let newIncident = IncidentDTO(
             id: newDoc.documentID,
@@ -107,6 +116,7 @@ struct IncidentService: IncidentServiceProtocol {
             materialsUsed: input.materialsUsed
         )
         try await modelService.setIncident(newIncident, at: newDoc)
+        try await fetchIncidents()
     }
 
     /// Updates an existing incident document in Firestore.
@@ -161,32 +171,25 @@ struct IncidentService: IncidentServiceProtocol {
             data["materialsUsed"] = FieldValue.delete()
         }
 
-        let newBeforeUrls = try await photoService.uploadBeforePhotos(teamId: teamId, incidentId: incidentId, images: beforeImages)
+        let newBeforeUrls = try await photoService.uploadBeforePhotos(
+            teamId: teamId,
+            incidentId: incidentId,
+            images: beforeImages
+        )
         if !newBeforeUrls.isEmpty {
             data["beforePhotoUrls"] = FieldValue.arrayUnion(newBeforeUrls)
         }
 
-        let newAfterUrls = try await photoService.uploadAfterPhotos(teamId: teamId, incidentId: incidentId, images: afterImages)
+        let newAfterUrls = try await photoService.uploadAfterPhotos(
+            teamId: teamId,
+            incidentId: incidentId,
+            images: afterImages
+        )
         if !newAfterUrls.isEmpty {
             data["afterPhotoUrls"] = FieldValue.arrayUnion(newAfterUrls)
         }
 
         try await modelService.updateIncident(id: incidentId, teamId: teamId, data: data)
-
-        if !input.removeBeforeUrls.isEmpty {
-            try await modelService.updateIncident(
-                id: incidentId,
-                teamId: teamId,
-                data: ["beforePhotoUrls": FieldValue.arrayRemove(input.removeBeforeUrls)]
-            )
-        }
-        if !input.removeAfterUrls.isEmpty {
-            try await modelService.updateIncident(
-                id: incidentId,
-                teamId: teamId,
-                data: ["afterPhotoUrls": FieldValue.arrayRemove(input.removeAfterUrls)]
-            )
-        }
     }
 }
 

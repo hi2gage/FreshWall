@@ -26,10 +26,6 @@ final class EditIncidentViewModel {
     var status: String
     /// Materials used description.
     var materialsUsed: String
-    /// Existing before photo URLs that may be removed.
-    var beforeUrls: [String]
-    /// Existing after photo URLs that may be removed.
-    var afterUrls: [String]
     /// Status options for selection.
     let statusOptions = ["open", "in_progress", "completed"]
     /// Loaded clients for selection.
@@ -38,8 +34,6 @@ final class EditIncidentViewModel {
     private let incidentId: String
     private let service: IncidentServiceProtocol
     private let clientService: ClientServiceProtocol
-    private let originalBeforeUrls: [String]
-    private let originalAfterUrls: [String]
 
     /// Validation: requires a client and description.
     var isValid: Bool {
@@ -61,16 +55,10 @@ final class EditIncidentViewModel {
         projectName = incident.projectName ?? ""
         status = incident.status
         materialsUsed = incident.materialsUsed ?? ""
-        beforeUrls = incident.beforePhotoUrls
-        afterUrls = incident.afterPhotoUrls
-        originalBeforeUrls = incident.beforePhotoUrls
-        originalAfterUrls = incident.afterPhotoUrls
     }
 
     /// Saves the updated incident using the service along with new photos.
     func save(beforeImages: [Data], afterImages: [Data]) async throws {
-        let removeBefore = originalBeforeUrls.filter { !beforeUrls.contains($0) }
-        let removeAfter = originalAfterUrls.filter { !afterUrls.contains($0) }
         let input = UpdateIncidentInput(
             clientId: clientId.trimmingCharacters(in: .whitespaces),
             description: description,
@@ -81,9 +69,7 @@ final class EditIncidentViewModel {
             rate: Double(rateText),
             projectName: projectName.isEmpty ? nil : projectName,
             status: status,
-            materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed,
-            removeBeforeUrls: removeBefore,
-            removeAfterUrls: removeAfter
+            materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed
         )
         try await service.updateIncident(
             incidentId,

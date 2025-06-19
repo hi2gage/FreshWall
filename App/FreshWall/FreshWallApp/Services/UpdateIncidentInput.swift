@@ -23,36 +23,4 @@ struct UpdateIncidentInput: Sendable {
     let status: String
     /// Optional materials used description.
     let materialsUsed: String?
-    /// URLs of before photos to remove.
-    let removeBeforeUrls: [String]
-    /// URLs of after photos to remove.
-    let removeAfterUrls: [String]
-
-    init(
-        clientId: String,
-        description: String,
-        area: Double,
-        startTime: Date,
-        endTime: Date,
-        billable: Bool,
-        rate: Double?,
-        projectName: String?,
-        status: String,
-        materialsUsed: String?,
-        removeBeforeUrls: [String] = [],
-        removeAfterUrls: [String] = []
-    ) {
-        self.clientId = clientId
-        self.description = description
-        self.area = area
-        self.startTime = startTime
-        self.endTime = endTime
-        self.billable = billable
-        self.rate = rate
-        self.projectName = projectName
-        self.status = status
-        self.materialsUsed = materialsUsed
-        self.removeBeforeUrls = removeBeforeUrls
-        self.removeAfterUrls = removeAfterUrls
-    }
 }
