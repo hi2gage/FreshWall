@@ -69,4 +69,51 @@ struct IncidentsListViewModelTests {
         #expect(groups.count == 1)
         #expect(groups.first?.incidents.isEmpty == true)
     }
+
+    @Test func groupingByDate() {
+        let service = MockService()
+        let clientService = MockClientService()
+        let vm = IncidentsListViewModel(incidentService: service, clientService: clientService)
+        let clientRef = Firestore.firestore().document("teams/t/clients/a")
+        let baseDate = Date()
+        let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: baseDate)!
+        let first = IncidentDTO(
+            id: "1",
+            clientRef: clientRef,
+            workerRefs: [],
+            description: "d",
+            area: 1,
+            createdAt: Timestamp(date: baseDate),
+            startTime: Timestamp(date: baseDate),
+            endTime: Timestamp(date: baseDate),
+            beforePhotoUrls: [],
+            afterPhotoUrls: [],
+            createdBy: Firestore.firestore().document("teams/t/users/u"),
+            lastModifiedBy: nil,
+            lastModifiedAt: nil,
+            billable: false,
+            rate: nil,
+            projectName: nil,
+            status: "open",
+            materialsUsed: nil
+        )
+        var second = first
+        second.id = "2"
+        second.startTime = Timestamp(date: nextDay)
+        second.createdAt = Timestamp(date: nextDay)
+        second.endTime = Timestamp(date: nextDay)
+        vm.incidents = [first, second]
+        vm.groupOption = .date
+
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+
+        let groups = vm.groupedIncidents()
+        #expect(groups.count == 2)
+        #expect(groups[0].title == formatter.string(from: Calendar.current.startOfDay(for: baseDate)))
+        #expect(groups[0].items.count == 1)
+        #expect(groups[1].title == formatter.string(from: Calendar.current.startOfDay(for: nextDay)))
+        #expect(groups[1].items.count == 1)
+    }
 }
