@@ -12,48 +12,18 @@ struct IncidentsListView: View {
     }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                ForEach(viewModel.groupedIncidents(), id: \.title) { group in
-                    if let title = group.title, viewModel.groupOption != .none {
-                        Text(title)
-                            .font(.headline)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal)
-                    }
-                    ForEach(group.incidents) { incident in
-                        NavigationLink(value: RouterDestination.incidentDetail(incident: incident)) {
-                            IncidentListCell(incident: incident)
-                        }
-                        .buttonStyle(.plain)
-                        .padding(.horizontal)
-                    }
-                }
+        GenericGroupableListView(
+            groups: viewModel.groupedIncidents(),
+            title: "Incidents",
+            groupOption: $viewModel.groupOption,
+            destination: { incident in .incidentDetail(incident: incident) },
+            content: { incident in
+                IncidentListCell(incident: incident)
+            },
+            plusButtonAction: {
+                routerPath.push(.addIncident)
             }
-        }
-        .scrollIndicators(.hidden)
-        .navigationTitle("Incidents")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    viewModel.showingGroupDialog = true
-                } label: {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
-                }
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    routerPath.push(.addIncident)
-                } label: {
-                    Image(systemName: "plus")
-                }
-            }
-        }
-        .confirmationDialog("Group By", isPresented: $viewModel.showingGroupDialog) {
-            ForEach(IncidentGroupOption.allCases, id: \.self) { option in
-                Button(option.rawValue) { viewModel.groupOption = option }
-            }
-        }
+        )
         .task {
             await viewModel.loadIncidents()
             await viewModel.loadClients()
