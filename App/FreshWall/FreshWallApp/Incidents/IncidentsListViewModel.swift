@@ -50,6 +50,29 @@ final class IncidentsListViewModel {
             .sorted { lhs, rhs in
                 (lhs.title ?? "") < (rhs.title ?? "")
             }
+        case .date:
+            let dayGroups = Dictionary(grouping: incidents) { incident in
+                Calendar.current.startOfDay(for: incident.startTime.dateValue())
+            }
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .none
+            return dayGroups
+                .map { date, value in
+                    (
+                        title: formatter.string(from: date),
+                        items: value.sorted { lhs, rhs in
+                            lhs.startTime.dateValue() < rhs.startTime.dateValue()
+                        }
+                    )
+                }
+                .sorted { lhs, rhs in
+                    guard
+                        let lhsDate = formatter.date(from: lhs.title ?? ""),
+                        let rhsDate = formatter.date(from: rhs.title ?? "")
+                    else { return false }
+                    return lhsDate < rhsDate
+                }
         }
     }
 }
