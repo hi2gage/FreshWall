@@ -56,7 +56,9 @@ struct GenericGroupableListView<
                             withAnimation { toggleCollapse(index) }
                         } label: {
                             HStack {
-                                Image(systemName: collapsedGroups.contains(index) ? "chevron.right" : "chevron.down")
+                                Image(systemName: "chevron.right")
+                                    .rotationEffect(.degrees(collapsedGroups.contains(index) ? 0 : 90))
+                                    .animation(.easeInOut(duration: 0.2), value: collapsedGroups)
                                     .frame(width: 16, alignment: .leading)
                                 Text(title)
                             }
@@ -73,16 +75,20 @@ struct GenericGroupableListView<
                     }
 
                     if !collapsedGroups.contains(index) {
-                        ForEach(group.items) { item in
-                            NavigationLink(value: destination(item)) {
-                                content(item)
+                        VStack(spacing: 16) {
+                            ForEach(group.items) { item in
+                                NavigationLink(value: destination(item)) {
+                                    content(item)
+                                }
+                                .buttonStyle(.plain)
+                                .padding(.horizontal)
                             }
-                            .buttonStyle(.plain)
-                            .padding(.horizontal)
                         }
+                        .transition(.opacity)
                     }
                 }
             }
+            .animation(.easeInOut(duration: 0.2), value: collapsedGroups)
         }
         .scrollIndicators(.hidden)
         .navigationTitle(title)
