@@ -57,8 +57,8 @@ final class EditIncidentViewModel {
         materialsUsed = incident.materialsUsed ?? ""
     }
 
-    /// Saves the updated incident using the service.
-    func save() async throws {
+    /// Saves the updated incident using the service along with new photos.
+    func save(beforeImages: [Data], afterImages: [Data]) async throws {
         let input = UpdateIncidentInput(
             clientId: clientId.trimmingCharacters(in: .whitespaces),
             description: description,
@@ -71,7 +71,12 @@ final class EditIncidentViewModel {
             status: status,
             materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed
         )
-        try await service.updateIncident(incidentId, with: input)
+        try await service.updateIncident(
+            incidentId,
+            with: input,
+            beforeImages: beforeImages,
+            afterImages: afterImages
+        )
     }
 
     /// Loads available clients for selection.

@@ -8,8 +8,17 @@ struct EditIncidentViewModelTests {
         var updateArgs: (String, UpdateIncidentInput)?
         func fetchIncidents() async throws -> [IncidentDTO] { [] }
         func addIncident(_: IncidentDTO) async throws {}
-        func addIncident(_: AddIncidentInput) async throws {}
-        func updateIncident(_ id: String, with input: UpdateIncidentInput) async throws {
+        func addIncident(
+            _ : AddIncidentInput,
+            beforeImages _: [Data],
+            afterImages _: [Data]
+        ) async throws {}
+        func updateIncident(
+            _ id: String,
+            with input: UpdateIncidentInput,
+            beforeImages _: [Data],
+            afterImages _: [Data]
+        ) async throws {
             updateArgs = (id, input)
         }
     }
@@ -77,7 +86,7 @@ struct EditIncidentViewModelTests {
         )
         let vm = EditIncidentViewModel(incident: incident, incidentService: incidentService, clientService: clientService)
         vm.description = "new"
-        try await vm.save()
+        try await vm.save(beforeImages: [], afterImages: [])
         #expect(incidentService.updateArgs?.0 == "1")
         #expect(incidentService.updateArgs?.1.description == "new")
     }
