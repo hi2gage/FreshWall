@@ -6,11 +6,20 @@ import Observation
 final class IncidentsListViewModel {
     /// Incidents fetched from the service.
     var incidents: [IncidentDTO] = []
+    /// Clients used for grouping by client name.
+    var clients: [ClientDTO] = []
+    /// Selected grouping option for incidents.
+    var groupOption: IncidentGroupOption = .none
+    /// Indicates whether the grouping dialog is presented.
+    var showingGroupDialog = false
+
     private let service: IncidentServiceProtocol
+    private let clientService: ClientServiceProtocol
 
     /// Initializes the view model with a service conforming to `IncidentServiceProtocol`.
-    init(service: IncidentServiceProtocol) {
-        self.service = service
+    init(incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
+        service = incidentService
+        self.clientService = clientService
     }
 
     /// Loads incidents from the service.
@@ -24,11 +33,12 @@ final class IncidentsListViewModel {
     ///   - clients: All clients used to resolve names when grouping by client.
     /// - Returns: An array of tuples where the first value is an optional group
     ///   title and the second is the incidents for that group.
-    func groupedIncidents(
-        by option: IncidentGroupOption,
-        clients: [ClientDTO]
-    ) -> [(title: String?, incidents: [IncidentDTO])] {
-        switch option {
+    func loadClients() async {
+        clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+    }
+
+    func groupedIncidents() -> [(title: String?, incidents: [IncidentDTO])] {
+        switch groupOption {
         case .none:
             return [(nil, incidents)]
         case .client:
