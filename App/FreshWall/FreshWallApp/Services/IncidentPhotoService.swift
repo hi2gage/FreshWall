@@ -1,11 +1,21 @@
 import Foundation
 
-/// Handles Storage uploads for incident photos.
+/// Handles Firebase Storage uploads for incident photos.
+///
+/// The protocol is separate from ``IncidentServiceProtocol`` so that photo
+/// management can be mocked independently in tests.
 protocol IncidentPhotoServiceProtocol: Sendable {
+    /// Uploads the given images as "before" photos and returns their download
+    /// URLs.
     func uploadBeforePhotos(teamId: String, incidentId: String, images: [Data]) async throws -> [String]
+
+    /// Uploads the given images as "after" photos and returns their download
+    /// URLs.
     func uploadAfterPhotos(teamId: String, incidentId: String, images: [Data]) async throws -> [String]
 }
 
+/// Default ``IncidentPhotoServiceProtocol`` implementation using
+/// ``StorageService``.
 struct IncidentPhotoService: IncidentPhotoServiceProtocol {
     private let storage: StorageServiceProtocol
 
