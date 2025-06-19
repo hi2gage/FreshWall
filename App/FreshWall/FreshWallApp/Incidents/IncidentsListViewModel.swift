@@ -10,7 +10,7 @@ final class IncidentsListViewModel {
     /// Clients used for grouping by client name.
     var clients: [ClientDTO] = []
     /// Selected grouping option for incidents.
-    var groupOption: IncidentGroupOption = .none
+    var groupOption: IncidentGroupOption?
     /// Field used when sorting incidents.
     var sortField: IncidentSortField = .date
     /// Determines whether sorting is ascending or descending.
