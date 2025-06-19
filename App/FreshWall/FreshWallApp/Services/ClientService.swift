@@ -13,44 +13,26 @@ protocol ClientServiceProtocol: Sendable {
 
 /// Service to fetch and manage Client entities from Firestore.
 struct ClientService: ClientServiceProtocol {
-    private let firestore: Firestore
+    private let modelService: ClientModelServiceProtocol
     private let session: UserSession
 
     /// Initializes the service with a `Firestore` instance and `UserSession` for team context.
-    init(firestore: Firestore, session: UserSession) {
-        self.firestore = firestore
+    init(firestore: Firestore, modelService: ClientModelServiceProtocol? = nil, session: UserSession) {
+        self.modelService = modelService ?? ClientModelService(firestore: firestore)
         self.session = session
     }
 
     /// Fetches active clients for the current team from Firestore.
-    func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] {
+    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO] {
         let teamId = session.teamId
-
-        let snapshot = try await firestore
-            .collection("teams")
-            .document(teamId)
-            .collection("clients")
-//            .whereField("isDeleted", isEqualTo: false)
-//            .order(by: sortOption.field, descending: sortOption.isDescending)
-            .getDocuments()
-        print(snapshot)
-
-        let fetched: [ClientDTO] = try snapshot.documents.compactMap {
-            try $0.data(as: ClientDTO.self)
-        }
-
-        return fetched
+        return try await modelService.fetchClients(teamId: teamId, sortedBy: sortOption)
     }
 
     /// Adds a new client using an input value object.
     func addClient(_ input: AddClientInput) async throws {
         let teamId = session.teamId
 
-        let clientsRef = firestore
-            .collection("teams")
-            .document(teamId)
-            .collection("clients")
-        let newDoc = clientsRef.document()
+        let newDoc = modelService.newClientDocument(teamId: teamId)
         let newClient = ClientDTO(
             id: newDoc.documentID,
             name: input.name,
@@ -60,18 +42,14 @@ struct ClientService: ClientServiceProtocol {
             createdAt: Timestamp(date: Date()),
             lastIncidentAt: input.lastIncidentAt
         )
-        try newDoc.setData(from: newClient)
+        try await modelService.setClient(newClient, at: newDoc)
     }
 
     /// Updates an existing client document in Firestore.
     func updateClient(_ clientId: String, with input: UpdateClientInput) async throws {
         let teamId = session.teamId
 
-        let clientRef = firestore
-            .collection("teams")
-            .document(teamId)
-            .collection("clients")
-            .document(clientId)
+        let clientRef = modelService.clientDocument(teamId: teamId, clientId: clientId)
 
         var data: [String: Any] = ["name": input.name]
         if let notes = input.notes {
@@ -80,7 +58,7 @@ struct ClientService: ClientServiceProtocol {
             data["notes"] = FieldValue.delete()
         }
 
-        try await clientRef.updateData(data)
+        try await modelService.updateClient(id: clientId, teamId: teamId, data: data)
     }
 }
 

@@ -17,16 +17,49 @@ struct IncidentServiceCompositionTests {
         func uploadAfterPhotos(teamId _: String, incidentId _: String, images: [Data]) async throws -> [String] { images.map { _ in "after" } }
     }
 
+    final actor MockClientModel: ClientModelServiceProtocol {
+        var requested: (String, String)?
+        func fetchClients(teamId _: String, sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
+        func newClientDocument(teamId _: String) -> DocumentReference { Firestore.firestore().document("c") }
+        func setClient(_ client: ClientDTO, at _: DocumentReference) async throws {}
+        func updateClient(id _: String, teamId _: String, data _: [String : Any]) async throws {}
+        func clientDocument(teamId: String, clientId: String) -> DocumentReference {
+            requested = (teamId, clientId)
+            return Firestore.firestore().document("teams/\(teamId)/clients/\(clientId)")
+        }
+    }
+
+    final actor MockUserModel: UserModelServiceProtocol {
+        var requested: (String, String)?
+        func userDocument(teamId: String, userId: String) -> DocumentReference {
+            requested = (teamId, userId)
+            return Firestore.firestore().document("teams/\(teamId)/users/\(userId)")
+        }
+    }
+
     @Test func addIncidentDelegates() async throws {
         let model = MockModel()
         let photo = MockPhoto()
+        let clientModel = MockClientModel()
+        let userModel = MockUserModel()
         let session = UserSession(teamId: "t")
-        let service = IncidentService(firestore: Firestore.firestore(), modelService: model, photoService: photo, session: session)
+        let service = IncidentService(
+            firestore: Firestore.firestore(),
+            modelService: model,
+            photoService: photo,
+            clientModelService: clientModel,
+            userModelService: userModel,
+            session: session
+        )
         let input = AddIncidentInput(
             clientId: "c", description: "d", area: 1, startTime: .init(), endTime: .init(), billable: false, rate: nil, projectName: nil, status: "open", materialsUsed: nil
         )
         try await service.addIncident(input, beforeImages: [Data()], afterImages: [])
         let added = await model.added
+        let clientArgs = await clientModel.requested
+        let userArgs = await userModel.requested
         #expect(added?.beforePhotoUrls.first == "before")
+        #expect(clientArgs?.1 == "c")
+        #expect(userArgs?.0 == "t")
     }
 }
