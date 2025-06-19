@@ -22,6 +22,19 @@ protocol IncidentServiceProtocol: Sendable {
         afterImages: [Data]
     ) async throws
 }
+//
+//extension IncidentService {
+//    init(
+//        firestore: Firestore,
+//        session: UserSession
+//    ) {
+//        self.modelService = IncidentModelService(firestore: firestore)
+//        self.photoService = IncidentPhotoService()
+//        self.clientModelService = ClientModelService(firestore: firestore)
+//        self.userModelService = UserModelService(firestore: firestore)
+//        self.session = session
+//    }
+//}
 
 /// Service to fetch and manage Incident entities from Firestore.
 struct IncidentService: IncidentServiceProtocol {
@@ -33,17 +46,16 @@ struct IncidentService: IncidentServiceProtocol {
 
     /// Initializes the service with a `Firestore` instance and `UserSession` for team context.
     init(
-        firestore: Firestore,
-        modelService: IncidentModelServiceProtocol? = nil,
-        photoService: IncidentPhotoServiceProtocol? = nil,
-        clientModelService: ClientModelServiceProtocol? = nil,
-        userModelService: UserModelServiceProtocol? = nil,
+        modelService: IncidentModelServiceProtocol,
+        photoService: IncidentPhotoServiceProtocol,
+        clientModelService: ClientModelServiceProtocol,
+        userModelService: UserModelServiceProtocol,
         session: UserSession
     ) {
-        self.modelService = modelService ?? IncidentModelService(firestore: firestore)
-        self.photoService = photoService ?? IncidentPhotoService()
-        self.clientModelService = clientModelService ?? ClientModelService(firestore: firestore)
-        self.userModelService = userModelService ?? UserModelService(firestore: firestore)
+        self.modelService = modelService
+        self.photoService = photoService
+        self.clientModelService = clientModelService
+        self.userModelService = userModelService
         self.session = session
     }
 

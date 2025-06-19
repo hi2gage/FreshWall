@@ -17,8 +17,11 @@ struct ClientService: ClientServiceProtocol {
     private let session: UserSession
 
     /// Initializes the service with a `Firestore` instance and `UserSession` for team context.
-    init(firestore: Firestore, modelService: ClientModelServiceProtocol? = nil, session: UserSession) {
-        self.modelService = modelService ?? ClientModelService(firestore: firestore)
+    init(
+        modelService: ClientModelServiceProtocol,
+        session: UserSession
+    ) {
+        self.modelService = modelService
         self.session = session
     }
 
