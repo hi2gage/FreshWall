@@ -1,15 +1,30 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
-/// Handles Firestore reads and writes for clients.
+/// Handles Firestore reads and writes for `ClientDTO` models.
+///
+/// This service is intentionally low level and used by higher level client
+/// services to isolate Firestore calls.
 protocol ClientModelServiceProtocol: Sendable {
+    /// Fetch all non-deleted clients for the given team sorted by the supplied
+    /// option.
     func fetchClients(teamId: String, sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO]
+
+    /// Returns a new document reference for a client under the given team.
     func newClientDocument(teamId: String) -> DocumentReference
+
+    /// Writes a `ClientDTO` to the provided document reference.
     func setClient(_ client: ClientDTO, at ref: DocumentReference) async throws
+
+    /// Updates an existing client document with the supplied data.
     func updateClient(id: String, teamId: String, data: [String: Any]) async throws
+
+    /// Returns a reference to a specific client document.
     func clientDocument(teamId: String, clientId: String) -> DocumentReference
 }
 
+/// Concrete implementation of ``ClientModelServiceProtocol`` backed by
+/// ``Firestore``.
 struct ClientModelService: ClientModelServiceProtocol {
     private let firestore: Firestore
 

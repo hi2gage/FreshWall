@@ -1,14 +1,25 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
-/// Handles Firestore reads and writes for incidents.
+/// Handles Firestore reads and writes for ``IncidentDTO`` models.
+///
+/// Similar to ``ClientModelServiceProtocol`` this protocol isolates the
+/// low-level Firestore interactions from higher level services.
 protocol IncidentModelServiceProtocol: Sendable {
+    /// Fetch all incidents for the given team.
     func fetchIncidents(teamId: String) async throws -> [IncidentDTO]
+
+    /// Returns a new document reference for an incident.
     func newIncidentDocument(teamId: String) -> DocumentReference
+
+    /// Writes an ``IncidentDTO`` to a new document reference.
     func setIncident(_ incident: IncidentDTO, at ref: DocumentReference) async throws
+
+    /// Apply the provided data updates to an existing incident document.
     func updateIncident(id: String, teamId: String, data: [String: Any]) async throws
 }
 
+/// ``IncidentModelServiceProtocol`` implementation backed by ``Firestore``.
 struct IncidentModelService: IncidentModelServiceProtocol {
     private let firestore: Firestore
 
