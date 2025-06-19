@@ -1,12 +1,11 @@
-import FirebaseAuth
 @preconcurrency import FirebaseFirestore
 import Foundation
 
 /// Handles Firestore reads and writes for incidents.
 protocol IncidentModelServiceProtocol: Sendable {
     func fetchIncidents(teamId: String) async throws -> [IncidentDTO]
-    func setIncident(_ incident: IncidentDTO, at ref: DocumentReference) async throws
     func newIncidentDocument(teamId: String) -> DocumentReference
+    func setIncident(_ incident: IncidentDTO, at ref: DocumentReference) async throws
     func updateIncident(id: String, teamId: String, data: [String: Any]) async throws
 }
 
