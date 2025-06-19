@@ -8,6 +8,12 @@ struct MainAppView: View {
     private let sessionStore: AuthenticatedSessionStore
 
     private let clientService: ClientServiceProtocol
+
+    private let incidentModelService: IncidentModelServiceProtocol
+    private let incidentPhotoService: IncidentPhotoServiceProtocol
+    private let clientModelService: ClientModelServiceProtocol
+    private let userModelService: UserModelServiceProtocol
+
     private let incidentService: IncidentServiceProtocol
     private let memberService: MemberServiceProtocol
 
@@ -15,8 +21,25 @@ struct MainAppView: View {
         self.sessionStore = sessionStore
 
         let firestore = Firestore.firestore()
-        clientService = ClientService(firestore: firestore, session: sessionStore.session)
-        incidentService = IncidentService(firestore: firestore, session: sessionStore.session)
+
+        incidentModelService = IncidentModelService(firestore: firestore)
+        incidentPhotoService = IncidentPhotoService()
+        clientModelService = ClientModelService(firestore: firestore)
+        userModelService = UserModelService(firestore: firestore)
+
+        clientService = ClientService(
+            modelService: clientModelService,
+            session: sessionStore.session
+        )
+
+        incidentService = IncidentService(
+            modelService: incidentModelService,
+            photoService: incidentPhotoService,
+            clientModelService: clientModelService,
+            userModelService: userModelService,
+            session: sessionStore.session
+        )
+
         memberService = MemberService(firestore: firestore, session: sessionStore.session)
     }
 
