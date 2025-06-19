@@ -1,4 +1,4 @@
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
 import SwiftUI
 
 /// A view displaying detailed information for a specific incident.
@@ -6,6 +6,8 @@ struct IncidentDetailView: View {
     @State private var incident: IncidentDTO
     let incidentService: IncidentServiceProtocol
     let clientService: ClientServiceProtocol
+    @Environment(RouterPath.self) private var routerPath
+    @State private var client: ClientDTO?
     @State private var showingEdit = false
 
     init(incident: IncidentDTO, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
@@ -21,6 +23,13 @@ struct IncidentDetailView: View {
         if let match = updated.first(where: { $0.id == id }) {
             incident = match
         }
+        await loadClient()
+    }
+
+    /// Loads the client associated with this incident.
+    private func loadClient() async {
+        let clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+        client = clients.first { $0.id == incident.clientRef.documentID }
     }
 
     var body: some View {
@@ -148,20 +157,16 @@ struct IncidentDetailView: View {
                     .frame(height: 120)
                 }
             }
-//            Section("References") {
-//                HStack {
-//                    Text("Client Ref")
-//                    Spacer()
-//                    Text(incident.clientRef.documentID)
-//                }
-//                ForEach(incident.workerRefs, id: \.path) { ref in
-//                    HStack {
-//                        Text("Worker Ref")
-//                        Spacer()
-//                        Text(ref.documentID)
-//                    }
-//                }
-//            }
+            if let client {
+                Section("Client") {
+                    Button(client.name) {
+                        routerPath.push(.clientDetail(client: client))
+                    }
+                    if let notes = client.notes, !notes.isEmpty {
+                        Text(notes)
+                    }
+                }
+            }
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Incident Details")
@@ -180,6 +185,9 @@ struct IncidentDetailView: View {
                     )
                 )
             }
+        }
+        .task {
+            await loadClient()
         }
     }
 }
