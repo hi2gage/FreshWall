@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A generic view for displaying items grouped into sections with a context menu for selecting a grouping option.
+/// A generic view for displaying items grouped into sections with a menu for selecting a grouping option.
 struct GenericGroupableListView<
     Item: Identifiable,
     GroupOption: CaseIterable & Hashable & RawRepresentable,
@@ -10,9 +10,9 @@ struct GenericGroupableListView<
     var groups: [(title: String?, items: [Item])]
     /// Title used in the navigation bar.
     var title: String
-    /// Currently selected grouping option.
-    @Binding var groupOption: GroupOption
-    /// Field used when sorting items when grouping is `.none`.
+    /// Currently selected grouping option (nil means no grouping).
+    @Binding var groupOption: GroupOption?
+    /// Field used when sorting items when grouping is nil.
     @Binding var sortField: IncidentSortField
     /// Indicates whether sorting is ascending.
     @Binding var isAscending: Bool
@@ -29,7 +29,7 @@ struct GenericGroupableListView<
     init(
         groups: [(title: String?, items: [Item])],
         title: String,
-        groupOption: Binding<GroupOption>,
+        groupOption: Binding<GroupOption?>,
         sortField: Binding<IncidentSortField>,
         isAscending: Binding<Bool>,
         destination: @escaping (Item) -> RouterDestination,
@@ -89,77 +89,107 @@ struct GenericGroupableListView<
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
-                    ForEach(Array(GroupOption.allCases), id: \.self) { option in
-                        Button {
-                            groupOption = option
-                        } label: {
-                            Label {
-                                Text(option.rawValue)
-                            } icon: {
-                                if option == groupOption {
-                                    Image(systemName: "checkmark")
-                                }
-                            }
-                        }
-                    }
-
-                    if groupOption == .none {
-                        Button {
-                            if sortField == .alphabetical {
-                                isAscending.toggle()
-                            } else {
-                                sortField = .alphabetical
-                                isAscending = true
-                            }
-                        } label: {
-                            let arrow = sortField == .alphabetical ? (isAscending ? "arrow.up" : "arrow.down") : ""
-                            Label("Alphabetical", systemImage: arrow)
-                        }
-
-                        Button {
-                            if sortField == .date {
-                                isAscending.toggle()
-                            } else {
-                                sortField = .date
-                                isAscending = true
-                            }
-                        } label: {
-                            let arrow = sortField == .date ? (isAscending ? "arrow.up" : "arrow.down") : ""
-                            Label("By Date", systemImage: arrow)
-                        }
-                    } else {
-                        Menu("Order") {
-                            Button { isAscending = true } label: {
-                                Label("Ascending", systemImage: isAscending ? "checkmark" : "")
-                            }
-                            Button { isAscending = false } label: {
-                                Label("Descending", systemImage: isAscending ? "" : "checkmark")
-                            }
-                        }
-                    }
-                    if groupOption != .none {
-                        let allCollapsed = collapsedGroups.count == groups.count
-                        Button {
-                            if allCollapsed {
-                                collapsedGroups.removeAll()
-                            } else {
-                                collapsedGroups = Set(groups.indices)
-                            }
-                        } label: {
-                            Label(allCollapsed ? "Uncollapse All" : "Collapse All",
-                                  systemImage: allCollapsed ? "chevron.down" : "chevron.right")
-                        }
-                    }
+                    groupingMenu()
                 } label: {
                     Image(systemName: "line.3.horizontal.decrease.circle")
                 }
             }
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button { plusButtonAction() } label: { Image(systemName: "plus") }
             }
         }
         .onChange(of: groupOption) { _, _ in
             collapsedGroups.removeAll()
+        }
+    }
+
+    @ViewBuilder
+    private func groupingMenu() -> some View {
+        // "None" grouping option
+        Button {
+            groupOption = nil
+        } label: {
+            Label {
+                Text("None")
+            } icon: {
+                if groupOption == nil {
+                    Image(systemName: "checkmark")
+                }
+            }
+        }
+
+        // Enum-based grouping options
+        ForEach(Array(GroupOption.allCases), id: \.self) { option in
+            Button {
+                groupOption = option
+            } label: {
+                Label {
+                    Text(option.rawValue)
+                } icon: {
+                    if groupOption == option {
+                        Image(systemName: "checkmark")
+                    }
+                }
+            }
+        }
+
+        // Sorting buttons (only when ungrouped)
+        if groupOption == nil {
+            Button {
+                if sortField == .alphabetical {
+                    isAscending.toggle()
+                } else {
+                    sortField = .alphabetical
+                    isAscending = true
+                }
+            } label: {
+                let arrow = sortField == .alphabetical ? (isAscending ? "arrow.up" : "arrow.down") : ""
+                Label("Alphabetical", systemImage: arrow)
+            }
+
+            Button {
+                if sortField == .date {
+                    isAscending.toggle()
+                } else {
+                    sortField = .date
+                    isAscending = true
+                }
+            } label: {
+                let arrow = sortField == .date ? (isAscending ? "arrow.up" : "arrow.down") : ""
+                Label("By Date", systemImage: arrow)
+            }
+        } else {
+            Menu("Order") {
+                Button {
+                    isAscending = true
+                } label: {
+                    Label("Ascending", systemImage: isAscending ? "checkmark" : "")
+                }
+
+                Button {
+                    isAscending = false
+                } label: {
+                    Label("Descending", systemImage: isAscending ? "" : "checkmark")
+                }
+            }
+        }
+
+        // Collapse/uncollapse all
+        let allCollapsed = collapsedGroups.count == groups.count
+        if groupOption != nil {
+            Button {
+                if allCollapsed {
+                    collapsedGroups.removeAll()
+                } else {
+                    collapsedGroups = Set(groups.indices)
+                }
+            } label: {
+                Label(
+                    allCollapsed ? "Uncollapse All" : "Collapse All",
+                    systemImage: allCollapsed ? "chevron.down" : "chevron.right"
+                )
+            }
         }
     }
 
