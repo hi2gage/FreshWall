@@ -188,6 +188,9 @@ struct IncidentDetailView: View {
         }
         .task {
             await loadClient()
+	}
+        .fullScreenCover(isPresented: $showingViewer) {
+            PhotoViewer(sources: viewerSources, index: $viewerIndex)
         }
     }
 }
