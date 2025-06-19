@@ -49,6 +49,7 @@ struct GenericGroupableListView<
                         } label: {
                             HStack {
                                 Image(systemName: collapsedGroups.contains(index) ? "chevron.right" : "chevron.down")
+                                    .frame(width: 16, alignment: .leading)
                                 Text(title)
                             }
                             .font(.headline)
@@ -84,7 +85,13 @@ struct GenericGroupableListView<
                         Button {
                             groupOption = option
                         } label: {
-                            Label(option.rawValue, systemImage: option == groupOption ? "checkmark" : "")
+                            Label {
+                                Text(option.rawValue)
+                            } icon: {
+                                if option == groupOption {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
                         }
                     }
                 } label: {
@@ -95,7 +102,7 @@ struct GenericGroupableListView<
                 Button { plusButtonAction() } label: { Image(systemName: "plus") }
             }
         }
-        .onChange(of: groupOption) { _ in
+        .onChange(of: groupOption) { _, _ in
             collapsedGroups.removeAll()
         }
     }
