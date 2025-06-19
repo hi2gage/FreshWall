@@ -1,7 +1,7 @@
+import _PhotosUI_SwiftUI
 import FirebaseFirestore
 import Foundation
 import Observation
-import _PhotosUI_SwiftUI
 
 /// ViewModel for editing an existing incident.
 @MainActor

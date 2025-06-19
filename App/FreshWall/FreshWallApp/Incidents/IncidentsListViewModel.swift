@@ -1,5 +1,5 @@
-import Observation
 import Foundation
+import Observation
 
 /// ViewModel responsible for incident list presentation and data operations.
 @MainActor

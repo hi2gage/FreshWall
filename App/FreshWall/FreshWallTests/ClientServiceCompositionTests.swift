@@ -1,5 +1,5 @@
-@testable import FreshWall
 @preconcurrency import FirebaseFirestore
+@testable import FreshWall
 import Testing
 
 struct ClientServiceCompositionTests {
@@ -9,7 +9,7 @@ struct ClientServiceCompositionTests {
         func fetchClients(teamId _: String, sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
         func newClientDocument(teamId _: String) -> DocumentReference { Firestore.firestore().document("c") }
         func setClient(_ client: ClientDTO, at _: DocumentReference) async throws { added = client }
-        func updateClient(id _: String, teamId _: String, data: [String : Any]) async throws { updateData = data }
+        func updateClient(id _: String, teamId _: String, data: [String: Any]) async throws { updateData = data }
         func clientDocument(teamId _: String, clientId _: String) -> DocumentReference { Firestore.firestore().document("c") }
     }
 

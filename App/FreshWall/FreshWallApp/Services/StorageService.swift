@@ -13,12 +13,12 @@ struct StorageService: StorageServiceProtocol {
 
     init() {
         #if DEBUG
-        let storage = Storage.storage()
-        // Connect to the emulator
-        storage.useEmulator(withHost: "localhost", port: 9199)
-        self.storage = storage
+            let storage = Storage.storage()
+            // Connect to the emulator
+            storage.useEmulator(withHost: "localhost", port: 9199)
+            self.storage = storage
         #else
-        self.storage = Storage.storage()
+            self.storage = Storage.storage()
         #endif
     }
 
