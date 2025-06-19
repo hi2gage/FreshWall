@@ -22,30 +22,6 @@ protocol IncidentServiceProtocol: Sendable {
         afterImages: [Data]
     ) async throws
 }
-/// Service to fetch and manage ``IncidentDTO`` entities for the current team.
-///
-/// This type delegates Firestore persistence to an ``IncidentModelServiceProtocol``
-/// and photo uploads to an ``IncidentPhotoServiceProtocol`` to keep concerns
-/// separate.
-    /// Initializes the service.
-    /// - Parameters:
-    ///   - firestore: Firestore instance used when creating default model services.
-    ///   - modelService: Custom model service, mainly for testing.
-    ///   - photoService: Custom photo service for uploading images.
-    ///   - clientModelService: Service resolving client references.
-    ///   - userModelService: Service resolving user references.
-    ///   - session: The current user session providing team context.
-//    init(
-//        firestore: Firestore,
-//        session: UserSession
-//    ) {
-//        self.modelService = IncidentModelService(firestore: firestore)
-//        self.photoService = IncidentPhotoService()
-//        self.clientModelService = ClientModelService(firestore: firestore)
-//        self.userModelService = UserModelService(firestore: firestore)
-//        self.session = session
-//    }
-//}
 
 /// Service to fetch and manage Incident entities from Firestore.
 struct IncidentService: IncidentServiceProtocol {
