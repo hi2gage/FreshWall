@@ -10,6 +10,7 @@ struct IncidentsListViewModelTests {
         func addIncident(_: AddIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
         func updateIncident(_: String, with _: UpdateIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
     }
+
     final class MockClientService: ClientServiceProtocol {
         func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
         func addClient(_: AddClientInput) async throws {}
@@ -49,7 +50,7 @@ struct IncidentsListViewModelTests {
         vm.groupOption = .client
         vm.clients = [
             ClientDTO(id: "a", name: "A", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
-            ClientDTO(id: "b", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init())
+            ClientDTO(id: "b", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
         ]
 
         let grouped = vm.groupedIncidents()

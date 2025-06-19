@@ -1,5 +1,5 @@
-@testable import FreshWall
 import FirebaseFirestore
+@testable import FreshWall
 import Testing
 
 struct IncidentServiceCompositionTests {
@@ -9,7 +9,7 @@ struct IncidentServiceCompositionTests {
         func fetchIncidents(teamId _: String) async throws -> [IncidentDTO] { [] }
         func setIncident(_ incident: IncidentDTO, at _: DocumentReference) async throws { added = incident }
         func newIncidentDocument(teamId _: String) -> DocumentReference { Firestore.firestore().document("teams/t/incidents/i") }
-        func updateIncident(id _: String, teamId _: String, data: [String : Any]) async throws { updateData = data }
+        func updateIncident(id _: String, teamId _: String, data: [String: Any]) async throws { updateData = data }
     }
 
     final actor MockPhoto: IncidentPhotoServiceProtocol {
@@ -21,8 +21,8 @@ struct IncidentServiceCompositionTests {
         var requested: (String, String)?
         func fetchClients(teamId _: String, sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
         func newClientDocument(teamId _: String) -> DocumentReference { Firestore.firestore().document("c") }
-        func setClient(_ client: ClientDTO, at _: DocumentReference) async throws {}
-        func updateClient(id _: String, teamId _: String, data _: [String : Any]) async throws {}
+        func setClient(_: ClientDTO, at _: DocumentReference) async throws {}
+        func updateClient(id _: String, teamId _: String, data _: [String: Any]) async throws {}
         func clientDocument(teamId: String, clientId: String) -> DocumentReference {
             requested = (teamId, clientId)
             return Firestore.firestore().document("teams/\(teamId)/clients/\(clientId)")
