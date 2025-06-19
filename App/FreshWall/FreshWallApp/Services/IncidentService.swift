@@ -26,17 +26,20 @@ protocol IncidentServiceProtocol: Sendable {
 /// Service to fetch and manage Incident entities from Firestore.
 struct IncidentService: IncidentServiceProtocol {
     private let firestore: Firestore
-    private let storage: StorageServiceProtocol
+    private let modelService: IncidentModelServiceProtocol
+    private let photoService: IncidentPhotoServiceProtocol
     private let session: UserSession
 
     /// Initializes the service with a `Firestore` instance and `UserSession` for team context.
     init(
         firestore: Firestore,
-        storage: StorageServiceProtocol = StorageService(),
+        modelService: IncidentModelServiceProtocol? = nil,
+        photoService: IncidentPhotoServiceProtocol? = nil,
         session: UserSession
     ) {
         self.firestore = firestore
-        self.storage = storage
+        self.modelService = modelService ?? IncidentModelService(firestore: firestore)
+        self.photoService = photoService ?? IncidentPhotoService()
         self.session = session
     }
 
@@ -44,15 +47,7 @@ struct IncidentService: IncidentServiceProtocol {
     func fetchIncidents() async throws -> [IncidentDTO] {
         let teamId = session.teamId
 
-        let snapshot = try await firestore
-            .collection("teams")
-            .document(teamId)
-            .collection("incidents")
-            .getDocuments()
-        let fetched: [IncidentDTO] = try snapshot.documents.compactMap {
-            try $0.data(as: IncidentDTO.self)
-        }
-        return fetched
+        return try await modelService.fetchIncidents(teamId: teamId)
     }
 
     /// Adds a new incident document to Firestore under the current team.
@@ -62,14 +57,10 @@ struct IncidentService: IncidentServiceProtocol {
     func addIncident(_ incident: IncidentDTO) async throws {
         let teamId = session.teamId
 
-        let incidentsRef = firestore
-            .collection("teams")
-            .document(teamId)
-            .collection("incidents")
-        let newDoc = incidentsRef.document()
+        let newDoc = modelService.newIncidentDocument(teamId: teamId)
         var newIncident = incident
         newIncident.id = newDoc.documentID
-        try await newDoc.setData(from: newIncident)
+        try await modelService.setIncident(newIncident, at: newDoc)
     }
 
     /// Adds a new incident using an input value object and optional images.
@@ -80,11 +71,7 @@ struct IncidentService: IncidentServiceProtocol {
     ) async throws {
         let teamId = session.teamId
 
-        let incidentsRef = firestore
-            .collection("teams")
-            .document(teamId)
-            .collection("incidents")
-        let newDoc = incidentsRef.document()
+        let newDoc = modelService.newIncidentDocument(teamId: teamId)
         let clientRef = firestore
             .collection("teams")
             .document(teamId)
@@ -96,19 +83,8 @@ struct IncidentService: IncidentServiceProtocol {
             .document(teamId)
             .collection("users")
             .document(uid)
-        var beforeUrls: [String] = []
-        for data in beforeImages {
-            let path = "teams/\(teamId)/incidents/\(newDoc.documentID)/before/\(UUID().uuidString).jpg"
-            let url = try await storage.uploadData(data, to: path)
-            beforeUrls.append(url)
-        }
-
-        var afterUrls: [String] = []
-        for data in afterImages {
-            let path = "teams/\(teamId)/incidents/\(newDoc.documentID)/after/\(UUID().uuidString).jpg"
-            let url = try await storage.uploadData(data, to: path)
-            afterUrls.append(url)
-        }
+        let beforeUrls = try await photoService.uploadBeforePhotos(teamId: teamId, incidentId: newDoc.documentID, images: beforeImages)
+        let afterUrls = try await photoService.uploadAfterPhotos(teamId: teamId, incidentId: newDoc.documentID, images: afterImages)
 
         let newIncident = IncidentDTO(
             id: newDoc.documentID,
@@ -130,8 +106,7 @@ struct IncidentService: IncidentServiceProtocol {
             status: input.status,
             materialsUsed: input.materialsUsed
         )
-        try await newDoc.setData(from: newIncident)
-        try await fetchIncidents()
+        try await modelService.setIncident(newIncident, at: newDoc)
     }
 
     /// Updates an existing incident document in Firestore.
@@ -142,12 +117,6 @@ struct IncidentService: IncidentServiceProtocol {
         afterImages: [Data]
     ) async throws {
         let teamId = session.teamId
-
-        let incidentRef = firestore
-            .collection("teams")
-            .document(teamId)
-            .collection("incidents")
-            .document(incidentId)
 
         let clientRef = firestore
             .collection("teams")
@@ -192,27 +161,32 @@ struct IncidentService: IncidentServiceProtocol {
             data["materialsUsed"] = FieldValue.delete()
         }
 
-        var newBeforeUrls: [String] = []
-        for image in beforeImages {
-            let path = "teams/\(teamId)/incidents/\(incidentId)/before/\(UUID().uuidString).jpg"
-            let url = try await storage.uploadData(image, to: path)
-            newBeforeUrls.append(url)
-        }
+        let newBeforeUrls = try await photoService.uploadBeforePhotos(teamId: teamId, incidentId: incidentId, images: beforeImages)
         if !newBeforeUrls.isEmpty {
             data["beforePhotoUrls"] = FieldValue.arrayUnion(newBeforeUrls)
         }
 
-        var newAfterUrls: [String] = []
-        for image in afterImages {
-            let path = "teams/\(teamId)/incidents/\(incidentId)/after/\(UUID().uuidString).jpg"
-            let url = try await storage.uploadData(image, to: path)
-            newAfterUrls.append(url)
-        }
+        let newAfterUrls = try await photoService.uploadAfterPhotos(teamId: teamId, incidentId: incidentId, images: afterImages)
         if !newAfterUrls.isEmpty {
             data["afterPhotoUrls"] = FieldValue.arrayUnion(newAfterUrls)
         }
 
-        try await incidentRef.updateData(data)
+        try await modelService.updateIncident(id: incidentId, teamId: teamId, data: data)
+
+        if !input.removeBeforeUrls.isEmpty {
+            try await modelService.updateIncident(
+                id: incidentId,
+                teamId: teamId,
+                data: ["beforePhotoUrls": FieldValue.arrayRemove(input.removeBeforeUrls)]
+            )
+        }
+        if !input.removeAfterUrls.isEmpty {
+            try await modelService.updateIncident(
+                id: incidentId,
+                teamId: teamId,
+                data: ["afterPhotoUrls": FieldValue.arrayRemove(input.removeAfterUrls)]
+            )
+        }
     }
 }
 

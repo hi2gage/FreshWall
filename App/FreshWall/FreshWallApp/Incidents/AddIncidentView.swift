@@ -12,6 +12,9 @@ struct AddIncidentView: View {
     @State private var afterPickerItems: [PhotosPickerItem] = []
     @State private var beforeImages: [UIImage] = []
     @State private var afterImages: [UIImage] = []
+    @State private var viewerIndex = 0
+    @State private var viewerSources: [PhotoSource] = []
+    @State private var showingViewer = false
 
     /// Initializes the view with a view model.
     init(viewModel: AddIncidentViewModel) {
@@ -82,11 +85,25 @@ struct AddIncidentView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
                             ForEach(beforeImages.indices, id: \.self) { idx in
-                                Image(uiImage: beforeImages[idx])
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 100, height: 100)
-                                    .clipped()
+                                ZStack(alignment: .topTrailing) {
+                                    Image(uiImage: beforeImages[idx])
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 100, height: 100)
+                                        .clipped()
+                                        .onTapGesture {
+                                            viewerSources = beforeImages.map { PhotoSource.uiImage($0) }
+                                            viewerIndex = idx
+                                            showingViewer = true
+                                        }
+                                    Button {
+                                        beforeImages.remove(at: idx)
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(.white)
+                                            .padding(4)
+                                    }
+                                }
                             }
                         }
                     }
@@ -101,11 +118,25 @@ struct AddIncidentView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
                             ForEach(afterImages.indices, id: \.self) { idx in
-                                Image(uiImage: afterImages[idx])
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 100, height: 100)
-                                    .clipped()
+                                ZStack(alignment: .topTrailing) {
+                                    Image(uiImage: afterImages[idx])
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 100, height: 100)
+                                        .clipped()
+                                        .onTapGesture {
+                                            viewerSources = afterImages.map { PhotoSource.uiImage($0) }
+                                            viewerIndex = idx
+                                            showingViewer = true
+                                        }
+                                    Button {
+                                        afterImages.remove(at: idx)
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(.white)
+                                            .padding(4)
+                                    }
+                                }
                             }
                         }
                     }
@@ -158,6 +189,9 @@ struct AddIncidentView: View {
                     }
                 }
             }
+        }
+        .fullScreenCover(isPresented: $showingViewer) {
+            PhotoViewer(sources: viewerSources, index: $viewerIndex)
         }
     }
 }

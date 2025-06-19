@@ -7,6 +7,9 @@ struct IncidentDetailView: View {
     let incidentService: IncidentServiceProtocol
     let clientService: ClientServiceProtocol
     @State private var showingEdit = false
+    @State private var viewerSources: [PhotoSource] = []
+    @State private var viewerIndex = 0
+    @State private var showingViewer = false
 
     init(incident: IncidentDTO, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
         _incident = State(wrappedValue: incident)
@@ -92,7 +95,7 @@ struct IncidentDetailView: View {
                 Section("Before Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(beforePhotos, id: \.self) { urlString in
+                            ForEach(Array(beforePhotos.enumerated()), id: \.1) { idx, urlString in
                                 AsyncImage(url: URL(string: urlString)) { phase in
                                     switch phase {
                                     case .empty:
@@ -103,6 +106,11 @@ struct IncidentDetailView: View {
                                             .scaledToFill()
                                             .frame(width: 100, height: 100)
                                             .clipped()
+                                            .onTapGesture {
+                                                viewerSources = beforePhotos.map { PhotoSource.url($0) }
+                                                viewerIndex = idx
+                                                showingViewer = true
+                                            }
                                     case .failure:
                                         Image(systemName: "photo")
                                             .resizable()
@@ -122,7 +130,7 @@ struct IncidentDetailView: View {
                 Section("After Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(afterPhotoUrls, id: \.self) { urlString in
+                            ForEach(Array(afterPhotoUrls.enumerated()), id: \.1) { idx, urlString in
                                 AsyncImage(url: URL(string: urlString)) { phase in
                                     switch phase {
                                     case .empty:
@@ -133,6 +141,11 @@ struct IncidentDetailView: View {
                                             .scaledToFill()
                                             .frame(width: 100, height: 100)
                                             .clipped()
+                                            .onTapGesture {
+                                                viewerSources = afterPhotoUrls.map { PhotoSource.url($0) }
+                                                viewerIndex = idx
+                                                showingViewer = true
+                                            }
                                     case .failure:
                                         Image(systemName: "photo")
                                             .resizable()
@@ -180,6 +193,9 @@ struct IncidentDetailView: View {
                     )
                 )
             }
+        }
+        .fullScreenCover(isPresented: $showingViewer) {
+            PhotoViewer(sources: viewerSources, index: $viewerIndex)
         }
     }
 }
