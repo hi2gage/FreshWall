@@ -7,10 +7,6 @@ struct EditIncidentView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: EditIncidentViewModel
     private let addNewTag = "__ADD_NEW__"
-    @State private var beforePickerItems: [PhotosPickerItem] = []
-    @State private var afterPickerItems: [PhotosPickerItem] = []
-    @State private var beforeImages: [UIImage] = []
-    @State private var afterImages: [UIImage] = []
 
     init(viewModel: EditIncidentViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -75,12 +71,12 @@ struct EditIncidentView: View {
                 TextEditor(text: $viewModel.materialsUsed)
                     .frame(minHeight: 80)
             }
-            if !beforeImages.isEmpty {
+            if !viewModel.beforeImages.isEmpty {
                 Section("Before Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(beforeImages.indices, id: \.self) { idx in
-                                Image(uiImage: beforeImages[idx])
+                            ForEach(viewModel.beforeImages.indices, id: \.self) { idx in
+                                Image(uiImage: viewModel.beforeImages[idx])
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 100, height: 100)
@@ -91,15 +87,15 @@ struct EditIncidentView: View {
                     .frame(height: 120)
                 }
             }
-            PhotosPicker(selection: $beforePickerItems, matching: .images, photoLibrary: .shared()) {
+            PhotosPicker(selection: $viewModel.beforePickerItems, matching: .images, photoLibrary: .shared()) {
                 Label("Add Before Photos", systemImage: "photo.on.rectangle")
             }
-            if !afterImages.isEmpty {
+            if !viewModel.afterImages.isEmpty {
                 Section("After Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(afterImages.indices, id: \.self) { idx in
-                                Image(uiImage: afterImages[idx])
+                            ForEach(viewModel.afterImages.indices, id: \.self) { idx in
+                                Image(uiImage: viewModel.afterImages[idx])
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 100, height: 100)
@@ -110,7 +106,7 @@ struct EditIncidentView: View {
                     .frame(height: 120)
                 }
             }
-            PhotosPicker(selection: $afterPickerItems, matching: .images, photoLibrary: .shared()) {
+            PhotosPicker(selection: $viewModel.afterPickerItems, matching: .images, photoLibrary: .shared()) {
                 Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
             }
         }
@@ -123,8 +119,8 @@ struct EditIncidentView: View {
                 Button("Save") {
                     Task {
                         do {
-                            let beforeData = beforeImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
-                            let afterData = afterImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
+                            let beforeData = viewModel.beforeImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
+                            let afterData = viewModel.afterImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
                             try await viewModel.save(beforeImages: beforeData, afterImages: afterData)
                             dismiss()
                         } catch {}
@@ -136,24 +132,24 @@ struct EditIncidentView: View {
         .task {
             await viewModel.loadClients()
         }
-        .onChange(of: beforePickerItems) { _, newItems in
+        .onChange(of: viewModel.beforePickerItems) { _, newItems in
             Task {
-                beforeImages = []
+                viewModel.beforeImages = []
                 for item in newItems {
                     if let data = try? await item.loadTransferable(type: Data.self),
                        let image = UIImage(data: data) {
-                        beforeImages.append(image)
+                        viewModel.beforeImages.append(image)
                     }
                 }
             }
         }
-        .onChange(of: afterPickerItems) { _, newItems in
+        .onChange(of: viewModel.afterPickerItems) { _, newItems in
             Task {
-                afterImages = []
+                viewModel.afterImages = []
                 for item in newItems {
                     if let data = try? await item.loadTransferable(type: Data.self),
                        let image = UIImage(data: data) {
-                        afterImages.append(image)
+                        viewModel.afterImages.append(image)
                     }
                 }
             }
