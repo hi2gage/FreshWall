@@ -106,6 +106,9 @@ struct GenericGroupableListView<
 
     @ViewBuilder
     private func groupingMenu() -> some View {
+        Text("Group By")
+                .font(.caption)
+                .foregroundColor(.secondary)
         // "None" grouping option
         Button {
             groupOption = nil
@@ -134,6 +137,10 @@ struct GenericGroupableListView<
             }
         }
 
+        Text("Order By")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
         // Sorting buttons (only when ungrouped)
         if groupOption == nil {
             Button {
@@ -160,24 +167,15 @@ struct GenericGroupableListView<
                 Label("By Date", systemImage: arrow)
             }
         } else {
-            Menu("Order") {
-                Button {
-                    isAscending = true
-                } label: {
-                    Label("Ascending", systemImage: isAscending ? "checkmark" : "")
-                }
-
-                Button {
-                    isAscending = false
-                } label: {
-                    Label("Descending", systemImage: isAscending ? "" : "checkmark")
-                }
+            Button {
+                isAscending.toggle()
+            } label: {
+                let arrow = sortField == .date ? (isAscending ? "arrow.up" : "arrow.down") : ""
+                Label("Order", systemImage: arrow)
             }
-        }
 
-        // Collapse/uncollapse all
-        let allCollapsed = collapsedGroups.count == groups.count
-        if groupOption != nil {
+            // Collapse/uncollapse all
+            let allCollapsed = collapsedGroups.count == groups.count
             Button {
                 if allCollapsed {
                     collapsedGroups.removeAll()
