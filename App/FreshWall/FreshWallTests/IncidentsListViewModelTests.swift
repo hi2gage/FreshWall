@@ -7,8 +7,8 @@ struct IncidentsListViewModelTests {
     final class MockService: IncidentServiceProtocol {
         func fetchIncidents() async throws -> [IncidentDTO] { [] }
         func addIncident(_: IncidentDTO) async throws {}
-        func addIncident(_ : AddIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
-        func updateIncident(_ : String, with _: UpdateIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
+        func addIncident(_: AddIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
+        func updateIncident(_: String, with _: UpdateIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
     }
 
     @Test func groupingByClient() {
