@@ -19,6 +19,9 @@ struct GenericGroupableListView<
 
     let plusButtonAction: @MainActor () -> Void
 
+    /// Tracks which groups are collapsed by index when grouping is enabled.
+    @State private var collapsedGroups: Set<Int> = []
+
     init(
         groups: [(title: String?, items: [Item])],
         title: String,
@@ -40,18 +43,34 @@ struct GenericGroupableListView<
             LazyVStack(spacing: 16) {
                 ForEach(groups.indices, id: \.self) { index in
                     let group = groups[index]
-                    if let title = group.title {
+                    if let title = group.title, groups.count > 1 {
+                        Button {
+                            withAnimation { toggleCollapse(index) }
+                        } label: {
+                            HStack {
+                                Image(systemName: collapsedGroups.contains(index) ? "chevron.right" : "chevron.down")
+                                Text(title)
+                            }
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+                        }
+                        .buttonStyle(.plain)
+                    } else if let title = group.title {
                         Text(title)
                             .font(.headline)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal)
                     }
-                    ForEach(group.items) { item in
-                        NavigationLink(value: destination(item)) {
-                            content(item)
+
+                    if !collapsedGroups.contains(index) {
+                        ForEach(group.items) { item in
+                            NavigationLink(value: destination(item)) {
+                                content(item)
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.horizontal)
                         }
-                        .buttonStyle(.plain)
-                        .padding(.horizontal)
                     }
                 }
             }
@@ -75,6 +94,17 @@ struct GenericGroupableListView<
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button { plusButtonAction() } label: { Image(systemName: "plus") }
             }
+        }
+        .onChange(of: groupOption) { _ in
+            collapsedGroups.removeAll()
+        }
+    }
+
+    private func toggleCollapse(_ index: Int) {
+        if collapsedGroups.contains(index) {
+            collapsedGroups.remove(index)
+        } else {
+            collapsedGroups.insert(index)
         }
     }
 }
