@@ -137,6 +137,18 @@ struct GenericGroupableListView<
                             }
                         }
                     }
+
+                    let allCollapsed = collapsedGroups.count == groups.count
+                    Button {
+                        if allCollapsed {
+                            collapsedGroups.removeAll()
+                        } else {
+                            collapsedGroups = Set(groups.indices)
+                        }
+                    } label: {
+                        Label(allCollapsed ? "Uncollapse All" : "Collapse All",
+                              systemImage: allCollapsed ? "chevron.down" : "chevron.right")
+                    }
                 } label: {
                     Image(systemName: "line.3.horizontal.decrease.circle")
                 }
