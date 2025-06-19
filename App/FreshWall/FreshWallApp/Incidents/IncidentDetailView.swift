@@ -9,13 +9,13 @@ struct IncidentDetailView: View {
     @Environment(RouterPath.self) private var routerPath
     @State private var client: ClientDTO?
     @State private var showingEdit = false
-    
+
     init(incident: IncidentDTO, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
         _incident = State(wrappedValue: incident)
         self.incidentService = incidentService
         self.clientService = clientService
     }
-    
+
     /// Reloads the incident after editing.
     private func reloadIncident() async {
         guard let id = incident.id else { return }
@@ -25,13 +25,13 @@ struct IncidentDetailView: View {
         }
         await loadClient()
     }
-    
+
     /// Loads the client associated with this incident.
     private func loadClient() async {
         let clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
         client = clients.first { $0.id == incident.clientRef.documentID }
     }
-    
+
     var body: some View {
         List {
             Section("Overview") {

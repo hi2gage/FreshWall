@@ -142,7 +142,8 @@ struct AddIncidentView: View {
                 beforeImages = []
                 for item in newItems {
                     if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data) {
+                       let image = UIImage(data: data)
+                    {
                         beforeImages.append(image)
                     }
                 }
@@ -153,7 +154,8 @@ struct AddIncidentView: View {
                 afterImages = []
                 for item in newItems {
                     if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data) {
+                       let image = UIImage(data: data)
+                    {
                         afterImages.append(image)
                     }
                 }
