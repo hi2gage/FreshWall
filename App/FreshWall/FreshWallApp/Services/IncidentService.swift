@@ -25,9 +25,10 @@ protocol IncidentServiceProtocol: Sendable {
 
 /// Service to fetch and manage Incident entities from Firestore.
 struct IncidentService: IncidentServiceProtocol {
-    private let firestore: Firestore
     private let modelService: IncidentModelServiceProtocol
     private let photoService: IncidentPhotoServiceProtocol
+    private let clientModelService: ClientModelServiceProtocol
+    private let userModelService: UserModelServiceProtocol
     private let session: UserSession
 
     /// Initializes the service with a `Firestore` instance and `UserSession` for team context.
@@ -35,11 +36,14 @@ struct IncidentService: IncidentServiceProtocol {
         firestore: Firestore,
         modelService: IncidentModelServiceProtocol? = nil,
         photoService: IncidentPhotoServiceProtocol? = nil,
+        clientModelService: ClientModelServiceProtocol? = nil,
+        userModelService: UserModelServiceProtocol? = nil,
         session: UserSession
     ) {
-        self.firestore = firestore
         self.modelService = modelService ?? IncidentModelService(firestore: firestore)
         self.photoService = photoService ?? IncidentPhotoService()
+        self.clientModelService = clientModelService ?? ClientModelService(firestore: firestore)
+        self.userModelService = userModelService ?? UserModelService(firestore: firestore)
         self.session = session
     }
 
@@ -72,17 +76,9 @@ struct IncidentService: IncidentServiceProtocol {
         let teamId = session.teamId
 
         let newDoc = modelService.newIncidentDocument(teamId: teamId)
-        let clientRef = firestore
-            .collection("teams")
-            .document(teamId)
-            .collection("clients")
-            .document(input.clientId)
+        let clientRef = clientModelService.clientDocument(teamId: teamId, clientId: input.clientId)
         let uid = Auth.auth().currentUser?.uid ?? ""
-        let createdByRef = firestore
-            .collection("teams")
-            .document(teamId)
-            .collection("users")
-            .document(uid)
+        let createdByRef = userModelService.userDocument(teamId: teamId, userId: uid)
         let beforeUrls = try await photoService.uploadBeforePhotos(
             teamId: teamId,
             incidentId: newDoc.documentID,
@@ -128,18 +124,10 @@ struct IncidentService: IncidentServiceProtocol {
     ) async throws {
         let teamId = session.teamId
 
-        let clientRef = firestore
-            .collection("teams")
-            .document(teamId)
-            .collection("clients")
-            .document(input.clientId)
+        let clientRef = clientModelService.clientDocument(teamId: teamId, clientId: input.clientId)
 
         let uid = Auth.auth().currentUser?.uid ?? ""
-        let modifiedByRef = firestore
-            .collection("teams")
-            .document(teamId)
-            .collection("users")
-            .document(uid)
+        let modifiedByRef = userModelService.userDocument(teamId: teamId, userId: uid)
 
         var data: [String: Any] = [
             "clientRef": clientRef,
