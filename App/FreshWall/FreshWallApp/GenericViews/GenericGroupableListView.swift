@@ -1,7 +1,11 @@
 import SwiftUI
 
 /// A generic view for displaying items grouped into sections with a context menu for selecting a grouping option.
-struct GenericGroupableListView<Item: Identifiable, GroupOption: CaseIterable & Hashable & RawRepresentable, Content: View>: View where GroupOption.RawValue == String {
+struct GenericGroupableListView<
+    Item: Identifiable,
+    GroupOption: CaseIterable & Hashable & RawRepresentable,
+    Content: View
+>: View where GroupOption.RawValue == String {
     /// Groups of items along with optional section titles.
     var groups: [(title: String?, items: [Item])]
     /// Title used in the navigation bar.
