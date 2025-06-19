@@ -56,12 +56,17 @@ struct GenericGroupableListView<Item: Identifiable, GroupOption: CaseIterable & 
         .navigationTitle(title)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Image(systemName: "line.3.horizontal.decrease.circle")
-                    .contextMenu {
-                        ForEach(Array(GroupOption.allCases), id: \.self) { option in
-                            Button(option.rawValue) { groupOption = option }
+                Menu {
+                    ForEach(Array(GroupOption.allCases), id: \.self) { option in
+                        Button {
+                            groupOption = option
+                        } label: {
+                            Label(option.rawValue, systemImage: option == groupOption ? "checkmark" : "")
                         }
                     }
+                } label: {
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button { plusButtonAction() } label: { Image(systemName: "plus") }
