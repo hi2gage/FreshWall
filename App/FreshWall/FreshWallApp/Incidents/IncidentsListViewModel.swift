@@ -10,8 +10,6 @@ final class IncidentsListViewModel {
     var clients: [ClientDTO] = []
     /// Selected grouping option for incidents.
     var groupOption: IncidentGroupOption = .none
-    /// Indicates whether the grouping dialog is presented.
-    var showingGroupDialog = false
 
     private let service: IncidentServiceProtocol
     private let clientService: ClientServiceProtocol
