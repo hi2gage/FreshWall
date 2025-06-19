@@ -52,8 +52,20 @@ struct ClientsListView: View {
 #Preview {
     let firestore = Firestore.firestore()
     let session = UserSession(userId: "", displayName: "", teamId: "team123")
-    let clientService = ClientService(firestore: firestore, session: session)
-    let incidentService = IncidentService(firestore: firestore, session: session)
+
+    let incidentModelService = IncidentModelService(firestore: firestore)
+    let incidentPhotoService = IncidentPhotoService()
+    let clientModelService = ClientModelService(firestore: firestore)
+    let userModelService = UserModelService(firestore: firestore)
+
+    let clientService = ClientService(modelService: clientModelService, session: session)
+    let incidentService = IncidentService(
+        modelService: incidentModelService,
+        photoService: incidentPhotoService,
+        clientModelService: clientModelService,
+        userModelService: userModelService,
+        session: session
+    )
     FreshWallPreview {
         NavigationStack {
             ClientsListView(
