@@ -4,17 +4,27 @@ import Observation
 @MainActor
 @Observable
 final class ClientsListViewModel {
-    /// Clients fetched from the service.
+    /// Clients fetched from the client service.
     var clients: [ClientDTO] = []
-    private let service: ClientServiceProtocol
+    /// Incidents fetched from the incident service.
+    var incidents: [IncidentDTO] = []
 
-    /// Initializes the view model with a client service conforming to `ClientServiceProtocol`.
-    init(service: ClientServiceProtocol) {
-        self.service = service
+    private let clientService: ClientServiceProtocol
+    private let incidentService: IncidentServiceProtocol
+
+    /// Initializes the view model with required services.
+    init(clientService: ClientServiceProtocol, incidentService: IncidentServiceProtocol) {
+        self.clientService = clientService
+        self.incidentService = incidentService
     }
 
     /// Loads clients from the service.
     func loadClients() async {
-        clients = await (try? service.fetchClients(sortedBy: .createdAtAscending)) ?? []
+        clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+    }
+
+    /// Loads incidents from the service.
+    func loadIncidents() async {
+        incidents = await (try? incidentService.fetchIncidents()) ?? []
     }
 }
