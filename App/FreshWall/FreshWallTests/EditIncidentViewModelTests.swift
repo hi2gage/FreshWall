@@ -9,7 +9,7 @@ struct EditIncidentViewModelTests {
         func fetchIncidents() async throws -> [IncidentDTO] { [] }
         func addIncident(_: IncidentDTO) async throws {}
         func addIncident(
-            _ : AddIncidentInput,
+            _: AddIncidentInput,
             beforeImages _: [Data],
             afterImages _: [Data]
         ) async throws {}
