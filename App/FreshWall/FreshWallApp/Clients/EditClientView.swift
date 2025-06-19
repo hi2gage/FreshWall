@@ -41,6 +41,25 @@ struct EditClientView: View {
     }
 }
 
+@MainActor
+private class PreviewClientService: ClientServiceProtocol {
+    func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] {
+        [ClientDTO(
+            id: "client1",
+            name: "Sample Client",
+            notes: "Preview client",
+            isDeleted: false,
+            deletedAt: nil,
+            createdAt: .init(),
+            lastIncidentAt: .init()
+        )]
+    }
+
+    func addClient(_: AddClientInput) async throws {}
+
+    func updateClient(_: String, with _: UpdateClientInput) async throws {}
+}
+
 #Preview {
     let sampleClient = ClientDTO(
         id: "client123",
@@ -57,11 +76,4 @@ struct EditClientView: View {
             EditClientView(viewModel: EditClientViewModel(client: sampleClient, service: service))
         }
     }
-}
-
-@MainActor
-private class PreviewClientService: ClientServiceProtocol {
-    func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
-    func addClient(_: AddClientInput) async throws {}
-    func updateClient(_: String, with _: UpdateClientInput) async throws {}
 }
