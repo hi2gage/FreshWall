@@ -20,6 +20,7 @@ struct SortState<Field: Equatable>: Equatable {
 
     func icon(for field: Field) -> String? {
         guard self.field == field else { return nil }
+
         return isAscending ? "arrow.up" : "arrow.down"
     }
 

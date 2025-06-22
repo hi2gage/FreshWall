@@ -82,8 +82,8 @@ final class IncidentsListViewModel {
                 .sorted { lhs, rhs in
                     guard
                         let lhsDate = formatter.date(from: lhs.title ?? ""),
-                        let rhsDate = formatter.date(from: rhs.title ?? "")
-                    else { return false }
+                        let rhsDate = formatter.date(from: rhs.title ?? "") else { return false }
+
                     return isAscending ? lhsDate < rhsDate : lhsDate > rhsDate
                 }
         }

@@ -1,6 +1,8 @@
 import FirebaseFirestore
 import Foundation
 
+// MARK: - Member
+
 /// Domain model representing a team member used by the UI layer.
 struct Member: Identifiable, Hashable, Sendable {
     var id: String?

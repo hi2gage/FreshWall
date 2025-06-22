@@ -1,6 +1,8 @@
 import FirebaseFirestore
 import Foundation
 
+// MARK: - IncidentRow
+
 /// Domain model representing an incident for UI display.
 struct IncidentRow: Identifiable, Hashable {
     let id: String
@@ -14,6 +16,7 @@ extension IncidentRow {
     static func makeRows(from incidents: [Incident]) -> [IncidentRow] {
         incidents.compactMap { incident in
             guard let id = incident.id else { return nil }
+
             return IncidentRow(
                 id: id,
                 description: incident.description,

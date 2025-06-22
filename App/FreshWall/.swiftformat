@@ -1,0 +1,31 @@
+# Disable unwanted or noisy rules
+--disable redundantSelf,wrapMultilineStatementBraces,wrapEnumCases
+
+--enable isEmpty,blankLinesAfterGuardStatements,markTypes
+
+
+--allman false
+--guardelse same-line
+
+
+--commas always
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+
+
+--enable spaceinsideparens
+--enable spaceinsidebraces
+--trimwhitespace always
+--linebreaks lf
+
+
+--importgrouping alpha
+--enable blanklineafterimports
+
+
+--extensionacl on-extension
+--modifierorder override,public,internal,private,static,class,lazy
+
+
+--marktypes always

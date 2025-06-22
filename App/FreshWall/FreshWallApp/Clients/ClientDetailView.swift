@@ -10,10 +10,11 @@ struct ClientDetailView: View {
     @State private var incidents: [Incident] = []
     @State private var showingEdit = false
 
-    init(client: Client,
-         incidentService: IncidentServiceProtocol,
-         clientService: ClientServiceProtocol)
-    {
+    init(
+        client: Client,
+        incidentService: IncidentServiceProtocol,
+        clientService: ClientServiceProtocol
+    ) {
         _client = State(wrappedValue: client)
         self.incidentService = incidentService
         self.clientService = clientService
@@ -22,6 +23,7 @@ struct ClientDetailView: View {
     /// Reloads the client data after editing.
     private func reloadClient() async {
         guard let id = client.id else { return }
+
         let updatedClients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
         if let updated = updatedClients.first(where: { $0.id == id }) {
             client = updated

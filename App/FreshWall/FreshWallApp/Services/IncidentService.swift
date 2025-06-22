@@ -2,6 +2,8 @@ import FirebaseAuth
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - IncidentServiceProtocol
+
 /// Protocol defining operations for fetching and managing Incident entities.
 protocol IncidentServiceProtocol: Sendable {
     /// Fetches incidents for the current team.
@@ -22,6 +24,8 @@ protocol IncidentServiceProtocol: Sendable {
         afterImages: [Data]
     ) async throws
 }
+
+// MARK: - IncidentService
 
 /// Service to fetch and manage Incident entities from Firestore.
 struct IncidentService: IncidentServiceProtocol {
@@ -215,6 +219,8 @@ struct IncidentService: IncidentServiceProtocol {
         try await modelService.updateIncident(id: incidentId, teamId: teamId, data: data)
     }
 }
+
+// MARK: IncidentService.Errors
 
 extension IncidentService {
     enum Errors: Error {

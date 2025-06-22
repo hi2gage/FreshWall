@@ -1,9 +1,13 @@
 @preconcurrency import FirebaseFunctions
 import Foundation
 
+// MARK: - InviteCodeGenerating
+
 protocol InviteCodeGenerating: Sendable {
     func generateInviteCode(role: UserRole, maxUses: Int) async throws -> String
 }
+
+// MARK: - InviteCodeService
 
 struct InviteCodeService: InviteCodeGenerating {
     private let functions = Functions.functions()
@@ -26,6 +30,7 @@ struct InviteCodeService: InviteCodeGenerating {
                 userInfo: [NSLocalizedDescriptionKey: "Invalid response from generateInviteCode"]
             )
         }
+
         return code
     }
 }

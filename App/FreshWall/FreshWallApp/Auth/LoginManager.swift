@@ -1,3 +1,5 @@
+// MARK: - LoginManaging
+
 protocol LoginManaging: Sendable {
     func signIn(
         email: String,
@@ -18,6 +20,8 @@ protocol LoginManaging: Sendable {
         teamCode: String
     ) async throws
 }
+
+// MARK: - LoginManager
 
 struct LoginManager: LoginManaging {
     /// Called when authentication completes with valid userId and teamId.

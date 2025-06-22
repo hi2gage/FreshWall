@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - GenericGroupableListView
+
 /// A generic view for displaying items grouped into sections with a menu for selecting a grouping option.
 struct GenericGroupableListView<
     Item: Identifiable,

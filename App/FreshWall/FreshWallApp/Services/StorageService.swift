@@ -1,11 +1,15 @@
 @preconcurrency import FirebaseStorage
 import Foundation
 
+// MARK: - StorageServiceProtocol
+
 /// Protocol defining operations for uploading binary data to Firebase Storage.
 protocol StorageServiceProtocol: Sendable {
     /// Uploads data to the given storage path and returns a download URL string.
     func uploadData(_ data: Data, to path: String) async throws -> String
 }
+
+// MARK: - StorageService
 
 /// Concrete storage service using `FirebaseStorage`.
 struct StorageService: StorageServiceProtocol {

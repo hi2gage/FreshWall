@@ -4,6 +4,8 @@ import ImageIO
 import Photos
 import PhotosUI
 
+// MARK: - PhotoMetadata
+
 /// Metadata extracted from an image.
 struct PhotoMetadata: Sendable {
     /// Date the photo was captured if available.
@@ -12,6 +14,8 @@ struct PhotoMetadata: Sendable {
     let location: CLLocation?
 }
 
+// MARK: - PhotoMetadataServiceProtocol
+
 /// Protocol for loading metadata from selected photos.
 protocol PhotoMetadataServiceProtocol: Sendable {
     /// Extract metadata from a picker item.
@@ -19,6 +23,8 @@ protocol PhotoMetadataServiceProtocol: Sendable {
     /// Extract metadata from raw image data.
     func metadata(from data: Data) -> PhotoMetadata
 }
+
+// MARK: - PhotoMetadataService
 
 /// Default metadata service using `Photos` and `ImageIO`.
 struct PhotoMetadataService: PhotoMetadataServiceProtocol {
@@ -37,21 +43,18 @@ struct PhotoMetadataService: PhotoMetadataServiceProtocol {
 
     func metadata(from data: Data) -> PhotoMetadata {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil),
-              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any]
-        else {
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] else {
             return PhotoMetadata(captureDate: nil, location: nil)
         }
 
         var date: Date?
         if let exif = properties[kCGImagePropertyExifDictionary] as? [CFString: Any],
-           let dateString = exif[kCGImagePropertyExifDateTimeOriginal] as? String
-        {
+           let dateString = exif[kCGImagePropertyExifDateTimeOriginal] as? String {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
             date = formatter.date(from: dateString)
         } else if let tiff = properties[kCGImagePropertyTIFFDictionary] as? [CFString: Any],
-                  let dateString = tiff[kCGImagePropertyTIFFDateTime] as? String
-        {
+                  let dateString = tiff[kCGImagePropertyTIFFDateTime] as? String {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
             date = formatter.date(from: dateString)
@@ -62,8 +65,7 @@ struct PhotoMetadataService: PhotoMetadataServiceProtocol {
            let lat = gps[kCGImagePropertyGPSLatitude] as? Double,
            let latRef = gps[kCGImagePropertyGPSLatitudeRef] as? String,
            let lon = gps[kCGImagePropertyGPSLongitude] as? Double,
-           let lonRef = gps[kCGImagePropertyGPSLongitudeRef] as? String
-        {
+           let lonRef = gps[kCGImagePropertyGPSLongitudeRef] as? String {
             let latitude = latRef == "S" ? -lat : lat
             let longitude = lonRef == "W" ? -lon : lon
             location = CLLocation(latitude: latitude, longitude: longitude)

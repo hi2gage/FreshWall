@@ -62,6 +62,7 @@ final class ClientsListViewModel {
     /// Returns the latest incident date for a client or distantPast if none.
     private func lastIncidentDate(for client: Client) -> Date {
         guard let id = client.id else { return .distantPast }
+
         let dates = incidents
             .filter { $0.clientRef.documentID == id }
             .map { $0.createdAt.dateValue() }

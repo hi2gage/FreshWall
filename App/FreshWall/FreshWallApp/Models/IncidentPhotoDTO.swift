@@ -1,6 +1,8 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - IncidentPhotoDTO
+
 /// Metadata and storage info for an incident photo persisted in Firestore.
 struct IncidentPhotoDTO: Codable, Hashable, Sendable {
     /// Download URL for the photo.

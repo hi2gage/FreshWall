@@ -6,6 +6,8 @@
 //
 import Observation
 
+// MARK: - SessionStore
+
 @Observable
 @MainActor
 class SessionStore {
@@ -19,6 +21,8 @@ class SessionStore {
         session = nil
     }
 }
+
+// MARK: - AuthenticatedSessionStore
 
 @MainActor
 struct AuthenticatedSessionStore {

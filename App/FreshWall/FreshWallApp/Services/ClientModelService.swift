@@ -1,6 +1,8 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - ClientModelServiceProtocol
+
 /// Handles Firestore reads and writes for `ClientDTO` models.
 ///
 /// This service is intentionally low level and used by higher level client
@@ -22,6 +24,8 @@ protocol ClientModelServiceProtocol: Sendable {
     /// Returns a reference to a specific client document.
     func clientDocument(teamId: String, clientId: String) -> DocumentReference
 }
+
+// MARK: - ClientModelService
 
 /// Concrete implementation of ``ClientModelServiceProtocol`` backed by
 /// ``Firestore``.

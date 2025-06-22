@@ -9,6 +9,8 @@ import FirebaseCore
 @preconcurrency import FirebaseFirestore
 import SwiftUI
 
+// MARK: - AppDelegate
+
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
         _: UIApplication,
@@ -18,6 +20,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
 }
+
+// MARK: - FreshWallApp
 
 @main
 struct FreshWallApp: App {
