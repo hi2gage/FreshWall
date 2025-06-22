@@ -22,7 +22,7 @@ struct GenericListView<
         content: @escaping (Item) -> Content,
         plusButtonAction: @escaping @MainActor () -> Void,
         refreshAction: @escaping @MainActor () async -> Void,
-        @ViewBuilder menu: @escaping () -> MenuContent = { EmptyView() }
+        @ViewBuilder menu: @escaping () -> MenuContent
     ) {
         self.items = items
         self.title = title
