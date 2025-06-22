@@ -3,7 +3,7 @@ import SwiftUI
 
 /// A cell view displaying summary information for a client.
 struct ClientListCell: View {
-    let client: ClientDTO
+    let client: Client
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {

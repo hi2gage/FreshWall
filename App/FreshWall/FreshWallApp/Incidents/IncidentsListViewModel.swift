@@ -6,9 +6,9 @@ import Observation
 @Observable
 final class IncidentsListViewModel {
     /// Incidents fetched from the service.
-    var incidents: [IncidentDTO] = []
+    var incidents: [Incident] = []
     /// Clients used for grouping by client name.
-    var clients: [ClientDTO] = []
+    var clients: [Client] = []
     /// Selected grouping option for incidents.
     var groupOption: IncidentGroupOption?
     /// Field used when sorting incidents.
@@ -40,7 +40,7 @@ final class IncidentsListViewModel {
         clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
     }
 
-    func groupedIncidents() -> [(title: String?, items: [IncidentDTO])] {
+    func groupedIncidents() -> [(title: String?, items: [Incident])] {
         switch groupOption {
         case .none:
             let sorted = sort(incidents)
@@ -84,7 +84,7 @@ final class IncidentsListViewModel {
     }
 
     /// Sorts incidents using the current sort field and direction.
-    private func sort(_ items: [IncidentDTO]) -> [IncidentDTO] {
+    private func sort(_ items: [Incident]) -> [Incident] {
         switch sortField {
         case .alphabetical:
             return items.sorted { lhs, rhs in

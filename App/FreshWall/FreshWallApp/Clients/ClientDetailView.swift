@@ -3,14 +3,14 @@ import SwiftUI
 
 /// A view displaying detailed information for a specific client.
 struct ClientDetailView: View {
-    @State private var client: ClientDTO
+    @State private var client: Client
     let incidentService: IncidentServiceProtocol
     let clientService: ClientServiceProtocol
     @Environment(RouterPath.self) private var routerPath
-    @State private var incidents: [IncidentDTO] = []
+    @State private var incidents: [Incident] = []
     @State private var showingEdit = false
 
-    init(client: ClientDTO,
+    init(client: Client,
          incidentService: IncidentServiceProtocol,
          clientService: ClientServiceProtocol)
     {
@@ -102,7 +102,7 @@ struct ClientDetailView: View {
 
 //
 // #Preview {
-//    let sampleClient = ClientDTO(
+//    let sampleClient = Client(
 //        id: "client123",
 //        name: "Test Client",
 //        notes: "Sample notes",

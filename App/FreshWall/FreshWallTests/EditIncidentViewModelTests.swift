@@ -6,8 +6,8 @@ import Testing
 struct EditIncidentViewModelTests {
     final class MockIncidentService: IncidentServiceProtocol {
         var updateArgs: (String, UpdateIncidentInput)?
-        func fetchIncidents() async throws -> [IncidentDTO] { [] }
-        func addIncident(_: IncidentDTO) async throws {}
+        func fetchIncidents() async throws -> [Incident] { [] }
+        func addIncident(_: Incident) async throws {}
         func addIncident(
             _: AddIncidentInput,
             beforeImages _: [Data],
@@ -24,7 +24,7 @@ struct EditIncidentViewModelTests {
     }
 
     final class MockClientService: ClientServiceProtocol {
-        func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
+        func fetchClients(sortedBy _: ClientSortOption) async throws -> [Client] { [] }
         func addClient(_: AddClientInput) async throws {}
         func updateClient(_: String, with _: UpdateClientInput) async throws {}
     }
@@ -32,7 +32,7 @@ struct EditIncidentViewModelTests {
     @Test func validation() {
         let incidentService = MockIncidentService()
         let clientService = MockClientService()
-        let incident = IncidentDTO(
+        let incident = Incident(
             id: "1",
             clientRef: Firestore.firestore().document("teams/t/clients/c"),
             workerRefs: [],
@@ -66,7 +66,7 @@ struct EditIncidentViewModelTests {
     @Test func saveCallsService() async throws {
         let incidentService = MockIncidentService()
         let clientService = MockClientService()
-        let incident = IncidentDTO(
+        let incident = Incident(
             id: "1",
             clientRef: Firestore.firestore().document("teams/t/clients/c"),
             workerRefs: [],

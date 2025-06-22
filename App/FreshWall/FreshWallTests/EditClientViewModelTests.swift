@@ -6,7 +6,7 @@ import Testing
 struct EditClientViewModelTests {
     final class MockService: ClientServiceProtocol {
         var updateArgs: (String, UpdateClientInput)?
-        func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
+        func fetchClients(sortedBy _: ClientSortOption) async throws -> [Client] { [] }
         func addClient(_: AddClientInput) async throws {}
         func updateClient(_ clientId: String, with input: UpdateClientInput) async throws {
             updateArgs = (clientId, input)
@@ -15,7 +15,7 @@ struct EditClientViewModelTests {
 
     @Test func validation() {
         let service = MockService()
-        let dto = ClientDTO(
+        let dto = Client(
             id: "1",
             name: "Test",
             notes: nil,
@@ -33,7 +33,7 @@ struct EditClientViewModelTests {
 
     @Test func saveCallsService() async throws {
         let service = MockService()
-        let dto = ClientDTO(
+        let dto = Client(
             id: "1",
             name: "Old",
             notes: nil,

@@ -18,7 +18,7 @@ final class EditClientViewModel {
         !name.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
-    init(client: ClientDTO, service: ClientServiceProtocol) {
+    init(client: Client, service: ClientServiceProtocol) {
         clientId = client.id ?? ""
         self.service = service
         name = client.name
