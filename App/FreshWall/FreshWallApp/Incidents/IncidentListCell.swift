@@ -3,7 +3,7 @@ import SwiftUI
 
 /// A cell view displaying summary information for an incident.
 struct IncidentListCell: View {
-    let incident: IncidentDTO
+    let incident: Incident
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {

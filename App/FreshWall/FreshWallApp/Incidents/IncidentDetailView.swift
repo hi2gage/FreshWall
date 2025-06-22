@@ -3,14 +3,14 @@ import SwiftUI
 
 /// A view displaying detailed information for a specific incident.
 struct IncidentDetailView: View {
-    @State private var incident: IncidentDTO
+    @State private var incident: Incident
     let incidentService: IncidentServiceProtocol
     let clientService: ClientServiceProtocol
     @Environment(RouterPath.self) private var routerPath
-    @State private var client: ClientDTO?
+    @State private var client: Client?
     @State private var showingEdit = false
 
-    init(incident: IncidentDTO, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
+    init(incident: Incident, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
         _incident = State(wrappedValue: incident)
         self.incidentService = incidentService
         self.clientService = clientService

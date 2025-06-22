@@ -38,7 +38,7 @@ final class EditIncidentViewModel {
     /// Status options for selection.
     let statusOptions = ["open", "in_progress", "completed"]
     /// Loaded clients for selection.
-    var clients: [ClientDTO] = []
+    var clients: [Client] = []
 
     private let incidentId: String
     private let service: IncidentServiceProtocol
@@ -51,7 +51,7 @@ final class EditIncidentViewModel {
             !projectTitle.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
-    init(incident: IncidentDTO, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
+    init(incident: Incident, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
         incidentId = incident.id ?? ""
         service = incidentService
         self.clientService = clientService

@@ -9,7 +9,7 @@ import Foundation
 
 protocol ClientsRepository {
     /// Fetches active clients for the current team.
-    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO]
+    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [Client]
     /// Adds a new client using an input value object.
     func addClient(_ input: AddClientInput) async throws
 }
@@ -17,7 +17,7 @@ protocol ClientsRepository {
 struct DefaultClientsRepository: ClientsRepository {
     let client: ClientServiceProtocol
 
-    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO] {
+    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [Client] {
         try await client.fetchClients(sortedBy: sortOption)
     }
 

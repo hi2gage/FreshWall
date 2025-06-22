@@ -5,9 +5,9 @@ import Foundation
 /// Protocol defining operations for fetching and managing Incident entities.
 protocol IncidentServiceProtocol: Sendable {
     /// Fetches incidents for the current team.
-    func fetchIncidents() async throws -> [IncidentDTO]
+    func fetchIncidents() async throws -> [Incident]
     /// Adds a new incident via full Incident model.
-    func addIncident(_ incident: IncidentDTO) async throws
+    func addIncident(_ incident: Incident) async throws
     /// Adds a new incident using an input value object and optional images.
     func addIncident(
         _ input: AddIncidentInput,
@@ -47,23 +47,24 @@ struct IncidentService: IncidentServiceProtocol {
     }
 
     /// Fetches active incidents for the current team from Firestore.
-    func fetchIncidents() async throws -> [IncidentDTO] {
+    func fetchIncidents() async throws -> [Incident] {
         let teamId = session.teamId
 
-        return try await modelService.fetchIncidents(teamId: teamId)
+        let dtos = try await modelService.fetchIncidents(teamId: teamId)
+        return dtos.map { Incident(dto: $0) }
     }
 
     /// Adds a new incident document to Firestore under the current team.
     ///
     /// - Parameter incident: The `Incident` model to add (with `id == nil`).
     /// - Throws: An error if the Firestore write fails or teamId is missing.
-    func addIncident(_ incident: IncidentDTO) async throws {
+    func addIncident(_ incident: Incident) async throws {
         let teamId = session.teamId
 
         let newDoc = modelService.newIncidentDocument(teamId: teamId)
-        var newIncident = incident
-        newIncident.id = newDoc.documentID
-        try await modelService.setIncident(newIncident, at: newDoc)
+        var dto = incident.dto
+        dto.id = newDoc.documentID
+        try await modelService.setIncident(dto, at: newDoc)
     }
 
     /// Adds a new incident using an input value object and optional images.

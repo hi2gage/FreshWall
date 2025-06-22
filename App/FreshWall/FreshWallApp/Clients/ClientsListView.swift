@@ -54,7 +54,7 @@ struct ClientsListView: View {
                 viewModel.isAscending = true
             }
         } label: {
-            let arrow = viewModel.sortField == .alphabetical ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
+            let arrow = viewModel.sortField == .alphabetical ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : nil
             Label("Alphabetical", systemImage: arrow)
         }
 
@@ -66,7 +66,7 @@ struct ClientsListView: View {
                 viewModel.isAscending = false
             }
         } label: {
-            let arrow = viewModel.sortField == .incidentDate ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
+            let arrow = viewModel.sortField == .incidentDate ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : nil
             Label("By Incident Date", systemImage: arrow)
         }
     }

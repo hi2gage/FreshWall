@@ -23,11 +23,11 @@ enum RouterDestination: Hashable {
     case clientsList
     /// Screen for adding a new client.
     case addClient
-    case clientDetail(client: ClientDTO)
+    case clientDetail(client: Client)
     case incidentsList
     /// Screen for adding a new incident.
     case addIncident
-    case incidentDetail(incident: IncidentDTO)
+    case incidentDetail(incident: Incident)
     case membersList
     /// Screen for adding a new member.
     case addMember

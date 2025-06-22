@@ -11,7 +11,7 @@ struct IncidentRow: Identifiable, Hashable {
 
 extension IncidentRow {
     /// Generates domain rows from Firestore incidents, filtering out those without IDs.
-    static func makeRows(from incidents: [IncidentDTO]) -> [IncidentRow] {
+    static func makeRows(from incidents: [Incident]) -> [IncidentRow] {
         incidents.compactMap { incident in
             guard let id = incident.id else { return nil }
             return IncidentRow(

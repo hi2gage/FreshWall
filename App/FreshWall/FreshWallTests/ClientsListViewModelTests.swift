@@ -5,14 +5,14 @@ import Testing
 @MainActor
 struct ClientsListViewModelTests {
     final class MockClientService: ClientServiceProtocol {
-        func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
+        func fetchClients(sortedBy _: ClientSortOption) async throws -> [Client] { [] }
         func addClient(_: AddClientInput) async throws {}
         func updateClient(_: String, with _: UpdateClientInput) async throws {}
     }
 
     final class MockIncidentService: IncidentServiceProtocol {
-        func fetchIncidents() async throws -> [IncidentDTO] { [] }
-        func addIncident(_: IncidentDTO) async throws {}
+        func fetchIncidents() async throws -> [Incident] { [] }
+        func addIncident(_: Incident) async throws {}
         func addIncident(_: AddIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
         func updateIncident(_: String, with _: UpdateIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
     }
@@ -22,8 +22,8 @@ struct ClientsListViewModelTests {
         let incidentService = MockIncidentService()
         let vm = ClientsListViewModel(clientService: clientService, incidentService: incidentService)
         vm.clients = [
-            ClientDTO(id: "1", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
-            ClientDTO(id: "2", name: "A", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init())
+            Client(id: "1", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
+            Client(id: "2", name: "A", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init())
         ]
         vm.sortField = .alphabetical
         vm.isAscending = true
@@ -38,10 +38,10 @@ struct ClientsListViewModelTests {
         let clientRefA = Firestore.firestore().document("teams/t/clients/a")
         let clientRefB = Firestore.firestore().document("teams/t/clients/b")
         vm.clients = [
-            ClientDTO(id: "a", name: "A", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
-            ClientDTO(id: "b", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init())
+            Client(id: "a", name: "A", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
+            Client(id: "b", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init())
         ]
-        var first = IncidentDTO(
+        var first = Incident(
             id: "1",
             clientRef: clientRefA,
             workerRefs: [],
