@@ -1,9 +1,14 @@
 import SwiftUI
 
-struct GenericListView<Item: Identifiable, Content: View, MenuContent: View>: View {
+struct GenericListView<
+    Item: Identifiable,
+    Destination: Hashable,
+    Content: View,
+    MenuContent: View
+>: View {
     var items: [Item]
     var title: String
-    var destination: (Item) -> RouterDestination
+    var destination: (Item) -> Destination
     var content: (Item) -> Content
 
     let plusButtonAction: @MainActor () -> Void
@@ -13,10 +18,10 @@ struct GenericListView<Item: Identifiable, Content: View, MenuContent: View>: Vi
     init(
         items: [Item],
         title: String,
-        destination: @escaping (Item) -> RouterDestination,
+        destination: @escaping (Item) -> Destination,
         content: @escaping (Item) -> Content,
         plusButtonAction: @escaping @MainActor () -> Void,
-        refreshAction: @escaping @MainActor () async -> Void = {},
+        refreshAction: @escaping @MainActor () async -> Void,
         @ViewBuilder menu: @escaping () -> MenuContent = { EmptyView() }
     ) {
         self.items = items
@@ -53,5 +58,27 @@ struct GenericListView<Item: Identifiable, Content: View, MenuContent: View>: Vi
                 }
             }
         }
+    }
+}
+
+extension GenericListView where Destination == RouterDestination {
+    init(
+        items: [Item],
+        title: String,
+        routerDestination: @escaping (Item) -> RouterDestination,
+        content: @escaping (Item) -> Content,
+        plusButtonAction: @escaping @MainActor () -> Void,
+        refreshAction: @escaping @MainActor () async -> Void = {},
+        @ViewBuilder menu: @escaping () -> MenuContent = { EmptyView() }
+    ) {
+        self.init(
+            items: items,
+            title: title,
+            destination: routerDestination,
+            content: content,
+            plusButtonAction: plusButtonAction,
+            refreshAction: refreshAction,
+            menu: menu
+        )
     }
 }
