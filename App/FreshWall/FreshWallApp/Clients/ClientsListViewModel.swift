@@ -8,6 +8,10 @@ final class ClientsListViewModel {
     var clients: [ClientDTO] = []
     /// Incidents fetched from the incident service.
     var incidents: [IncidentDTO] = []
+    /// Field used when sorting clients.
+    var sortField: ClientSortField = .date
+    /// Indicates whether sorting is ascending.
+    var isAscending = false
 
     private let clientService: ClientServiceProtocol
     private let incidentService: IncidentServiceProtocol
@@ -26,5 +30,38 @@ final class ClientsListViewModel {
     /// Loads incidents from the service.
     func loadIncidents() async {
         incidents = await (try? incidentService.fetchIncidents()) ?? []
+    }
+
+    /// Returns clients sorted using the current sort field and direction.
+    func sortedClients() -> [ClientDTO] {
+        switch sortField {
+        case .alphabetical:
+            return clients.sorted { lhs, rhs in
+                if isAscending {
+                    return lhs.name < rhs.name
+                } else {
+                    return lhs.name > rhs.name
+                }
+            }
+        case .date:
+            return clients.sorted { lhs, rhs in
+                let lhsDate = lastIncidentDate(for: lhs)
+                let rhsDate = lastIncidentDate(for: rhs)
+                if isAscending {
+                    return lhsDate < rhsDate
+                } else {
+                    return lhsDate > rhsDate
+                }
+            }
+        }
+    }
+
+    /// Returns the latest incident date for a client or distantPast if none.
+    private func lastIncidentDate(for client: ClientDTO) -> Date {
+        guard let id = client.id else { return .distantPast }
+        let dates = incidents
+            .filter { $0.clientRef.documentID == id }
+            .map { $0.createdAt.dateValue() }
+        return dates.max() ?? .distantPast
     }
 }
