@@ -87,3 +87,6 @@ iOSInjectionProject/
 # End of https://www.toptal.com/developers/gitignore/api/xcode,swift
 
 .DS_Store
+
+# Firebase
+Firebase/functions/emulator-data
