@@ -73,12 +73,12 @@ struct EditIncidentView: View {
                 TextEditor(text: $viewModel.materialsUsed)
                     .frame(minHeight: 80)
             }
-            if !viewModel.beforeImages.isEmpty {
+            if !viewModel.beforePhotos.isEmpty {
                 Section("Before Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(viewModel.beforeImages.indices, id: \.self) { idx in
-                                Image(uiImage: viewModel.beforeImages[idx])
+                            ForEach(viewModel.beforePhotos.indices, id: \.self) { idx in
+                                Image(uiImage: viewModel.beforePhotos[idx].image)
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 100, height: 100)
@@ -89,15 +89,15 @@ struct EditIncidentView: View {
                     .frame(height: 120)
                 }
             }
-            PhotosPicker(selection: $viewModel.beforePickerItems, matching: .images, photoLibrary: .shared()) {
+            PhotoPicker(selection: $viewModel.beforePhotos, matching: .images, photoLibrary: .shared()) {
                 Label("Add Before Photos", systemImage: "photo.on.rectangle")
             }
-            if !viewModel.afterImages.isEmpty {
+            if !viewModel.afterPhotos.isEmpty {
                 Section("After Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(viewModel.afterImages.indices, id: \.self) { idx in
-                                Image(uiImage: viewModel.afterImages[idx])
+                            ForEach(viewModel.afterPhotos.indices, id: \.self) { idx in
+                                Image(uiImage: viewModel.afterPhotos[idx].image)
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 100, height: 100)
@@ -108,7 +108,7 @@ struct EditIncidentView: View {
                     .frame(height: 120)
                 }
             }
-            PhotosPicker(selection: $viewModel.afterPickerItems, matching: .images, photoLibrary: .shared()) {
+            PhotoPicker(selection: $viewModel.afterPhotos, matching: .images, photoLibrary: .shared()) {
                 Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
             }
         }
@@ -121,8 +121,8 @@ struct EditIncidentView: View {
                 Button("Save") {
                     Task {
                         do {
-                            let beforeData = viewModel.beforeImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
-                            let afterData = viewModel.afterImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
+                            let beforeData = viewModel.beforePhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
+                            let afterData = viewModel.afterPhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
                             try await viewModel.save(beforeImages: beforeData, afterImages: afterData)
                             dismiss()
                         } catch {}
@@ -134,28 +134,7 @@ struct EditIncidentView: View {
         .task {
             await viewModel.loadClients()
         }
-        .onChange(of: viewModel.beforePickerItems) { _, newItems in
-            Task {
-                viewModel.beforeImages = []
-                for item in newItems {
-                    if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data) {
-                        viewModel.beforeImages.append(image)
-                    }
-                }
-            }
-        }
-        .onChange(of: viewModel.afterPickerItems) { _, newItems in
-            Task {
-                viewModel.afterImages = []
-                for item in newItems {
-                    if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data) {
-                        viewModel.afterImages.append(image)
-                    }
-                }
-            }
-        }
+        
     }
 }
 

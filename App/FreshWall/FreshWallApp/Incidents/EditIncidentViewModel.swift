@@ -27,14 +27,10 @@ final class EditIncidentViewModel {
     var status: String
     /// Materials used description.
     var materialsUsed: String
-    /// Picker selections for before photos.
-    var beforePickerItems: [PhotosPickerItem] = []
-    /// Picker selections for after photos.
-    var afterPickerItems: [PhotosPickerItem] = []
-    /// Images chosen for before state.
-    var beforeImages: [UIImage] = []
-    /// Images chosen for after state.
-    var afterImages: [UIImage] = []
+    /// Photos selected to represent the "before" state.
+    var beforePhotos: [PickedPhoto] = []
+    /// Photos selected to represent the "after" state.
+    var afterPhotos: [PickedPhoto] = []
     /// Status options for selection.
     let statusOptions = ["open", "in_progress", "completed"]
     /// Loaded clients for selection.
