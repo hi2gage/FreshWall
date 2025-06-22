@@ -1,4 +1,5 @@
 import FirebaseFirestore
+import _PhotosUI_SwiftUI
 @testable import FreshWall
 import Testing
 
@@ -15,6 +16,11 @@ struct IncidentServiceCompositionTests {
     final actor MockPhoto: IncidentPhotoServiceProtocol {
         func uploadBeforePhotos(teamId _: String, incidentId _: String, images: [Data]) async throws -> [String] { images.map { _ in "before" } }
         func uploadAfterPhotos(teamId _: String, incidentId _: String, images: [Data]) async throws -> [String] { images.map { _ in "after" } }
+    }
+
+    actor MockMeta: PhotoMetadataServiceProtocol {
+        func metadata(for _: PhotosPickerItem) async throws -> PhotoMetadata { PhotoMetadata(captureDate: nil, location: nil) }
+        func metadata(from _: Data) -> PhotoMetadata { PhotoMetadata(captureDate: nil, location: nil) }
     }
 
     final actor MockClientModel: ClientModelServiceProtocol {
@@ -44,11 +50,11 @@ struct IncidentServiceCompositionTests {
         let userModel = MockUserModel()
         let session = UserSession(teamId: "t")
         let service = IncidentService(
-            firestore: Firestore.firestore(),
             modelService: model,
             photoService: photo,
             clientModelService: clientModel,
             userModelService: userModel,
+            metadataService: MockMeta(),
             session: session
         )
         let input = AddIncidentInput(
@@ -58,7 +64,7 @@ struct IncidentServiceCompositionTests {
         let added = await model.added
         let clientArgs = await clientModel.requested
         let userArgs = await userModel.requested
-        #expect(added?.beforePhotoUrls.first == "before")
+        #expect(added?.beforePhotos.first?.url == "before")
         #expect(clientArgs?.1 == "c")
         #expect(userArgs?.0 == "t")
     }

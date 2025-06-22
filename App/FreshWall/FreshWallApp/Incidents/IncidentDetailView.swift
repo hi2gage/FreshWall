@@ -93,12 +93,12 @@ struct IncidentDetailView: View {
                     }
                 }
             }
-            if let beforePhotos = incident.beforePhotoUrls.nullIfEmpty {
+            if let beforePhotos = incident.beforePhotos.nullIfEmpty {
                 Section("Before Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(beforePhotos, id: \.self) { urlString in
-                                AsyncImage(url: URL(string: urlString)) { phase in
+                            ForEach(beforePhotos, id: \.url) { photo in
+                                AsyncImage(url: URL(string: photo.url)) { phase in
                                     switch phase {
                                     case .empty:
                                         ProgressView()
@@ -123,12 +123,12 @@ struct IncidentDetailView: View {
                     .frame(height: 120)
                 }
             }
-            if let afterPhotoUrls = incident.afterPhotoUrls.nullIfEmpty {
+            if let afterPhotos = incident.afterPhotos.nullIfEmpty {
                 Section("After Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(afterPhotoUrls, id: \.self) { urlString in
-                                AsyncImage(url: URL(string: urlString)) { phase in
+                            ForEach(afterPhotos, id: \.url) { photo in
+                                AsyncImage(url: URL(string: photo.url)) { phase in
                                     switch phase {
                                     case .empty:
                                         ProgressView()
@@ -200,8 +200,8 @@ struct IncidentDetailView: View {
 //        createdAt: Timestamp(date: Date()),
 //        startTime: Timestamp(date: Date()),
 //        endTime: Timestamp(date: Date()),
-//        beforePhotoUrls: ["https://via.placeholder.com/100"],
-//        afterPhotoUrls: ["https://via.placeholder.com/100"],
+//        beforePhotos: [IncidentPhoto(url: "https://via.placeholder.com/100", captureDate: nil, location: nil)],
+//        afterPhotos: [IncidentPhoto(url: "https://via.placeholder.com/100", captureDate: nil, location: nil)],
 //        createdBy: dummyRef,
 //        lastModifiedBy: nil,
 //        lastModifiedAt: nil,

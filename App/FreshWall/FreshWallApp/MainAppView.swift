@@ -37,6 +37,7 @@ struct MainAppView: View {
             photoService: incidentPhotoService,
             clientModelService: clientModelService,
             userModelService: userModelService,
+            metadataService: PhotoMetadataService(),
             session: sessionStore.session
         )
 
