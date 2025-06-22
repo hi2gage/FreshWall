@@ -4,14 +4,14 @@ import Foundation
 /// Protocol defining operations for fetching and managing Client entities.
 protocol ClientServiceProtocol: Sendable {
     /// Fetches active clients for the current team.
-    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO]
+    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [Client]
     /// Adds a new client using an input value object.
     func addClient(_ input: AddClientInput) async throws
     /// Updates an existing client using an input value object.
     func updateClient(_ clientId: String, with input: UpdateClientInput) async throws
 }
 
-/// Service to fetch and manage ``ClientDTO`` entities for the current team.
+/// Service to fetch and manage ``Client`` entities for the current team.
 ///
 /// All direct Firestore interaction is delegated to a ``ClientModelServiceProtocol``
 /// instance to keep this type focused on higher level business logic.
@@ -33,9 +33,10 @@ struct ClientService: ClientServiceProtocol {
     }
 
     /// Fetches active clients for the current team from Firestore.
-    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO] {
+    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [Client] {
         let teamId = session.teamId
-        return try await modelService.fetchClients(teamId: teamId, sortedBy: sortOption)
+        let dtos = try await modelService.fetchClients(teamId: teamId, sortedBy: sortOption)
+        return dtos.map { Client(dto: $0) }
     }
 
     /// Adds a new client using an input value object.
@@ -58,8 +59,6 @@ struct ClientService: ClientServiceProtocol {
     /// Updates an existing client document in Firestore.
     func updateClient(_ clientId: String, with input: UpdateClientInput) async throws {
         let teamId = session.teamId
-
-        let clientRef = modelService.clientDocument(teamId: teamId, clientId: clientId)
 
         var data: [String: Any] = ["name": input.name]
         if let notes = input.notes {

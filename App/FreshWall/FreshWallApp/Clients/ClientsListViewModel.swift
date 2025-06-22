@@ -6,9 +6,9 @@ import Foundation
 @Observable
 final class ClientsListViewModel {
     /// Clients fetched from the client service.
-    var clients: [ClientDTO] = []
+    var clients: [Client] = []
     /// Incidents fetched from the incident service.
-    var incidents: [IncidentDTO] = []
+    var incidents: [Incident] = []
     /// Field used when sorting clients.
     var sortField: ClientSortField = .incidentDate
     /// Indicates whether sorting is ascending.
@@ -34,7 +34,7 @@ final class ClientsListViewModel {
     }
 
     /// Returns clients sorted using the current sort field and direction.
-    func sortedClients() -> [ClientDTO] {
+    func sortedClients() -> [Client] {
         switch sortField {
         case .alphabetical:
             return clients.sorted { lhs, rhs in
@@ -58,7 +58,7 @@ final class ClientsListViewModel {
     }
 
     /// Returns the latest incident date for a client or distantPast if none.
-    private func lastIncidentDate(for client: ClientDTO) -> Date {
+    private func lastIncidentDate(for client: Client) -> Date {
         guard let id = client.id else { return .distantPast }
         let dates = incidents
             .filter { $0.clientRef.documentID == id }

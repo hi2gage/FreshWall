@@ -41,7 +41,7 @@ struct IncidentsListView: View {
 
     @ViewBuilder
     private func groupingMenu(
-        groups: [(title: String?, items: [IncidentDTO])],
+            groups: [(title: String?, items: [Incident])],
         collapsedGroups: Binding<Set<Int>>
     ) -> some View {
         Text("Group By")
@@ -110,16 +110,16 @@ struct IncidentsListView: View {
 
 @MainActor
 private class PreviewIncidentService: IncidentServiceProtocol {
-    func fetchIncidents() async throws -> [IncidentDTO] { [] }
-    func addIncident(_: IncidentDTO) async throws {}
+    func fetchIncidents() async throws -> [Incident] { [] }
+    func addIncident(_: Incident) async throws {}
     func addIncident(_: AddIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
     func updateIncident(_: String, with _: UpdateIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
 }
 
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
-    func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] {
-        [ClientDTO(
+    func fetchClients(sortedBy _: ClientSortOption) async throws -> [Client] {
+        [Client(
             id: "client1",
             name: "Sample Client",
             notes: "Preview client",

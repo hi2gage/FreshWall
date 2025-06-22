@@ -13,7 +13,7 @@ struct ClientCellModel: Identifiable, Hashable {
 
 extension ClientCellModel {
     /// Generates domain rows from Firestore clients and incidents, filtering out those without IDs.
-    static func makeRows(from clients: [ClientDTO], incidents: [IncidentDTO]) -> [ClientCellModel] {
+    static func makeRows(from clients: [Client], incidents: [Incident]) -> [ClientCellModel] {
         clients.compactMap { client in
             guard let id = client.id else { return nil }
             let lastDate = incidents

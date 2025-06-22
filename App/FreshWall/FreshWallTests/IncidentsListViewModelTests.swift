@@ -5,14 +5,14 @@ import Testing
 @MainActor
 struct IncidentsListViewModelTests {
     final class MockService: IncidentServiceProtocol {
-        func fetchIncidents() async throws -> [IncidentDTO] { [] }
-        func addIncident(_: IncidentDTO) async throws {}
+        func fetchIncidents() async throws -> [Incident] { [] }
+        func addIncident(_: Incident) async throws {}
         func addIncident(_: AddIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
         func updateIncident(_: String, with _: UpdateIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
     }
 
     final class MockClientService: ClientServiceProtocol {
-        func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
+        func fetchClients(sortedBy _: ClientSortOption) async throws -> [Client] { [] }
         func addClient(_: AddClientInput) async throws {}
         func updateClient(_: String, with _: UpdateClientInput) async throws {}
     }
@@ -23,7 +23,7 @@ struct IncidentsListViewModelTests {
         let vm = IncidentsListViewModel(incidentService: service, clientService: clientService)
         let clientRefA = Firestore.firestore().document("teams/t/clients/a")
         let clientRefB = Firestore.firestore().document("teams/t/clients/b")
-        let baseIncident = IncidentDTO(
+        let baseIncident = Incident(
             id: "1",
             clientRef: clientRefA,
             workerRefs: [],
@@ -49,8 +49,8 @@ struct IncidentsListViewModelTests {
         vm.incidents = [baseIncident, second]
         vm.groupOption = .client
         vm.clients = [
-            ClientDTO(id: "a", name: "A", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
-            ClientDTO(id: "b", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
+            Client(id: "a", name: "A", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
+            Client(id: "b", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
         ]
 
         vm.isAscending = true
@@ -79,7 +79,7 @@ struct IncidentsListViewModelTests {
         let clientRef = Firestore.firestore().document("teams/t/clients/a")
         let baseDate = Date()
         let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: baseDate)!
-        let first = IncidentDTO(
+        let first = Incident(
             id: "1",
             clientRef: clientRef,
             workerRefs: [],
@@ -125,7 +125,7 @@ struct IncidentsListViewModelTests {
         let clientService = MockClientService()
         let vm = IncidentsListViewModel(incidentService: service, clientService: clientService)
         let clientRef = Firestore.firestore().document("teams/t/clients/a")
-        var first = IncidentDTO(
+        var first = Incident(
             id: "1",
             clientRef: clientRef,
             workerRefs: [],
@@ -164,7 +164,7 @@ struct IncidentsListViewModelTests {
         let clientRef = Firestore.firestore().document("teams/t/clients/a")
         let baseDate = Date()
         let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: baseDate)!
-        var first = IncidentDTO(
+        var first = Incident(
             id: "1",
             clientRef: clientRef,
             workerRefs: [],
