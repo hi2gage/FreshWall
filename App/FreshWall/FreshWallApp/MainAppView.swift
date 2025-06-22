@@ -50,7 +50,8 @@ struct MainAppView: View {
                 .withAppRouter(
                     clientService: clientService,
                     incidentService: incidentService,
-                    memberService: memberService
+                    memberService: memberService,
+                    currentUserId: sessionStore.session.userId
                 )
         }
         .environment(routerPath)

@@ -44,7 +44,8 @@ extension View {
     func withAppRouter(
         clientService: ClientServiceProtocol,
         incidentService: IncidentServiceProtocol,
-        memberService: MemberServiceProtocol
+        memberService: MemberServiceProtocol,
+        currentUserId: String
     ) -> some View {
         navigationDestination(for: RouterDestination.self) { destination in
             switch destination {
@@ -82,7 +83,10 @@ extension View {
                     clientService: clientService
                 )
             case .membersList:
-                MembersListView(service: memberService)
+                MembersListView(
+                    service: memberService,
+                    currentUserId: currentUserId
+                )
             case .inviteMember:
                 InviteMemberView(service: InviteCodeService())
             case let .memberDetail(member):
