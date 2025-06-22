@@ -47,5 +47,12 @@ service cloud.firestore {
       allow create: if isSignedIn() && isInTeam(teamId);
       allow update, delete: if isSignedIn() && isLead(teamId);
     }
+
+    // 📧 Invite Codes for joining a team
+    match /teams/{teamId}/inviteCodes/{code} {
+      // Only team leads may view codes; writes occur via Cloud Functions
+      allow read: if isSignedIn() && isLead(teamId);
+      allow write: if false;
+    }
   }
 }
