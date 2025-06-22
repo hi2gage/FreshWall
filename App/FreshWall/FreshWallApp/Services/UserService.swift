@@ -8,18 +8,7 @@ struct UserService {
     private let auth = Auth.auth()
     private let functions = Functions.functions()
 
-    init() {
-        #if DEBUG
-            let settings = Firestore.firestore().settings
-            settings.host = "localhost:8080"
-            settings.isSSLEnabled = false
-            settings.isPersistenceEnabled = false
-            Firestore.firestore().settings = settings
-
-            Functions.functions().useEmulator(withHost: "localhost", port: 5001)
-            Auth.auth().useEmulator(withHost: "localhost", port: 9099)
-        #endif
-    }
+    init() {}
 
     /// Creates a new Firebase Auth user, a new team, and the corresponding Firestore user record.
     ///

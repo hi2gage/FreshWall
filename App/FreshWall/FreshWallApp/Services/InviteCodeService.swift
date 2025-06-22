@@ -12,11 +12,7 @@ protocol InviteCodeGenerating: Sendable {
 struct InviteCodeService: InviteCodeGenerating {
     private let functions = Functions.functions()
 
-    init() {
-        #if DEBUG
-            Functions.functions().useEmulator(withHost: "localhost", port: 5001)
-        #endif
-    }
+    init() {}
 
     func generateInviteCode(role: UserRole = .member, maxUses: Int = 10) async throws -> String {
         let result = try await functions.httpsCallable("generateInviteCode").call([
