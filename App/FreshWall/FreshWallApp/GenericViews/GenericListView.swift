@@ -7,6 +7,7 @@ struct GenericListView<Item: Identifiable, Content: View, MenuContent: View>: Vi
     var content: (Item) -> Content
 
     let plusButtonAction: @MainActor () -> Void
+    let refreshAction: @MainActor () async -> Void
     @ViewBuilder var menu: () -> MenuContent
 
     init(
@@ -15,6 +16,7 @@ struct GenericListView<Item: Identifiable, Content: View, MenuContent: View>: Vi
         destination: @escaping (Item) -> RouterDestination,
         content: @escaping (Item) -> Content,
         plusButtonAction: @escaping @MainActor () -> Void,
+        refreshAction: @escaping @MainActor () async -> Void = {},
         @ViewBuilder menu: @escaping () -> MenuContent = { EmptyView() }
     ) {
         self.items = items
@@ -22,6 +24,7 @@ struct GenericListView<Item: Identifiable, Content: View, MenuContent: View>: Vi
         self.destination = destination
         self.content = content
         self.plusButtonAction = plusButtonAction
+        self.refreshAction = refreshAction
         self.menu = menu
     }
 
@@ -37,6 +40,7 @@ struct GenericListView<Item: Identifiable, Content: View, MenuContent: View>: Vi
                 .padding(.horizontal)
             }
         }
+        .refreshable { await refreshAction() }
         .scrollIndicators(.hidden)
         .navigationTitle(title)
         .toolbar {

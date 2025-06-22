@@ -26,6 +26,10 @@ struct ClientsListView: View {
             plusButtonAction: {
                 routerPath.push(.addClient)
             },
+            refreshAction: {
+                await viewModel.loadClients()
+                await viewModel.loadIncidents()
+            },
             menu: {
                 Menu {
                     sortingMenu

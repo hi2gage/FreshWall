@@ -23,6 +23,9 @@ struct MembersListView: View {
             },
             plusButtonAction: {
                 routerPath.push(.inviteMember)
+            },
+            refreshAction: {
+                await viewModel.loadMembers()
             }
         )
         .task {

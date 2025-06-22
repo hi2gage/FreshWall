@@ -23,6 +23,10 @@ struct IncidentsListView: View {
             plusButtonAction: {
                 routerPath.push(.addIncident)
             },
+            refreshAction: {
+                await viewModel.loadIncidents()
+                await viewModel.loadClients()
+            },
             menu: { collapsedGroups in
                 Menu {
                     groupingMenu(groups: viewModel.groupedIncidents(), collapsedGroups: collapsedGroups)
