@@ -23,7 +23,7 @@ struct ClientsListViewModelTests {
         let vm = ClientsListViewModel(clientService: clientService, incidentService: incidentService)
         vm.clients = [
             Client(id: "1", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
-            Client(id: "2", name: "A", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init())
+            Client(id: "2", name: "A", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
         ]
         vm.sortField = .alphabetical
         vm.isAscending = true
@@ -39,7 +39,7 @@ struct ClientsListViewModelTests {
         let clientRefB = Firestore.firestore().document("teams/t/clients/b")
         vm.clients = [
             Client(id: "a", name: "A", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
-            Client(id: "b", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init())
+            Client(id: "b", name: "B", notes: nil, isDeleted: false, deletedAt: nil, createdAt: .init(), lastIncidentAt: .init()),
         ]
         var first = Incident(
             id: "1",

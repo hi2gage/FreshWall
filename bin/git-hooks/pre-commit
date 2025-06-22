@@ -1,0 +1,37 @@
+#!/bin/zsh
+
+# Path to the SwiftFormat config
+CONFIG_PATH="./App/FreshWall/.swiftformat"
+
+# Get staged Swift files (Added, Copied, or Modified)
+staged_files=("${(@f)$(git diff --cached --name-only --diff-filter=ACM | grep '\.swift$')}")
+
+if [[ ${#staged_files[@]} -eq 0 ]]; then
+  exit 0
+fi
+
+echo "🔧 Running SwiftFormat using $CONFIG_PATH on staged Swift files..."
+
+# Track whether any files were modified
+files_changed=0
+
+for file in $staged_files; do
+  if [[ -f "$file" ]]; then
+    original_hash=$(shasum "$file")
+      mint run swiftformat@0.56.1 --config "$CONFIG_PATH" "$file"
+    new_hash=$(shasum "$file")
+    
+    if [[ "$original_hash" != "$new_hash" ]]; then
+      echo "⚠️  File formatted: $file"
+      files_changed=1
+    fi
+  fi
+done
+
+if [[ $files_changed -eq 1 ]]; then
+  echo "❌ SwiftFormat made changes. Please review and stage the formatted files."
+  exit 1
+fi
+
+echo "✅ SwiftFormat passed with no changes."
+exit 0

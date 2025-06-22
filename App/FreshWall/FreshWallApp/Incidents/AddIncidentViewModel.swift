@@ -55,16 +55,16 @@ final class AddIncidentViewModel {
         let areaValue = Double(input.areaText) ?? 0
         let rateValue = Double(input.rateText)
         let input = AddIncidentInput(
-            clientId: self.input.clientId.trimmingCharacters(in: .whitespaces),
-            description: self.input.description,
+            clientId: input.clientId.trimmingCharacters(in: .whitespaces),
+            description: input.description,
             area: areaValue,
-            startTime: self.input.startTime,
-            endTime: self.input.endTime,
-            billable: self.input.billable,
+            startTime: input.startTime,
+            endTime: input.endTime,
+            billable: input.billable,
             rate: rateValue,
-            projectTitle: self.input.projectTitle,
-            status: self.input.status,
-            materialsUsed: self.input.materialsUsed.isEmpty ? nil : self.input.materialsUsed
+            projectTitle: input.projectTitle,
+            status: input.status,
+            materialsUsed: input.materialsUsed.isEmpty ? nil : input.materialsUsed
         )
         try await service.addIncident(
             input,
