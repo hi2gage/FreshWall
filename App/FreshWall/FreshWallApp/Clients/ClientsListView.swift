@@ -67,6 +67,7 @@ struct ClientsListView: View {
         photoService: incidentPhotoService,
         clientModelService: clientModelService,
         userModelService: userModelService,
+        metadataService: PhotoMetadataService(),
         session: session
     )
     FreshWallPreview {
