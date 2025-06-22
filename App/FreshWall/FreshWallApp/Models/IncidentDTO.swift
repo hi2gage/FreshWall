@@ -5,11 +5,13 @@ import Foundation
 struct IncidentDTO: Codable, Identifiable, Sendable, Hashable {
     /// Firestore-generated document identifier for the incident.
     @DocumentID var id: String?
+    /// Title describing the project for this incident.
+    var projectTitle: String
     /// Reference to the client document associated with this incident.
     var clientRef: DocumentReference
     /// References to worker user documents involved in this incident.
     var workerRefs: [DocumentReference]
-    /// Description of the incident.
+    /// Notes describing the incident.
     var description: String
     /// Area affected by the incident.
     var area: Double
@@ -33,8 +35,6 @@ struct IncidentDTO: Codable, Identifiable, Sendable, Hashable {
     var billable: Bool
     /// Optional billing rate applied to this incident.
     var rate: Double?
-    /// Optional project name associated with this incident.
-    var projectName: String?
     /// Current status of the incident (e.g. "open", "in_progress", "completed").
     var status: String
     /// Materials used during the incident work (optional details).

@@ -92,6 +92,7 @@ struct IncidentService: IncidentServiceProtocol {
 
         let newIncident = IncidentDTO(
             id: newDoc.documentID,
+            projectTitle: input.projectTitle,
             clientRef: clientRef,
             workerRefs: [],
             description: input.description,
@@ -106,7 +107,6 @@ struct IncidentService: IncidentServiceProtocol {
             lastModifiedAt: nil,
             billable: input.billable,
             rate: input.rate,
-            projectName: input.projectName,
             status: input.status,
             materialsUsed: input.materialsUsed
         )
@@ -146,11 +146,7 @@ struct IncidentService: IncidentServiceProtocol {
             data["rate"] = FieldValue.delete()
         }
 
-        if let projectName = input.projectName {
-            data["projectName"] = projectName
-        } else {
-            data["projectName"] = FieldValue.delete()
-        }
+        data["projectTitle"] = input.projectTitle
 
         if let materialsUsed = input.materialsUsed {
             data["materialsUsed"] = materialsUsed

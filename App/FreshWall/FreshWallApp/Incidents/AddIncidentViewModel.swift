@@ -5,26 +5,32 @@ import Observation
 @MainActor
 @Observable
 final class AddIncidentViewModel {
-    /// Client document ID or special tag for add-new.
-    var clientId: String = ""
-    /// Description of the incident.
-    var description: String = ""
-    /// Area affected (as text input).
-    var areaText: String = ""
-    /// Start time of incident.
-    var startTime: Date = .init()
-    /// End time of incident.
-    var endTime: Date = .init()
-    /// Whether the incident is billable.
-    var billable: Bool = false
-    /// Billing rate (as text input).
-    var rateText: String = ""
-    /// Optional project name.
-    var projectName: String = ""
-    /// Status of the incident.
-    var status: String = "open"
-    /// Materials used description.
-    var materialsUsed: String = ""
+    /// Container for all editable incident fields.
+    struct Input {
+        /// Title of the project.
+        var projectTitle: String = ""
+        /// Selected client document ID or tag for add-new.
+        var clientId: String = ""
+        /// Notes describing the incident.
+        var description: String = ""
+        /// Area affected as free-form text.
+        var areaText: String = ""
+        /// Start time of incident.
+        var startTime: Date = .init()
+        /// End time of incident.
+        var endTime: Date = .init()
+        /// Whether the incident is billable.
+        var billable: Bool = false
+        /// Billing rate as text.
+        var rateText: String = ""
+        /// Status of the incident.
+        var status: String = "open"
+        /// Materials used description.
+        var materialsUsed: String = ""
+    }
+
+    /// Current input being edited.
+    var input = Input()
     /// Available status options.
     let statusOptions = ["open", "in_progress", "completed"]
     /// Loaded clients for selection.
@@ -32,10 +38,11 @@ final class AddIncidentViewModel {
     private let clientService: ClientServiceProtocol
     private let service: IncidentServiceProtocol
 
-    /// Validation: requires a clientId and description.
+    /// Validation: requires a clientId, description, and project title.
     var isValid: Bool {
-        !clientId.trimmingCharacters(in: .whitespaces).isEmpty &&
-            !description.trimmingCharacters(in: .whitespaces).isEmpty
+        !input.clientId.trimmingCharacters(in: .whitespaces).isEmpty &&
+            !input.description.trimmingCharacters(in: .whitespaces).isEmpty &&
+            !input.projectTitle.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     init(service: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
@@ -45,19 +52,19 @@ final class AddIncidentViewModel {
 
     /// Saves the new incident via the service along with photo data.
     func save(beforeImages: [Data], afterImages: [Data]) async throws {
-        let areaValue = Double(areaText) ?? 0
-        let rateValue = Double(rateText)
+        let areaValue = Double(input.areaText) ?? 0
+        let rateValue = Double(input.rateText)
         let input = AddIncidentInput(
-            clientId: clientId.trimmingCharacters(in: .whitespaces),
-            description: description,
+            clientId: self.input.clientId.trimmingCharacters(in: .whitespaces),
+            description: self.input.description,
             area: areaValue,
-            startTime: startTime,
-            endTime: endTime,
-            billable: billable,
+            startTime: self.input.startTime,
+            endTime: self.input.endTime,
+            billable: self.input.billable,
             rate: rateValue,
-            projectName: projectName.isEmpty ? nil : projectName,
-            status: status,
-            materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed
+            projectTitle: self.input.projectTitle,
+            status: self.input.status,
+            materialsUsed: self.input.materialsUsed.isEmpty ? nil : self.input.materialsUsed
         )
         try await service.addIncident(
             input,

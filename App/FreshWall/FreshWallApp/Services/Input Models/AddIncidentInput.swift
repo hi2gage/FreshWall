@@ -16,8 +16,8 @@ struct AddIncidentInput: Sendable {
     let billable: Bool
     /// Optional rate for billing.
     let rate: Double?
-    /// Optional project name.
-    let projectName: String?
+    /// Title of the project.
+    let projectTitle: String
     /// Status string (e.g. "open", "completed").
     let status: String
     /// Optional materials used description.

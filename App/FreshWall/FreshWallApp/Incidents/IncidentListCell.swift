@@ -7,7 +7,7 @@ struct IncidentListCell: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(incident.description)
+            Text(incident.projectTitle)
                 .font(.headline)
             HStack(spacing: 12) {
                 Text(incident.status.capitalized)
