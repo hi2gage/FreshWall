@@ -10,16 +10,16 @@ struct MemberRow: Identifiable, Hashable {
 }
 
 extension MemberRow {
-    /// Generates domain rows from Firestore users, filtering out those without IDs.
-    static func makeRows(from users: [UserDTO]) -> [MemberRow] {
-        users.compactMap { user in
-            guard let id = user.id else { return nil }
+    /// Generates domain rows from members, filtering out those without IDs.
+    static func makeRows(from members: [Member]) -> [MemberRow] {
+        members.compactMap { member in
+            guard let id = member.id else { return nil }
             return MemberRow(
                 id: id,
-                displayName: user.displayName,
-                email: user.email,
-                role: user.role.rawValue.capitalized,
-                isDeleted: user.isDeleted
+                displayName: member.displayName,
+                email: member.email,
+                role: member.role.rawValue.capitalized,
+                isDeleted: member.isDeleted
             )
         }
     }
