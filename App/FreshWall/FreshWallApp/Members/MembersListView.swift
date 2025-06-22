@@ -17,12 +17,15 @@ struct MembersListView: View {
         GenericListView(
             items: viewModel.members,
             title: "Members",
-            destination: { member in .memberDetail(member: member) },
+            routerDestination: { member in .memberDetail(member: member) },
             content: { member in
                 MemberListCell(member: member)
             },
             plusButtonAction: {
                 routerPath.push(.inviteMember)
+            },
+            refreshAction: {
+                await viewModel.loadMembers()
             }
         )
         .task {

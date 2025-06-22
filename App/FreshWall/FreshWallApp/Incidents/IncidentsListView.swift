@@ -16,12 +16,16 @@ struct IncidentsListView: View {
             groups: viewModel.groupedIncidents(),
             title: "Incidents",
             groupOption: $viewModel.groupOption,
-            destination: { incident in .incidentDetail(incident: incident) },
+            routerDestination: { incident in .incidentDetail(incident: incident) },
             content: { incident in
                 IncidentListCell(incident: incident)
             },
             plusButtonAction: {
                 routerPath.push(.addIncident)
+            },
+            refreshAction: {
+                await viewModel.loadIncidents()
+                await viewModel.loadClients()
             },
             menu: { collapsedGroups in
                 Menu {

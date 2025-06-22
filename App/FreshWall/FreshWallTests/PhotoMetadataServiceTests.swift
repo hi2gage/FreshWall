@@ -32,11 +32,11 @@ struct PhotoMetadataServiceTests {
             kCGImagePropertyGPSLatitude: 37.0,
             kCGImagePropertyGPSLatitudeRef: "N",
             kCGImagePropertyGPSLongitude: 122.0,
-            kCGImagePropertyGPSLongitudeRef: "W"
+            kCGImagePropertyGPSLongitudeRef: "W",
         ]
         let props: [CFString: Any] = [
             kCGImagePropertyExifDictionary: exif,
-            kCGImagePropertyGPSDictionary: gps
+            kCGImagePropertyGPSDictionary: gps,
         ]
         CGImageDestinationAddImage(dest, cgImage, props as CFDictionary)
         CGImageDestinationFinalize(dest)

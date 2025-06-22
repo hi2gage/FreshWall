@@ -21,10 +21,14 @@ struct ClientsListView: View {
         GenericListView(
             items: viewModel.sortedClients(),
             title: "Clients",
-            destination: { client in .clientDetail(client: client) },
+            routerDestination: { client in .clientDetail(client: client) },
             content: { client in ClientListCell(client: client) },
             plusButtonAction: {
                 routerPath.push(.addClient)
+            },
+            refreshAction: {
+                await viewModel.loadClients()
+                await viewModel.loadIncidents()
             },
             menu: {
                 Menu {
