@@ -50,7 +50,7 @@ struct IncidentsListView: View {
 
         Picker("Group By", selection: $viewModel.groupOption) {
             Text("None").tag(Optional<IncidentGroupOption>.none)
-            ForEach(Array(IncidentGroupOption.allCases), id: \\.self) { option in
+            ForEach(Array(IncidentGroupOption.allCases), id: \.self) { option in
                 Text(option.rawValue).tag(Optional.some(option))
             }
         }
