@@ -17,8 +17,7 @@ Open the Xcode project and build the `FreshWallApp` target:
 
 ```bash
 cd App/FreshWall
-open FreshWall.xcodeproj  # or build from the command line
-# xcodebuild -scheme FreshWallApp -destination 'platform=iOS Simulator,name=iPhone 15' build
+open  App/FreshWall/FreshWall.xcodeproj  # or build from the command line
 ```
 
 ### Tests
