@@ -21,7 +21,7 @@ struct PickedPhoto: Identifiable, Sendable {
     ///   - data: Raw image bytes.
     ///   - service: Service used to extract metadata.
     /// - Returns: A ``PickedPhoto`` if the data can be converted to an image.
-    init(id: String = UUID().uuidString, image: UIImage, captureDate: Date?, location: CLLocation?) {
+    init(id: String, image: UIImage, captureDate: Date?, location: CLLocation?) {
         self.id = id
         self.image = image
         self.captureDate = captureDate
@@ -34,6 +34,7 @@ struct PickedPhoto: Identifiable, Sendable {
         using service: PhotoMetadataServiceProtocol
     ) -> PickedPhoto? {
         guard let image = UIImage(data: data) else { return nil }
+
         let meta = service.metadata(from: data)
         return PickedPhoto(id: id, image: image, captureDate: meta.captureDate, location: meta.location)
     }

@@ -17,7 +17,7 @@ extension IncidentPhotoDTO {
     }
 }
 
-extension Array where Element == PickedPhoto {
+extension [PickedPhoto] {
     /// Convert the photos into DTOs pairing each item with the given URLs.
     /// - Parameter urls: Storage URLs matching the photo order.
     /// - Returns: DTOs ready for persistence.

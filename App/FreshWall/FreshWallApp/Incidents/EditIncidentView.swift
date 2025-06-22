@@ -135,7 +135,6 @@ struct EditIncidentView: View {
         .task {
             await viewModel.loadClients()
         }
-        
     }
 }
 

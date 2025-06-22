@@ -18,7 +18,6 @@ struct IncidentServiceCompositionTests {
         func uploadAfterPhotos(teamId _: String, incidentId _: String, images: [Data]) async throws -> [String] { images.map { _ in "after" } }
     }
 
-
     final actor MockClientModel: ClientModelServiceProtocol {
         var requested: (String, String)?
         func fetchClients(teamId _: String, sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
