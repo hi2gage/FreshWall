@@ -3,6 +3,7 @@ import SwiftUI
 /// A generic view for displaying items grouped into sections with a menu for selecting a grouping option.
 struct GenericGroupableListView<
     Item: Identifiable,
+    Destination: Hashable,
     GroupOption: CaseIterable & Hashable & RawRepresentable,
     Content: View,
     MenuContent: View
@@ -14,11 +15,12 @@ struct GenericGroupableListView<
     /// Currently selected grouping option (nil means no grouping).
     @Binding var groupOption: GroupOption?
     /// Produces a navigation destination for a given item.
-    var destination: (Item) -> RouterDestination
+    var destination: (Item) -> Destination
     /// Creates the content view for a given item.
     var content: (Item) -> Content
 
     let plusButtonAction: @MainActor () -> Void
+    let refreshAction: @MainActor () async -> Void
     @ViewBuilder var menu: (_ collapsedGroups: Binding<Set<Int>>) -> MenuContent
 
     /// Tracks which groups are collapsed by index when grouping is enabled.
@@ -28,9 +30,10 @@ struct GenericGroupableListView<
         groups: [(title: String?, items: [Item])],
         title: String,
         groupOption: Binding<GroupOption?>,
-        destination: @escaping (Item) -> RouterDestination,
+        destination: @escaping (Item) -> Destination,
         content: @escaping (Item) -> Content,
         plusButtonAction: @escaping @MainActor () -> Void,
+        refreshAction: @escaping @MainActor () async -> Void = {},
         @ViewBuilder menu: @escaping (_ collapsedGroups: Binding<Set<Int>>) -> MenuContent = { _ in EmptyView() }
     ) {
         self.groups = groups
@@ -39,6 +42,7 @@ struct GenericGroupableListView<
         self.destination = destination
         self.content = content
         self.plusButtonAction = plusButtonAction
+        self.refreshAction = refreshAction
         self.menu = menu
     }
 
@@ -86,6 +90,7 @@ struct GenericGroupableListView<
             }
             .animation(.easeInOut(duration: 0.2), value: collapsedGroups)
         }
+        .refreshable { await refreshAction() }
         .scrollIndicators(.hidden)
         .navigationTitle(title)
         .toolbar {
@@ -105,5 +110,29 @@ struct GenericGroupableListView<
         } else {
             collapsedGroups.insert(index)
         }
+    }
+}
+
+extension GenericGroupableListView where Destination == RouterDestination {
+    init(
+        groups: [(title: String?, items: [Item])],
+        title: String,
+        groupOption: Binding<GroupOption?>,
+        routerDestination: @escaping (Item) -> RouterDestination,
+        content: @escaping (Item) -> Content,
+        plusButtonAction: @escaping @MainActor () -> Void,
+        refreshAction: @escaping @MainActor () async -> Void = {},
+        @ViewBuilder menu: @escaping (_ collapsedGroups: Binding<Set<Int>>) -> MenuContent = { _ in EmptyView() }
+    ) {
+        self.init(
+            groups: groups,
+            title: title,
+            groupOption: groupOption,
+            destination: routerDestination,
+            content: content,
+            plusButtonAction: plusButtonAction,
+            refreshAction: refreshAction,
+            menu: menu
+        )
     }
 }

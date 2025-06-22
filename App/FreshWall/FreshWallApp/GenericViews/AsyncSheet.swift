@@ -12,8 +12,12 @@ extension View {
         onDismiss: @escaping () async -> Void,
         @ViewBuilder content: @escaping () -> some View
     ) -> some View {
-        sheet(isPresented: isPresented, onDismiss: {
-            Task { await onDismiss() }
-        }, content: content)
+        sheet(
+            isPresented: isPresented,
+            onDismiss: {
+                Task { await onDismiss() }
+            },
+            content: content
+        )
     }
 }
