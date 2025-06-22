@@ -26,27 +26,27 @@ struct PhotoViewer: View {
     var body: some View {
         TabView(selection: $index) {
             ForEach(Array(photos.enumerated()), id: \.element.id) { idx, photo in
-                AsyncImage(url: URL(string: photo.url)) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(Color.black)
-                    case let .success(image):
-                        ZoomableImage(image: image)
-                            .tag(idx)
-                    case .failure:
-                        Image(systemName: "photo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(Color.black)
-                            .tag(idx)
-                    @unknown default:
-                        EmptyView()
-                            .tag(idx)
+                ZStack {
+                    AsyncImage(url: URL(string: photo.url)) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(Color.black)
+                        case let .success(image):
+                            ZoomableImage(image: image)
+                        case .failure:
+                            Image(systemName: "photo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(Color.black)
+                        @unknown default:
+                            EmptyView()
+                        }
                     }
                 }
+                .tag(idx)
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .always))
