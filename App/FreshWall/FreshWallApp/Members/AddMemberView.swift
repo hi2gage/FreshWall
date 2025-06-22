@@ -30,9 +30,6 @@ struct AddMemberView: View {
         }
         .navigationTitle("Add Member")
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
-            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     Task {
