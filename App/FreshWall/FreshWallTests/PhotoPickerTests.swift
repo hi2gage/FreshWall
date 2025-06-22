@@ -40,7 +40,7 @@ struct PhotoPickerTests {
 
     @Test func createPickedPhotoFromData() {
         let data = makeTestImageData()
-        let photo = PickedPhoto.make(from: data, using: MockMeta())
+        let photo = PickedPhoto.make(id: "id", from: data, using: MockMeta())
         #expect(photo?.captureDate == .distantPast)
         #expect(photo?.image.size.width == 1)
     }
@@ -48,9 +48,9 @@ struct PhotoPickerTests {
     @Test func convertPhotosToDTOs() {
         let renderer = UIGraphicsImageRenderer(size: .init(width: 1, height: 1))
         let image = renderer.image { _ in }
-        let photo = PickedPhoto(image: image, captureDate: .distantPast, location: CLLocation(latitude: 1, longitude: 2))
+        let photo = PickedPhoto(id: "p", image: image, captureDate: .distantPast, location: CLLocation(latitude: 1, longitude: 2))
         let dtos = [photo].toIncidentPhotoDTOs(urls: ["url"])
-        #expect(dtos.first?.id == photo.id.uuidString)
+        #expect(dtos.first?.id == photo.id)
         #expect(dtos.first?.url == "url")
         #expect(dtos.first?.captureDate?.dateValue() == .distantPast)
         #expect(dtos.first?.location?.latitude == 1)

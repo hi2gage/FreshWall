@@ -8,7 +8,7 @@ import SwiftUI
 /// A photo selected from ``PhotoPicker`` along with optional metadata.
 struct PickedPhoto: Identifiable, Sendable {
     /// Unique identifier for the selection.
-    let id = UUID()
+    let id: String
     /// Chosen image.
     let image: UIImage
     /// Date when the photo was captured, if available.
@@ -21,13 +21,21 @@ struct PickedPhoto: Identifiable, Sendable {
     ///   - data: Raw image bytes.
     ///   - service: Service used to extract metadata.
     /// - Returns: A ``PickedPhoto`` if the data can be converted to an image.
+    init(id: String = UUID().uuidString, image: UIImage, captureDate: Date?, location: CLLocation?) {
+        self.id = id
+        self.image = image
+        self.captureDate = captureDate
+        self.location = location
+    }
+
     static func make(
+        id: String,
         from data: Data,
         using service: PhotoMetadataServiceProtocol
     ) -> PickedPhoto? {
         guard let image = UIImage(data: data) else { return nil }
         let meta = service.metadata(from: data)
-        return PickedPhoto(image: image, captureDate: meta.captureDate, location: meta.location)
+        return PickedPhoto(id: id, image: image, captureDate: meta.captureDate, location: meta.location)
     }
 }
 
@@ -82,7 +90,11 @@ struct PhotoPicker<Label: View>: View {
                 var newSelection: [PickedPhoto] = []
                 for item in newItems {
                     if let data = try? await item.loadTransferable(type: Data.self),
-                       let photo = PickedPhoto.make(from: data, using: metadataService) {
+                       let photo = PickedPhoto.make(
+                           id: item.itemIdentifier ?? UUID().uuidString,
+                           from: data,
+                           using: metadataService
+                       ) {
                         newSelection.append(photo)
                     }
                 }
