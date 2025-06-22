@@ -1,6 +1,8 @@
 import SwiftData
 import SwiftUI
 
+// MARK: - RouterPath
+
 @MainActor
 @Observable
 final class RouterPath {
@@ -17,6 +19,8 @@ final class RouterPath {
         _ = path.popLast()
     }
 }
+
+// MARK: - RouterDestination
 
 /// Destinations for navigation within the app.
 enum RouterDestination: Hashable {

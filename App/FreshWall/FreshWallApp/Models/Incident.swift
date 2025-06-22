@@ -1,6 +1,8 @@
 import FirebaseFirestore
 import Foundation
 
+// MARK: - Incident
+
 /// Domain model representing an incident used by the UI layer.
 struct Incident: Identifiable, Hashable, Sendable {
     var id: String?
@@ -58,8 +60,8 @@ extension Incident {
             createdAt: createdAt,
             startTime: startTime,
             endTime: endTime,
-            beforePhotos: beforePhotos.map { $0.dto },
-            afterPhotos: afterPhotos.map { $0.dto },
+            beforePhotos: beforePhotos.map(\.dto),
+            afterPhotos: afterPhotos.map(\.dto),
             createdBy: createdBy,
             lastModifiedBy: lastModifiedBy,
             lastModifiedAt: lastModifiedAt,

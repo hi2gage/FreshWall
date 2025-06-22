@@ -1,6 +1,8 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - IncidentModelServiceProtocol
+
 /// Handles Firestore reads and writes for ``IncidentDTO`` models.
 ///
 /// Similar to ``ClientModelServiceProtocol`` this protocol isolates the
@@ -18,6 +20,8 @@ protocol IncidentModelServiceProtocol: Sendable {
     /// Apply the provided data updates to an existing incident document.
     func updateIncident(id: String, teamId: String, data: [String: Any]) async throws
 }
+
+// MARK: - IncidentModelService
 
 /// ``IncidentModelServiceProtocol`` implementation backed by ``Firestore``.
 struct IncidentModelService: IncidentModelServiceProtocol {

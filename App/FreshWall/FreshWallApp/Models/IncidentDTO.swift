@@ -1,6 +1,8 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - IncidentDTO
+
 /// An incident logged for a client, including timestamps, photos, and billing info.
 struct IncidentDTO: Codable, Identifiable, Sendable, Hashable {
     /// Firestore-generated document identifier for the incident.

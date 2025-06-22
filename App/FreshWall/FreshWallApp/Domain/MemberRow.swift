@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - MemberRow
+
 /// Domain model representing a team member for UI display.
 struct MemberRow: Identifiable, Hashable {
     let id: String
@@ -14,6 +16,7 @@ extension MemberRow {
     static func makeRows(from members: [Member]) -> [MemberRow] {
         members.compactMap { member in
             guard let id = member.id else { return nil }
+
             return MemberRow(
                 id: id,
                 displayName: member.displayName,

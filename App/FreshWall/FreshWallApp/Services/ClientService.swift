@@ -1,6 +1,8 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - ClientServiceProtocol
+
 /// Protocol defining operations for fetching and managing Client entities.
 protocol ClientServiceProtocol: Sendable {
     /// Fetches active clients for the current team.
@@ -10,6 +12,8 @@ protocol ClientServiceProtocol: Sendable {
     /// Updates an existing client using an input value object.
     func updateClient(_ clientId: String, with input: UpdateClientInput) async throws
 }
+
+// MARK: - ClientService
 
 /// Service to fetch and manage ``Client`` entities for the current team.
 ///
@@ -70,6 +74,8 @@ struct ClientService: ClientServiceProtocol {
         try await modelService.updateClient(id: clientId, teamId: teamId, data: data)
     }
 }
+
+// MARK: ClientService.Errors
 
 extension ClientService {
     enum Errors: Error {

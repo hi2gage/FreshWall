@@ -1,6 +1,8 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - UserModelServiceProtocol
+
 /// Provides helpers for working with Firestore user documents.
 ///
 /// Primarily used by ``IncidentService`` when resolving `createdBy` or
@@ -9,6 +11,8 @@ protocol UserModelServiceProtocol: Sendable {
     /// Returns a reference to a user document within the given team.
     func userDocument(teamId: String, userId: String) -> DocumentReference
 }
+
+// MARK: - UserModelService
 
 /// ``UserModelServiceProtocol`` implementation backed by ``Firestore``.
 struct UserModelService: UserModelServiceProtocol {

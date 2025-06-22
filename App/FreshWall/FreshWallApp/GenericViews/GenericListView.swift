@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - GenericListView
+
 struct GenericListView<
     Item: Identifiable,
     Destination: Hashable,

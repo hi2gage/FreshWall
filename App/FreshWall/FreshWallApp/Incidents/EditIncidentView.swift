@@ -2,6 +2,8 @@
 import PhotosUI
 import SwiftUI
 
+// MARK: - EditIncidentView
+
 /// View for editing an existing incident.
 struct EditIncidentView: View {
     @Environment(\.dismiss) private var dismiss
@@ -137,8 +139,7 @@ struct EditIncidentView: View {
                 viewModel.beforeImages = []
                 for item in newItems {
                     if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data)
-                    {
+                       let image = UIImage(data: data) {
                         viewModel.beforeImages.append(image)
                     }
                 }
@@ -149,8 +150,7 @@ struct EditIncidentView: View {
                 viewModel.afterImages = []
                 for item in newItems {
                     if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data)
-                    {
+                       let image = UIImage(data: data) {
                         viewModel.afterImages.append(image)
                     }
                 }
@@ -158,6 +158,8 @@ struct EditIncidentView: View {
         }
     }
 }
+
+// MARK: - PreviewClientService
 
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
@@ -177,6 +179,8 @@ private class PreviewClientService: ClientServiceProtocol {
 
     func updateClient(_: String, with _: UpdateClientInput) async throws {}
 }
+
+// MARK: - PreviewIncidentService
 
 /// Dummy implementations of services for previews.
 @MainActor

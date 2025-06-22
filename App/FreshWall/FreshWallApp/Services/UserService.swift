@@ -49,8 +49,7 @@ struct UserService {
         guard
             let data = result.data as? [String: Any],
             let teamId = data["teamId"] as? String,
-            let teamCode = data["teamCode"] as? String
-        else {
+            let teamCode = data["teamCode"] as? String else {
             throw NSError(
                 domain: "UserService",
                 code: -1,
@@ -94,8 +93,7 @@ struct UserService {
             ])
 
         guard
-            let data = result.data as? [String: Any]
-        else {
+            let data = result.data as? [String: Any] else {
             throw NSError(
                 domain: "UserService",
                 code: -1,

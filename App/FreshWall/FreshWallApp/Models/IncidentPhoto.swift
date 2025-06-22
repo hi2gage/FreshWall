@@ -2,6 +2,8 @@ import CoreLocation
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - IncidentPhoto
+
 /// Domain model representing a photo with optional metadata.
 struct IncidentPhoto: Sendable {
     /// Download URL for the photo.
@@ -11,6 +13,8 @@ struct IncidentPhoto: Sendable {
     /// Location coordinate where the photo was captured.
     var location: CLLocationCoordinate2D?
 }
+
+// MARK: Hashable, Equatable
 
 extension IncidentPhoto: Hashable, Equatable {
     public func hash(into hasher: inout Hasher) {
