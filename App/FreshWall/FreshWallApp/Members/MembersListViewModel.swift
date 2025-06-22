@@ -16,8 +16,9 @@ final class MembersListViewModel {
             }
         }
     }
+
     /// Indicates whether the user manually changed the sort order.
-    private(set) var userSelectedSort = false
+    var userSelectedSort = false
 
     private let service: MemberServiceProtocol
     private let currentUserId: String
@@ -57,7 +58,7 @@ final class MembersListViewModel {
     func sortedMembers() -> [Member] {
         var result = sortMembers(members)
 
-        if !userSelectedSort && sort.field == .alphabetical && groupOption == nil {
+        if !userSelectedSort, sort.field == .alphabetical, groupOption == nil {
             if let index = result.firstIndex(where: { $0.id == currentUserId }) {
                 let current = result.remove(at: index)
                 result.insert(current, at: 0)
@@ -70,7 +71,7 @@ final class MembersListViewModel {
     private func sortMembers(_ items: [Member]) -> [Member] {
         switch sort.field {
         case .alphabetical:
-            return items.sorted { lhs, rhs in
+            items.sorted { lhs, rhs in
                 if sort.isAscending {
                     lhs.displayName < rhs.displayName
                 } else {
@@ -78,7 +79,7 @@ final class MembersListViewModel {
                 }
             }
         case .role:
-            return items.sorted { lhs, rhs in
+            items.sorted { lhs, rhs in
                 let lhsRole = lhs.role.rawValue
                 let rhsRole = rhs.role.rawValue
                 if sort.isAscending {

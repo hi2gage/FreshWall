@@ -16,6 +16,7 @@ enum MemberSortField: SortFieldRepresentable {
 
     func icon(isSelected: Bool, isAscending: Bool) -> String? {
         guard isSelected else { return nil }
+
         return isAscending ? "arrow.up" : "arrow.down"
     }
 }
