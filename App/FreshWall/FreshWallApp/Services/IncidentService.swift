@@ -92,6 +92,7 @@ struct IncidentService: IncidentServiceProtocol {
 
         let newIncident = IncidentDTO(
             id: newDoc.documentID,
+            projectTitle: input.projectTitle,
             clientRef: clientRef,
             workerRefs: [],
             description: input.description,
@@ -106,7 +107,6 @@ struct IncidentService: IncidentServiceProtocol {
             lastModifiedAt: nil,
             billable: input.billable,
             rate: input.rate,
-            projectTitle: input.projectTitle,
             status: input.status,
             materialsUsed: input.materialsUsed
         )

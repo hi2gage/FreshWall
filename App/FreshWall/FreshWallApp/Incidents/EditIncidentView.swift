@@ -199,6 +199,7 @@ private class PreviewIncidentService: IncidentServiceProtocol {
 #Preview {
     let incident = IncidentDTO(
         id: "inc1",
+        projectTitle: "",
         clientRef: Firestore.firestore().document("teams/t/clients/client1"),
         workerRefs: [],
         description: "Some incident",
@@ -213,7 +214,6 @@ private class PreviewIncidentService: IncidentServiceProtocol {
         lastModifiedAt: nil,
         billable: false,
         rate: nil,
-        projectTitle: "",
         status: "open",
         materialsUsed: nil
     )
