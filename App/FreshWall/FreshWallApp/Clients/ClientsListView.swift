@@ -18,19 +18,20 @@ struct ClientsListView: View {
     }
 
     var body: some View {
-        // Sort clients by most recent incident date
-        let sortedClients = viewModel.clients.sorted { lhs, rhs in
-            let dateA = lastIncidentDate(for: lhs)
-            let dateB = lastIncidentDate(for: rhs)
-            return dateA > dateB
-        }
         GenericListView(
-            items: sortedClients,
+            items: viewModel.sortedClients(),
             title: "Clients",
             destination: { client in .clientDetail(client: client) },
             content: { client in ClientListCell(client: client) },
             plusButtonAction: {
                 routerPath.push(.addClient)
+            },
+            menu: {
+                Menu {
+                    sortingMenu()
+                } label: {
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                }
             }
         )
         .task {
@@ -39,13 +40,35 @@ struct ClientsListView: View {
         }
     }
 
-    /// Returns the latest incident date for a given client, or distantPast if none.
-    private func lastIncidentDate(for client: ClientDTO) -> Date {
-        guard let id = client.id else { return Date.distantPast }
-        let dates = viewModel.incidents
-            .filter { $0.clientRef.documentID == id }
-            .map { $0.createdAt.dateValue() }
-        return dates.max() ?? Date.distantPast
+    @ViewBuilder
+    private func sortingMenu() -> some View {
+        Text("Order By")
+            .font(.caption)
+            .foregroundColor(.secondary)
+
+        Button {
+            if viewModel.sortField == .alphabetical {
+                viewModel.isAscending.toggle()
+            } else {
+                viewModel.sortField = .alphabetical
+                viewModel.isAscending = true
+            }
+        } label: {
+            let arrow = viewModel.sortField == .alphabetical ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
+            Label("Alphabetical", systemImage: arrow)
+        }
+
+        Button {
+            if viewModel.sortField == .incidentDate {
+                viewModel.isAscending.toggle()
+            } else {
+                viewModel.sortField = .incidentDate
+                viewModel.isAscending = false
+            }
+        } label: {
+            let arrow = viewModel.sortField == .incidentDate ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
+            Label("By Incident Date", systemImage: arrow)
+        }
     }
 }
 
