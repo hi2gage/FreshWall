@@ -12,8 +12,8 @@ struct Incident: Identifiable, Hashable, Sendable {
     var createdAt: Timestamp
     var startTime: Timestamp
     var endTime: Timestamp
-    var beforePhotoUrls: [String]
-    var afterPhotoUrls: [String]
+    var beforePhotos: [IncidentPhoto]
+    var afterPhotos: [IncidentPhoto]
     var createdBy: DocumentReference
     var lastModifiedBy: DocumentReference?
     var lastModifiedAt: Timestamp?
@@ -35,8 +35,8 @@ extension Incident {
         createdAt = dto.createdAt
         startTime = dto.startTime
         endTime = dto.endTime
-        beforePhotoUrls = dto.beforePhotoUrls
-        afterPhotoUrls = dto.afterPhotoUrls
+        beforePhotos = dto.beforePhotos.map { IncidentPhoto(dto: $0) }
+        afterPhotos = dto.afterPhotos.map { IncidentPhoto(dto: $0) }
         createdBy = dto.createdBy
         lastModifiedBy = dto.lastModifiedBy
         lastModifiedAt = dto.lastModifiedAt
@@ -58,8 +58,8 @@ extension Incident {
             createdAt: createdAt,
             startTime: startTime,
             endTime: endTime,
-            beforePhotoUrls: beforePhotoUrls,
-            afterPhotoUrls: afterPhotoUrls,
+            beforePhotos: beforePhotos.map { $0.dto },
+            afterPhotos: afterPhotos.map { $0.dto },
             createdBy: createdBy,
             lastModifiedBy: lastModifiedBy,
             lastModifiedAt: lastModifiedAt,

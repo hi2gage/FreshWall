@@ -21,10 +21,10 @@ struct IncidentDTO: Codable, Identifiable, Sendable, Hashable {
     var startTime: Timestamp
     /// End time of the incident.
     var endTime: Timestamp
-    /// URLs for photos taken before work began.
-    var beforePhotoUrls: [String]
-    /// URLs for photos taken after work completed.
-    var afterPhotoUrls: [String]
+    /// Metadata for photos taken before work began.
+    var beforePhotos: [IncidentPhotoDTO]
+    /// Metadata for photos taken after work completed.
+    var afterPhotos: [IncidentPhotoDTO]
     /// Reference to the user who created the incident record.
     var createdBy: DocumentReference
     /// Reference to the last user who modified the incident (if applicable).
