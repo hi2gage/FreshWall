@@ -16,8 +16,6 @@ struct IncidentsListView: View {
             groups: viewModel.groupedIncidents(),
             title: "Incidents",
             groupOption: $viewModel.groupOption,
-            sortField: $viewModel.sortField,
-            isAscending: $viewModel.isAscending,
             destination: { incident in .incidentDetail(incident: incident) },
             content: { incident in
                 IncidentListCell(incident: incident)
@@ -50,60 +48,42 @@ struct IncidentsListView: View {
 
         Picker("Group By", selection: $viewModel.groupOption) {
             Text("None").tag(IncidentGroupOption?.none)
-            ForEach(Array(IncidentGroupOption.allCases), id: \.self) { option in
+            ForEach(IncidentGroupOption.allCases, id: \.self) { option in
                 Text(option.rawValue).tag(Optional.some(option))
             }
         }
 
-        Text("Order By")
+        Text("Sort By")
             .font(.caption)
             .foregroundColor(.secondary)
 
         if viewModel.groupOption == nil {
-            Button {
-                if viewModel.sortField == .alphabetical {
-                    viewModel.isAscending.toggle()
-                } else {
-                    viewModel.sortField = .alphabetical
-                    viewModel.isAscending = true
-                }
-            } label: {
-                let arrow = viewModel.sortField == .alphabetical ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : nil
-                Label("Alphabetical", systemImage: arrow)
-            }
-
-            Button {
-                if viewModel.sortField == .date {
-                    viewModel.isAscending.toggle()
-                } else {
-                    viewModel.sortField = .date
-                    viewModel.isAscending = true
-                }
-            } label: {
-                let arrow = viewModel.sortField == .date ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : nil
-                Label("By Date", systemImage: arrow)
-            }
+            SortButton(for: .alphabetical, sort: $viewModel.sort)
+            SortButton(for: .date, sort: $viewModel.sort)
         } else {
-            Button {
-                viewModel.isAscending.toggle()
-            } label: {
-                let arrow = viewModel.sortField == .date ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : nil
-                Label("Order", systemImage: arrow)
-            }
+            SortButton(for: .date, sort: $viewModel.sort)
+            collapseToggleButton(groups: groups, collapsedGroups: collapsedGroups)
+        }
+    }
 
-            let allCollapsed = collapsedGroups.wrappedValue.count == groups.count
-            Button {
-                if allCollapsed {
-                    collapsedGroups.wrappedValue.removeAll()
-                } else {
-                    collapsedGroups.wrappedValue = Set(groups.indices)
-                }
-            } label: {
-                Label(
-                    allCollapsed ? "Uncollapse All" : "Collapse All",
-                    systemImage: allCollapsed ? "chevron.down" : "chevron.right"
-                )
+    @ViewBuilder
+    private func collapseToggleButton(
+        groups: [(title: String?, items: [Incident])],
+        collapsedGroups: Binding<Set<Int>>
+    ) -> some View {
+        let allCollapsed = collapsedGroups.wrappedValue.count == groups.count
+
+        Button {
+            if allCollapsed {
+                collapsedGroups.wrappedValue.removeAll()
+            } else {
+                collapsedGroups.wrappedValue = Set(groups.indices)
             }
+        } label: {
+            Label(
+                allCollapsed ? "Uncollapse All" : "Collapse All",
+                systemImage: allCollapsed ? "chevron.down" : "chevron.right"
+            )
         }
     }
 }

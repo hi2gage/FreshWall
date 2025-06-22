@@ -28,7 +28,7 @@ struct ClientsListView: View {
             },
             menu: {
                 Menu {
-                    sortingMenu()
+                    sortingMenu
                 } label: {
                     Image(systemName: "line.3.horizontal.decrease.circle")
                 }
@@ -40,34 +40,14 @@ struct ClientsListView: View {
         }
     }
 
-    @ViewBuilder
-    private func sortingMenu() -> some View {
-        Text("Order By")
-            .font(.caption)
-            .foregroundColor(.secondary)
+    private var sortingMenu: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Order By")
+                .font(.caption)
+                .foregroundColor(.secondary)
 
-        Button {
-            if viewModel.sortField == .alphabetical {
-                viewModel.isAscending.toggle()
-            } else {
-                viewModel.sortField = .alphabetical
-                viewModel.isAscending = true
-            }
-        } label: {
-            let arrow = viewModel.sortField == .alphabetical ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : nil
-            Label("Alphabetical", systemImage: arrow)
-        }
-
-        Button {
-            if viewModel.sortField == .incidentDate {
-                viewModel.isAscending.toggle()
-            } else {
-                viewModel.sortField = .incidentDate
-                viewModel.isAscending = false
-            }
-        } label: {
-            let arrow = viewModel.sortField == .incidentDate ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : nil
-            Label("By Incident Date", systemImage: arrow)
+            SortButton(for: .alphabetical, sort: $viewModel.sort)
+            SortButton(for: .incidentDate, sort: $viewModel.sort)
         }
     }
 }

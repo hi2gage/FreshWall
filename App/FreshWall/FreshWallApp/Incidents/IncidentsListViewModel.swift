@@ -11,10 +11,16 @@ final class IncidentsListViewModel {
     var clients: [Client] = []
     /// Selected grouping option for incidents.
     var groupOption: IncidentGroupOption?
-    /// Field used when sorting incidents.
-    var sortField: IncidentSortField = .date
-    /// Determines whether sorting is ascending or descending.
-    var isAscending = false
+
+    var sortField: IncidentSortField {
+        sort.field
+    }
+
+    var isAscending: Bool {
+        sort.isAscending
+    }
+
+    var sort: SortState<IncidentSortField> = .init(field: .date, isAscending: true)
 
     private let service: IncidentServiceProtocol
     private let clientService: ClientServiceProtocol
