@@ -11,13 +11,13 @@ These are required for Scott and his crew to use FreshWall in the field.
   - [ ] Assign user roles: Admin, Manager, Field Worker
 
 - [ ] **Incident Logging**
-  - [ ] Field worker can log a graffiti job
-    - [ ] Take/upload *before* photo
+  - [x] Field worker can log a graffiti job
+    - [x] Take/upload *before* photo
     - [ ] Add metadata (location, surface type, notes)
-    - [ ] Auto-timestamp
-  - [ ] Field worker can mark job as complete
-    - [ ] Take/upload *after* photo
-    - [ ] Add cleanup notes or outcome status
+    - [x] Auto-timestamp
+  - [x] Field worker can mark job as complete
+    - [x] Take/upload *after* photo
+    - [x] Add cleanup notes or outcome status
 
 - [ ] **Incident Browsing**
   - [ ] View incidents by list and map
@@ -32,6 +32,15 @@ These are required for Scott and his crew to use FreshWall in the field.
     - [ ] Includes before/after images, timestamps, notes
   - [ ] Filter by date range and status
 
+- **Design**
+  - [ ] App Icon Logo
+  - [ ] Color Schemea
+  - [ ] Graphics for Linkedin
+  - [ ] 
+
+- **App Store**
+  - [ ] App Store Connect
+  - [ ] Testflight build
 ---
 
 ## 📲 2. Beta Presentation Readiness
@@ -63,10 +72,10 @@ You want Scott to help answer:
 
 Even during beta, secure and structured data handling is key.
 
-- [ ] Firebase Auth with email/password
-- [ ] Firebase rules to enforce team-based access
+- [x] Firebase Auth with email/password
+- [x] Firebase rules to enforce team-based access
 - [ ] Role-based permissions in Firestore
-- [ ] Firebase Storage for photo uploads
+- [x] Firebase Storage for photo uploads
 - [ ] Export or backup system (manual CSV is fine to start)
 
 ---
