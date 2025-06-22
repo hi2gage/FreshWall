@@ -4,9 +4,9 @@ import Foundation
 /// Protocol defining operations for fetching and managing User (team member) entities.
 protocol MemberServiceProtocol: Sendable {
     /// Fetches active members for the current team.
-    func fetchMembers() async throws -> [UserDTO]
+    func fetchMembers() async throws -> [Member]
     /// Adds a new team member document to Firestore.
-    func addMember(_ member: UserDTO) async throws
+    func addMember(_ input: AddMemberInput) async throws
 }
 
 /// Service to fetch and manage User (member) entities from Firestore.
@@ -21,7 +21,7 @@ struct MemberService: MemberServiceProtocol {
     }
 
     /// Fetches active members for the current team from Firestore.
-    func fetchMembers() async throws -> [UserDTO] {
+    func fetchMembers() async throws -> [Member] {
         let teamId = session.teamId
 
         let snapshot = try await firestore
@@ -33,14 +33,14 @@ struct MemberService: MemberServiceProtocol {
         let fetched: [UserDTO] = try snapshot.documents.compactMap {
             try $0.data(as: UserDTO.self)
         }
-        return fetched
+        return fetched.map { Member(dto: $0) }
     }
 
     /// Adds a new member document to Firestore under the current team.
     ///
     /// - Parameter member: The `User` model to add (with `id == nil`).
     /// - Throws: An error if the Firestore write fails or teamId is missing.
-    func addMember(_ member: UserDTO) async throws {
+    func addMember(_ input: AddMemberInput) async throws {
         let teamId = session.teamId
 
         let usersRef = firestore
@@ -48,8 +48,14 @@ struct MemberService: MemberServiceProtocol {
             .document(teamId)
             .collection("users")
         let newDoc = usersRef.document()
-        var newMember = member
-        newMember.id = newDoc.documentID
+        let newMember = UserDTO(
+            id: newDoc.documentID,
+            displayName: input.displayName,
+            email: input.email,
+            role: input.role,
+            isDeleted: false,
+            deletedAt: nil
+        )
         try newDoc.setData(from: newMember)
     }
 }

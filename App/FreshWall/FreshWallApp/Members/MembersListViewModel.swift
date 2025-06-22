@@ -5,7 +5,7 @@ import Observation
 @Observable
 final class MembersListViewModel {
     /// Team members fetched from the service.
-    var members: [UserDTO] = []
+    var members: [Member] = []
     private let service: MemberServiceProtocol
 
     /// Initializes the view model with a service conforming to `MemberServiceProtocol`.
