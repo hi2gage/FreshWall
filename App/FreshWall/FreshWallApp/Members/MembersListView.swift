@@ -22,7 +22,7 @@ struct MembersListView: View {
                 MemberListCell(member: member)
             },
             plusButtonAction: {
-                routerPath.push(.addMember)
+                routerPath.push(.inviteMember)
             }
         )
         .task {
