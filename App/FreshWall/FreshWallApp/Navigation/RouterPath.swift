@@ -30,7 +30,6 @@ enum RouterDestination: Hashable {
     case incidentDetail(incident: Incident)
     case membersList
     /// Screen for adding a new member.
-    case addMember
     case inviteMember
     case memberDetail(member: UserDTO)
 }
@@ -80,8 +79,6 @@ extension View {
                 )
             case .membersList:
                 MembersListView(service: memberService)
-            case .addMember:
-                AddMemberView(viewModel: AddMemberViewModel(service: memberService))
             case .inviteMember:
                 InviteMemberView(service: InviteCodeService())
             case let .memberDetail(member):

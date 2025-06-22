@@ -22,14 +22,7 @@ struct MembersListView: View {
                 MemberListCell(member: member)
             },
             plusButtonAction: {
-                routerPath.push(.addMember)
-            },
-            menu: {
-                Button {
-                    routerPath.push(.inviteMember)
-                } label: {
-                    Image(systemName: "person.crop.circle.badge.plus")
-                }
+                routerPath.push(.inviteMember)
             }
         )
         .task {
