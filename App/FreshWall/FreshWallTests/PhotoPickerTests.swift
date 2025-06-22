@@ -44,4 +44,15 @@ struct PhotoPickerTests {
         #expect(photo?.captureDate == .distantPast)
         #expect(photo?.image.size.width == 1)
     }
+
+    @Test func convertPhotosToDTOs() {
+        let renderer = UIGraphicsImageRenderer(size: .init(width: 1, height: 1))
+        let image = renderer.image { _ in }
+        let photo = PickedPhoto(image: image, captureDate: .distantPast, location: CLLocation(latitude: 1, longitude: 2))
+        let dtos = [photo].toIncidentPhotoDTOs(urls: ["url"])
+        #expect(dtos.first?.url == "url")
+        #expect(dtos.first?.captureDate?.dateValue() == .distantPast)
+        #expect(dtos.first?.location?.latitude == 1)
+        #expect(dtos.first?.location?.longitude == 2)
+    }
 }

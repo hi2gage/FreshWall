@@ -97,21 +97,9 @@ struct IncidentService: IncidentServiceProtocol {
             images: afterData
         )
 
-        let beforePhotosDTO = zip(beforePhotos, beforeUrls).map { photo, url -> IncidentPhotoDTO in
-            IncidentPhotoDTO(
-                url: url,
-                captureDate: photo.captureDate.map { Timestamp(date: $0) },
-                location: photo.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
-            )
-        }
+        let beforePhotosDTO = beforePhotos.toIncidentPhotoDTOs(urls: beforeUrls)
 
-        let afterPhotosDTO = zip(afterPhotos, afterUrls).map { photo, url -> IncidentPhotoDTO in
-            IncidentPhotoDTO(
-                url: url,
-                captureDate: photo.captureDate.map { Timestamp(date: $0) },
-                location: photo.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
-            )
-        }
+        let afterPhotosDTO = afterPhotos.toIncidentPhotoDTOs(urls: afterUrls)
 
         let newIncident = IncidentDTO(
             id: newDoc.documentID,
@@ -183,14 +171,9 @@ struct IncidentService: IncidentServiceProtocol {
             incidentId: incidentId,
             images: beforeData
         )
-        let beforePhotoDicts = zip(beforePhotos, newBeforeUrls).map { photo, url -> [String: Any] in
-            let dto = IncidentPhotoDTO(
-                url: url,
-                captureDate: photo.captureDate.map { Timestamp(date: $0) },
-                location: photo.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
-            )
-            return dto.dictionary
-        }
+        let beforePhotoDicts = beforePhotos
+            .toIncidentPhotoDTOs(urls: newBeforeUrls)
+            .map(\.dictionary)
         if !beforePhotoDicts.isEmpty {
             data["beforePhotos"] = FieldValue.arrayUnion(beforePhotoDicts)
         }
@@ -201,14 +184,9 @@ struct IncidentService: IncidentServiceProtocol {
             incidentId: incidentId,
             images: afterData
         )
-        let afterPhotoDicts = zip(afterPhotos, newAfterUrls).map { photo, url -> [String: Any] in
-            let dto = IncidentPhotoDTO(
-                url: url,
-                captureDate: photo.captureDate.map { Timestamp(date: $0) },
-                location: photo.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
-            )
-            return dto.dictionary
-        }
+        let afterPhotoDicts = afterPhotos
+            .toIncidentPhotoDTOs(urls: newAfterUrls)
+            .map(\.dictionary)
         if !afterPhotoDicts.isEmpty {
             data["afterPhotos"] = FieldValue.arrayUnion(afterPhotoDicts)
         }
