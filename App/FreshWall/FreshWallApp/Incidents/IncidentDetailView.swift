@@ -9,8 +9,7 @@ struct IncidentDetailView: View {
     @Environment(RouterPath.self) private var routerPath
     @State private var client: Client?
     @State private var showingEdit = false
-    @State private var viewerPhotos: [IncidentPhoto] = []
-    @State private var selectedPhoto: IncidentPhoto?
+    @State private var viewerContext: PhotoViewerContext?
 
     init(incident: Incident, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
         _incident = State(wrappedValue: incident)
@@ -98,74 +97,16 @@ struct IncidentDetailView: View {
             }
             if let beforePhotos = incident.beforePhotos.nullIfEmpty {
                 Section("Before Photos") {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(beforePhotos) { photo in
-                                Button {
-                                    viewerPhotos = beforePhotos
-                                    selectedPhoto = photo
-                                } label: {
-                                    AsyncImage(url: URL(string: photo.url)) { phase in
-                                        switch phase {
-                                        case .empty:
-                                            ProgressView()
-                                        case let .success(image):
-                                            image
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(width: 100, height: 100)
-                                                .clipped()
-                                        case .failure:
-                                            Image(systemName: "photo")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 100, height: 100)
-                                        @unknown default:
-                                            EmptyView()
-                                        }
-                                    }
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
+                    PhotoCarousel(photos: beforePhotos) { photo in
+                        viewerContext = PhotoViewerContext(photos: beforePhotos, selectedPhoto: photo)
                     }
-                    .frame(height: 120)
                 }
             }
             if let afterPhotos = incident.afterPhotos.nullIfEmpty {
                 Section("After Photos") {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(afterPhotos) { photo in
-                                Button {
-                                    viewerPhotos = afterPhotos
-                                    selectedPhoto = photo
-                                } label: {
-                                    AsyncImage(url: URL(string: photo.url)) { phase in
-                                        switch phase {
-                                        case .empty:
-                                            ProgressView()
-                                        case let .success(image):
-                                            image
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(width: 100, height: 100)
-                                                .clipped()
-                                        case .failure:
-                                            Image(systemName: "photo")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 100, height: 100)
-                                        @unknown default:
-                                            EmptyView()
-                                        }
-                                    }
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
+                    PhotoCarousel(photos: afterPhotos) { photo in
+                        viewerContext = PhotoViewerContext(photos: afterPhotos, selectedPhoto: photo)
                     }
-                    .frame(height: 120)
                 }
             }
             if let client {
@@ -197,8 +138,8 @@ struct IncidentDetailView: View {
                 )
             }
         }
-        .fullScreenCover(item: $selectedPhoto) { photo in
-            PhotoViewer(photos: viewerPhotos, selectedPhoto: photo)
+        .fullScreenCover(item: $viewerContext) { context in
+            PhotoViewer(photos: context.photos, selectedPhoto: context.selectedPhoto)
         }
         .task {
             await loadClient()
