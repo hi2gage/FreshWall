@@ -8,19 +8,7 @@ struct AuthService {
     private let auth = Auth.auth()
 
     /// Starts listening for Firebase authentication state changes.
-    init() {
-        #if DEBUG
-            let settings = Firestore.firestore().settings
-            settings.host = "localhost:8080"
-            settings.isSSLEnabled = false
-            settings.isPersistenceEnabled = false
-            Firestore.firestore().settings = settings
-
-            Functions.functions().useEmulator(withHost: "localhost", port: 5001)
-
-            Auth.auth().useEmulator(withHost: "localhost", port: 9099)
-        #endif
-    }
+    init() {}
 
     /// Signs in an existing user with email and password.
     ///

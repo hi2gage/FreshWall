@@ -16,14 +16,7 @@ struct StorageService: StorageServiceProtocol {
     private let storage: Storage
 
     init() {
-        #if DEBUG
-            let storage = Storage.storage()
-            // Connect to the emulator
-            storage.useEmulator(withHost: "localhost", port: 9199)
-            self.storage = storage
-        #else
-            self.storage = Storage.storage()
-        #endif
+        self.storage = Storage.storage()
     }
 
     func uploadData(_ data: Data, to path: String) async throws -> String {
