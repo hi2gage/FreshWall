@@ -10,14 +10,14 @@ struct EditIncidentViewModelTests {
         func addIncident(_: Incident) async throws {}
         func addIncident(
             _: AddIncidentInput,
-            beforeImages _: [Data],
-            afterImages _: [Data]
+            beforePhotos _: [PickedPhoto],
+            afterPhotos _: [PickedPhoto]
         ) async throws {}
         func updateIncident(
             _ id: String,
             with input: UpdateIncidentInput,
-            beforeImages _: [Data],
-            afterImages _: [Data]
+            beforePhotos _: [PickedPhoto],
+            afterPhotos _: [PickedPhoto]
         ) async throws {
             updateArgs = (id, input)
         }
@@ -88,7 +88,7 @@ struct EditIncidentViewModelTests {
         )
         let vm = EditIncidentViewModel(incident: incident, incidentService: incidentService, clientService: clientService)
         vm.description = "new"
-        try await vm.save(beforeImages: [], afterImages: [])
+        try await vm.save(beforePhotos: [], afterPhotos: [])
         #expect(incidentService.updateArgs?.0 == "1")
         #expect(incidentService.updateArgs?.1.description == "new")
     }
