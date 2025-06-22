@@ -15,13 +15,13 @@ struct Client: Identifiable, Hashable, Sendable {
 extension Client {
     /// Creates a domain model from a DTO.
     init(dto: ClientDTO) {
-        self.id = dto.id
-        self.name = dto.name
-        self.notes = dto.notes
-        self.isDeleted = dto.isDeleted
-        self.deletedAt = dto.deletedAt
-        self.createdAt = dto.createdAt
-        self.lastIncidentAt = dto.lastIncidentAt
+        id = dto.id
+        name = dto.name
+        notes = dto.notes
+        isDeleted = dto.isDeleted
+        deletedAt = dto.deletedAt
+        createdAt = dto.createdAt
+        lastIncidentAt = dto.lastIncidentAt
     }
 
     /// Converts the domain model back to a DTO for persistence.

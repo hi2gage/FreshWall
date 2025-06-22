@@ -26,24 +26,24 @@ struct Incident: Identifiable, Hashable, Sendable {
 extension Incident {
     /// Creates a domain model from a DTO.
     init(dto: IncidentDTO) {
-        self.id = dto.id
-        self.projectTitle = dto.projectTitle
-        self.clientRef = dto.clientRef
-        self.workerRefs = dto.workerRefs
-        self.description = dto.description
-        self.area = dto.area
-        self.createdAt = dto.createdAt
-        self.startTime = dto.startTime
-        self.endTime = dto.endTime
-        self.beforePhotoUrls = dto.beforePhotoUrls
-        self.afterPhotoUrls = dto.afterPhotoUrls
-        self.createdBy = dto.createdBy
-        self.lastModifiedBy = dto.lastModifiedBy
-        self.lastModifiedAt = dto.lastModifiedAt
-        self.billable = dto.billable
-        self.rate = dto.rate
-        self.status = dto.status
-        self.materialsUsed = dto.materialsUsed
+        id = dto.id
+        projectTitle = dto.projectTitle
+        clientRef = dto.clientRef
+        workerRefs = dto.workerRefs
+        description = dto.description
+        area = dto.area
+        createdAt = dto.createdAt
+        startTime = dto.startTime
+        endTime = dto.endTime
+        beforePhotoUrls = dto.beforePhotoUrls
+        afterPhotoUrls = dto.afterPhotoUrls
+        createdBy = dto.createdBy
+        lastModifiedBy = dto.lastModifiedBy
+        lastModifiedAt = dto.lastModifiedAt
+        billable = dto.billable
+        rate = dto.rate
+        status = dto.status
+        materialsUsed = dto.materialsUsed
     }
 
     /// Converts the domain model back to a DTO for persistence.

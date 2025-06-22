@@ -16,13 +16,13 @@ struct SessionService {
 
     init() {
         #if DEBUG
-        let settings = FirestoreSettings()
-        settings.host = "localhost:8080"
-        settings.isSSLEnabled = false
-        settings.isPersistenceEnabled = false
-        Firestore.firestore().settings = settings
+            let settings = FirestoreSettings()
+            settings.host = "localhost:8080"
+            settings.isSSLEnabled = false
+            settings.isPersistenceEnabled = false
+            Firestore.firestore().settings = settings
 
-        Auth.auth().useEmulator(withHost: "localhost", port: 9099)
+            Auth.auth().useEmulator(withHost: "localhost", port: 9099)
         #endif
     }
 
