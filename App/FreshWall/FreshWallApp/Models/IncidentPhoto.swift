@@ -5,7 +5,7 @@ import Foundation
 // MARK: - IncidentPhoto
 
 /// Domain model representing a photo with optional metadata.
-struct IncidentPhoto: Sendable {
+struct IncidentPhoto: Identifiable, Sendable {
     /// Identifier used to match the DTO representation.
     var id: String
     /// Download URL for the photo.

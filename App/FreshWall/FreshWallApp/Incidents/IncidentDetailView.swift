@@ -9,6 +9,8 @@ struct IncidentDetailView: View {
     @Environment(RouterPath.self) private var routerPath
     @State private var client: Client?
     @State private var showingEdit = false
+    @State private var viewerPhotos: [IncidentPhoto] = []
+    @State private var selectedPhoto: IncidentPhoto?
 
     init(incident: Incident, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
         _incident = State(wrappedValue: incident)
@@ -98,26 +100,32 @@ struct IncidentDetailView: View {
                 Section("Before Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(beforePhotos, id: \.url) { photo in
-                                AsyncImage(url: URL(string: photo.url)) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                    case let .success(image):
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 100, height: 100)
-                                            .clipped()
-                                    case .failure:
-                                        Image(systemName: "photo")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 100, height: 100)
-                                    @unknown default:
-                                        EmptyView()
+                            ForEach(beforePhotos) { photo in
+                                Button {
+                                    viewerPhotos = beforePhotos
+                                    selectedPhoto = photo
+                                } label: {
+                                    AsyncImage(url: URL(string: photo.url)) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            ProgressView()
+                                        case let .success(image):
+                                            image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 100, height: 100)
+                                                .clipped()
+                                        case .failure:
+                                            Image(systemName: "photo")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 100, height: 100)
+                                        @unknown default:
+                                            EmptyView()
+                                        }
                                     }
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -128,26 +136,32 @@ struct IncidentDetailView: View {
                 Section("After Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(afterPhotos, id: \.url) { photo in
-                                AsyncImage(url: URL(string: photo.url)) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                    case let .success(image):
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 100, height: 100)
-                                            .clipped()
-                                    case .failure:
-                                        Image(systemName: "photo")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 100, height: 100)
-                                    @unknown default:
-                                        EmptyView()
+                            ForEach(afterPhotos) { photo in
+                                Button {
+                                    viewerPhotos = afterPhotos
+                                    selectedPhoto = photo
+                                } label: {
+                                    AsyncImage(url: URL(string: photo.url)) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            ProgressView()
+                                        case let .success(image):
+                                            image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 100, height: 100)
+                                                .clipped()
+                                        case .failure:
+                                            Image(systemName: "photo")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 100, height: 100)
+                                        @unknown default:
+                                            EmptyView()
+                                        }
                                     }
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -182,6 +196,9 @@ struct IncidentDetailView: View {
                     )
                 )
             }
+        }
+        .fullScreenCover(item: $selectedPhoto) { photo in
+            PhotoViewer(photos: viewerPhotos, selectedPhoto: photo)
         }
         .task {
             await loadClient()
