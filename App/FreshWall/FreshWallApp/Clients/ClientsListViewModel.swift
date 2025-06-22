@@ -9,10 +9,12 @@ final class ClientsListViewModel {
     var clients: [Client] = []
     /// Incidents fetched from the incident service.
     var incidents: [Incident] = []
-    /// Field used when sorting clients.
-    var sortField: ClientSortField = .incidentDate
-    /// Indicates whether sorting is ascending.
-    var isAscending = false
+
+    var sort: SortState<ClientSortField> = .init(field: .incidentDate, isAscending: false)
+
+    var sortField: ClientSortField { sort.field }
+
+    var isAscending: Bool { sort.isAscending }
 
     private let clientService: ClientServiceProtocol
     private let incidentService: IncidentServiceProtocol

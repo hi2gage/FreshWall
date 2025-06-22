@@ -13,10 +13,6 @@ struct GenericGroupableListView<
     var title: String
     /// Currently selected grouping option (nil means no grouping).
     @Binding var groupOption: GroupOption?
-    /// Field used when sorting items when grouping is nil.
-    @Binding var sortField: IncidentSortField
-    /// Indicates whether sorting is ascending.
-    @Binding var isAscending: Bool
     /// Produces a navigation destination for a given item.
     var destination: (Item) -> RouterDestination
     /// Creates the content view for a given item.
@@ -32,8 +28,6 @@ struct GenericGroupableListView<
         groups: [(title: String?, items: [Item])],
         title: String,
         groupOption: Binding<GroupOption?>,
-        sortField: Binding<IncidentSortField>,
-        isAscending: Binding<Bool>,
         destination: @escaping (Item) -> RouterDestination,
         content: @escaping (Item) -> Content,
         plusButtonAction: @escaping @MainActor () -> Void,
@@ -42,8 +36,6 @@ struct GenericGroupableListView<
         self.groups = groups
         self.title = title
         _groupOption = groupOption
-        _sortField = sortField
-        _isAscending = isAscending
         self.destination = destination
         self.content = content
         self.plusButtonAction = plusButtonAction
