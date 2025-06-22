@@ -50,6 +50,7 @@ struct PhotoPickerTests {
         let image = renderer.image { _ in }
         let photo = PickedPhoto(image: image, captureDate: .distantPast, location: CLLocation(latitude: 1, longitude: 2))
         let dtos = [photo].toIncidentPhotoDTOs(urls: ["url"])
+        #expect(dtos.first?.id == photo.id.uuidString)
         #expect(dtos.first?.url == "url")
         #expect(dtos.first?.captureDate?.dateValue() == .distantPast)
         #expect(dtos.first?.location?.latitude == 1)

@@ -6,6 +6,8 @@ import Foundation
 
 /// Domain model representing a photo with optional metadata.
 struct IncidentPhoto: Sendable {
+    /// Identifier used to match the DTO representation.
+    var id: String
     /// Download URL for the photo.
     var url: String
     /// Date when the photo was captured.
@@ -30,6 +32,7 @@ extension IncidentPhoto: Hashable, Equatable {
 extension IncidentPhoto {
     /// Create a domain model from a DTO.
     init(dto: IncidentPhotoDTO) {
+        id = dto.id
         url = dto.url
         captureDate = dto.captureDate?.dateValue()
         if let point = dto.location {
@@ -42,6 +45,7 @@ extension IncidentPhoto {
     /// Convert the domain model to a DTO for persistence.
     var dto: IncidentPhotoDTO {
         IncidentPhotoDTO(
+            id: id,
             url: url,
             captureDate: captureDate.map { Timestamp(date: $0) },
             location: location.map { GeoPoint(latitude: $0.latitude, longitude: $0.longitude) }

@@ -8,6 +8,7 @@ extension IncidentPhotoDTO {
     ///   - url: Storage URL for the photo.
     ///   - photo: The selected photo with metadata.
     init(url: String, photo: PickedPhoto) {
+        self.id = photo.id.uuidString
         self.url = url
         self.captureDate = photo.captureDate.map { Timestamp(date: $0) }
         self.location = photo.location.map {
