@@ -24,11 +24,86 @@ struct IncidentsListView: View {
             },
             plusButtonAction: {
                 routerPath.push(.addIncident)
+            },
+            menu: { collapsedGroups in
+                Menu {
+                    groupingMenu(groups: viewModel.groupedIncidents(), collapsedGroups: collapsedGroups)
+                } label: {
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                }
             }
         )
         .task {
             await viewModel.loadIncidents()
             await viewModel.loadClients()
+        }
+    }
+
+    @ViewBuilder
+    private func groupingMenu(
+        groups: [(title: String?, items: [IncidentDTO])],
+        collapsedGroups: Binding<Set<Int>>
+    ) -> some View {
+        Text("Group By")
+            .font(.caption)
+            .foregroundColor(.secondary)
+
+        Picker("Group By", selection: $viewModel.groupOption) {
+            Text("None").tag(Optional<IncidentGroupOption>.none)
+            ForEach(Array(IncidentGroupOption.allCases), id: \\.self) { option in
+                Text(option.rawValue).tag(Optional.some(option))
+            }
+        }
+
+        Text("Order By")
+            .font(.caption)
+            .foregroundColor(.secondary)
+
+        if viewModel.groupOption == nil {
+            Button {
+                if viewModel.sortField == .alphabetical {
+                    viewModel.isAscending.toggle()
+                } else {
+                    viewModel.sortField = .alphabetical
+                    viewModel.isAscending = true
+                }
+            } label: {
+                let arrow = viewModel.sortField == .alphabetical ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
+                Label("Alphabetical", systemImage: arrow)
+            }
+
+            Button {
+                if viewModel.sortField == .date {
+                    viewModel.isAscending.toggle()
+                } else {
+                    viewModel.sortField = .date
+                    viewModel.isAscending = true
+                }
+            } label: {
+                let arrow = viewModel.sortField == .date ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
+                Label("By Date", systemImage: arrow)
+            }
+        } else {
+            Button {
+                viewModel.isAscending.toggle()
+            } label: {
+                let arrow = viewModel.sortField == .date ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
+                Label("Order", systemImage: arrow)
+            }
+
+            let allCollapsed = collapsedGroups.wrappedValue.count == groups.count
+            Button {
+                if allCollapsed {
+                    collapsedGroups.wrappedValue.removeAll()
+                } else {
+                    collapsedGroups.wrappedValue = Set(groups.indices)
+                }
+            } label: {
+                Label(
+                    allCollapsed ? "Uncollapse All" : "Collapse All",
+                    systemImage: allCollapsed ? "chevron.down" : "chevron.right"
+                )
+            }
         }
     }
 }
