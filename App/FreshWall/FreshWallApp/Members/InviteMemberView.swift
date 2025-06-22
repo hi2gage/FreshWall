@@ -17,11 +17,12 @@ struct InviteMemberView: View {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
             } else {
-                Button("Generate Code") {
-                    Task { await viewModel.generate() }
-                }
+                Text("Error try again later")
             }
             Spacer()
+        }
+        .task {
+            await viewModel.generate()
         }
         .padding()
         .navigationTitle("Invite Member")
