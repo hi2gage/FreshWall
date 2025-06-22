@@ -64,7 +64,7 @@ final class EditIncidentViewModel {
     }
 
     /// Saves the updated incident using the service along with new photos.
-    func save(beforeImages: [Data], afterImages: [Data]) async throws {
+    func save(beforePhotos: [PickedPhoto], afterPhotos: [PickedPhoto]) async throws {
         let input = UpdateIncidentInput(
             clientId: clientId.trimmingCharacters(in: .whitespaces),
             description: description,
@@ -80,8 +80,8 @@ final class EditIncidentViewModel {
         try await service.updateIncident(
             incidentId,
             with: input,
-            beforeImages: beforeImages,
-            afterImages: afterImages
+            beforePhotos: beforePhotos,
+            afterPhotos: afterPhotos
         )
     }
 

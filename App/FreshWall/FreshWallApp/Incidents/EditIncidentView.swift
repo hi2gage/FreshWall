@@ -121,9 +121,10 @@ struct EditIncidentView: View {
                 Button("Save") {
                     Task {
                         do {
-                            let beforeData = viewModel.beforePhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
-                            let afterData = viewModel.afterPhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
-                            try await viewModel.save(beforeImages: beforeData, afterImages: afterData)
+                            try await viewModel.save(
+                                beforePhotos: viewModel.beforePhotos,
+                                afterPhotos: viewModel.afterPhotos
+                            )
                             dismiss()
                         } catch {}
                     }
@@ -168,14 +169,14 @@ private class PreviewIncidentService: IncidentServiceProtocol {
     func addIncident(_: Incident) async throws {}
     func addIncident(
         _: AddIncidentInput,
-        beforeImages _: [Data],
-        afterImages _: [Data]
+        beforePhotos _: [PickedPhoto],
+        afterPhotos _: [PickedPhoto]
     ) async throws {}
     func updateIncident(
         _: String,
         with _: UpdateIncidentInput,
-        beforeImages _: [Data],
-        afterImages _: [Data]
+        beforePhotos _: [PickedPhoto],
+        afterPhotos _: [PickedPhoto]
     ) async throws {}
 }
 

@@ -13,15 +13,15 @@ protocol IncidentServiceProtocol: Sendable {
     /// Adds a new incident using an input value object and optional images.
     func addIncident(
         _ input: AddIncidentInput,
-        beforeImages: [Data],
-        afterImages: [Data]
+        beforePhotos: [PickedPhoto],
+        afterPhotos: [PickedPhoto]
     ) async throws
     /// Updates an existing incident using an input value object and optional images.
     func updateIncident(
         _ incidentId: String,
         with input: UpdateIncidentInput,
-        beforeImages: [Data],
-        afterImages: [Data]
+        beforePhotos: [PickedPhoto],
+        afterPhotos: [PickedPhoto]
     ) async throws
 }
 
@@ -33,7 +33,6 @@ struct IncidentService: IncidentServiceProtocol {
     private let photoService: IncidentPhotoServiceProtocol
     private let clientModelService: ClientModelServiceProtocol
     private let userModelService: UserModelServiceProtocol
-    private let metadataService: PhotoMetadataServiceProtocol
     private let session: UserSession
 
     /// Initializes the service with a `Firestore` instance and `UserSession` for team context.
@@ -42,14 +41,12 @@ struct IncidentService: IncidentServiceProtocol {
         photoService: IncidentPhotoServiceProtocol,
         clientModelService: ClientModelServiceProtocol,
         userModelService: UserModelServiceProtocol,
-        metadataService: PhotoMetadataServiceProtocol,
         session: UserSession
     ) {
         self.modelService = modelService
         self.photoService = photoService
         self.clientModelService = clientModelService
         self.userModelService = userModelService
-        self.metadataService = metadataService
         self.session = session
     }
 
@@ -77,8 +74,8 @@ struct IncidentService: IncidentServiceProtocol {
     /// Adds a new incident using an input value object and optional images.
     func addIncident(
         _ input: AddIncidentInput,
-        beforeImages: [Data],
-        afterImages: [Data]
+        beforePhotos: [PickedPhoto],
+        afterPhotos: [PickedPhoto]
     ) async throws {
         let teamId = session.teamId
 
@@ -86,33 +83,33 @@ struct IncidentService: IncidentServiceProtocol {
         let clientRef = clientModelService.clientDocument(teamId: teamId, clientId: input.clientId)
         let uid = Auth.auth().currentUser?.uid ?? ""
         let createdByRef = userModelService.userDocument(teamId: teamId, userId: uid)
+        let beforeData = beforePhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
         let beforeUrls = try await photoService.uploadBeforePhotos(
             teamId: teamId,
             incidentId: newDoc.documentID,
-            images: beforeImages
+            images: beforeData
         )
 
+        let afterData = afterPhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
         let afterUrls = try await photoService.uploadAfterPhotos(
             teamId: teamId,
             incidentId: newDoc.documentID,
-            images: afterImages
+            images: afterData
         )
 
-        let beforePhotos = zip(beforeImages, beforeUrls).map { data, url -> IncidentPhotoDTO in
-            let meta = metadataService.metadata(from: data)
-            return IncidentPhotoDTO(
+        let beforePhotosDTO = zip(beforePhotos, beforeUrls).map { photo, url -> IncidentPhotoDTO in
+            IncidentPhotoDTO(
                 url: url,
-                captureDate: meta.captureDate.map { Timestamp(date: $0) },
-                location: meta.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+                captureDate: photo.captureDate.map { Timestamp(date: $0) },
+                location: photo.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
             )
         }
 
-        let afterPhotos = zip(afterImages, afterUrls).map { data, url -> IncidentPhotoDTO in
-            let meta = metadataService.metadata(from: data)
-            return IncidentPhotoDTO(
+        let afterPhotosDTO = zip(afterPhotos, afterUrls).map { photo, url -> IncidentPhotoDTO in
+            IncidentPhotoDTO(
                 url: url,
-                captureDate: meta.captureDate.map { Timestamp(date: $0) },
-                location: meta.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+                captureDate: photo.captureDate.map { Timestamp(date: $0) },
+                location: photo.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
             )
         }
 
@@ -126,8 +123,8 @@ struct IncidentService: IncidentServiceProtocol {
             createdAt: Timestamp(date: Date()),
             startTime: Timestamp(date: input.startTime),
             endTime: Timestamp(date: input.endTime),
-            beforePhotos: beforePhotos,
-            afterPhotos: afterPhotos,
+            beforePhotos: beforePhotosDTO,
+            afterPhotos: afterPhotosDTO,
             createdBy: createdByRef,
             lastModifiedBy: nil,
             lastModifiedAt: nil,
@@ -144,8 +141,8 @@ struct IncidentService: IncidentServiceProtocol {
     func updateIncident(
         _ incidentId: String,
         with input: UpdateIncidentInput,
-        beforeImages: [Data],
-        afterImages: [Data]
+        beforePhotos: [PickedPhoto],
+        afterPhotos: [PickedPhoto]
     ) async throws {
         let teamId = session.teamId
 
@@ -180,40 +177,40 @@ struct IncidentService: IncidentServiceProtocol {
             data["materialsUsed"] = FieldValue.delete()
         }
 
+        let beforeData = beforePhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
         let newBeforeUrls = try await photoService.uploadBeforePhotos(
             teamId: teamId,
             incidentId: incidentId,
-            images: beforeImages
+            images: beforeData
         )
-        let beforePhotos = zip(beforeImages, newBeforeUrls).map { data, url -> [String: Any] in
-            let meta = metadataService.metadata(from: data)
+        let beforePhotoDicts = zip(beforePhotos, newBeforeUrls).map { photo, url -> [String: Any] in
             let dto = IncidentPhotoDTO(
                 url: url,
-                captureDate: meta.captureDate.map { Timestamp(date: $0) },
-                location: meta.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+                captureDate: photo.captureDate.map { Timestamp(date: $0) },
+                location: photo.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
             )
             return dto.dictionary
         }
-        if !beforePhotos.isEmpty {
-            data["beforePhotos"] = FieldValue.arrayUnion(beforePhotos)
+        if !beforePhotoDicts.isEmpty {
+            data["beforePhotos"] = FieldValue.arrayUnion(beforePhotoDicts)
         }
 
+        let afterData = afterPhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
         let newAfterUrls = try await photoService.uploadAfterPhotos(
             teamId: teamId,
             incidentId: incidentId,
-            images: afterImages
+            images: afterData
         )
-        let afterPhotos = zip(afterImages, newAfterUrls).map { data, url -> [String: Any] in
-            let meta = metadataService.metadata(from: data)
+        let afterPhotoDicts = zip(afterPhotos, newAfterUrls).map { photo, url -> [String: Any] in
             let dto = IncidentPhotoDTO(
                 url: url,
-                captureDate: meta.captureDate.map { Timestamp(date: $0) },
-                location: meta.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
+                captureDate: photo.captureDate.map { Timestamp(date: $0) },
+                location: photo.location.map { GeoPoint(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
             )
             return dto.dictionary
         }
-        if !afterPhotos.isEmpty {
-            data["afterPhotos"] = FieldValue.arrayUnion(afterPhotos)
+        if !afterPhotoDicts.isEmpty {
+            data["afterPhotos"] = FieldValue.arrayUnion(afterPhotoDicts)
         }
 
         try await modelService.updateIncident(id: incidentId, teamId: teamId, data: data)
