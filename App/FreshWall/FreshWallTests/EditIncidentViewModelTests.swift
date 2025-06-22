@@ -48,16 +48,18 @@ struct EditIncidentViewModelTests {
             lastModifiedAt: nil,
             billable: false,
             rate: nil,
-            projectName: nil,
+            projectTitle: "",
             status: "open",
             materialsUsed: nil
         )
         let vm = EditIncidentViewModel(incident: incident, incidentService: incidentService, clientService: clientService)
         vm.description = ""
         vm.clientId = ""
+        vm.projectTitle = ""
         #expect(vm.isValid == false)
         vm.clientId = "c"
         vm.description = "test"
+        vm.projectTitle = "Title"
         #expect(vm.isValid == true)
     }
 
@@ -80,7 +82,7 @@ struct EditIncidentViewModelTests {
             lastModifiedAt: nil,
             billable: false,
             rate: nil,
-            projectName: nil,
+            projectTitle: "",
             status: "open",
             materialsUsed: nil
         )

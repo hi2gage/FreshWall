@@ -39,7 +39,7 @@ struct IncidentsListViewModelTests {
             lastModifiedAt: nil,
             billable: false,
             rate: nil,
-            projectName: nil,
+            projectTitle: "",
             status: "open",
             materialsUsed: nil
         )
@@ -95,7 +95,7 @@ struct IncidentsListViewModelTests {
             lastModifiedAt: nil,
             billable: false,
             rate: nil,
-            projectName: nil,
+            projectTitle: "",
             status: "open",
             materialsUsed: nil
         )
@@ -141,7 +141,7 @@ struct IncidentsListViewModelTests {
             lastModifiedAt: nil,
             billable: false,
             rate: nil,
-            projectName: nil,
+            projectTitle: "",
             status: "open",
             materialsUsed: nil
         )
@@ -180,7 +180,7 @@ struct IncidentsListViewModelTests {
             lastModifiedAt: nil,
             billable: false,
             rate: nil,
-            projectName: nil,
+            projectTitle: "",
             status: "open",
             materialsUsed: nil
         )

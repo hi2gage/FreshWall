@@ -56,8 +56,8 @@ struct EditIncidentView: View {
                         .keyboardType(.decimalPad)
                 }
             }
-            Section("Project Name") {
-                TextField("Project Name", text: $viewModel.projectName)
+            Section("Project Title") {
+                TextField("Project Title", text: $viewModel.projectTitle)
             }
             Section("Status") {
                 Picker("Status", selection: $viewModel.status) {
@@ -213,7 +213,7 @@ private class PreviewIncidentService: IncidentServiceProtocol {
         lastModifiedAt: nil,
         billable: false,
         rate: nil,
-        projectName: nil,
+        projectTitle: "",
         status: "open",
         materialsUsed: nil
     )
