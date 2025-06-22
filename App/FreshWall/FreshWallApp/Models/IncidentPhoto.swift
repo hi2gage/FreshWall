@@ -3,13 +3,24 @@ import CoreLocation
 import Foundation
 
 /// Domain model representing a photo with optional metadata.
-struct IncidentPhoto: Hashable, Sendable {
+struct IncidentPhoto: Sendable {
     /// Download URL for the photo.
     var url: String
     /// Date when the photo was captured.
     var captureDate: Date?
     /// Location coordinate where the photo was captured.
     var location: CLLocationCoordinate2D?
+}
+
+extension IncidentPhoto: Hashable, Equatable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(url)
+        hasher.combine(captureDate)
+    }
+
+    public static func == (lhs: IncidentPhoto, rhs: IncidentPhoto) -> Bool {
+        lhs.url == rhs.url && lhs.captureDate == rhs.captureDate
+    }
 }
 
 extension IncidentPhoto {
