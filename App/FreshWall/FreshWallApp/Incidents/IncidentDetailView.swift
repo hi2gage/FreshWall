@@ -19,6 +19,7 @@ struct IncidentDetailView: View {
     /// Reloads the incident after editing.
     private func reloadIncident() async {
         guard let id = incident.id else { return }
+
         let updated = await (try? incidentService.fetchIncidents()) ?? []
         if let match = updated.first(where: { $0.id == id }) {
             incident = match

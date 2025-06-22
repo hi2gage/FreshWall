@@ -1,6 +1,8 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - TeamDTO
+
 /// A team represents a group under which all data is scoped.
 struct TeamDTO: Codable, Identifiable {
     /// Firestore-generated document identifier for the team.
@@ -12,6 +14,8 @@ struct TeamDTO: Codable, Identifiable {
     /// Timestamp when this team was created.
     var createdAt: Timestamp
 }
+
+// MARK: - TeamGenerator
 
 enum TeamGenerator {
     static func make(

@@ -1,5 +1,7 @@
 import Foundation
 
+// MARK: - IncidentPhotoServiceProtocol
+
 /// Handles Firebase Storage uploads for incident photos.
 ///
 /// The protocol is separate from ``IncidentServiceProtocol`` so that photo
@@ -13,6 +15,8 @@ protocol IncidentPhotoServiceProtocol: Sendable {
     /// URLs.
     func uploadAfterPhotos(teamId: String, incidentId: String, images: [Data]) async throws -> [String]
 }
+
+// MARK: - IncidentPhotoService
 
 /// Default ``IncidentPhotoServiceProtocol`` implementation using
 /// ``StorageService``.

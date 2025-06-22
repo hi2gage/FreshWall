@@ -82,6 +82,7 @@ final class AddIncidentViewModel {
     var validClients: [(id: String, name: String)] {
         clients.compactMap { client in
             guard let id = client.id else { return nil }
+
             return (id: id, name: client.name)
         }
     }

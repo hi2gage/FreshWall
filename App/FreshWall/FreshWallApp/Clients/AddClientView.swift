@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - AddClientView
+
 /// View for adding a new client, injecting a service conforming to `ClientServiceProtocol`.
 struct AddClientView: View {
     @Environment(\.dismiss) private var dismiss
@@ -41,6 +43,8 @@ struct AddClientView: View {
         }
     }
 }
+
+// MARK: - PreviewClientService
 
 /// Dummy implementation of `ClientServiceProtocol` for previews.
 @MainActor

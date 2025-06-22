@@ -1,6 +1,8 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - UserRole
+
 /// Role of a user within the team.
 enum UserRole: String, Codable, CaseIterable, Sendable {
     /// Team lead with full permissions.
@@ -8,6 +10,8 @@ enum UserRole: String, Codable, CaseIterable, Sendable {
     /// Regular team member.
     case member
 }
+
+// MARK: - UserDTO
 
 /// A user under a team, with scoped access and role-based permissions.
 struct UserDTO: Codable, Identifiable, Sendable, Hashable {

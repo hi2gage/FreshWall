@@ -1,6 +1,8 @@
 import FirebaseFirestore
 import Foundation
 
+// MARK: - ClientCellModel
+
 /// Domain model representing a client for UI display.
 struct ClientCellModel: Identifiable, Hashable {
     let id: String
@@ -16,6 +18,7 @@ extension ClientCellModel {
     static func makeRows(from clients: [Client], incidents: [Incident]) -> [ClientCellModel] {
         clients.compactMap { client in
             guard let id = client.id else { return nil }
+
             let lastDate = incidents
                 .filter { $0.clientRef.documentID == id }
                 .map { $0.createdAt.dateValue() }

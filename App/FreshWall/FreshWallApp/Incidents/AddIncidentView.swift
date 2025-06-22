@@ -1,6 +1,8 @@
 import PhotosUI
 import SwiftUI
 
+// MARK: - AddIncidentView
+
 /// View for adding a new incident, injecting a service conforming to `IncidentServiceProtocol`.
 
 struct AddIncidentView: View {
@@ -142,8 +144,7 @@ struct AddIncidentView: View {
                 beforeImages = []
                 for item in newItems {
                     if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data)
-                    {
+                       let image = UIImage(data: data) {
                         beforeImages.append(image)
                     }
                 }
@@ -154,8 +155,7 @@ struct AddIncidentView: View {
                 afterImages = []
                 for item in newItems {
                     if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data)
-                    {
+                       let image = UIImage(data: data) {
                         afterImages.append(image)
                     }
                 }
@@ -163,6 +163,8 @@ struct AddIncidentView: View {
         }
     }
 }
+
+// MARK: - PreviewIncidentService
 
 /// Dummy implementations of services for previews.
 @MainActor
@@ -181,6 +183,8 @@ private class PreviewIncidentService: IncidentServiceProtocol {
         afterImages _: [Data]
     ) async throws {}
 }
+
+// MARK: - PreviewClientService
 
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {

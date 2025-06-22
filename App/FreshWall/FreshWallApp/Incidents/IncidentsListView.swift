@@ -1,6 +1,8 @@
 @preconcurrency import FirebaseFirestore
 import SwiftUI
 
+// MARK: - IncidentsListView
+
 /// A view displaying a list of incidents for the current team.
 struct IncidentsListView: View {
     @Environment(RouterPath.self) private var routerPath
@@ -92,6 +94,8 @@ struct IncidentsListView: View {
     }
 }
 
+// MARK: - PreviewIncidentService
+
 @MainActor
 private class PreviewIncidentService: IncidentServiceProtocol {
     func fetchIncidents() async throws -> [Incident] { [] }
@@ -99,6 +103,8 @@ private class PreviewIncidentService: IncidentServiceProtocol {
     func addIncident(_: AddIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
     func updateIncident(_: String, with _: UpdateIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
 }
+
+// MARK: - PreviewClientService
 
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {

@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - ListCellStyle
+
 /// A style modifier for list cells, providing padding, background, and corner radius.
 struct ListCellStyle: ViewModifier {
     func body(content: Content) -> some View {

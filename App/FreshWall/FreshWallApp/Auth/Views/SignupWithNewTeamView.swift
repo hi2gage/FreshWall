@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - SignupWithNewTeamView
+
 /// A view that allows new users to create an account and team.
 struct SignupWithNewTeamView: View {
     let loginManager: LoginManaging
@@ -57,6 +59,8 @@ struct SignupWithNewTeamView: View {
         .padding()
     }
 }
+
+// MARK: - PreviewLoginManager
 
 struct PreviewLoginManager: LoginManaging {
     func signIn(email _: String, password _: String) async throws {}

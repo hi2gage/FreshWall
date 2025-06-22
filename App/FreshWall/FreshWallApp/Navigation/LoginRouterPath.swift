@@ -1,6 +1,8 @@
 import SwiftData
 import SwiftUI
 
+// MARK: - LoginRouterPath
+
 @MainActor
 @Observable
 final class LoginRouterPath {
@@ -17,6 +19,8 @@ final class LoginRouterPath {
         _ = path.popLast()
     }
 }
+
+// MARK: LoginRouterPath.RouterDestination
 
 extension LoginRouterPath {
     /// Destinations for navigation within the app.

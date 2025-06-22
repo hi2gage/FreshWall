@@ -1,6 +1,8 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - MemberServiceProtocol
+
 /// Protocol defining operations for fetching and managing User (team member) entities.
 protocol MemberServiceProtocol: Sendable {
     /// Fetches active members for the current team.
@@ -8,6 +10,8 @@ protocol MemberServiceProtocol: Sendable {
     /// Adds a new team member document to Firestore.
     func addMember(_ input: AddMemberInput) async throws
 }
+
+// MARK: - MemberService
 
 /// Service to fetch and manage User (member) entities from Firestore.
 struct MemberService: MemberServiceProtocol {
@@ -59,6 +63,8 @@ struct MemberService: MemberServiceProtocol {
         try newDoc.setData(from: newMember)
     }
 }
+
+// MARK: MemberService.Errors
 
 extension MemberService {
     enum Errors: Error {

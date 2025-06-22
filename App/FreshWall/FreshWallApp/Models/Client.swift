@@ -1,6 +1,8 @@
 import FirebaseFirestore
 import Foundation
 
+// MARK: - Client
+
 /// Domain model representing a client used by the UI layer.
 struct Client: Identifiable, Hashable, Sendable {
     var id: String?
