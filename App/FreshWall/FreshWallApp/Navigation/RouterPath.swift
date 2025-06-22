@@ -31,7 +31,7 @@ enum RouterDestination: Hashable {
     case membersList
     /// Screen for adding a new member.
     case inviteMember
-    case memberDetail(member: UserDTO)
+    case memberDetail(member: Member)
 }
 
 // swiftlint:disable cyclomatic_complexity

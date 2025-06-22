@@ -4,7 +4,7 @@ import SwiftUI
 /// A view displaying detailed information for a specific team member.
 /// A view displaying detailed information for a specific team member.
 struct MemberDetailView: View {
-    let member: UserDTO
+    let member: Member
 
     var body: some View {
         List {
@@ -41,7 +41,7 @@ struct MemberDetailView: View {
 }
 
 #Preview {
-    let sampleMember = UserDTO(
+    let sampleMember = Member(
         id: "member123",
         displayName: "Jane Doe",
         email: "jane@example.com",
