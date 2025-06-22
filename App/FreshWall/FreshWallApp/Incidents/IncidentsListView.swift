@@ -68,7 +68,7 @@ struct IncidentsListView: View {
                     viewModel.isAscending = true
                 }
             } label: {
-                let arrow = viewModel.sortField == .alphabetical ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
+                let arrow = viewModel.sortField == .alphabetical ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : nil
                 Label("Alphabetical", systemImage: arrow)
             }
 
@@ -80,14 +80,14 @@ struct IncidentsListView: View {
                     viewModel.isAscending = true
                 }
             } label: {
-                let arrow = viewModel.sortField == .date ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
+                let arrow = viewModel.sortField == .date ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : nil
                 Label("By Date", systemImage: arrow)
             }
         } else {
             Button {
                 viewModel.isAscending.toggle()
             } label: {
-                let arrow = viewModel.sortField == .date ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
+                let arrow = viewModel.sortField == .date ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : nil
                 Label("Order", systemImage: arrow)
             }
 

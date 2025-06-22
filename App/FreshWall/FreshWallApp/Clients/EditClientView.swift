@@ -43,8 +43,8 @@ struct EditClientView: View {
 
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
-    func fetchClients(sortedBy _: ClientSortOption) async throws -> [ClientDTO] {
-        [ClientDTO(
+    func fetchClients(sortedBy _: ClientSortOption) async throws -> [Client] {
+        [Client(
             id: "client1",
             name: "Sample Client",
             notes: "Preview client",
@@ -61,7 +61,7 @@ private class PreviewClientService: ClientServiceProtocol {
 }
 
 #Preview {
-    let sampleClient = ClientDTO(
+    let sampleClient = Client(
         id: "client123",
         name: "Test Client",
         notes: "Sample notes",
