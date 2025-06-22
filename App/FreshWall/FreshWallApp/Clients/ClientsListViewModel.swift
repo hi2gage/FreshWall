@@ -1,4 +1,5 @@
 import Observation
+import Foundation
 
 /// ViewModel responsible for client list presentation and data operations.
 @MainActor
@@ -9,7 +10,7 @@ final class ClientsListViewModel {
     /// Incidents fetched from the incident service.
     var incidents: [IncidentDTO] = []
     /// Field used when sorting clients.
-    var sortField: ClientSortField = .date
+    var sortField: ClientSortField = .incidentDate
     /// Indicates whether sorting is ascending.
     var isAscending = false
 
@@ -43,7 +44,7 @@ final class ClientsListViewModel {
                     return lhs.name > rhs.name
                 }
             }
-        case .date:
+        case .incidentDate:
             return clients.sorted { lhs, rhs in
                 let lhsDate = lastIncidentDate(for: lhs)
                 let rhsDate = lastIncidentDate(for: rhs)

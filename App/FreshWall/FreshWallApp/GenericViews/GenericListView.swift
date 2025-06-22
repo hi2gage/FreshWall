@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct GenericListView<Item: Identifiable, Content: View, MenuContent: View = EmptyView>: View {
+struct GenericListView<Item: Identifiable, Content: View, MenuContent: View>: View {
     var items: [Item]
     var title: String
     var destination: (Item) -> RouterDestination

@@ -66,7 +66,7 @@ struct ClientsListViewModelTests {
         second.clientRef = clientRefB
         second.createdAt = Timestamp(date: Date().addingTimeInterval(60))
         vm.incidents = [first, second]
-        vm.sortField = .date
+        vm.sortField = .incidentDate
         vm.isAscending = false
         let sorted = vm.sortedClients()
         #expect(sorted.first?.id == "b")

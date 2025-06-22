@@ -59,15 +59,15 @@ struct ClientsListView: View {
         }
 
         Button {
-            if viewModel.sortField == .date {
+            if viewModel.sortField == .incidentDate {
                 viewModel.isAscending.toggle()
             } else {
-                viewModel.sortField = .date
+                viewModel.sortField = .incidentDate
                 viewModel.isAscending = false
             }
         } label: {
-            let arrow = viewModel.sortField == .date ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
-            Label("By Date", systemImage: arrow)
+            let arrow = viewModel.sortField == .incidentDate ? (viewModel.isAscending ? "arrow.up" : "arrow.down") : ""
+            Label("By Incident Date", systemImage: arrow)
         }
     }
 }
