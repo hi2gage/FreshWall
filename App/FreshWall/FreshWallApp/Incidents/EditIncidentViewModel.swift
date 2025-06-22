@@ -9,7 +9,7 @@ import Observation
 final class EditIncidentViewModel {
     /// Selected client document ID.
     var clientId: String
-    /// Description text.
+    /// Notes text.
     var description: String
     /// Area affected input as text.
     var areaText: String
@@ -21,8 +21,8 @@ final class EditIncidentViewModel {
     var billable: Bool
     /// Billing rate input as text.
     var rateText: String
-    /// Optional project name.
-    var projectName: String
+    /// Project title.
+    var projectTitle: String
     /// Incident status string.
     var status: String
     /// Materials used description.
@@ -44,10 +44,11 @@ final class EditIncidentViewModel {
     private let service: IncidentServiceProtocol
     private let clientService: ClientServiceProtocol
 
-    /// Validation: requires a client and description.
+    /// Validation: requires a client, description, and project title.
     var isValid: Bool {
         !clientId.trimmingCharacters(in: .whitespaces).isEmpty &&
-            !description.trimmingCharacters(in: .whitespaces).isEmpty
+            !description.trimmingCharacters(in: .whitespaces).isEmpty &&
+            !projectTitle.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     init(incident: IncidentDTO, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
@@ -61,7 +62,7 @@ final class EditIncidentViewModel {
         endTime = incident.endTime.dateValue()
         billable = incident.billable
         rateText = incident.rate.map { String($0) } ?? ""
-        projectName = incident.projectName ?? ""
+        projectTitle = incident.projectTitle
         status = incident.status
         materialsUsed = incident.materialsUsed ?? ""
     }
@@ -76,7 +77,7 @@ final class EditIncidentViewModel {
             endTime: endTime,
             billable: billable,
             rate: Double(rateText),
-            projectName: projectName.isEmpty ? nil : projectName,
+            projectTitle: projectTitle,
             status: status,
             materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed
         )

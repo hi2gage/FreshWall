@@ -52,7 +52,7 @@ struct IncidentServiceCompositionTests {
             session: session
         )
         let input = AddIncidentInput(
-            clientId: "c", description: "d", area: 1, startTime: .init(), endTime: .init(), billable: false, rate: nil, projectName: nil, status: "open", materialsUsed: nil
+            clientId: "c", description: "d", area: 1, startTime: .init(), endTime: .init(), billable: false, rate: nil, projectTitle: "", status: "open", materialsUsed: nil
         )
         try await service.addIncident(input, beforeImages: [Data()], afterImages: [])
         let added = await model.added

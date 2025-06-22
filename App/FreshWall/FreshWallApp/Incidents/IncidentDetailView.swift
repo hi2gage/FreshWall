@@ -35,18 +35,14 @@ struct IncidentDetailView: View {
     var body: some View {
         List {
             Section("Overview") {
-                Text(incident.description)
+                Text(incident.projectTitle)
+                if !incident.description.trimmingCharacters(in: .whitespaces).isEmpty {
+                    Text(incident.description)
+                }
                 HStack {
                     Text("Status")
                     Spacer()
                     Text(incident.status.capitalized)
-                }
-                if let project = incident.projectName {
-                    HStack {
-                        Text("Project")
-                        Spacer()
-                        Text(project)
-                    }
                 }
                 HStack {
                     Text("Area")
@@ -211,7 +207,7 @@ struct IncidentDetailView: View {
 //        lastModifiedAt: nil,
 //        billable: true,
 //        rate: 75.0,
-//        projectName: "Front Wall Project",
+//        projectTitle: "Front Wall Project",
 //        status: "completed",
 //        materialsUsed: "Paint, brushes"
 //    )
