@@ -13,8 +13,8 @@ struct ClientsListViewModelTests {
     final class MockIncidentService: IncidentServiceProtocol {
         func fetchIncidents() async throws -> [Incident] { [] }
         func addIncident(_: Incident) async throws {}
-        func addIncident(_: AddIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
-        func updateIncident(_: String, with _: UpdateIncidentInput, beforeImages _: [Data], afterImages _: [Data]) async throws {}
+        func addIncident(_: AddIncidentInput, beforePhotos _: [PickedPhoto], afterPhotos _: [PickedPhoto]) async throws {}
+        func updateIncident(_: String, with _: UpdateIncidentInput, beforePhotos _: [PickedPhoto], afterPhotos _: [PickedPhoto]) async throws {}
     }
 
     @Test func sortAlphabeticalAscending() {

@@ -10,10 +10,8 @@ struct AddIncidentView: View {
     @Environment(RouterPath.self) private var routerPath
     @State var viewModel: AddIncidentViewModel
     private let addNewTag = "__ADD_NEW__"
-    @State private var beforePickerItems: [PhotosPickerItem] = []
-    @State private var afterPickerItems: [PhotosPickerItem] = []
-    @State private var beforeImages: [UIImage] = []
-    @State private var afterImages: [UIImage] = []
+    @State private var beforePhotos: [PickedPhoto] = []
+    @State private var afterPhotos: [PickedPhoto] = []
 
     /// Initializes the view with a view model.
     init(viewModel: AddIncidentViewModel) {
@@ -79,12 +77,12 @@ struct AddIncidentView: View {
                 TextEditor(text: $viewModel.input.materialsUsed)
                     .frame(minHeight: 80)
             }
-            if !beforeImages.isEmpty {
+            if !beforePhotos.isEmpty {
                 Section("Before Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(beforeImages.indices, id: \.self) { idx in
-                                Image(uiImage: beforeImages[idx])
+                            ForEach(beforePhotos.indices, id: \.self) { idx in
+                                Image(uiImage: beforePhotos[idx].image)
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 100, height: 100)
@@ -95,15 +93,15 @@ struct AddIncidentView: View {
                     .frame(height: 120)
                 }
             }
-            PhotosPicker(selection: $beforePickerItems, matching: .images, photoLibrary: .shared()) {
+            PhotoPicker(selection: $beforePhotos, matching: .images, photoLibrary: .shared()) {
                 Label("Add Before Photos", systemImage: "photo.on.rectangle")
             }
-            if !afterImages.isEmpty {
+            if !afterPhotos.isEmpty {
                 Section("After Photos") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(afterImages.indices, id: \.self) { idx in
-                                Image(uiImage: afterImages[idx])
+                            ForEach(afterPhotos.indices, id: \.self) { idx in
+                                Image(uiImage: afterPhotos[idx].image)
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 100, height: 100)
@@ -114,7 +112,7 @@ struct AddIncidentView: View {
                     .frame(height: 120)
                 }
             }
-            PhotosPicker(selection: $afterPickerItems, matching: .images, photoLibrary: .shared()) {
+            PhotoPicker(selection: $afterPhotos, matching: .images, photoLibrary: .shared()) {
                 Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
             }
         }
@@ -124,9 +122,7 @@ struct AddIncidentView: View {
                 Button("Save") {
                     Task {
                         do {
-                            let beforeData = beforeImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
-                            let afterData = afterImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
-                            try await viewModel.save(beforeImages: beforeData, afterImages: afterData)
+                            try await viewModel.save(beforePhotos: beforePhotos, afterPhotos: afterPhotos)
                             dismiss()
                         } catch {
                             // Handle error if needed
@@ -138,28 +134,6 @@ struct AddIncidentView: View {
         }
         .task {
             await viewModel.loadClients()
-        }
-        .onChange(of: beforePickerItems) { _, newItems in
-            Task {
-                beforeImages = []
-                for item in newItems {
-                    if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data) {
-                        beforeImages.append(image)
-                    }
-                }
-            }
-        }
-        .onChange(of: afterPickerItems) { _, newItems in
-            Task {
-                afterImages = []
-                for item in newItems {
-                    if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data) {
-                        afterImages.append(image)
-                    }
-                }
-            }
         }
     }
 }
@@ -173,14 +147,14 @@ private class PreviewIncidentService: IncidentServiceProtocol {
     func addIncident(_: Incident) async throws {}
     func addIncident(
         _: AddIncidentInput,
-        beforeImages _: [Data],
-        afterImages _: [Data]
+        beforePhotos _: [PickedPhoto],
+        afterPhotos _: [PickedPhoto]
     ) async throws {}
     func updateIncident(
         _: String,
         with _: UpdateIncidentInput,
-        beforeImages _: [Data],
-        afterImages _: [Data]
+        beforePhotos _: [PickedPhoto],
+        afterPhotos _: [PickedPhoto]
     ) async throws {}
 }
 

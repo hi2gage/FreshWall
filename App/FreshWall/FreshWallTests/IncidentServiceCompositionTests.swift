@@ -18,11 +18,6 @@ struct IncidentServiceCompositionTests {
         func uploadAfterPhotos(teamId _: String, incidentId _: String, images: [Data]) async throws -> [String] { images.map { _ in "after" } }
     }
 
-    actor MockMeta: PhotoMetadataServiceProtocol {
-        func metadata(for _: PhotosPickerItem) async throws -> PhotoMetadata { PhotoMetadata(captureDate: nil, location: nil) }
-        func metadata(from _: Data) -> PhotoMetadata { PhotoMetadata(captureDate: nil, location: nil) }
-    }
-
     final actor MockClientModel: ClientModelServiceProtocol {
         var requested: (String, String)?
         func fetchClients(teamId _: String, sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
@@ -54,13 +49,15 @@ struct IncidentServiceCompositionTests {
             photoService: photo,
             clientModelService: clientModel,
             userModelService: userModel,
-            metadataService: MockMeta(),
             session: session
         )
         let input = AddIncidentInput(
             clientId: "c", description: "d", area: 1, startTime: .init(), endTime: .init(), billable: false, rate: nil, projectTitle: "", status: "open", materialsUsed: nil
         )
-        try await service.addIncident(input, beforeImages: [Data()], afterImages: [])
+        let renderer = UIGraphicsImageRenderer(size: .init(width: 1, height: 1))
+        let image = renderer.image { _ in }
+        let photo = PickedPhoto(image: image, captureDate: nil, location: nil)
+        try await service.addIncident(input, beforePhotos: [photo], afterPhotos: [])
         let added = await model.added
         let clientArgs = await clientModel.requested
         let userArgs = await userModel.requested

@@ -51,7 +51,7 @@ final class AddIncidentViewModel {
     }
 
     /// Saves the new incident via the service along with photo data.
-    func save(beforeImages: [Data], afterImages: [Data]) async throws {
+    func save(beforePhotos: [PickedPhoto], afterPhotos: [PickedPhoto]) async throws {
         let areaValue = Double(input.areaText) ?? 0
         let rateValue = Double(input.rateText)
         let input = AddIncidentInput(
@@ -68,8 +68,8 @@ final class AddIncidentViewModel {
         )
         try await service.addIncident(
             input,
-            beforeImages: beforeImages,
-            afterImages: afterImages
+            beforePhotos: beforePhotos,
+            afterPhotos: afterPhotos
         )
     }
 
