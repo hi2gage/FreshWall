@@ -1,3 +1,4 @@
+import _PhotosUI_SwiftUI
 import CoreLocation
 import ImageIO
 import Photos
@@ -43,12 +44,14 @@ struct PhotoMetadataService: PhotoMetadataServiceProtocol {
 
         var date: Date?
         if let exif = properties[kCGImagePropertyExifDictionary] as? [CFString: Any],
-           let dateString = exif[kCGImagePropertyExifDateTimeOriginal] as? String {
+           let dateString = exif[kCGImagePropertyExifDateTimeOriginal] as? String
+        {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
             date = formatter.date(from: dateString)
         } else if let tiff = properties[kCGImagePropertyTIFFDictionary] as? [CFString: Any],
-                  let dateString = tiff[kCGImagePropertyTIFFDateTime] as? String {
+                  let dateString = tiff[kCGImagePropertyTIFFDateTime] as? String
+        {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
             date = formatter.date(from: dateString)
@@ -59,7 +62,8 @@ struct PhotoMetadataService: PhotoMetadataServiceProtocol {
            let lat = gps[kCGImagePropertyGPSLatitude] as? Double,
            let latRef = gps[kCGImagePropertyGPSLatitudeRef] as? String,
            let lon = gps[kCGImagePropertyGPSLongitude] as? Double,
-           let lonRef = gps[kCGImagePropertyGPSLongitudeRef] as? String {
+           let lonRef = gps[kCGImagePropertyGPSLongitudeRef] as? String
+        {
             let latitude = latRef == "S" ? -lat : lat
             let longitude = lonRef == "W" ? -lon : lon
             location = CLLocation(latitude: latitude, longitude: longitude)
