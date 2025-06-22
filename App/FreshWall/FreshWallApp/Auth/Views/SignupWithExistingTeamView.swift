@@ -29,7 +29,7 @@ struct SignupWithExistingTeamView: View {
                 .padding()
                 .background(Color(.secondarySystemBackground))
                 .cornerRadius(8)
-            TextField("Team Code", text: $teamCode)
+            TextField("Team Code (optional)", text: $teamCode)
                 .padding()
                 .background(Color(.secondarySystemBackground))
                 .cornerRadius(8)
