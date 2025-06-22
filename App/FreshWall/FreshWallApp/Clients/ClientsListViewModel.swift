@@ -1,5 +1,5 @@
-import Observation
 import Foundation
+import Observation
 
 /// ViewModel responsible for client list presentation and data operations.
 @MainActor
@@ -37,15 +37,15 @@ final class ClientsListViewModel {
     func sortedClients() -> [Client] {
         switch sortField {
         case .alphabetical:
-            return clients.sorted { lhs, rhs in
+            clients.sorted { lhs, rhs in
                 if isAscending {
-                    return lhs.name < rhs.name
+                    lhs.name < rhs.name
                 } else {
-                    return lhs.name > rhs.name
+                    lhs.name > rhs.name
                 }
             }
         case .incidentDate:
-            return clients.sorted { lhs, rhs in
+            clients.sorted { lhs, rhs in
                 let lhsDate = lastIncidentDate(for: lhs)
                 let rhsDate = lastIncidentDate(for: rhs)
                 if isAscending {

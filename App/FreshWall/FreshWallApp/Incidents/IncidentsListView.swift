@@ -41,7 +41,7 @@ struct IncidentsListView: View {
 
     @ViewBuilder
     private func groupingMenu(
-            groups: [(title: String?, items: [Incident])],
+        groups: [(title: String?, items: [Incident])],
         collapsedGroups: Binding<Set<Int>>
     ) -> some View {
         Text("Group By")
@@ -49,7 +49,7 @@ struct IncidentsListView: View {
             .foregroundColor(.secondary)
 
         Picker("Group By", selection: $viewModel.groupOption) {
-            Text("None").tag(Optional<IncidentGroupOption>.none)
+            Text("None").tag(IncidentGroupOption?.none)
             ForEach(Array(IncidentGroupOption.allCases), id: \.self) { option in
                 Text(option.rawValue).tag(Optional.some(option))
             }

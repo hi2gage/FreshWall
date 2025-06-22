@@ -87,7 +87,7 @@ final class IncidentsListViewModel {
     private func sort(_ items: [Incident]) -> [Incident] {
         switch sortField {
         case .alphabetical:
-            return items.sorted { lhs, rhs in
+            items.sorted { lhs, rhs in
                 let lhsDesc = lhs.description
                 let rhsDesc = rhs.description
                 if isAscending {
@@ -97,7 +97,7 @@ final class IncidentsListViewModel {
                 }
             }
         case .date:
-            return items.sorted { lhs, rhs in
+            items.sorted { lhs, rhs in
                 let lhsDate = lhs.startTime.dateValue()
                 let rhsDate = rhs.startTime.dateValue()
                 if isAscending {
