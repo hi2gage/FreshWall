@@ -49,7 +49,11 @@ struct IncidentListCell: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .listCellStyle()
+        .padding(.vertical)
+        .padding(.trailing)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(UIColor.secondarySystemBackground))
+        .cornerRadius(8)
     }
 
     private var statusColor: Color {
