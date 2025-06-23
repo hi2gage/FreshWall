@@ -18,7 +18,7 @@ struct IncidentListCell: View {
                         image
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 80, height: 80)
+                            .frame(maxWidth: 90)
                             .clipped()
                             .cornerRadius(4)
                     case .failure:
@@ -48,8 +48,8 @@ struct IncidentListCell: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical)
         }
-        .padding(.vertical)
         .padding(.trailing)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(UIColor.secondarySystemBackground))
