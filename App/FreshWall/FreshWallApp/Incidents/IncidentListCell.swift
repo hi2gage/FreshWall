@@ -1,6 +1,8 @@
 import FirebaseFirestore
 import SwiftUI
 
+// MARK: - IncidentListCell
+
 /// A cell view displaying summary information for an incident.
 struct IncidentListCell: View {
     let incident: Incident
@@ -13,7 +15,7 @@ struct IncidentListCell: View {
                     switch phase {
                     case .empty:
                         ProgressView()
-                            .frame(width: Constants.iconSize, height: Constants.iconSize)
+                            .frame(width: Constants.imageSize, height: Constants.imageSize)
                     case let .success(image):
                         image
                             .resizable()
@@ -25,17 +27,21 @@ struct IncidentListCell: View {
                         Image(systemName: "photo")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: Constants.iconSize, height: Constants.iconSize)
+                            .frame(width: Constants.imageSize, height: Constants.imageSize)
                     @unknown default:
                         EmptyView()
-                            .frame(width: Constants.iconSize, height: Constants.iconSize)
+                            .frame(width: Constants.imageSize, height: Constants.imageSize)
                     }
                 }
             } else {
-                Image(systemName: "photo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Constants.iconSize, height: Constants.iconSize)
+                ZStack {
+                    Color.clear
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Constants.iconSize, height: Constants.iconSize)
+                }
+                .frame(width: Constants.imageSize, height: Constants.imageSize)
             }
 
             VStack(alignment: .leading, spacing: Constants.verticalSpacing) {
@@ -71,9 +77,12 @@ struct IncidentListCell: View {
     }
 }
 
+// MARK: - Constants
+
 /// Layout constants for `IncidentListCell`.
 private enum Constants {
-    static let iconSize: CGFloat = 80
+    static let imageSize: CGFloat = 80
+    static let iconSize: CGFloat = 20
     static let maxImageWidth: CGFloat = 90
     static let smallCornerRadius: CGFloat = 4
     static let largeCornerRadius: CGFloat = 8
