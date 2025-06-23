@@ -78,6 +78,17 @@ struct LoginManager: LoginManaging {
             displayName: displayName,
             teamName: teamName
         )
+
+        guard let user = authService.getCurrentUser() else {
+            throw NSError(
+                domain: "LoginManager",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "User not logged in after sign up"]
+            )
+        }
+
+        let session = try await sessionService.fetchUserRecord(for: user)
+        await sessionStore.startSession(session)
     }
 
     func signUp(
@@ -92,5 +103,16 @@ struct LoginManager: LoginManaging {
             displayName: displayName,
             teamCode: teamCode
         )
+
+        guard let user = authService.getCurrentUser() else {
+            throw NSError(
+                domain: "LoginManager",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "User not logged in after sign up"]
+            )
+        }
+
+        let session = try await sessionService.fetchUserRecord(for: user)
+        await sessionStore.startSession(session)
     }
 }
