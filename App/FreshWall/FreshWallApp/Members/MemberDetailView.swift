@@ -37,6 +37,9 @@ struct MemberDetailView: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Member Details")
+        .refreshable {
+            // No-op until member service supports reloading a single member
+        }
     }
 }
 

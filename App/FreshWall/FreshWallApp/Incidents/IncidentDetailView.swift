@@ -117,6 +117,9 @@ struct IncidentDetailView: View {
         .task {
             await loadClient()
         }
+        .refreshable {
+            await reloadIncident()
+        }
     }
 }
 
