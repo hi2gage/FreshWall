@@ -9,14 +9,8 @@ struct ClientListCell: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(client.name)
                 .font(.headline)
-            HStack {
-                Text("Created: \\(client.createdAt.dateValue(), style: .date)")
-                    .font(.subheadline)
-                Spacer()
-                Text(client.isDeleted ? "Deleted" : "Active")
-                    .font(.subheadline)
-                    .foregroundColor(client.isDeleted ? .red : .green)
-            }
+            Text(client.createdAt.dateValue(), style: .date)
+                .font(.subheadline)
             if let notes = client.notes, !notes.isEmpty {
                 Text(notes)
                     .font(.subheadline)
