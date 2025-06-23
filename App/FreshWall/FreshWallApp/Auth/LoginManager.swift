@@ -1,3 +1,5 @@
+import Foundation
+
 // MARK: - LoginManaging
 
 protocol LoginManaging: Sendable {
