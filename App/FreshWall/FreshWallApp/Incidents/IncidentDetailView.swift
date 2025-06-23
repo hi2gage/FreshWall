@@ -50,24 +50,27 @@ struct IncidentDetailView: View {
                         Text(String(format: "%.2f", incident.area) + " sq ft")
                     }
                 }
+
                 HStack {
                     Text("Status")
                     Spacer()
                     Text(incident.status.capitalized)
                 }
             }
-            if incident.beforePhotos.isEmpty {
-                Button("Add Before Photos") { showingEdit = true }
-            } else if let beforePhotos = incident.beforePhotos.nullIfEmpty {
-                Section("Before Photos") {
-                    PhotoCarousel(photos: beforePhotos)
+            Section("Photos") {
+                if incident.beforePhotos.isEmpty {
+                    Button("Add Before Photos") { showingEdit = true }
+                } else if let beforePhotos = incident.beforePhotos.nullIfEmpty {
+                    Section("Before Photos") {
+                        PhotoCarousel(photos: beforePhotos)
+                    }
                 }
-            }
-            if incident.afterPhotos.isEmpty {
-                Button("Add After Photos") { showingEdit = true }
-            } else if let afterPhotos = incident.afterPhotos.nullIfEmpty {
-                Section("After Photos") {
-                    PhotoCarousel(photos: afterPhotos)
+                if incident.afterPhotos.isEmpty {
+                    Button("Add After Photos") { showingEdit = true }
+                } else if let afterPhotos = incident.afterPhotos.nullIfEmpty {
+                    Section("After Photos") {
+                        PhotoCarousel(photos: afterPhotos)
+                    }
                 }
             }
             Section("Timeline") {
@@ -82,14 +85,14 @@ struct IncidentDetailView: View {
                     Text(incident.endTime.dateValue(), style: .time)
                 }
             }
-            if let client {
-                Section("Client") {
+
+            Section("Client") {
+                if let client {
                     Button(client.name) {
                         routerPath.push(.clientDetail(client: client))
                     }
-                    if let notes = client.notes, !notes.isEmpty {
-                        Text(notes)
-                    }
+                } else {
+                    Button("Add Client") { showingEdit = true }
                 }
             }
         }
