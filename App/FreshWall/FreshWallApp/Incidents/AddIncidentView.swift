@@ -20,50 +20,12 @@ struct AddIncidentView: View {
 
     var body: some View {
         Form {
-            Section(header: Text("Client")) {
-                Picker("Select Client", selection: $viewModel.input.clientId) {
-                    Text("Add New Client...").tag(addNewTag)
-                    ForEach(viewModel.validClients, id: \.id) { item in
-                        Text(item.name).tag(item.id)
-                    }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: viewModel.input.clientId) { _, newValue in
-                    if newValue == addNewTag {
-                        routerPath.push(.addClient)
-                        viewModel.input.clientId = ""
-                    }
-                }
-            }
             Section(header: Text("Project Title")) {
                 TextField("Project Title", text: $viewModel.input.projectTitle)
-            }
-            Section(header: Text("Notes")) {
-                TextEditor(text: $viewModel.input.description)
-                    .frame(minHeight: 100)
             }
             Section(header: Text("Area (sq ft)")) {
                 TextField("Area", text: $viewModel.input.areaText)
                     .keyboardType(.decimalPad)
-            }
-            Section(header: Text("Timeframe")) {
-                DatePicker(
-                    "Start Time",
-                    selection: $viewModel.input.startTime,
-                    displayedComponents: [.date, .hourAndMinute]
-                )
-                DatePicker(
-                    "End Time",
-                    selection: $viewModel.input.endTime,
-                    displayedComponents: [.date, .hourAndMinute]
-                )
-            }
-            Section {
-                Toggle("Billable", isOn: $viewModel.input.billable)
-                if viewModel.input.billable {
-                    TextField("Rate", text: $viewModel.input.rateText)
-                        .keyboardType(.decimalPad)
-                }
             }
             Section(header: Text("Status")) {
                 Picker("Status", selection: $viewModel.input.status) {
@@ -72,10 +34,6 @@ struct AddIncidentView: View {
                     }
                 }
                 .pickerStyle(.segmented)
-            }
-            Section(header: Text("Materials Used")) {
-                TextEditor(text: $viewModel.input.materialsUsed)
-                    .frame(minHeight: 80)
             }
             if !beforePhotos.isEmpty {
                 Section("Before Photos") {
@@ -114,6 +72,48 @@ struct AddIncidentView: View {
             }
             PhotoPicker(selection: $afterPhotos, matching: .images, photoLibrary: .shared()) {
                 Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
+            }
+            Section(header: Text("Timeframe")) {
+                DatePicker(
+                    "Start Time",
+                    selection: $viewModel.input.startTime,
+                    displayedComponents: [.date, .hourAndMinute]
+                )
+                DatePicker(
+                    "End Time",
+                    selection: $viewModel.input.endTime,
+                    displayedComponents: [.date, .hourAndMinute]
+                )
+            }
+            Section(header: Text("Client")) {
+                Picker("Select Client", selection: $viewModel.input.clientId) {
+                    Text("Add New Client...").tag(addNewTag)
+                    ForEach(viewModel.validClients, id: \.id) { item in
+                        Text(item.name).tag(item.id)
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: viewModel.input.clientId) { _, newValue in
+                    if newValue == addNewTag {
+                        routerPath.push(.addClient)
+                        viewModel.input.clientId = ""
+                    }
+                }
+            }
+            Section(header: Text("Notes")) {
+                TextEditor(text: $viewModel.input.description)
+                    .frame(minHeight: 100)
+            }
+            Section {
+                Toggle("Billable", isOn: $viewModel.input.billable)
+                if viewModel.input.billable {
+                    TextField("Rate", text: $viewModel.input.rateText)
+                        .keyboardType(.decimalPad)
+                }
+            }
+            Section(header: Text("Materials Used")) {
+                TextEditor(text: $viewModel.input.materialsUsed)
+                    .frame(minHeight: 80)
             }
         }
         .navigationTitle("Add Incident")
