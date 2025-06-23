@@ -1,5 +1,5 @@
-import Testing
 @testable import FreshWall
+import Testing
 
 struct PhotoViewerContextTests {
     @Test func idMatchesSelectedPhoto() {

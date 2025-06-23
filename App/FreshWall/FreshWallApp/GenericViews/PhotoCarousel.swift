@@ -44,7 +44,7 @@ struct PhotoCarousel: View {
 #Preview {
     let photos = [
         IncidentPhoto(id: "1", url: "https://via.placeholder.com/100", captureDate: nil, location: nil),
-        IncidentPhoto(id: "2", url: "https://via.placeholder.com/100/EEE", captureDate: nil, location: nil)
+        IncidentPhoto(id: "2", url: "https://via.placeholder.com/100/EEE", captureDate: nil, location: nil),
     ]
     return FreshWallPreview {
         PhotoCarousel(photos: photos) { _ in }
