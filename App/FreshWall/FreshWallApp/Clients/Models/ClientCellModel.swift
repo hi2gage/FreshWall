@@ -20,7 +20,7 @@ extension ClientCellModel {
             guard let id = client.id else { return nil }
 
             let lastDate = incidents
-                .filter { $0.clientRef.documentID == id }
+                .filter { $0.clientRef?.documentID == id }
                 .map { $0.createdAt.dateValue() }
                 .max() ?? Date.distantPast
             return ClientCellModel(

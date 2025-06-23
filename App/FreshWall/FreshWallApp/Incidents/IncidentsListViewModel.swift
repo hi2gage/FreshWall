@@ -53,11 +53,11 @@ final class IncidentsListViewModel {
             return [(nil, sorted)]
         case .client:
             let groups = Dictionary(grouping: incidents) { incident in
-                incident.clientRef.documentID
+                incident.clientRef?.documentID ?? ""
             }
             return groups
                 .map { key, value in
-                    let name = clients.first { $0.id == key }?.name ?? "Unknown"
+                    let name = clients.first { $0.id == key }?.name ?? "No Client"
                     return (title: name, items: sort(value))
                 }
                 .sorted { lhs, rhs in

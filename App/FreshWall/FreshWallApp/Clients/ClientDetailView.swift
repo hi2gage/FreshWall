@@ -83,7 +83,7 @@ struct ClientDetailView: View {
         .navigationTitle("Client Details")
         .task {
             let all = await (try? incidentService.fetchIncidents()) ?? []
-            incidents = all.filter { $0.clientRef.documentID == client.id }
+            incidents = all.filter { $0.clientRef?.documentID == client.id }
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Client Details")

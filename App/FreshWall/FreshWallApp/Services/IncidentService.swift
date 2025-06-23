@@ -80,7 +80,9 @@ struct IncidentService: IncidentServiceProtocol {
         let teamId = session.teamId
 
         let newDoc = modelService.newIncidentDocument(teamId: teamId)
-        let clientRef = clientModelService.clientDocument(teamId: teamId, clientId: input.clientId)
+        let clientRef = input.clientId.map { id in
+            clientModelService.clientDocument(teamId: teamId, clientId: id)
+        }
         let uid = Auth.auth().currentUser?.uid ?? ""
         let createdByRef = userModelService.userDocument(teamId: teamId, userId: uid)
         let beforeData = beforePhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }

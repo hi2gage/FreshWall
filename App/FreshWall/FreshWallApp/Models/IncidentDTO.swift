@@ -9,8 +9,8 @@ struct IncidentDTO: Codable, Identifiable, Sendable, Hashable {
     @DocumentID var id: String?
     /// Title describing the project for this incident.
     var projectTitle: String
-    /// Reference to the client document associated with this incident.
-    var clientRef: DocumentReference
+    /// Reference to the client document associated with this incident, optional when not yet assigned.
+    var clientRef: DocumentReference?
     /// References to worker user documents involved in this incident.
     var workerRefs: [DocumentReference]
     /// Notes describing the incident.
