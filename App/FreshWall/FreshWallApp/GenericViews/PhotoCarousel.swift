@@ -1,16 +1,17 @@
 import SwiftUI
 
-/// A horizontally scrollable carousel of photos.
+/// A horizontally scrollable carousel of photos that can launch a full-screen photo viewer.
 struct PhotoCarousel: View {
     let photos: [IncidentPhoto]
-    let onSelect: (IncidentPhoto) -> Void
+
+    @State private var viewerContext: PhotoViewerContext?
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(photos) { photo in
                     Button {
-                        onSelect(photo)
+                        viewerContext = PhotoViewerContext(photos: photos, selectedPhoto: photo)
                     } label: {
                         AsyncImage(url: URL(string: photo.url)) { phase in
                             switch phase {
@@ -38,15 +39,8 @@ struct PhotoCarousel: View {
             }
         }
         .frame(height: 120)
-    }
-}
-
-#Preview {
-    let photos = [
-        IncidentPhoto(id: "1", url: "https://via.placeholder.com/100", captureDate: nil, location: nil),
-        IncidentPhoto(id: "2", url: "https://via.placeholder.com/100/EEE", captureDate: nil, location: nil),
-    ]
-    return FreshWallPreview {
-        PhotoCarousel(photos: photos) { _ in }
+        .fullScreenCover(item: $viewerContext) { context in
+            PhotoViewer(photos: context.photos, selectedPhoto: context.selectedPhoto)
+        }
     }
 }

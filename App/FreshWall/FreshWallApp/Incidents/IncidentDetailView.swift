@@ -97,16 +97,12 @@ struct IncidentDetailView: View {
             }
             if let beforePhotos = incident.beforePhotos.nullIfEmpty {
                 Section("Before Photos") {
-                    PhotoCarousel(photos: beforePhotos) { photo in
-                        viewerContext = PhotoViewerContext(photos: beforePhotos, selectedPhoto: photo)
-                    }
+                    PhotoCarousel(photos: beforePhotos)
                 }
             }
             if let afterPhotos = incident.afterPhotos.nullIfEmpty {
                 Section("After Photos") {
-                    PhotoCarousel(photos: afterPhotos) { photo in
-                        viewerContext = PhotoViewerContext(photos: afterPhotos, selectedPhoto: photo)
-                    }
+                    PhotoCarousel(photos: afterPhotos)
                 }
             }
             if let client {
@@ -138,7 +134,7 @@ struct IncidentDetailView: View {
                 )
             }
         }
-        .sheet(item: $viewerContext) { context in
+        .fullScreenCover(item: $viewerContext) { context in
             PhotoViewer(photos: context.photos, selectedPhoto: context.selectedPhoto)
         }
         .task {
