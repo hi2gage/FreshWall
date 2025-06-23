@@ -35,47 +35,42 @@ struct IncidentDetailView: View {
 
     var body: some View {
         List {
-            Section("Overview") {
-                Text(incident.projectTitle)
-                if !incident.description.trimmingCharacters(in: .whitespaces).isEmpty {
-                    Text(incident.description)
+            Section("Project") {
+                if incident.projectTitle.trimmingCharacters(in: .whitespaces).isEmpty {
+                    Button("Add Project Title") { showingEdit = true }
+                } else {
+                    Text(incident.projectTitle)
+                }
+                if incident.area <= 0 {
+                    Button("Add Square Footage") { showingEdit = true }
+                } else {
+                    HStack {
+                        Text("Area")
+                        Spacer()
+                        Text(String(format: "%.2f", incident.area) + " sq ft")
+                    }
                 }
                 HStack {
                     Text("Status")
                     Spacer()
                     Text(incident.status.capitalized)
                 }
-                HStack {
-                    Text("Area")
-                    Spacer()
-                    Text(String(format: "%.2f", incident.area) + " sq ft")
+            }
+            if incident.beforePhotos.isEmpty {
+                Button("Add Before Photos") { showingEdit = true }
+            } else if let beforePhotos = incident.beforePhotos.nullIfEmpty {
+                Section("Before Photos") {
+                    PhotoCarousel(photos: beforePhotos)
                 }
-                HStack {
-                    Text("Billable")
-                    Spacer()
-                    Text(incident.billable ? "Yes" : "No")
-                }
-                if let rate = incident.rate {
-                    HStack {
-                        Text("Rate")
-                        Spacer()
-                        Text("$" + String(format: "%.2f", rate))
-                    }
-                }
-                if let materials = incident.materialsUsed, !materials.isEmpty {
-                    HStack {
-                        Text("Materials Used")
-                        Spacer()
-                        Text(materials)
-                    }
+            }
+            if incident.afterPhotos.isEmpty {
+                Button("Add After Photos") { showingEdit = true }
+            } else if let afterPhotos = incident.afterPhotos.nullIfEmpty {
+                Section("After Photos") {
+                    PhotoCarousel(photos: afterPhotos)
                 }
             }
             Section("Timeline") {
-                HStack {
-                    Text("Created At")
-                    Spacer()
-                    Text(incident.createdAt.dateValue(), style: .time)
-                }
                 HStack {
                     Text("Start Time")
                     Spacer()
@@ -85,23 +80,6 @@ struct IncidentDetailView: View {
                     Text("End Time")
                     Spacer()
                     Text(incident.endTime.dateValue(), style: .time)
-                }
-                if let modifiedAt = incident.lastModifiedAt {
-                    HStack {
-                        Text("Modified At")
-                        Spacer()
-                        Text(modifiedAt.dateValue(), style: .date)
-                    }
-                }
-            }
-            if let beforePhotos = incident.beforePhotos.nullIfEmpty {
-                Section("Before Photos") {
-                    PhotoCarousel(photos: beforePhotos)
-                }
-            }
-            if let afterPhotos = incident.afterPhotos.nullIfEmpty {
-                Section("After Photos") {
-                    PhotoCarousel(photos: afterPhotos)
                 }
             }
             if let client {
