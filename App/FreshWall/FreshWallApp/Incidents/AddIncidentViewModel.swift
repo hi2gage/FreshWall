@@ -41,7 +41,6 @@ final class AddIncidentViewModel {
     /// Validation: requires a clientId, description, and project title.
     var isValid: Bool {
         !input.clientId.trimmingCharacters(in: .whitespaces).isEmpty &&
-            !input.description.trimmingCharacters(in: .whitespaces).isEmpty &&
             !input.projectTitle.trimmingCharacters(in: .whitespaces).isEmpty
     }
 

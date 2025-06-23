@@ -96,62 +96,12 @@ struct IncidentDetailView: View {
             }
             if let beforePhotos = incident.beforePhotos.nullIfEmpty {
                 Section("Before Photos") {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(beforePhotos, id: \.url) { photo in
-                                AsyncImage(url: URL(string: photo.url)) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                    case let .success(image):
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 100, height: 100)
-                                            .clipped()
-                                    case .failure:
-                                        Image(systemName: "photo")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 100, height: 100)
-                                    @unknown default:
-                                        EmptyView()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .frame(height: 120)
+                    PhotoCarousel(photos: beforePhotos)
                 }
             }
             if let afterPhotos = incident.afterPhotos.nullIfEmpty {
                 Section("After Photos") {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(afterPhotos, id: \.url) { photo in
-                                AsyncImage(url: URL(string: photo.url)) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                    case let .success(image):
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 100, height: 100)
-                                            .clipped()
-                                    case .failure:
-                                        Image(systemName: "photo")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 100, height: 100)
-                                    @unknown default:
-                                        EmptyView()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .frame(height: 120)
+                    PhotoCarousel(photos: afterPhotos)
                 }
             }
             if let client {
