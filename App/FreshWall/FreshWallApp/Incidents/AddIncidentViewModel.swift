@@ -38,10 +38,9 @@ final class AddIncidentViewModel {
     private let clientService: ClientServiceProtocol
     private let service: IncidentServiceProtocol
 
-    /// Validation: requires a clientId, description, and project title.
+    /// Validation: requires a non-empty project title.
     var isValid: Bool {
-        !input.clientId.trimmingCharacters(in: .whitespaces).isEmpty &&
-            !input.projectTitle.trimmingCharacters(in: .whitespaces).isEmpty
+        !input.projectTitle.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     init(service: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
@@ -53,8 +52,9 @@ final class AddIncidentViewModel {
     func save(beforePhotos: [PickedPhoto], afterPhotos: [PickedPhoto]) async throws {
         let areaValue = Double(input.areaText) ?? 0
         let rateValue = Double(input.rateText)
+        let trimmedId = input.clientId.trimmingCharacters(in: .whitespaces)
         let input = AddIncidentInput(
-            clientId: input.clientId.trimmingCharacters(in: .whitespaces),
+            clientId: trimmedId.isEmpty ? nil : trimmedId,
             description: input.description,
             area: areaValue,
             startTime: input.startTime,

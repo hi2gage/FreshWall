@@ -30,7 +30,7 @@ struct IncidentDetailView: View {
     /// Loads the client associated with this incident.
     private func loadClient() async {
         let clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
-        client = clients.first { $0.id == incident.clientRef.documentID }
+        client = clients.first { $0.id == incident.clientRef?.documentID }
     }
 
     var body: some View {
