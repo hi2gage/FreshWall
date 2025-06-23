@@ -138,7 +138,7 @@ struct IncidentDetailView: View {
                 )
             }
         }
-        .fullScreenCover(item: $viewerContext) { context in
+        .sheet(item: $viewerContext) { context in
             PhotoViewer(photos: context.photos, selectedPhoto: context.selectedPhoto)
         }
         .task {
