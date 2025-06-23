@@ -6,7 +6,6 @@ import SwiftUI
 struct PhotoViewer: View {
     let photos: [IncidentPhoto]
     @State private var index: Int
-    @Environment(\.dismiss) private var dismiss
     @State private var isZoomed = false
 
     init(photos: [IncidentPhoto], selectedPhoto: IncidentPhoto?) {
@@ -22,48 +21,38 @@ struct PhotoViewer: View {
     }
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            TabView(selection: $index) {
-                ForEach(Array(photos.enumerated()), id: \.element.id) { idx, photo in
-                    ZStack {
-                        AsyncImage(url: URL(string: photo.url)) { phase in
-                            switch phase {
-                            case .empty:
-                                ProgressView()
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .background(Color.black)
-                            case let .success(image):
-                                image
-                                    .resizable()
-                                    .scaledToFit()
-                                    .zoomable(
-                                        minZoomScale: 1,
-                                        doubleTapZoomScale: 3
-                                    )
-                            case .failure:
-                                Image(systemName: "photo")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .background(Color.black)
-                            @unknown default:
-                                EmptyView()
-                            }
+        TabView(selection: $index) {
+            ForEach(Array(photos.enumerated()), id: \.element.id) { idx, photo in
+                ZStack {
+                    AsyncImage(url: URL(string: photo.url)) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(Color.black)
+                        case let .success(image):
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .zoomable(
+                                    minZoomScale: 1,
+                                    doubleTapZoomScale: 3
+                                )
+                        case .failure:
+                            Image(systemName: "photo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(Color.black)
+                        @unknown default:
+                            EmptyView()
                         }
                     }
-                    .tag(idx)
                 }
-            }
-            .tabViewStyle(.page(indexDisplayMode: .always))
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 28))
-                    .foregroundColor(.white)
-                    .padding()
+                .tag(idx)
             }
         }
+        .tabViewStyle(.page(indexDisplayMode: .always))
         .background(Color.black.ignoresSafeArea())
     }
 }

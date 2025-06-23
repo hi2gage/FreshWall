@@ -36,6 +36,8 @@ enum RouterDestination: Hashable {
     /// Screen for adding a new member.
     case inviteMember
     case memberDetail(member: Member)
+    /// Screen for viewing a photo in full screen.
+    case photoViewer(context: PhotoViewerContext)
 }
 
 // swiftlint:disable cyclomatic_complexity
@@ -91,6 +93,8 @@ extension View {
                 InviteMemberView(service: InviteCodeService())
             case let .memberDetail(member):
                 MemberDetailView(member: member)
+            case let .photoViewer(context):
+                PhotoViewer(photos: context.photos, selectedPhoto: context.selectedPhoto)
             }
         }
     }

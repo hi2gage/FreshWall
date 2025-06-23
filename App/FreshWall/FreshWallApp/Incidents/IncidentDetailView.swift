@@ -9,7 +9,6 @@ struct IncidentDetailView: View {
     @Environment(RouterPath.self) private var routerPath
     @State private var client: Client?
     @State private var showingEdit = false
-    @State private var viewerContext: PhotoViewerContext?
 
     init(incident: Incident, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
         _incident = State(wrappedValue: incident)
@@ -133,9 +132,6 @@ struct IncidentDetailView: View {
                     )
                 )
             }
-        }
-        .fullScreenCover(item: $viewerContext) { context in
-            PhotoViewer(photos: context.photos, selectedPhoto: context.selectedPhoto)
         }
         .task {
             await loadClient()

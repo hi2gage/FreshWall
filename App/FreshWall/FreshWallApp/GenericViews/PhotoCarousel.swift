@@ -4,14 +4,15 @@ import SwiftUI
 struct PhotoCarousel: View {
     let photos: [IncidentPhoto]
 
-    @State private var viewerContext: PhotoViewerContext?
+    @Environment(RouterPath.self) private var routerPath
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(photos) { photo in
                     Button {
-                        viewerContext = PhotoViewerContext(photos: photos, selectedPhoto: photo)
+                        let context = PhotoViewerContext(photos: photos, selectedPhoto: photo)
+                        routerPath.push(.photoViewer(context: context))
                     } label: {
                         AsyncImage(url: URL(string: photo.url)) { phase in
                             switch phase {
@@ -39,8 +40,5 @@ struct PhotoCarousel: View {
             }
         }
         .frame(height: 120)
-        .fullScreenCover(item: $viewerContext) { context in
-            PhotoViewer(photos: context.photos, selectedPhoto: context.selectedPhoto)
-        }
     }
 }
