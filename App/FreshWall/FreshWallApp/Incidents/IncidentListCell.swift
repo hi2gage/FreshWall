@@ -6,42 +6,47 @@ struct IncidentListCell: View {
     let incident: Incident
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: Constants.cellSpacing) {
             if let urlString = incident.beforePhotos.first?.url,
                let url = URL(string: urlString) {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     case .empty:
                         ProgressView()
-                            .frame(width: 80, height: 80)
+                            .frame(width: Constants.iconSize, height: Constants.iconSize)
                     case let .success(image):
                         image
                             .resizable()
                             .scaledToFill()
-                            .frame(maxWidth: 90)
+                            .frame(maxWidth: Constants.maxImageWidth)
                             .clipped()
-                            .cornerRadius(4)
+                            .cornerRadius(Constants.smallCornerRadius)
                     case .failure:
                         Image(systemName: "photo")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 80, height: 80)
+                            .frame(width: Constants.iconSize, height: Constants.iconSize)
                     @unknown default:
                         EmptyView()
-                            .frame(width: 80, height: 80)
+                            .frame(width: Constants.iconSize, height: Constants.iconSize)
                     }
                 }
+            } else {
+                Image(systemName: "photo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Constants.iconSize, height: Constants.iconSize)
             }
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: Constants.verticalSpacing) {
                 Text(incident.projectTitle)
                     .font(.headline)
-                HStack(spacing: 12) {
+                HStack(spacing: Constants.cellSpacing) {
                     Text(incident.status.capitalized)
                         .font(.subheadline)
-                        .padding(4)
-                        .background(statusColor.opacity(0.3))
-                        .cornerRadius(4)
+                        .padding(Constants.smallPadding)
+                        .background(statusColor.opacity(Constants.statusOpacity))
+                        .cornerRadius(Constants.smallCornerRadius)
                     Spacer()
                     Text(incident.startTime.dateValue(), style: .date)
                         .font(.subheadline)
@@ -53,7 +58,7 @@ struct IncidentListCell: View {
         .padding(.trailing)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(UIColor.secondarySystemBackground))
-        .cornerRadius(8)
+        .cornerRadius(Constants.largeCornerRadius)
     }
 
     private var statusColor: Color {
@@ -64,4 +69,16 @@ struct IncidentListCell: View {
         default: .gray
         }
     }
+}
+
+/// Layout constants for `IncidentListCell`.
+private enum Constants {
+    static let iconSize: CGFloat = 80
+    static let maxImageWidth: CGFloat = 90
+    static let smallCornerRadius: CGFloat = 4
+    static let largeCornerRadius: CGFloat = 8
+    static let cellSpacing: CGFloat = 12
+    static let verticalSpacing: CGFloat = 8
+    static let smallPadding: CGFloat = 4
+    static let statusOpacity: CGFloat = 0.3
 }
