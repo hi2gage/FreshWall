@@ -85,6 +85,11 @@ struct ClientDetailView: View {
             let all = await (try? incidentService.fetchIncidents()) ?? []
             incidents = all.filter { $0.clientRef?.documentID == client.id }
         }
+        .refreshable {
+            await reloadClient()
+            let all = await (try? incidentService.fetchIncidents()) ?? []
+            incidents = all.filter { $0.clientRef?.documentID == client.id }
+        }
         .listStyle(.insetGrouped)
         .navigationTitle("Client Details")
         .toolbar {
