@@ -51,7 +51,7 @@ final class EditIncidentViewModel {
         incidentId = incident.id ?? ""
         service = incidentService
         self.clientService = clientService
-        clientId = incident.clientRef.documentID
+        clientId = incident.clientRef?.documentID ?? ""
         description = incident.description
         areaText = String(incident.area)
         startTime = incident.startTime.dateValue()

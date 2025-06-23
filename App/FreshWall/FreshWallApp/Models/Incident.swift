@@ -7,7 +7,7 @@ import Foundation
 struct Incident: Identifiable, Hashable, Sendable {
     var id: String?
     var projectTitle: String
-    var clientRef: DocumentReference
+    var clientRef: DocumentReference?
     var workerRefs: [DocumentReference]
     var description: String
     var area: Double

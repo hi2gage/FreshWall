@@ -64,7 +64,7 @@ final class ClientsListViewModel {
         guard let id = client.id else { return .distantPast }
 
         let dates = incidents
-            .filter { $0.clientRef.documentID == id }
+            .filter { $0.clientRef?.documentID == id }
             .map { $0.createdAt.dateValue() }
         return dates.max() ?? .distantPast
     }
