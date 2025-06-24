@@ -23,7 +23,7 @@ struct StorageService: StorageServiceProtocol {
         let ref = storage.reference(withPath: path)
 
         // Upload data with progress reporting
-        let metadata = try await ref.putDataAsync(data)
+        let _ = try await ref.putDataAsync(data)
 
         // Get download URL
         return try await withCheckedThrowingContinuation { continuation in

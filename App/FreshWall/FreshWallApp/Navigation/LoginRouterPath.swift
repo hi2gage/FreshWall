@@ -31,7 +31,6 @@ extension LoginRouterPath {
     }
 }
 
-// swiftlint:disable cyclomatic_complexity
 extension View {
     /// Sets up routing destinations for various views, injecting necessary services.
     func withAppLoginRouter(
@@ -47,5 +46,3 @@ extension View {
         }
     }
 }
-
-// swiftlint:enable cyclomatic_complexity
