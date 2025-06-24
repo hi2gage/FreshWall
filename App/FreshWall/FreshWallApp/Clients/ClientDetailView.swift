@@ -8,7 +8,6 @@ struct ClientDetailView: View {
     let clientService: ClientServiceProtocol
     @Environment(RouterPath.self) private var routerPath
     @State private var incidents: [Incident] = []
-    @State private var showingEdit = false
 
     init(
         client: Client,
@@ -89,15 +88,11 @@ struct ClientDetailView: View {
         .navigationTitle("Client Details")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("Edit") { showingEdit = true }
+                Button("Edit") { routerPath.push(.editClient(client: client)) }
             }
         }
-        .asyncSheet(isPresented: $showingEdit, onDismiss: reloadClient) {
-            NavigationStack {
-                EditClientView(
-                    viewModel: EditClientViewModel(client: client, service: clientService)
-                )
-            }
+        .onAppear {
+            Task { await reloadClient() }
         }
     }
 }
