@@ -28,10 +28,14 @@ enum RouterDestination: Hashable {
     /// Screen for adding a new client.
     case addClient
     case clientDetail(client: Client)
+    /// Screen for editing an existing client.
+    case editClient(client: Client)
     case incidentsList
     /// Screen for adding a new incident.
     case addIncident
     case incidentDetail(incident: Incident)
+    /// Screen for editing an existing incident.
+    case editIncident(incident: Incident)
     case membersList
     /// Screen for adding a new member.
     case inviteMember
@@ -64,6 +68,10 @@ extension View {
                     incidentService: incidentService,
                     clientService: clientService
                 )
+            case let .editClient(client):
+                EditClientView(
+                    viewModel: EditClientViewModel(client: client, service: clientService)
+                )
             case .incidentsList:
                 IncidentsListView(
                     viewModel: IncidentsListViewModel(
@@ -83,6 +91,14 @@ extension View {
                     incident: incident,
                     incidentService: incidentService,
                     clientService: clientService
+                )
+            case let .editIncident(incident):
+                EditIncidentView(
+                    viewModel: EditIncidentViewModel(
+                        incident: incident,
+                        incidentService: incidentService,
+                        clientService: clientService
+                    )
                 )
             case .membersList:
                 MembersListView(
