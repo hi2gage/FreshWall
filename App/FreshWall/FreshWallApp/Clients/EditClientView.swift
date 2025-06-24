@@ -23,9 +23,6 @@ struct EditClientView: View {
         }
         .navigationTitle("Edit Client")
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
-            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     Task {

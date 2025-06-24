@@ -114,9 +114,6 @@ struct EditIncidentView: View {
         }
         .navigationTitle("Edit Incident")
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
-            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     Task {
