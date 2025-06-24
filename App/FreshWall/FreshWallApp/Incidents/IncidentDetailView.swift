@@ -8,7 +8,6 @@ struct IncidentDetailView: View {
     let clientService: ClientServiceProtocol
     @Environment(RouterPath.self) private var routerPath
     @State private var client: Client?
-    @State private var showingEdit = false
 
     init(incident: Incident, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
         _incident = State(wrappedValue: incident)
@@ -37,12 +36,12 @@ struct IncidentDetailView: View {
         List {
             Section("Project") {
                 if incident.projectTitle.trimmingCharacters(in: .whitespaces).isEmpty {
-                    Button("Add Project Title") { showingEdit = true }
+                    Button("Add Project Title") { routerPath.push(.editIncident(incident: incident)) }
                 } else {
                     Text(incident.projectTitle)
                 }
                 if incident.area <= 0 {
-                    Button("Add Square Footage") { showingEdit = true }
+                    Button("Add Square Footage") { routerPath.push(.editIncident(incident: incident)) }
                 } else {
                     HStack {
                         Text("Area")
@@ -59,14 +58,14 @@ struct IncidentDetailView: View {
             }
             Section("Photos") {
                 if incident.beforePhotos.isEmpty {
-                    Button("Add Before Photos") { showingEdit = true }
+                    Button("Add Before Photos") { routerPath.push(.editIncident(incident: incident)) }
                 } else if let beforePhotos = incident.beforePhotos.nullIfEmpty {
                     Section("Before Photos") {
                         PhotoCarousel(photos: beforePhotos)
                     }
                 }
                 if incident.afterPhotos.isEmpty {
-                    Button("Add After Photos") { showingEdit = true }
+                    Button("Add After Photos") { routerPath.push(.editIncident(incident: incident)) }
                 } else if let afterPhotos = incident.afterPhotos.nullIfEmpty {
                     Section("After Photos") {
                         PhotoCarousel(photos: afterPhotos)
@@ -92,7 +91,7 @@ struct IncidentDetailView: View {
                         routerPath.push(.clientDetail(client: client))
                     }
                 } else {
-                    Button("Add Client") { showingEdit = true }
+                    Button("Add Client") { routerPath.push(.editIncident(incident: incident)) }
                 }
             }
         }
@@ -100,19 +99,11 @@ struct IncidentDetailView: View {
         .navigationTitle("Incident Details")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("Edit") { showingEdit = true }
+                Button("Edit") { routerPath.push(.editIncident(incident: incident)) }
             }
         }
-        .asyncSheet(isPresented: $showingEdit, onDismiss: reloadIncident) {
-            NavigationStack {
-                EditIncidentView(
-                    viewModel: EditIncidentViewModel(
-                        incident: incident,
-                        incidentService: incidentService,
-                        clientService: clientService
-                    )
-                )
-            }
+        .onAppear {
+            Task { await reloadIncident() }
         }
         .task {
             await loadClient()

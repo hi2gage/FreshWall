@@ -24,9 +24,6 @@ struct AddClientView: View {
         }
         .navigationTitle("Add Client")
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
-            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     Task {
