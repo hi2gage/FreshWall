@@ -101,7 +101,12 @@ private class PreviewIncidentService: IncidentServiceProtocol {
     func fetchIncidents() async throws -> [Incident] { [] }
     func addIncident(_: Incident) async throws {}
     func addIncident(_: AddIncidentInput, beforePhotos _: [PickedPhoto], afterPhotos _: [PickedPhoto]) async throws {}
-    func updateIncident(_: String, with _: UpdateIncidentInput, beforePhotos _: [PickedPhoto], afterPhotos _: [PickedPhoto]) async throws {}
+    func updateIncident(
+        _: String,
+        with _: UpdateIncidentInput,
+        beforePhotos _: [PickedPhoto],
+        afterPhotos _: [PickedPhoto]
+    ) async throws {}
 }
 
 // MARK: - PreviewClientService
