@@ -6,7 +6,7 @@ import Foundation
 /// Protocol defining operations for fetching and managing Client entities.
 protocol ClientServiceProtocol: Sendable {
     /// Fetches active clients for the current team.
-    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [Client]
+    func fetchClients() async throws -> [Client]
     /// Adds a new client using an input value object.
     func addClient(_ input: AddClientInput) async throws
     /// Updates an existing client using an input value object.
@@ -37,9 +37,9 @@ struct ClientService: ClientServiceProtocol {
     }
 
     /// Fetches active clients for the current team from Firestore.
-    func fetchClients(sortedBy sortOption: ClientSortOption) async throws -> [Client] {
+    func fetchClients() async throws -> [Client] {
         let teamId = session.teamId
-        let dtos = try await modelService.fetchClients(teamId: teamId, sortedBy: sortOption)
+        let dtos = try await modelService.fetchClients(teamId: teamId)
         return dtos.map { Client(dto: $0) }
     }
 

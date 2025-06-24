@@ -12,12 +12,16 @@ final class IncidentsListViewModel {
     /// Selected grouping option for incidents.
     var groupOption: IncidentGroupOption?
 
+    /// The field by which incidents are currently sorted.
     var sortField: IncidentSortField {
-        sort.field
+        get { sort.field }
+        set { sort.field = newValue }
     }
 
+    /// Indicates whether the incident sorting is ascending.
     var isAscending: Bool {
-        sort.isAscending
+        get { sort.isAscending }
+        set { sort.isAscending = newValue }
     }
 
     var sort: SortState<IncidentSortField> = .init(field: .date, isAscending: true)
@@ -43,7 +47,7 @@ final class IncidentsListViewModel {
     /// - Returns: An array of tuples where the first value is an optional group
     ///   title and the second is the incidents for that group.
     func loadClients() async {
-        clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+        clients = await (try? clientService.fetchClients()) ?? []
     }
 
     func groupedIncidents() -> [(title: String?, items: [Incident])] {

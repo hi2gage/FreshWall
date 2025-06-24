@@ -108,7 +108,7 @@ private class PreviewIncidentService: IncidentServiceProtocol {
 
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
-    func fetchClients(sortedBy _: ClientSortOption) async throws -> [Client] {
+    func fetchClients() async throws -> [Client] {
         [Client(
             id: "client1",
             name: "Sample Client",

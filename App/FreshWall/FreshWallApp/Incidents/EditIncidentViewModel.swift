@@ -87,7 +87,7 @@ final class EditIncidentViewModel {
 
     /// Loads available clients for selection.
     func loadClients() async {
-        clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+        clients = await (try? clientService.fetchClients()) ?? []
     }
 
     /// Valid client options.
