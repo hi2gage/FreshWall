@@ -44,7 +44,7 @@ enum RouterDestination: Hashable {
     case photoViewer(context: PhotoViewerContext)
 }
 
-// swiftlint:disable cyclomatic_complexity
+// swiftlint:disable cyclomatic_complexity function_body_length
 extension View {
     /// Sets up routing destinations for various views, injecting necessary services.
     func withAppRouter(
@@ -116,4 +116,4 @@ extension View {
     }
 }
 
-// swiftlint:enable cyclomatic_complexity
+// swiftlint:enable cyclomatic_complexity function_body_length

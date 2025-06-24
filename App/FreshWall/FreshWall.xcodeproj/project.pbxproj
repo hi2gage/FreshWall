@@ -12,6 +12,16 @@
 		1C5436612DE224C600153F4F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1C5436602DE224C600153F4F /* FirebaseStorage */; };
 		1C5437182DE2558400153F4F /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 1C5437172DE2558400153F4F /* FirebaseFunctions */; };
 		1CA3B46A2E0281F200A04DB7 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */; };
+		1CDE5E082E0A72C0005B35FF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E012E0A72C0005B35FF /* FirebaseAuth */; };
+		1CDE5E092E0A72C0005B35FF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E032E0A72C0005B35FF /* FirebaseFirestore */; };
+		1CDE5E0A2E0A72C0005B35FF /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E042E0A72C0005B35FF /* FirebaseStorage */; };
+		1CDE5E0B2E0A72C0005B35FF /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E052E0A72C0005B35FF /* FirebaseFunctions */; };
+		1CDE5E0D2E0A72C0005B35FF /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */; };
+		1CDE5E1C2E0A72C9005B35FF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E152E0A72C9005B35FF /* FirebaseAuth */; };
+		1CDE5E1D2E0A72C9005B35FF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E172E0A72C9005B35FF /* FirebaseFirestore */; };
+		1CDE5E1E2E0A72C9005B35FF /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E182E0A72C9005B35FF /* FirebaseStorage */; };
+		1CDE5E1F2E0A72C9005B35FF /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E192E0A72C9005B35FF /* FirebaseFunctions */; };
+		1CDE5E212E0A72C9005B35FF /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,11 +46,210 @@
 		1C5436042DE2224000153F4F /* FreshWallTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FreshWallTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C54360E2DE2224000153F4F /* FreshWallUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FreshWallUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
+		1CDE5E112E0A72C0005B35FF /* FreshWall-Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FreshWall-Beta.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CDE5E252E0A72C9005B35FF /* FreshWall-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FreshWall-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1CDE5E122E0A72C0005B35FF /* Exceptions for "FreshWallApp" folder in "FreshWall-Beta" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				Auth/AuthService.swift,
+				Auth/LoginManager.swift,
+				Auth/SessionService.swift,
+				Auth/SessionStore.swift,
+				Auth/Views/AuthFlowView.swift,
+				Auth/Views/SignupWithExistingTeamView.swift,
+				Auth/Views/SignupWithNewTeamView.swift,
+				Clients/AddClientView.swift,
+				Clients/AddClientViewModel.swift,
+				Clients/ClientDetailView.swift,
+				Clients/ClientListCell.swift,
+				Clients/ClientsListView.swift,
+				Clients/ClientsListViewModel.swift,
+				Clients/ClientSortField.swift,
+				Clients/EditClientView.swift,
+				Clients/EditClientViewModel.swift,
+				Clients/Models/ClientCellModel.swift,
+				Clients/Repositories/ClientsRepository.swift,
+				ContentView.swift,
+				Domain/IncidentRow.swift,
+				Domain/MemberRow.swift,
+				FreshWallApp.swift,
+				FreshWallPreview.swift,
+				GenericViews/AsyncSheet.swift,
+				GenericViews/GenericGroupableListView.swift,
+				GenericViews/GenericListView.swift,
+				"GenericViews/Label+extension.swift",
+				GenericViews/ListCellStyle.swift,
+				GenericViews/PhotoCarousel.swift,
+				GenericViews/PhotoPicker.swift,
+				GenericViews/PhotoViewer.swift,
+				GenericViews/PhotoViewerContext.swift,
+				GenericViews/Sort/SortButton.swift,
+				GenericViews/Sort/SortFieldRepresentable.swift,
+				GenericViews/Sort/SortState.swift,
+				GenericViews/ZoomableModifer.swift,
+				"GoogleService-Info.plist",
+				Incidents/AddIncidentView.swift,
+				Incidents/AddIncidentViewModel.swift,
+				Incidents/EditIncidentView.swift,
+				Incidents/EditIncidentViewModel.swift,
+				Incidents/IncidentDetailView.swift,
+				Incidents/IncidentGroupOption.swift,
+				Incidents/IncidentListCell.swift,
+				Incidents/IncidentsListView.swift,
+				Incidents/IncidentsListViewModel.swift,
+				Incidents/IncidentSortField.swift,
+				MainAppView.swift,
+				MainListView.swift,
+				Members/InviteMemberView.swift,
+				Members/InviteMemberViewModel.swift,
+				Members/MemberDetailView.swift,
+				Members/MemberGroupOption.swift,
+				Members/MemberListCell.swift,
+				Members/MembersListView.swift,
+				Members/MembersListViewModel.swift,
+				Members/MemberSortField.swift,
+				Models/Client.swift,
+				Models/ClientDTO.swift,
+				Models/Incident.swift,
+				Models/IncidentDTO.swift,
+				Models/IncidentPhoto.swift,
+				Models/IncidentPhotoDTO.swift,
+				Models/Member.swift,
+				"Models/PickedPhoto+IncidentDTO.swift",
+				Models/TeamDTO.swift,
+				Models/UserDTO.swift,
+				Models/UserSession.swift,
+				Navigation/LoginRouterPath.swift,
+				Navigation/RouterPath.swift,
+				RootView.swift,
+				Services/ClientModelService.swift,
+				Services/ClientService.swift,
+				Services/FirebaseConfiguration.swift,
+				Services/IncidentModelService.swift,
+				Services/IncidentPhotoService.swift,
+				Services/IncidentService.swift,
+				"Services/Input Models/AddClientInput.swift",
+				"Services/Input Models/AddIncidentInput.swift",
+				"Services/Input Models/AddMemberInput.swift",
+				"Services/Input Models/UpdateClientInput.swift",
+				"Services/Input Models/UpdateIncidentInput.swift",
+				Services/InviteCodeService.swift,
+				Services/MemberService.swift,
+				Services/PhotoMetadataService.swift,
+				Services/StorageService.swift,
+				Services/UserModelService.swift,
+				Services/UserService.swift,
+			);
+			target = 1CDE5DFF2E0A72C0005B35FF /* FreshWall-Beta */;
+		};
+		1CDE5E262E0A72C9005B35FF /* Exceptions for "FreshWallApp" folder in "FreshWall-Dev" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				Auth/AuthService.swift,
+				Auth/LoginManager.swift,
+				Auth/SessionService.swift,
+				Auth/SessionStore.swift,
+				Auth/Views/AuthFlowView.swift,
+				Auth/Views/SignupWithExistingTeamView.swift,
+				Auth/Views/SignupWithNewTeamView.swift,
+				Clients/AddClientView.swift,
+				Clients/AddClientViewModel.swift,
+				Clients/ClientDetailView.swift,
+				Clients/ClientListCell.swift,
+				Clients/ClientsListView.swift,
+				Clients/ClientsListViewModel.swift,
+				Clients/ClientSortField.swift,
+				Clients/EditClientView.swift,
+				Clients/EditClientViewModel.swift,
+				Clients/Models/ClientCellModel.swift,
+				Clients/Repositories/ClientsRepository.swift,
+				ContentView.swift,
+				Domain/IncidentRow.swift,
+				Domain/MemberRow.swift,
+				FreshWallApp.swift,
+				FreshWallPreview.swift,
+				GenericViews/AsyncSheet.swift,
+				GenericViews/GenericGroupableListView.swift,
+				GenericViews/GenericListView.swift,
+				"GenericViews/Label+extension.swift",
+				GenericViews/ListCellStyle.swift,
+				GenericViews/PhotoCarousel.swift,
+				GenericViews/PhotoPicker.swift,
+				GenericViews/PhotoViewer.swift,
+				GenericViews/PhotoViewerContext.swift,
+				GenericViews/Sort/SortButton.swift,
+				GenericViews/Sort/SortFieldRepresentable.swift,
+				GenericViews/Sort/SortState.swift,
+				GenericViews/ZoomableModifer.swift,
+				"GoogleService-Info.plist",
+				Incidents/AddIncidentView.swift,
+				Incidents/AddIncidentViewModel.swift,
+				Incidents/EditIncidentView.swift,
+				Incidents/EditIncidentViewModel.swift,
+				Incidents/IncidentDetailView.swift,
+				Incidents/IncidentGroupOption.swift,
+				Incidents/IncidentListCell.swift,
+				Incidents/IncidentsListView.swift,
+				Incidents/IncidentsListViewModel.swift,
+				Incidents/IncidentSortField.swift,
+				MainAppView.swift,
+				MainListView.swift,
+				Members/InviteMemberView.swift,
+				Members/InviteMemberViewModel.swift,
+				Members/MemberDetailView.swift,
+				Members/MemberGroupOption.swift,
+				Members/MemberListCell.swift,
+				Members/MembersListView.swift,
+				Members/MembersListViewModel.swift,
+				Members/MemberSortField.swift,
+				Models/Client.swift,
+				Models/ClientDTO.swift,
+				Models/Incident.swift,
+				Models/IncidentDTO.swift,
+				Models/IncidentPhoto.swift,
+				Models/IncidentPhotoDTO.swift,
+				Models/Member.swift,
+				"Models/PickedPhoto+IncidentDTO.swift",
+				Models/TeamDTO.swift,
+				Models/UserDTO.swift,
+				Models/UserSession.swift,
+				Navigation/LoginRouterPath.swift,
+				Navigation/RouterPath.swift,
+				RootView.swift,
+				Services/ClientModelService.swift,
+				Services/ClientService.swift,
+				Services/FirebaseConfiguration.swift,
+				Services/IncidentModelService.swift,
+				Services/IncidentPhotoService.swift,
+				Services/IncidentService.swift,
+				"Services/Input Models/AddClientInput.swift",
+				"Services/Input Models/AddIncidentInput.swift",
+				"Services/Input Models/AddMemberInput.swift",
+				"Services/Input Models/UpdateClientInput.swift",
+				"Services/Input Models/UpdateIncidentInput.swift",
+				Services/InviteCodeService.swift,
+				Services/MemberService.swift,
+				Services/PhotoMetadataService.swift,
+				Services/StorageService.swift,
+				Services/UserModelService.swift,
+				Services/UserService.swift,
+			);
+			target = 1CDE5E132E0A72C9005B35FF /* FreshWall-Dev */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1C5435F82DE2223F00153F4F /* FreshWallApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1CDE5E122E0A72C0005B35FF /* Exceptions for "FreshWallApp" folder in "FreshWall-Beta" target */,
+				1CDE5E262E0A72C9005B35FF /* Exceptions for "FreshWallApp" folder in "FreshWall-Dev" target */,
+			);
 			path = FreshWallApp;
 			sourceTree = "<group>";
 		};
@@ -82,6 +291,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1CDE5E072E0A72C0005B35FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CDE5E082E0A72C0005B35FF /* FirebaseAuth in Frameworks */,
+				1CDE5E092E0A72C0005B35FF /* FirebaseFirestore in Frameworks */,
+				1CDE5E0A2E0A72C0005B35FF /* FirebaseStorage in Frameworks */,
+				1CDE5E0B2E0A72C0005B35FF /* FirebaseFunctions in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1CDE5E1B2E0A72C9005B35FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CDE5E1C2E0A72C9005B35FF /* FirebaseAuth in Frameworks */,
+				1CDE5E1D2E0A72C9005B35FF /* FirebaseFirestore in Frameworks */,
+				1CDE5E1E2E0A72C9005B35FF /* FirebaseStorage in Frameworks */,
+				1CDE5E1F2E0A72C9005B35FF /* FirebaseFunctions in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -103,6 +334,8 @@
 				1C5435F62DE2223F00153F4F /* FreshWall.app */,
 				1C5436042DE2224000153F4F /* FreshWallTests.xctest */,
 				1C54360E2DE2224000153F4F /* FreshWallUITests.xctest */,
+				1CDE5E112E0A72C0005B35FF /* FreshWall-Beta.app */,
+				1CDE5E252E0A72C9005B35FF /* FreshWall-Dev.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -190,6 +423,60 @@
 			productReference = 1C54360E2DE2224000153F4F /* FreshWallUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		1CDE5DFF2E0A72C0005B35FF /* FreshWall-Beta */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1CDE5E0E2E0A72C0005B35FF /* Build configuration list for PBXNativeTarget "FreshWall-Beta" */;
+			buildPhases = (
+				1CDE5E062E0A72C0005B35FF /* Sources */,
+				1CDE5E072E0A72C0005B35FF /* Frameworks */,
+				1CDE5E0C2E0A72C0005B35FF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1CDE5E002E0A72C0005B35FF /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1C5435F82DE2223F00153F4F /* FreshWallApp */,
+			);
+			name = "FreshWall-Beta";
+			packageProductDependencies = (
+				1CDE5E012E0A72C0005B35FF /* FirebaseAuth */,
+				1CDE5E032E0A72C0005B35FF /* FirebaseFirestore */,
+				1CDE5E042E0A72C0005B35FF /* FirebaseStorage */,
+				1CDE5E052E0A72C0005B35FF /* FirebaseFunctions */,
+			);
+			productName = FreshWall;
+			productReference = 1CDE5E112E0A72C0005B35FF /* FreshWall-Beta.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1CDE5E132E0A72C9005B35FF /* FreshWall-Dev */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1CDE5E222E0A72C9005B35FF /* Build configuration list for PBXNativeTarget "FreshWall-Dev" */;
+			buildPhases = (
+				1CDE5E1A2E0A72C9005B35FF /* Sources */,
+				1CDE5E1B2E0A72C9005B35FF /* Frameworks */,
+				1CDE5E202E0A72C9005B35FF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1CDE5E142E0A72C9005B35FF /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1C5435F82DE2223F00153F4F /* FreshWallApp */,
+			);
+			name = "FreshWall-Dev";
+			packageProductDependencies = (
+				1CDE5E152E0A72C9005B35FF /* FirebaseAuth */,
+				1CDE5E172E0A72C9005B35FF /* FirebaseFirestore */,
+				1CDE5E182E0A72C9005B35FF /* FirebaseStorage */,
+				1CDE5E192E0A72C9005B35FF /* FirebaseFunctions */,
+			);
+			productName = FreshWall;
+			productReference = 1CDE5E252E0A72C9005B35FF /* FreshWall-Dev.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -232,6 +519,8 @@
 			projectRoot = "";
 			targets = (
 				1C5435F52DE2223F00153F4F /* FreshWall */,
+				1CDE5DFF2E0A72C0005B35FF /* FreshWall-Beta */,
+				1CDE5E132E0A72C9005B35FF /* FreshWall-Dev */,
 				1C5436032DE2224000153F4F /* FreshWallTests */,
 				1C54360D2DE2224000153F4F /* FreshWallUITests */,
 			);
@@ -261,6 +550,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1CDE5E0C2E0A72C0005B35FF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CDE5E0D2E0A72C0005B35FF /* TestPlan.xctestplan in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1CDE5E202E0A72C9005B35FF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CDE5E212E0A72C9005B35FF /* TestPlan.xctestplan in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -285,6 +590,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1CDE5E062E0A72C0005B35FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1CDE5E1A2E0A72C9005B35FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -299,6 +618,14 @@
 			targetProxy = 1C54360F2DE2224000153F4F /* PBXContainerItemProxy */;
 		};
 		1C54371E2DE2AB9500153F4F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 1C54371D2DE2AB9500153F4F /* SwiftLintBuildToolPlugin */;
+		};
+		1CDE5E002E0A72C0005B35FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 1C54371D2DE2AB9500153F4F /* SwiftLintBuildToolPlugin */;
+		};
+		1CDE5E142E0A72C9005B35FF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = 1C54371D2DE2AB9500153F4F /* SwiftLintBuildToolPlugin */;
 		};
@@ -429,6 +756,7 @@
 				CODE_SIGN_ENTITLEMENTS = FreshWallApp/FreshWall.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = KJ66BJ6KYX;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -589,6 +917,164 @@
 			};
 			name = Release;
 		};
+		1CDE5E0F2E0A72C0005B35FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FreshWallApp/FreshWall.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = KJ66BJ6KYX;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 15.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hi2gage.FreshWall;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Debug;
+		};
+		1CDE5E102E0A72C0005B35FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FreshWallApp/FreshWall.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KJ66BJ6KYX;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 15.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hi2gage.FreshWall;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Release;
+		};
+		1CDE5E232E0A72C9005B35FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FreshWallApp/FreshWall.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = KJ66BJ6KYX;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 15.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hi2gage.FreshWall;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Debug;
+		};
+		1CDE5E242E0A72C9005B35FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FreshWallApp/FreshWall.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KJ66BJ6KYX;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 15.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hi2gage.FreshWall;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -628,6 +1114,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		1CDE5E0E2E0A72C0005B35FF /* Build configuration list for PBXNativeTarget "FreshWall-Beta" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1CDE5E0F2E0A72C0005B35FF /* Debug */,
+				1CDE5E102E0A72C0005B35FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1CDE5E222E0A72C9005B35FF /* Build configuration list for PBXNativeTarget "FreshWall-Dev" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1CDE5E232E0A72C9005B35FF /* Debug */,
+				1CDE5E242E0A72C9005B35FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -645,6 +1149,22 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.59.1;
+			};
+		};
+		1CDE5E022E0A72C0005B35FF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.13.0;
+			};
+		};
+		1CDE5E162E0A72C9005B35FF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.13.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -674,6 +1194,46 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1C54371C2DE2AB7100153F4F /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		1CDE5E012E0A72C0005B35FF /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CDE5E022E0A72C0005B35FF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		1CDE5E032E0A72C0005B35FF /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CDE5E022E0A72C0005B35FF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		1CDE5E042E0A72C0005B35FF /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CDE5E022E0A72C0005B35FF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		1CDE5E052E0A72C0005B35FF /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CDE5E022E0A72C0005B35FF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		1CDE5E152E0A72C9005B35FF /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CDE5E162E0A72C9005B35FF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		1CDE5E172E0A72C9005B35FF /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CDE5E162E0A72C9005B35FF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		1CDE5E182E0A72C9005B35FF /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CDE5E162E0A72C9005B35FF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		1CDE5E192E0A72C9005B35FF /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CDE5E162E0A72C9005B35FF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
