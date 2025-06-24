@@ -74,7 +74,7 @@ final class AddIncidentViewModel {
 
     /// Loads available clients for the picker.
     func loadClients() async {
-        clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+        clients = await (try? clientService.fetchClients()) ?? []
     }
 
     /// A list of client options with valid IDs for selection.

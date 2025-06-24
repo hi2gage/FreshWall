@@ -5,7 +5,7 @@ import Testing
 @MainActor
 struct ClientsListViewModelTests {
     final class MockClientService: ClientServiceProtocol {
-        func fetchClients(sortedBy _: ClientSortOption) async throws -> [Client] { [] }
+        func fetchClients() async throws -> [Client] { [] }
         func addClient(_: AddClientInput) async throws {}
         func updateClient(_: String, with _: UpdateClientInput) async throws {}
     }

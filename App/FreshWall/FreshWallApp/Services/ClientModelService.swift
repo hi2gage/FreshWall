@@ -8,9 +8,8 @@ import Foundation
 /// This service is intentionally low level and used by higher level client
 /// services to isolate Firestore calls.
 protocol ClientModelServiceProtocol: Sendable {
-    /// Fetch all non-deleted clients for the given team sorted by the supplied
-    /// option.
-    func fetchClients(teamId: String, sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO]
+    /// Fetch all non-deleted clients for the given team.
+    func fetchClients(teamId: String) async throws -> [ClientDTO]
 
     /// Returns a new document reference for a client under the given team.
     func newClientDocument(teamId: String) -> DocumentReference
@@ -36,12 +35,11 @@ struct ClientModelService: ClientModelServiceProtocol {
         self.firestore = firestore
     }
 
-    func fetchClients(teamId: String, sortedBy sortOption: ClientSortOption) async throws -> [ClientDTO] {
+    func fetchClients(teamId: String) async throws -> [ClientDTO] {
         let snapshot = try await firestore
             .collection("teams")
             .document(teamId)
             .collection("clients")
-            .order(by: sortOption.field, descending: sortOption.isDescending)
             .getDocuments()
         return try snapshot.documents.compactMap { try $0.data(as: ClientDTO.self) }
     }
