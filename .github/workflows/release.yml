@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Fetch all tags
+        run: git fetch --tags --force
+
+      - name: Determine previous tag
+        id: prev
+        run: |
+          tags=$(git tag --sort=-version:refname)
+          current=${GITHUB_REF#refs/tags/}
+          prev=""
+          for t in $tags; do
+            if [ "$t" = "$current" ]; then
+              continue
+            fi
+            prev=$t
+            break
+          done
+          echo "tag=$prev" >> "$GITHUB_OUTPUT"
+
+      - name: Generate release notes
+        run: |
+          current=${GITHUB_REF#refs/tags/}
+          prev="${{ steps.prev.outputs.tag }}"
+          if [ -z "$prev" ]; then
+            git log --pretty=format:"- %s (%h)" > release_notes.md
+          else
+            git log "$prev".."$current" --pretty=format:"- %s (%h)" > release_notes.md
+          fi
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
