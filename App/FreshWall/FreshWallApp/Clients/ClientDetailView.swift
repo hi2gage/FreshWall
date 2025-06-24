@@ -23,7 +23,7 @@ struct ClientDetailView: View {
     private func reloadClient() async {
         guard let id = client.id else { return }
 
-        let updatedClients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+        let updatedClients = await (try? clientService.fetchClients()) ?? []
         if let updated = updatedClients.first(where: { $0.id == id }) {
             client = updated
         }

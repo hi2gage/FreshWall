@@ -2,7 +2,6 @@
 import SwiftUI
 
 /// A view displaying a list of clients for the current team.
-/// A view displaying a list of clients for the current team, ordered by most recent incident.
 struct ClientsListView: View {
     @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: ClientsListViewModel

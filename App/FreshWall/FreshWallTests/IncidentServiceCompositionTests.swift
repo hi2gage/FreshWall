@@ -20,7 +20,7 @@ struct IncidentServiceCompositionTests {
 
     final actor MockClientModel: ClientModelServiceProtocol {
         var requested: (String, String)?
-        func fetchClients(teamId _: String, sortedBy _: ClientSortOption) async throws -> [ClientDTO] { [] }
+        func fetchClients(teamId _: String) async throws -> [ClientDTO] { [] }
         func newClientDocument(teamId _: String) -> DocumentReference { Firestore.firestore().document("c") }
         func setClient(_: ClientDTO, at _: DocumentReference) async throws {}
         func updateClient(id _: String, teamId _: String, data _: [String: Any]) async throws {}

@@ -6,7 +6,7 @@ import Testing
 struct EditClientViewModelTests {
     final class MockService: ClientServiceProtocol {
         var updateArgs: (String, UpdateClientInput)?
-        func fetchClients(sortedBy _: ClientSortOption) async throws -> [Client] { [] }
+        func fetchClients() async throws -> [Client] { [] }
         func addClient(_: AddClientInput) async throws {}
         func updateClient(_ clientId: String, with input: UpdateClientInput) async throws {
             updateArgs = (clientId, input)

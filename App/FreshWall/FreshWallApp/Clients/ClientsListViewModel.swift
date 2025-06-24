@@ -12,9 +12,19 @@ final class ClientsListViewModel {
 
     var sort: SortState<ClientSortField> = .init(field: .incidentDate, isAscending: false)
 
-    var sortField: ClientSortField { sort.field }
+    /// The current field used for sorting clients.
+    var sortField: ClientSortField {
+        get { sort.field }
+        set { sort.field = newValue }
+    }
 
-    var isAscending: Bool { sort.isAscending }
+    /// Indicates whether the sorting is in ascending order.
+    var isAscending: Bool {
+        get { sort.isAscending }
+        set { sort.isAscending = newValue }
+    }
+
+    // The previous client sort option is now removed; fetching always returns unsorted list
 
     private let clientService: ClientServiceProtocol
     private let incidentService: IncidentServiceProtocol
@@ -27,7 +37,7 @@ final class ClientsListViewModel {
 
     /// Loads clients from the service.
     func loadClients() async {
-        clients = await (try? clientService.fetchClients(sortedBy: .createdAtAscending)) ?? []
+        clients = await (try? clientService.fetchClients()) ?? []
     }
 
     /// Loads incidents from the service.
