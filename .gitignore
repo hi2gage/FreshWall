@@ -89,4 +89,7 @@ iOSInjectionProject/
 .DS_Store
 
 # Firebase
-Firebase/functions/emulator-dataApp/FreshWall/FreshWallApp/GoogleService-Info-Prod.plist
+Firebase/functions/emulator-data
+App/FreshWall/FreshWallApp/GoogleService-Info-Prod.plist
+App/FreshWall/FreshWallApp/GoogleService-Info-Dev.plist
+App/FreshWall/FreshWallApp/GoogleService-Info-Beta.plist
