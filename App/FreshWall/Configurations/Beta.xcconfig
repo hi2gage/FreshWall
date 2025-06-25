@@ -1,0 +1,6 @@
+#include "Base.xcconfig"
+
+// Beta.xcconfig
+APP_DISPLAY_NAME = FreshWall Beta
+BUNDLE_ID_SUFFIX = .beta
+FIREBASE_GOOGLE_SERVICE_PLIST = GoogleService-Info-Beta.plist

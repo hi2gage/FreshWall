@@ -16,8 +16,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        FirebaseApp.configure()
-        FirebaseConfiguration.configureEmulators()
+        FirebaseConfiguration.configureFirebase()
         return true
     }
 }
