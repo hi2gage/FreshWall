@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.hi2gage.FreshWall</string>
+	<string>com.hi2gage.freshwall-prod</string>
 	<key>PROJECT_ID</key>
 	<string>freshwall-30afe</string>
 	<key>STORAGE_BUCKET</key>
@@ -24,9 +24,7 @@
 	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
 	<true/>
-	<key>New item</key>
-	<string></string>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:526475481183:ios:75fdf2447d355b7093cbea</string>
+	<string>1:526475481183:ios:97e7000dbddefe3e93cbea</string>
 </dict>
 </plist>
