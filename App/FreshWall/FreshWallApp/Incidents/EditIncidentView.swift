@@ -89,7 +89,7 @@ struct EditIncidentView: View {
                     .frame(height: 120)
                 }
             }
-            PhotoPicker(selection: $viewModel.beforePhotos, matching: .images, photoLibrary: .shared()) {
+            PhotoSourcePicker(selection: $viewModel.beforePhotos, matching: .images, photoLibrary: .shared()) {
                 Label("Add Before Photos", systemImage: "photo.on.rectangle")
             }
             if !viewModel.afterPhotos.isEmpty {
@@ -108,7 +108,7 @@ struct EditIncidentView: View {
                     .frame(height: 120)
                 }
             }
-            PhotoPicker(selection: $viewModel.afterPhotos, matching: .images, photoLibrary: .shared()) {
+            PhotoSourcePicker(selection: $viewModel.afterPhotos, matching: .images, photoLibrary: .shared()) {
                 Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
             }
         }
