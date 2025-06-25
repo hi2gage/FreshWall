@@ -14,7 +14,8 @@ struct PhotoSourcePicker<Label: View>: View {
 
     @State private var showDialog = false
     @State private var showCamera = false
-    @State private var librarySelection: [PickedPhoto] = []
+    @State private var libraryItems: [PhotosPickerItem] = []
+    @State private var showLibrary = false
 
     init(
         selection: Binding<[PickedPhoto]>,
@@ -40,19 +41,18 @@ struct PhotoSourcePicker<Label: View>: View {
         Button(action: { showDialog = true }, label: label)
             .confirmationDialog("Add Photo", isPresented: $showDialog) {
                 Button("Camera") { showCamera = true }
-                PhotoPicker(
-                    selection: $librarySelection,
-                    maxSelectionCount: maxSelectionCount,
-                    selectionBehavior: selectionBehavior,
-                    matching: filter,
-                    preferredItemEncoding: preferredItemEncoding,
-                    photoLibrary: photoLibrary,
-                    metadataService: metadataService
-                ) {
-                    Text("Photo Library")
-                }
+                Button("Photo Library") { showLibrary = true }
                 Button("Cancel", role: .cancel) {}
             }
+            .photosPicker(
+                isPresented: $showLibrary,
+                selection: $libraryItems,
+                maxSelectionCount: maxSelectionCount,
+                selectionBehavior: selectionBehavior,
+                matching: filter,
+                preferredItemEncoding: preferredItemEncoding,
+                photoLibrary: photoLibrary
+            )
             .sheet(isPresented: $showCamera) {
                 CameraPicker { data in
                     if let data,
@@ -66,9 +66,22 @@ struct PhotoSourcePicker<Label: View>: View {
                     showCamera = false
                 }
             }
-            .onChange(of: librarySelection) { _, newValue in
-                selection.append(contentsOf: newValue)
-                librarySelection.removeAll()
+            .onChange(of: libraryItems) { _, newItems in
+                Task {
+                    var newPhotos: [PickedPhoto] = []
+                    for item in newItems {
+                        if let data = try? await item.loadTransferable(type: Data.self),
+                           let photo = PickedPhoto.make(
+                               id: item.itemIdentifier ?? UUID().uuidString,
+                               from: data,
+                               using: metadataService
+                           ) {
+                            newPhotos.append(photo)
+                        }
+                    }
+                    selection.append(contentsOf: newPhotos)
+                    libraryItems.removeAll()
+                }
             }
     }
 }
