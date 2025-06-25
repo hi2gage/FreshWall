@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1C5435F52DE2223F00153F4F"
-               BuildableName = "FreshWall.app"
-               BlueprintName = "FreshWall"
+               BlueprintIdentifier = "1CDE5E132E0A72C9005B35FF"
+               BuildableName = "FreshWall-Dev.app"
+               BlueprintName = "FreshWall-Dev"
                ReferencedContainer = "container:FreshWall.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -27,40 +27,11 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
-      <TestPlans>
-         <TestPlanReference
-            reference = "container:TestPlan.xctestplan"
-            default = "YES">
-         </TestPlanReference>
-      </TestPlans>
-      <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1C5436032DE2224000153F4F"
-               BuildableName = "FreshWallTests.xctest"
-               BlueprintName = "FreshWallTests"
-               ReferencedContainer = "container:FreshWall.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1C54360D2DE2224000153F4F"
-               BuildableName = "FreshWallUITests.xctest"
-               BlueprintName = "FreshWallUITests"
-               ReferencedContainer = "container:FreshWall.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldAutocreateTestPlan = "YES">
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Beta"
+      buildConfiguration = "Dev"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -73,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1C5435F52DE2223F00153F4F"
-            BuildableName = "FreshWall.app"
-            BlueprintName = "FreshWall"
+            BlueprintIdentifier = "1CDE5E132E0A72C9005B35FF"
+            BuildableName = "FreshWall-Dev.app"
+            BlueprintName = "FreshWall-Dev"
             ReferencedContainer = "container:FreshWall.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -90,9 +61,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1C5435F52DE2223F00153F4F"
-            BuildableName = "FreshWall.app"
-            BlueprintName = "FreshWall"
+            BlueprintIdentifier = "1CDE5E132E0A72C9005B35FF"
+            BuildableName = "FreshWall-Dev.app"
+            BlueprintName = "FreshWall-Dev"
             ReferencedContainer = "container:FreshWall.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -101,7 +72,7 @@
       buildConfiguration = "Debug">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

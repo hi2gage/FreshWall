@@ -1,0 +1,6 @@
+#include "Base.xcconfig"
+
+// Dev.xcconfig
+APP_DISPLAY_NAME = FreshWall Dev
+BUNDLE_ID_SUFFIX = .dev
+FIREBASE_GOOGLE_SERVICE_PLIST = GoogleService-Info-Dev.plist
