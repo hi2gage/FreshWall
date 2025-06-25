@@ -13,11 +13,14 @@ struct CameraPicker: UIViewControllerRepresentable {
             self.parent = parent
         }
 
-        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        func imagePickerController(
+            _: UIImagePickerController,
+            didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+        ) {
             defer { parent.onImagePicked(parent.extractData(from: info)) }
         }
 
-        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        func imagePickerControllerDidCancel(_: UIImagePickerController) {
             parent.onImagePicked(nil)
         }
     }
@@ -37,7 +40,7 @@ struct CameraPicker: UIViewControllerRepresentable {
 
     private func extractData(from info: [UIImagePickerController.InfoKey: Any]) -> Data? {
         guard let image = info[.originalImage] as? UIImage else { return nil }
+
         return image.jpegData(compressionQuality: 0.8)
     }
 }
-

@@ -53,7 +53,7 @@ struct PhotoSourcePicker<Label: View>: View {
                 preferredItemEncoding: preferredItemEncoding,
                 photoLibrary: photoLibrary
             )
-            .sheet(isPresented: $showCamera) {
+            .fullScreenCover(isPresented: $showCamera) {
                 CameraPicker { data in
                     if let data,
                        let photo = PickedPhoto.make(
@@ -65,6 +65,7 @@ struct PhotoSourcePicker<Label: View>: View {
                     }
                     showCamera = false
                 }
+                .ignoresSafeArea()
             }
             .onChange(of: libraryItems) { _, newItems in
                 Task {
@@ -85,4 +86,3 @@ struct PhotoSourcePicker<Label: View>: View {
             }
     }
 }
-
