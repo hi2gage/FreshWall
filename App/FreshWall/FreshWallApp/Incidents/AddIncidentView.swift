@@ -51,7 +51,7 @@ struct AddIncidentView: View {
                     .frame(height: 120)
                 }
             }
-            PhotoPicker(selection: $beforePhotos, matching: .images, photoLibrary: .shared()) {
+            PhotoSourcePicker(selection: $beforePhotos, matching: .images, photoLibrary: .shared()) {
                 Label("Add Before Photos", systemImage: "photo.on.rectangle")
             }
             if !afterPhotos.isEmpty {
@@ -70,7 +70,7 @@ struct AddIncidentView: View {
                     .frame(height: 120)
                 }
             }
-            PhotoPicker(selection: $afterPhotos, matching: .images, photoLibrary: .shared()) {
+            PhotoSourcePicker(selection: $afterPhotos, matching: .images, photoLibrary: .shared()) {
                 Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
             }
             Section(header: Text("Timeframe")) {

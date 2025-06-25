@@ -6,7 +6,7 @@ import SwiftUI
 // MARK: - PickedPhoto
 
 /// A photo selected from ``PhotoPicker`` along with optional metadata.
-struct PickedPhoto: Identifiable, Sendable {
+struct PickedPhoto: Identifiable, Sendable, Equatable {
     /// Unique identifier for the selection.
     let id: String
     /// Chosen image.
