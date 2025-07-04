@@ -5,7 +5,7 @@
     "lint:fix": "biome lint --apply .",
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "test": "npm run lint && npm run build",
+    "test": "npm run lint && npm run build && node --test test/**/*.test.js",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
@@ -13,7 +13,7 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "22"
+    "node": "18"
   },
   "main": "lib/index.js",
   "dependencies": {
