@@ -4,7 +4,7 @@ import Foundation
 /// Input model for updating an existing incident via `IncidentService`.
 struct UpdateIncidentInput: Sendable {
     /// Document ID of the associated client.
-    let clientId: String
+    let clientId: String?
     /// Description of the incident.
     let description: String
     /// Area affected by the incident (sq ft).
