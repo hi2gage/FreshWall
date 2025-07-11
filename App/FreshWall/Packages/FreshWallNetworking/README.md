@@ -18,7 +18,7 @@ Add this package to your Xcode project:
 1. In Xcode, select File → Add Package Dependencies
 2. Click the "+" button
 3. Select "Add Local..."
-4. Navigate to `Packages/FreshWallNetworking`
+4. Navigate to `App/FreshWall/Packages/FreshWallNetworking`
 5. Click "Add Package"
 
 ## Usage
