@@ -70,6 +70,7 @@
 		1CDE5E112E0A72C0005B35FF /* FreshWall-Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FreshWall-Beta.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDE5E252E0A72C9005B35FF /* FreshWall-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FreshWall-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CE8C9662E5D5D52004ABAF4 /* FreshWall-Dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "FreshWall-Dev-Info.plist"; sourceTree = "<group>"; };
+		1CE8CEAD2E5D60C7004ABAF4 /* FreshWallNetworking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FreshWallNetworking; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -174,6 +175,7 @@
 				1C5437162DE2558400153F4F /* Frameworks */,
 				1C5435F72DE2223F00153F4F /* Products */,
 				1C88DD9C2E0BB8FC000D7CD0 /* Configurations */,
+				1CE8CEAE2E5D60C7004ABAF4 /* Packages */,
 			);
 			sourceTree = "<group>";
 		};
@@ -206,6 +208,14 @@
 				1C88DD9B2E0BB8FC000D7CD0 /* Prod.xcconfig */,
 			);
 			path = Configurations;
+			sourceTree = "<group>";
+		};
+		1CE8CEAE2E5D60C7004ABAF4 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				1CE8CEAD2E5D60C7004ABAF4 /* FreshWallNetworking */,
+			);
+			path = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
