@@ -23,6 +23,9 @@
 		1C88DDAF2E0BBCA2000D7CD0 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */; };
 		1C88DDB02E0BBCA2000D7CD0 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */; };
 		1C88DDB12E0BBCA2000D7CD0 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */; };
+		1C9B64CA2E51779800323C91 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C9B64C92E51779800323C91 /* Debug.xcconfig */; };
+		1C9B64CB2E51779800323C91 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C9B64C92E51779800323C91 /* Debug.xcconfig */; };
+		1C9B64CC2E51779800323C91 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C9B64C92E51779800323C91 /* Debug.xcconfig */; };
 		1CA3B46A2E0281F200A04DB7 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */; };
 		1CDE5E082E0A72C0005B35FF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E012E0A72C0005B35FF /* FirebaseAuth */; };
 		1CDE5E092E0A72C0005B35FF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E032E0A72C0005B35FF /* FirebaseFirestore */; };
@@ -62,6 +65,7 @@
 		1C88DD9A2E0BB8FC000D7CD0 /* Dev.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Dev.xcconfig; sourceTree = "<group>"; };
 		1C88DD9B2E0BB8FC000D7CD0 /* Prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Prod.xcconfig; sourceTree = "<group>"; };
 		1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		1C9B64C92E51779800323C91 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		1CDE5E112E0A72C0005B35FF /* FreshWall-Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FreshWall-Beta.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDE5E252E0A72C9005B35FF /* FreshWall-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FreshWall-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -196,6 +200,7 @@
 				1C88DD992E0BB8FC000D7CD0 /* Beta.xcconfig */,
 				1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */,
 				1C88DD9A2E0BB8FC000D7CD0 /* Dev.xcconfig */,
+				1C9B64C92E51779800323C91 /* Debug.xcconfig */,
 				1C88DD9B2E0BB8FC000D7CD0 /* Prod.xcconfig */,
 			);
 			path = Configurations;
@@ -388,6 +393,7 @@
 			files = (
 				1CA3B46A2E0281F200A04DB7 /* TestPlan.xctestplan in Resources */,
 				1C88DD9D2E0BB8FC000D7CD0 /* Prod.xcconfig in Resources */,
+				1C9B64CA2E51779800323C91 /* Debug.xcconfig in Resources */,
 				1C88DD9E2E0BB8FC000D7CD0 /* Beta.xcconfig in Resources */,
 				1C88DD9F2E0BB8FC000D7CD0 /* Dev.xcconfig in Resources */,
 				1C88DDAF2E0BBCA2000D7CD0 /* Base.xcconfig in Resources */,
@@ -414,6 +420,7 @@
 			files = (
 				1CDE5E0D2E0A72C0005B35FF /* TestPlan.xctestplan in Resources */,
 				1C88DDA02E0BB8FC000D7CD0 /* Prod.xcconfig in Resources */,
+				1C9B64CB2E51779800323C91 /* Debug.xcconfig in Resources */,
 				1C88DDA12E0BB8FC000D7CD0 /* Beta.xcconfig in Resources */,
 				1C88DDA22E0BB8FC000D7CD0 /* Dev.xcconfig in Resources */,
 				1C88DDB02E0BBCA2000D7CD0 /* Base.xcconfig in Resources */,
@@ -426,6 +433,7 @@
 			files = (
 				1CDE5E212E0A72C9005B35FF /* TestPlan.xctestplan in Resources */,
 				1C88DDA32E0BB8FC000D7CD0 /* Prod.xcconfig in Resources */,
+				1C9B64CC2E51779800323C91 /* Debug.xcconfig in Resources */,
 				1C88DDA42E0BB8FC000D7CD0 /* Beta.xcconfig in Resources */,
 				1C88DDA52E0BB8FC000D7CD0 /* Dev.xcconfig in Resources */,
 				1C88DDB12E0BBCA2000D7CD0 /* Base.xcconfig in Resources */,
@@ -498,8 +506,9 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1C5436162DE2224000153F4F /* Debug */ = {
+		1C5436162DE2224000153F4F /* Dev */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C88DD9A2E0BB8FC000D7CD0 /* Dev.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -558,7 +567,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1C5436172DE2224000153F4F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -614,7 +623,7 @@
 			};
 			name = Release;
 		};
-		1C5436192DE2224000153F4F /* Debug */ = {
+		1C5436192DE2224000153F4F /* Dev */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C88DD9B2E0BB8FC000D7CD0 /* Prod.xcconfig */;
 			buildSettings = {
@@ -659,7 +668,7 @@
 				TARGETED_DEVICE_FAMILY = 1;
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1C54361A2DE2224000153F4F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -709,7 +718,7 @@
 			};
 			name = Release;
 		};
-		1C54361C2DE2224000153F4F /* Debug */ = {
+		1C54361C2DE2224000153F4F /* Dev */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -731,7 +740,7 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FreshWall.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FreshWall";
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1C54361D2DE2224000153F4F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -757,7 +766,7 @@
 			};
 			name = Release;
 		};
-		1C54361F2DE2224000153F4F /* Debug */ = {
+		1C54361F2DE2224000153F4F /* Dev */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -777,7 +786,7 @@
 				TEST_TARGET_NAME = FreshWall;
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1C5436202DE2224000153F4F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -801,7 +810,7 @@
 			};
 			name = Release;
 		};
-		1CDE5E0F2E0A72C0005B35FF /* Debug */ = {
+		1CDE5E0F2E0A72C0005B35FF /* Dev */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C88DD992E0BB8FC000D7CD0 /* Beta.xcconfig */;
 			buildSettings = {
@@ -843,7 +852,7 @@
 				TARGETED_DEVICE_FAMILY = 1;
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1CDE5E102E0A72C0005B35FF /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -888,9 +897,9 @@
 			};
 			name = Release;
 		};
-		1CDE5E232E0A72C9005B35FF /* Debug */ = {
+		1CDE5E232E0A72C9005B35FF /* Dev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C88DD9A2E0BB8FC000D7CD0 /* Dev.xcconfig */;
+			baseConfigurationReference = 1C9B64C92E51779800323C91 /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -930,7 +939,7 @@
 				TARGETED_DEVICE_FAMILY = 1;
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1CDE5E242E0A72C9005B35FF /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -977,6 +986,7 @@
 		};
 		1CDE614D2E0BB6F0005B35FF /* Beta */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C88DD992E0BB8FC000D7CD0 /* Beta.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -1039,7 +1049,7 @@
 		};
 		1CDE614E2E0BB6F0005B35FF /* Beta */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C88DD9B2E0BB8FC000D7CD0 /* Prod.xcconfig */;
+			baseConfigurationReference = 1C88DD992E0BB8FC000D7CD0 /* Beta.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1224,7 +1234,7 @@
 		1C5435F12DE2223F00153F4F /* Build configuration list for PBXProject "FreshWall" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1C5436162DE2224000153F4F /* Debug */,
+				1C5436162DE2224000153F4F /* Dev */,
 				1CDE614D2E0BB6F0005B35FF /* Beta */,
 				1C5436172DE2224000153F4F /* Release */,
 			);
@@ -1234,7 +1244,7 @@
 		1C5436182DE2224000153F4F /* Build configuration list for PBXNativeTarget "FreshWall" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1C5436192DE2224000153F4F /* Debug */,
+				1C5436192DE2224000153F4F /* Dev */,
 				1CDE614E2E0BB6F0005B35FF /* Beta */,
 				1C54361A2DE2224000153F4F /* Release */,
 			);
@@ -1244,7 +1254,7 @@
 		1C54361B2DE2224000153F4F /* Build configuration list for PBXNativeTarget "FreshWallTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1C54361C2DE2224000153F4F /* Debug */,
+				1C54361C2DE2224000153F4F /* Dev */,
 				1CDE61512E0BB6F0005B35FF /* Beta */,
 				1C54361D2DE2224000153F4F /* Release */,
 			);
@@ -1254,7 +1264,7 @@
 		1C54361E2DE2224000153F4F /* Build configuration list for PBXNativeTarget "FreshWallUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1C54361F2DE2224000153F4F /* Debug */,
+				1C54361F2DE2224000153F4F /* Dev */,
 				1CDE61522E0BB6F0005B35FF /* Beta */,
 				1C5436202DE2224000153F4F /* Release */,
 			);
@@ -1264,7 +1274,7 @@
 		1CDE5E0E2E0A72C0005B35FF /* Build configuration list for PBXNativeTarget "FreshWall-Beta" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1CDE5E0F2E0A72C0005B35FF /* Debug */,
+				1CDE5E0F2E0A72C0005B35FF /* Dev */,
 				1CDE614F2E0BB6F0005B35FF /* Beta */,
 				1CDE5E102E0A72C0005B35FF /* Release */,
 			);
@@ -1274,7 +1284,7 @@
 		1CDE5E222E0A72C9005B35FF /* Build configuration list for PBXNativeTarget "FreshWall-Dev" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1CDE5E232E0A72C9005B35FF /* Debug */,
+				1CDE5E232E0A72C9005B35FF /* Dev */,
 				1CDE61502E0BB6F0005B35FF /* Beta */,
 				1CDE5E242E0A72C9005B35FF /* Release */,
 			);

@@ -71,7 +71,7 @@ struct ClientDetailView: View {
                         .italic()
                 } else {
                     ForEach(incidents) { incident in
-                        Button(incident.description) {
+                        Button(incident.projectTitle) {
                             routerPath.push(.incidentDetail(incident: incident))
                         }
                     }

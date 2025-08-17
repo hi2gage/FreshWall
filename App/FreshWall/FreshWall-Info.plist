@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>FIREBASE_GOOGLE_SERVICE_PLIST</key>
-	<string>$(FIREBASE_GOOGLE_SERVICE_PLIST)</string>
+	<string>$(FIREBASE_CONFIG_FILE)</string>
 </dict>
 </plist>
