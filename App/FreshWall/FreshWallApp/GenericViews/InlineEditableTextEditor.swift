@@ -11,6 +11,10 @@ struct InlineEditableTextEditor: View {
     @State private var editingText = ""
     @FocusState private var isFieldFocused: Bool
 
+    var isEditable: Bool {
+        text.isEmpty
+    }
+
     init(
         title: String,
         text: Binding<String>,
@@ -73,6 +77,8 @@ struct InlineEditableTextEditor: View {
     }
 
     private func startEditing() {
+        guard isEditable else { return }
+
         isEditing = true
         editingText = text
         isFieldFocused = true

@@ -196,22 +196,44 @@ struct IncidentDetailView: View {
             }
 
             Section("Client") {
-                if let client {
-                    HStack {
-                        Button(client.name) {
-                            routerPath.push(.clientDetail(client: client))
-                        }
-                        Spacer()
-                        Button(action: { showingClientPicker = true }) {
-                            Image(systemName: "pencil")
-                                .foregroundColor(.accentColor)
-                        }
+                AddableClientCell(
+                    selectedClientId: $selectedClientId,
+                    validClients: clients,
+                    onAddNewClient: {
+                        routerPath.push(.addClient)
+                    },
+                    onClientSelected: {
+                        await updateIncident()
+                    },
+                    onNavigateToClient: { client in
+                        routerPath.push(.clientDetail(client: client))
                     }
-                } else {
-                    Button("Add Client") {
-                        showingClientPicker = true
-                    }
-                }
+                )
+//                AddableClientCell(
+//                    selectedClientId: client,
+//                    validClients: [],
+//                    onAddNewClient: {},
+//                    onClientSelected: {},
+//                    onNavigateToClient { client in
+//                        routerPath.push(.clientDetail(client: client))
+//                    }
+//                )
+//                if let client {
+//                    HStack {
+//                        Button(client.name) {
+//                            routerPath.push(.clientDetail(client: client))
+//                        }
+//                        Spacer()
+//                        Button(action: { showingClientPicker = true }) {
+//                            Image(systemName: "pencil")
+//                                .foregroundColor(.accentColor)
+//                        }
+//                    }
+//                } else {
+//                    Button("Add Client") {
+//                        showingClientPicker = true
+//                    }
+//                }
             }
         }
         .listStyle(.insetGrouped)
