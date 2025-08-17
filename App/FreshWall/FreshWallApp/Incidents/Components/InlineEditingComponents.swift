@@ -189,20 +189,21 @@ struct InlineClientPicker: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(clients) { client in
-                    HStack {
-                        Text(client.name)
-                        Spacer()
-                        if tempSelectedId == client.id {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.accentColor)
-                        }
-                    }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        tempSelectedId = client.id
-                    }
-                }
+                Text("")
+//                ForEach(clients) { client in
+//                    HStack {
+//                        Text(client.name)
+//                        Spacer()
+//                        if tempSelectedId == client.id {
+//                            Image(systemName: "checkmark")
+//                                .foregroundColor(.accentColor)
+//                        }
+//                    }
+//                    .contentShape(Rectangle())
+//                    .onTapGesture {
+//                        tempSelectedId = client.id
+//                    }
+//                }
             }
             .navigationTitle("Select Client")
             .navigationBarTitleDisplayMode(.inline)
