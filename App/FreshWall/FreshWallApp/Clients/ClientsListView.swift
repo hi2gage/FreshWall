@@ -23,7 +23,7 @@ struct ClientsListView: View {
             routerDestination: { client in .clientDetail(client: client) },
             content: { client in ClientListCell(client: client) },
             plusButtonAction: {
-                routerPath.push(.addClient)
+                routerPath.push(.addClient())
             },
             refreshAction: {
                 await viewModel.loadClients()

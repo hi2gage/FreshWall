@@ -13,7 +13,7 @@ struct IncidentsListViewModelTests {
 
     final class MockClientService: ClientServiceProtocol {
         func fetchClients() async throws -> [Client] { [] }
-        func addClient(_: AddClientInput) async throws {}
+        func addClient(_: AddClientInput) async throws -> String { "mock-id" }
         func updateClient(_: String, with _: UpdateClientInput) async throws {}
     }
 

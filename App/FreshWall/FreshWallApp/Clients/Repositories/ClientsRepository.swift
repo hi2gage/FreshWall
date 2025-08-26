@@ -13,7 +13,8 @@ protocol ClientsRepository {
     /// Fetches active clients for the current team.
     func fetchClients() async throws -> [Client]
     /// Adds a new client using an input value object.
-    func addClient(_ input: AddClientInput) async throws
+    /// - Returns: The ID of the newly created client.
+    func addClient(_ input: AddClientInput) async throws -> String
 }
 
 // MARK: - DefaultClientsRepository
@@ -25,7 +26,7 @@ struct DefaultClientsRepository: ClientsRepository {
         try await client.fetchClients()
     }
 
-    func addClient(_ input: AddClientInput) async throws {
+    func addClient(_ input: AddClientInput) async throws -> String {
         try await client.addClient(input)
     }
 }

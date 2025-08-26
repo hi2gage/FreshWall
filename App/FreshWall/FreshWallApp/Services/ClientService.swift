@@ -8,7 +8,8 @@ protocol ClientServiceProtocol: Sendable {
     /// Fetches active clients for the current team.
     func fetchClients() async throws -> [Client]
     /// Adds a new client using an input value object.
-    func addClient(_ input: AddClientInput) async throws
+    /// - Returns: The ID of the newly created client.
+    func addClient(_ input: AddClientInput) async throws -> String
     /// Updates an existing client using an input value object.
     func updateClient(_ clientId: String, with input: UpdateClientInput) async throws
 }
@@ -44,7 +45,8 @@ struct ClientService: ClientServiceProtocol {
     }
 
     /// Adds a new client using an input value object.
-    func addClient(_ input: AddClientInput) async throws {
+    /// - Returns: The ID of the newly created client.
+    func addClient(_ input: AddClientInput) async throws -> String {
         let teamId = session.teamId
 
         let newDoc = modelService.newClientDocument(teamId: teamId)
@@ -58,6 +60,7 @@ struct ClientService: ClientServiceProtocol {
             lastIncidentAt: input.lastIncidentAt
         )
         try await modelService.setClient(newClient, at: newDoc)
+        return newDoc.documentID
     }
 
     /// Updates an existing client document in Firestore.
