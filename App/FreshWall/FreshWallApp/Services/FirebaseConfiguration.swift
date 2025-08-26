@@ -8,24 +8,23 @@ import Foundation
 /// Handles emulator setup for Firebase services.
 enum FirebaseConfiguration {
     /// IP address of the host running Firebase emulators when testing on device.
-//    static let deviceHostIP = "192.168.0.99"
     static let deviceHostIP = "127.0.0.1"
 
     /// Configure all Firebase services to connect to local emulators.
     private static func configureEmulators() {
-//        #if DEBUG
-        let host = emulatorHost
+        #if DEBUG
+            let host = emulatorHost
 
-        var settings = Firestore.firestore().settings
-        settings.host = "\(host):8080"
-        settings.isSSLEnabled = false
-        settings.isPersistenceEnabled = false
-        Firestore.firestore().settings = settings
+            var settings = Firestore.firestore().settings
+            settings.host = "\(host):8080"
+            settings.isSSLEnabled = false
+            settings.isPersistenceEnabled = false
+            Firestore.firestore().settings = settings
 
-        Functions.functions().useEmulator(withHost: host, port: 5001)
-        Auth.auth().useEmulator(withHost: host, port: 9099)
-        Storage.storage().useEmulator(withHost: host, port: 9199)
-//        #endif
+            Functions.functions().useEmulator(withHost: host, port: 5001)
+            Auth.auth().useEmulator(withHost: host, port: 9099)
+            Storage.storage().useEmulator(withHost: host, port: 9199)
+        #endif
     }
 
     static func configureFirebase() {
