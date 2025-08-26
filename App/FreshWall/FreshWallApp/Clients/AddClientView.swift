@@ -6,10 +6,12 @@ import SwiftUI
 struct AddClientView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: AddClientViewModel
+    private let onClientCreated: ((String) -> Void)?
 
     /// Initializes view with injected client service and view model.
-    init(viewModel: AddClientViewModel) {
+    init(viewModel: AddClientViewModel, onClientCreated: ((String) -> Void)? = nil) {
         _viewModel = State(wrappedValue: viewModel)
+        self.onClientCreated = onClientCreated
     }
 
     var body: some View {
@@ -28,7 +30,8 @@ struct AddClientView: View {
                 Button("Save") {
                     Task {
                         do {
-                            try await viewModel.save()
+                            let clientId = try await viewModel.save()
+                            onClientCreated?(clientId)
                             dismiss()
                         } catch {
                             // Handle error if needed
@@ -47,7 +50,7 @@ struct AddClientView: View {
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
     func fetchClients() async throws -> [Client] { [] }
-    func addClient(_: AddClientInput) async throws {}
+    func addClient(_: AddClientInput) async throws -> String { "preview-id" }
     func updateClient(_: String, with _: UpdateClientInput) async throws {}
 }
 

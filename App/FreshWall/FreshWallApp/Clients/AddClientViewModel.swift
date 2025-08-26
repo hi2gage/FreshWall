@@ -21,12 +21,13 @@ final class AddClientViewModel {
     }
 
     /// Saves the new client via the service.
-    func save() async throws {
+    /// - Returns: The ID of the newly created client.
+    func save() async throws -> String {
         let input = AddClientInput(
             name: name.trimmingCharacters(in: .whitespaces),
             notes: notes.isEmpty ? nil : notes,
             lastIncidentAt: .init()
         )
-        try await service.addClient(input)
+        return try await service.addClient(input)
     }
 }

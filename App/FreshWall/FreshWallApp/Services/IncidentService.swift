@@ -136,13 +136,13 @@ struct IncidentService: IncidentServiceProtocol {
     ) async throws {
         let teamId = session.teamId
 
-        let clientRef = clientModelService.clientDocument(teamId: teamId, clientId: input.clientId)
+        let clientRef = input.clientId.map { clientModelService.clientDocument(teamId: teamId, clientId: $0) }
 
         let uid = Auth.auth().currentUser?.uid ?? ""
         let modifiedByRef = userModelService.userDocument(teamId: teamId, userId: uid)
 
         var data: [String: Any] = [
-            "clientRef": clientRef,
+            "clientRef": clientRef as Any,
             "description": input.description,
             "area": input.area,
             "startTime": Timestamp(date: input.startTime),
