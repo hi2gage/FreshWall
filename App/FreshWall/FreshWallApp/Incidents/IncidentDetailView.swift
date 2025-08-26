@@ -3,71 +3,103 @@ import SwiftUI
 
 /// A view displaying detailed information for a specific incident.
 struct IncidentDetailView: View {
-    @State private var incident: Incident
-    let incidentService: IncidentServiceProtocol
-    let clientService: ClientServiceProtocol
+    @State private var viewModel: IncidentDetailViewModel
     @Environment(RouterPath.self) private var routerPath
-    @State private var client: Client?
 
-    init(incident: Incident, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
-        _incident = State(wrappedValue: incident)
-        self.incidentService = incidentService
-        self.clientService = clientService
-    }
-
-    /// Reloads the incident after editing.
-    private func reloadIncident() async {
-        guard let id = incident.id else { return }
-
-        let updated = await (try? incidentService.fetchIncidents()) ?? []
-        if let match = updated.first(where: { $0.id == id }) {
-            incident = match
-        }
-        await loadClient()
-    }
-
-    /// Loads the client associated with this incident.
-    private func loadClient() async {
-        let clients = await (try? clientService.fetchClients()) ?? []
-        client = clients.first { $0.id == incident.clientRef?.documentID }
+    init(
+        incident: Incident,
+        incidentService: IncidentServiceProtocol,
+        clientService: ClientServiceProtocol
+    ) {
+        _viewModel = State(wrappedValue: IncidentDetailViewModel(
+            incident: incident,
+            incidentService: incidentService,
+            clientService: clientService
+        ))
     }
 
     var body: some View {
         List {
             Section("Project") {
-                if incident.projectTitle.trimmingCharacters(in: .whitespaces).isEmpty {
-                    Button("Add Project Title") { routerPath.push(.editIncident(incident: incident)) }
-                } else {
-                    Text(incident.projectTitle)
+                HStack {
+                    Text("Project Title")
+                    Spacer()
+                    Text(viewModel.incident.projectTitle)
+                        .foregroundColor(viewModel.incident.projectTitle.isEmpty ? .secondary : .primary)
                 }
-                if incident.area <= 0 {
-                    Button("Add Square Footage") { routerPath.push(.editIncident(incident: incident)) }
-                } else {
-                    HStack {
-                        Text("Area")
-                        Spacer()
-                        Text(String(format: "%.2f", incident.area) + " sq ft")
+
+                AddableAreaCell(
+                    area: $viewModel.incident.area,
+                    onSave: {
+                        await viewModel.updateIncident()
                     }
-                }
+                )
+
+                AddableDescriptionCell(
+                    description: $viewModel.incident.description,
+                    onSave: {
+                        await viewModel.updateIncident()
+                    }
+                )
 
                 HStack {
                     Text("Status")
                     Spacer()
-                    Text(incident.status.capitalized)
+                    Text(viewModel.incident.status.capitalized)
                 }
             }
             Section("Photos") {
-                if incident.beforePhotos.isEmpty {
-                    Button("Add Before Photos") { routerPath.push(.editIncident(incident: incident)) }
-                } else if let beforePhotos = incident.beforePhotos.nullIfEmpty {
-                    Section("Before Photos") {
+                if viewModel.incident.beforePhotos.isEmpty {
+                    PhotoSourcePicker(
+                        selection: $viewModel.pickedBeforePhotos,
+                        maxSelectionCount: 10,
+                        matching: .images,
+                        photoLibrary: .shared()
+                    ) {
+                        Label("Add Before Photos", systemImage: "camera.fill")
+                    }
+                } else if let beforePhotos = viewModel.incident.beforePhotos.nullIfEmpty {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text("Before Photos")
+                            Spacer()
+                            PhotoSourcePicker(
+                                selection: $viewModel.pickedBeforePhotos,
+                                maxSelectionCount: 10,
+                                matching: .images,
+                                photoLibrary: .shared()
+                            ) {
+                                Image(systemName: "plus.circle")
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
                         PhotoCarousel(photos: beforePhotos)
                     }
                 }
-                if incident.afterPhotos.isEmpty {
-                    Button("Add After Photos") { routerPath.push(.editIncident(incident: incident)) }
-                } else if let afterPhotos = incident.afterPhotos.nullIfEmpty {
-                    Section("After Photos") {
+                if viewModel.incident.afterPhotos.isEmpty {
+                    PhotoSourcePicker(
+                        selection: $viewModel.pickedAfterPhotos,
+                        maxSelectionCount: 10,
+                        matching: .images,
+                        photoLibrary: .shared()
+                    ) {
+                        Label("Add After Photos", systemImage: "camera.fill")
+                    }
+                } else if let afterPhotos = viewModel.incident.afterPhotos.nullIfEmpty {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text("After Photos")
+                            Spacer()
+                            PhotoSourcePicker(
+                                selection: $viewModel.pickedAfterPhotos,
+                                maxSelectionCount: 10,
+                                matching: .images,
+                                photoLibrary: .shared()
+                            ) {
+                                Image(systemName: "plus.circle")
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
                         PhotoCarousel(photos: afterPhotos)
                     }
                 }
@@ -76,40 +108,68 @@ struct IncidentDetailView: View {
                 HStack {
                     Text("Start Time")
                     Spacer()
-                    Text(incident.startTime.dateValue(), style: .time)
+                    Text(viewModel.incident.startTime.dateValue(), style: .time)
                 }
                 HStack {
                     Text("End Time")
                     Spacer()
-                    Text(incident.endTime.dateValue(), style: .time)
+                    Text(viewModel.incident.endTime.dateValue(), style: .time)
                 }
             }
 
             Section("Client") {
-                if let client {
-                    Button(client.name) {
+                AddableClientCell(
+                    selectedClientId: $viewModel.selectedClientId,
+                    validClients: viewModel.clients,
+                    onAddNewClient: {
+                        // Clear the selection temporarily
+                        viewModel.selectedClientId = nil
+                        routerPath.push(.addClient(onClientCreated: { clientId in
+                            Task {
+                                await viewModel.handleNewClientCreated(clientId)
+                            }
+                        }))
+                    },
+                    onClientSelected: {
+                        await viewModel.updateIncident()
+                    },
+                    onNavigateToClient: { client in
                         routerPath.push(.clientDetail(client: client))
                     }
-                } else {
-                    Button("Add Client") { routerPath.push(.editIncident(incident: incident)) }
-                }
+                )
             }
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Incident Details")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("Edit") { routerPath.push(.editIncident(incident: incident)) }
+                Button("Edit") { routerPath.push(.editIncident(incident: viewModel.incident)) }
             }
         }
         .onAppear {
-            Task { await reloadIncident() }
+            Task { await viewModel.reloadIncident() }
         }
         .task {
-            await loadClient()
+            await viewModel.loadClient()
         }
         .refreshable {
-            await reloadIncident()
+            await viewModel.reloadIncident()
+        }
+        .onChange(of: viewModel.pickedBeforePhotos) { _, newPhotos in
+            if !newPhotos.isEmpty {
+                Task {
+                    await viewModel.updateIncidentWithPhotos(beforePhotos: newPhotos, afterPhotos: [])
+                    viewModel.pickedBeforePhotos.removeAll()
+                }
+            }
+        }
+        .onChange(of: viewModel.pickedAfterPhotos) { _, newPhotos in
+            if !newPhotos.isEmpty {
+                Task {
+                    await viewModel.updateIncidentWithPhotos(beforePhotos: [], afterPhotos: newPhotos)
+                    viewModel.pickedAfterPhotos.removeAll()
+                }
+            }
         }
     }
 }

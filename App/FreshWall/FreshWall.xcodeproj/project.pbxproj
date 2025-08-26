@@ -23,6 +23,9 @@
 		1C88DDAF2E0BBCA2000D7CD0 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */; };
 		1C88DDB02E0BBCA2000D7CD0 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */; };
 		1C88DDB12E0BBCA2000D7CD0 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */; };
+		1C9B64CA2E51779800323C91 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C9B64C92E51779800323C91 /* Debug.xcconfig */; };
+		1C9B64CB2E51779800323C91 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C9B64C92E51779800323C91 /* Debug.xcconfig */; };
+		1C9B64CC2E51779800323C91 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C9B64C92E51779800323C91 /* Debug.xcconfig */; };
 		1CA3B46A2E0281F200A04DB7 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */; };
 		1CDE5E082E0A72C0005B35FF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E012E0A72C0005B35FF /* FirebaseAuth */; };
 		1CDE5E092E0A72C0005B35FF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5E032E0A72C0005B35FF /* FirebaseFirestore */; };
@@ -62,9 +65,12 @@
 		1C88DD9A2E0BB8FC000D7CD0 /* Dev.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Dev.xcconfig; sourceTree = "<group>"; };
 		1C88DD9B2E0BB8FC000D7CD0 /* Prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Prod.xcconfig; sourceTree = "<group>"; };
 		1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		1C9B64C92E51779800323C91 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		1CDE5E112E0A72C0005B35FF /* FreshWall-Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FreshWall-Beta.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDE5E252E0A72C9005B35FF /* FreshWall-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FreshWall-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CE8C9662E5D5D52004ABAF4 /* FreshWall-Dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "FreshWall-Dev-Info.plist"; sourceTree = "<group>"; };
+		1CE8CEAD2E5D60C7004ABAF4 /* FreshWallNetworking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FreshWallNetworking; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -72,94 +78,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
-				Auth/AuthService.swift,
-				Auth/LoginManager.swift,
-				Auth/SessionService.swift,
-				Auth/SessionStore.swift,
-				Auth/Views/AuthFlowView.swift,
-				Auth/Views/SignupWithExistingTeamView.swift,
-				Auth/Views/SignupWithNewTeamView.swift,
-				Clients/AddClientView.swift,
-				Clients/AddClientViewModel.swift,
-				Clients/ClientDetailView.swift,
-				Clients/ClientListCell.swift,
-				Clients/ClientsListView.swift,
-				Clients/ClientsListViewModel.swift,
-				Clients/ClientSortField.swift,
-				Clients/EditClientView.swift,
-				Clients/EditClientViewModel.swift,
-				Clients/Models/ClientCellModel.swift,
-				Clients/Repositories/ClientsRepository.swift,
-				ContentView.swift,
-				Domain/IncidentRow.swift,
-				Domain/MemberRow.swift,
-				FreshWallApp.swift,
-				FreshWallPreview.swift,
-				GenericViews/AsyncSheet.swift,
-				GenericViews/GenericGroupableListView.swift,
-				GenericViews/GenericListView.swift,
-				"GenericViews/Label+extension.swift",
-				GenericViews/ListCellStyle.swift,
-				GenericViews/PhotoCarousel.swift,
-				GenericViews/PhotoPicker.swift,
-				GenericViews/PhotoViewer.swift,
-				GenericViews/PhotoViewerContext.swift,
-				GenericViews/Sort/SortButton.swift,
-				GenericViews/Sort/SortFieldRepresentable.swift,
-				GenericViews/Sort/SortState.swift,
-				GenericViews/ZoomableModifer.swift,
-				"GoogleService-Info-Prod.plist",
-				Incidents/AddIncidentView.swift,
-				Incidents/AddIncidentViewModel.swift,
-				Incidents/EditIncidentView.swift,
-				Incidents/EditIncidentViewModel.swift,
-				Incidents/IncidentDetailView.swift,
-				Incidents/IncidentGroupOption.swift,
-				Incidents/IncidentListCell.swift,
-				Incidents/IncidentsListView.swift,
-				Incidents/IncidentsListViewModel.swift,
-				Incidents/IncidentSortField.swift,
-				MainAppView.swift,
-				MainListView.swift,
-				Members/InviteMemberView.swift,
-				Members/InviteMemberViewModel.swift,
-				Members/MemberDetailView.swift,
-				Members/MemberGroupOption.swift,
-				Members/MemberListCell.swift,
-				Members/MembersListView.swift,
-				Members/MembersListViewModel.swift,
-				Members/MemberSortField.swift,
-				Models/Client.swift,
-				Models/ClientDTO.swift,
-				Models/Incident.swift,
-				Models/IncidentDTO.swift,
-				Models/IncidentPhoto.swift,
-				Models/IncidentPhotoDTO.swift,
-				Models/Member.swift,
-				"Models/PickedPhoto+IncidentDTO.swift",
-				Models/TeamDTO.swift,
-				Models/UserDTO.swift,
-				Models/UserSession.swift,
-				Navigation/LoginRouterPath.swift,
-				Navigation/RouterPath.swift,
-				RootView.swift,
-				Services/ClientModelService.swift,
-				Services/ClientService.swift,
-				Services/FirebaseConfiguration.swift,
-				Services/IncidentModelService.swift,
-				Services/IncidentPhotoService.swift,
-				Services/IncidentService.swift,
-				"Services/Input Models/AddClientInput.swift",
-				"Services/Input Models/AddIncidentInput.swift",
-				"Services/Input Models/AddMemberInput.swift",
-				"Services/Input Models/UpdateClientInput.swift",
-				"Services/Input Models/UpdateIncidentInput.swift",
-				Services/InviteCodeService.swift,
-				Services/MemberService.swift,
-				Services/PhotoMetadataService.swift,
-				Services/StorageService.swift,
-				Services/UserModelService.swift,
-				Services/UserService.swift,
 			);
 			target = 1CDE5DFF2E0A72C0005B35FF /* FreshWall-Beta */;
 		};
@@ -167,94 +85,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
-				Auth/AuthService.swift,
-				Auth/LoginManager.swift,
-				Auth/SessionService.swift,
-				Auth/SessionStore.swift,
-				Auth/Views/AuthFlowView.swift,
-				Auth/Views/SignupWithExistingTeamView.swift,
-				Auth/Views/SignupWithNewTeamView.swift,
-				Clients/AddClientView.swift,
-				Clients/AddClientViewModel.swift,
-				Clients/ClientDetailView.swift,
-				Clients/ClientListCell.swift,
-				Clients/ClientsListView.swift,
-				Clients/ClientsListViewModel.swift,
-				Clients/ClientSortField.swift,
-				Clients/EditClientView.swift,
-				Clients/EditClientViewModel.swift,
-				Clients/Models/ClientCellModel.swift,
-				Clients/Repositories/ClientsRepository.swift,
-				ContentView.swift,
-				Domain/IncidentRow.swift,
-				Domain/MemberRow.swift,
-				FreshWallApp.swift,
-				FreshWallPreview.swift,
-				GenericViews/AsyncSheet.swift,
-				GenericViews/GenericGroupableListView.swift,
-				GenericViews/GenericListView.swift,
-				"GenericViews/Label+extension.swift",
-				GenericViews/ListCellStyle.swift,
-				GenericViews/PhotoCarousel.swift,
-				GenericViews/PhotoPicker.swift,
-				GenericViews/PhotoViewer.swift,
-				GenericViews/PhotoViewerContext.swift,
-				GenericViews/Sort/SortButton.swift,
-				GenericViews/Sort/SortFieldRepresentable.swift,
-				GenericViews/Sort/SortState.swift,
-				GenericViews/ZoomableModifer.swift,
-				"GoogleService-Info-Prod.plist",
-				Incidents/AddIncidentView.swift,
-				Incidents/AddIncidentViewModel.swift,
-				Incidents/EditIncidentView.swift,
-				Incidents/EditIncidentViewModel.swift,
-				Incidents/IncidentDetailView.swift,
-				Incidents/IncidentGroupOption.swift,
-				Incidents/IncidentListCell.swift,
-				Incidents/IncidentsListView.swift,
-				Incidents/IncidentsListViewModel.swift,
-				Incidents/IncidentSortField.swift,
-				MainAppView.swift,
-				MainListView.swift,
-				Members/InviteMemberView.swift,
-				Members/InviteMemberViewModel.swift,
-				Members/MemberDetailView.swift,
-				Members/MemberGroupOption.swift,
-				Members/MemberListCell.swift,
-				Members/MembersListView.swift,
-				Members/MembersListViewModel.swift,
-				Members/MemberSortField.swift,
-				Models/Client.swift,
-				Models/ClientDTO.swift,
-				Models/Incident.swift,
-				Models/IncidentDTO.swift,
-				Models/IncidentPhoto.swift,
-				Models/IncidentPhotoDTO.swift,
-				Models/Member.swift,
-				"Models/PickedPhoto+IncidentDTO.swift",
-				Models/TeamDTO.swift,
-				Models/UserDTO.swift,
-				Models/UserSession.swift,
-				Navigation/LoginRouterPath.swift,
-				Navigation/RouterPath.swift,
-				RootView.swift,
-				Services/ClientModelService.swift,
-				Services/ClientService.swift,
-				Services/FirebaseConfiguration.swift,
-				Services/IncidentModelService.swift,
-				Services/IncidentPhotoService.swift,
-				Services/IncidentService.swift,
-				"Services/Input Models/AddClientInput.swift",
-				"Services/Input Models/AddIncidentInput.swift",
-				"Services/Input Models/AddMemberInput.swift",
-				"Services/Input Models/UpdateClientInput.swift",
-				"Services/Input Models/UpdateIncidentInput.swift",
-				Services/InviteCodeService.swift,
-				Services/MemberService.swift,
-				Services/PhotoMetadataService.swift,
-				Services/StorageService.swift,
-				Services/UserModelService.swift,
-				Services/UserService.swift,
 			);
 			target = 1CDE5E132E0A72C9005B35FF /* FreshWall-Dev */;
 		};
@@ -336,6 +166,7 @@
 		1C5435ED2DE2223F00153F4F = {
 			isa = PBXGroup;
 			children = (
+				1CE8C9662E5D5D52004ABAF4 /* FreshWall-Dev-Info.plist */,
 				1C5532C12E0BC46B001B83F0 /* FreshWall-Info.plist */,
 				1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */,
 				1C5435F82DE2223F00153F4F /* FreshWallApp */,
@@ -344,6 +175,7 @@
 				1C5437162DE2558400153F4F /* Frameworks */,
 				1C5435F72DE2223F00153F4F /* Products */,
 				1C88DD9C2E0BB8FC000D7CD0 /* Configurations */,
+				1CE8CEAE2E5D60C7004ABAF4 /* Packages */,
 			);
 			sourceTree = "<group>";
 		};
@@ -372,9 +204,18 @@
 				1C88DD992E0BB8FC000D7CD0 /* Beta.xcconfig */,
 				1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */,
 				1C88DD9A2E0BB8FC000D7CD0 /* Dev.xcconfig */,
+				1C9B64C92E51779800323C91 /* Debug.xcconfig */,
 				1C88DD9B2E0BB8FC000D7CD0 /* Prod.xcconfig */,
 			);
 			path = Configurations;
+			sourceTree = "<group>";
+		};
+		1CE8CEAE2E5D60C7004ABAF4 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				1CE8CEAD2E5D60C7004ABAF4 /* FreshWallNetworking */,
+			);
+			path = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -564,6 +405,7 @@
 			files = (
 				1CA3B46A2E0281F200A04DB7 /* TestPlan.xctestplan in Resources */,
 				1C88DD9D2E0BB8FC000D7CD0 /* Prod.xcconfig in Resources */,
+				1C9B64CA2E51779800323C91 /* Debug.xcconfig in Resources */,
 				1C88DD9E2E0BB8FC000D7CD0 /* Beta.xcconfig in Resources */,
 				1C88DD9F2E0BB8FC000D7CD0 /* Dev.xcconfig in Resources */,
 				1C88DDAF2E0BBCA2000D7CD0 /* Base.xcconfig in Resources */,
@@ -590,6 +432,7 @@
 			files = (
 				1CDE5E0D2E0A72C0005B35FF /* TestPlan.xctestplan in Resources */,
 				1C88DDA02E0BB8FC000D7CD0 /* Prod.xcconfig in Resources */,
+				1C9B64CB2E51779800323C91 /* Debug.xcconfig in Resources */,
 				1C88DDA12E0BB8FC000D7CD0 /* Beta.xcconfig in Resources */,
 				1C88DDA22E0BB8FC000D7CD0 /* Dev.xcconfig in Resources */,
 				1C88DDB02E0BBCA2000D7CD0 /* Base.xcconfig in Resources */,
@@ -602,6 +445,7 @@
 			files = (
 				1CDE5E212E0A72C9005B35FF /* TestPlan.xctestplan in Resources */,
 				1C88DDA32E0BB8FC000D7CD0 /* Prod.xcconfig in Resources */,
+				1C9B64CC2E51779800323C91 /* Debug.xcconfig in Resources */,
 				1C88DDA42E0BB8FC000D7CD0 /* Beta.xcconfig in Resources */,
 				1C88DDA52E0BB8FC000D7CD0 /* Dev.xcconfig in Resources */,
 				1C88DDB12E0BBCA2000D7CD0 /* Base.xcconfig in Resources */,
@@ -674,8 +518,9 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1C5436162DE2224000153F4F /* Debug */ = {
+		1C5436162DE2224000153F4F /* Dev */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C88DD9A2E0BB8FC000D7CD0 /* Dev.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -734,7 +579,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1C5436172DE2224000153F4F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -790,7 +635,7 @@
 			};
 			name = Release;
 		};
-		1C5436192DE2224000153F4F /* Debug */ = {
+		1C5436192DE2224000153F4F /* Dev */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C88DD9B2E0BB8FC000D7CD0 /* Prod.xcconfig */;
 			buildSettings = {
@@ -835,7 +680,7 @@
 				TARGETED_DEVICE_FAMILY = 1;
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1C54361A2DE2224000153F4F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -885,7 +730,7 @@
 			};
 			name = Release;
 		};
-		1C54361C2DE2224000153F4F /* Debug */ = {
+		1C54361C2DE2224000153F4F /* Dev */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -907,7 +752,7 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FreshWall.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FreshWall";
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1C54361D2DE2224000153F4F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -933,7 +778,7 @@
 			};
 			name = Release;
 		};
-		1C54361F2DE2224000153F4F /* Debug */ = {
+		1C54361F2DE2224000153F4F /* Dev */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -953,7 +798,7 @@
 				TEST_TARGET_NAME = FreshWall;
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1C5436202DE2224000153F4F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -977,7 +822,7 @@
 			};
 			name = Release;
 		};
-		1CDE5E0F2E0A72C0005B35FF /* Debug */ = {
+		1CDE5E0F2E0A72C0005B35FF /* Dev */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C88DD992E0BB8FC000D7CD0 /* Beta.xcconfig */;
 			buildSettings = {
@@ -1019,7 +864,7 @@
 				TARGETED_DEVICE_FAMILY = 1;
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1CDE5E102E0A72C0005B35FF /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1064,9 +909,9 @@
 			};
 			name = Release;
 		};
-		1CDE5E232E0A72C9005B35FF /* Debug */ = {
+		1CDE5E232E0A72C9005B35FF /* Dev */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C88DD9A2E0BB8FC000D7CD0 /* Dev.xcconfig */;
+			baseConfigurationReference = 1C9B64C92E51779800323C91 /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1078,7 +923,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				INFOPLIST_FILE = "FreshWall-Dev-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "FreshWall Dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -1090,7 +936,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET)";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.3;
@@ -1106,7 +952,7 @@
 				TARGETED_DEVICE_FAMILY = 1;
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
-			name = Debug;
+			name = Dev;
 		};
 		1CDE5E242E0A72C9005B35FF /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1121,7 +967,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				INFOPLIST_FILE = "FreshWall-Dev-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "FreshWall Dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -1133,7 +980,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET)";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.3;
@@ -1153,6 +1000,7 @@
 		};
 		1CDE614D2E0BB6F0005B35FF /* Beta */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C88DD992E0BB8FC000D7CD0 /* Beta.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -1215,7 +1063,7 @@
 		};
 		1CDE614E2E0BB6F0005B35FF /* Beta */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C88DD9B2E0BB8FC000D7CD0 /* Prod.xcconfig */;
+			baseConfigurationReference = 1C88DD992E0BB8FC000D7CD0 /* Beta.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1318,7 +1166,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				INFOPLIST_FILE = "FreshWall-Dev-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "FreshWall Dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -1330,7 +1179,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET)";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.3;
@@ -1400,7 +1249,7 @@
 		1C5435F12DE2223F00153F4F /* Build configuration list for PBXProject "FreshWall" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1C5436162DE2224000153F4F /* Debug */,
+				1C5436162DE2224000153F4F /* Dev */,
 				1CDE614D2E0BB6F0005B35FF /* Beta */,
 				1C5436172DE2224000153F4F /* Release */,
 			);
@@ -1410,7 +1259,7 @@
 		1C5436182DE2224000153F4F /* Build configuration list for PBXNativeTarget "FreshWall" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1C5436192DE2224000153F4F /* Debug */,
+				1C5436192DE2224000153F4F /* Dev */,
 				1CDE614E2E0BB6F0005B35FF /* Beta */,
 				1C54361A2DE2224000153F4F /* Release */,
 			);
@@ -1420,7 +1269,7 @@
 		1C54361B2DE2224000153F4F /* Build configuration list for PBXNativeTarget "FreshWallTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1C54361C2DE2224000153F4F /* Debug */,
+				1C54361C2DE2224000153F4F /* Dev */,
 				1CDE61512E0BB6F0005B35FF /* Beta */,
 				1C54361D2DE2224000153F4F /* Release */,
 			);
@@ -1430,7 +1279,7 @@
 		1C54361E2DE2224000153F4F /* Build configuration list for PBXNativeTarget "FreshWallUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1C54361F2DE2224000153F4F /* Debug */,
+				1C54361F2DE2224000153F4F /* Dev */,
 				1CDE61522E0BB6F0005B35FF /* Beta */,
 				1C5436202DE2224000153F4F /* Release */,
 			);
@@ -1440,7 +1289,7 @@
 		1CDE5E0E2E0A72C0005B35FF /* Build configuration list for PBXNativeTarget "FreshWall-Beta" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1CDE5E0F2E0A72C0005B35FF /* Debug */,
+				1CDE5E0F2E0A72C0005B35FF /* Dev */,
 				1CDE614F2E0BB6F0005B35FF /* Beta */,
 				1CDE5E102E0A72C0005B35FF /* Release */,
 			);
@@ -1450,7 +1299,7 @@
 		1CDE5E222E0A72C9005B35FF /* Build configuration list for PBXNativeTarget "FreshWall-Dev" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1CDE5E232E0A72C9005B35FF /* Debug */,
+				1CDE5E232E0A72C9005B35FF /* Dev */,
 				1CDE61502E0BB6F0005B35FF /* Beta */,
 				1CDE5E242E0A72C9005B35FF /* Release */,
 			);

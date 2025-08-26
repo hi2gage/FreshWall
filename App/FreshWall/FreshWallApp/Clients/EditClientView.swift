@@ -56,7 +56,7 @@ private class PreviewClientService: ClientServiceProtocol {
         )]
     }
 
-    func addClient(_: AddClientInput) async throws {}
+    func addClient(_: AddClientInput) async throws -> String { "preview-id" }
 
     func updateClient(_: String, with _: UpdateClientInput) async throws {}
 }

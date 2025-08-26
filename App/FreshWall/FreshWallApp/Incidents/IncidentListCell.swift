@@ -21,6 +21,7 @@ struct IncidentListCell: View {
                             .resizable()
                             .scaledToFill()
                             .frame(maxWidth: Constants.maxImageWidth)
+                            .frame(maxHeight: Constants.imageSize)
                             .clipped()
                             .cornerRadius(Constants.smallCornerRadius)
                     case .failure:

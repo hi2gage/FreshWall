@@ -95,7 +95,7 @@ struct AddIncidentView: View {
                 .pickerStyle(.menu)
                 .onChange(of: viewModel.input.clientId) { _, newValue in
                     if newValue == addNewTag {
-                        routerPath.push(.addClient)
+                        routerPath.push(.addClient())
                         viewModel.input.clientId = ""
                     }
                 }
@@ -174,7 +174,7 @@ private class PreviewClientService: ClientServiceProtocol {
         )]
     }
 
-    func addClient(_: AddClientInput) async throws {}
+    func addClient(_: AddClientInput) async throws -> String { "mock-id" }
 
     func updateClient(_: String, with _: UpdateClientInput) async throws {}
 }
