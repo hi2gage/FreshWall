@@ -2,14 +2,17 @@ export function Contact() {
   return (
     <>
       {/* Call to Action Section */}
-      <section className="py-20 bg-blue-600">
+      <section className="py-20 bg-gray-800">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold text-white mb-6">Ready to save hours and get paid faster?</h2>
           <div className="space-y-4">
-            <a href="mailto:gage@freshwall.app?subject=Demo Request" className="bg-white text-blue-600 hover:bg-gray-100 font-bold py-4 px-8 rounded-lg text-xl transition-colors inline-block">
+            <a
+              href="/demo"
+              className="bg-white bg-green-700 hover:bg-green-800 text-white font-bold py-4 px-8 rounded-lg text-xl transition-colors inline-block"
+            >
               Request a Demo
             </a>
-            <p className="text-blue-100 text-lg">or email: gage@freshwall.app</p>
+            <p className="text-gray-300 text-lg">or email: info@freshwall.app</p>
           </div>
         </div>
       </section>
@@ -22,13 +25,13 @@ export function Contact() {
             <p className="text-gray-400">Built in Montana</p>
           </div>
           <div className="flex justify-center space-x-8 text-gray-400">
-            <a href="mailto:gage@freshwall.app" className="hover:text-white transition-colors">
-              gage@freshwall.app
+            <a href="mailto:info@freshwall.app" className="hover:text-white transition-colors">
+              info@freshwall.app
             </a>
             <span>|</span>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <a href="/terms" className="hover:text-white transition-colors">Terms</a>
             <span>|</span>
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
+            <a href="/privacy" className="hover:text-white transition-colors">Privacy</a>
           </div>
         </div>
       </footer>
