@@ -30,15 +30,15 @@ export function Services() {
               </p>
               <ul className="space-y-4 text-lg text-gray-700">
                 <li className="flex items-start">
-                  <span className="text-blue-600 mr-3">•</span>
+                  <span className="text-green-600 mr-3">•</span>
                   Log every job instantly with photos, notes, and location.
                 </li>
                 <li className="flex items-start">
-                  <span className="text-blue-600 mr-3">•</span>
+                  <span className="text-green-600 mr-3">•</span>
                   Generate invoices automatically ready to send with a click.
                 </li>
                 <li className="flex items-start">
-                  <span className="text-blue-600 mr-3">•</span>
+                  <span className="text-green-600 mr-3">•</span>
                   Share clean reports with customers and city officials that prove the work you've done.
                 </li>
               </ul>
@@ -57,7 +57,7 @@ export function Services() {
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {steps.map((step, index) => (
               <div key={index} className="text-center">
-                <div className="w-16 h-16 bg-blue-600 text-white text-2xl font-bold rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="w-16 h-16 bg-green-600 text-white text-2xl font-bold rounded-full flex items-center justify-center mx-auto mb-6">
                   {step.step}
                 </div>
                 <h3 className="text-2xl font-semibold text-gray-900 mb-4">{step.title}</h3>

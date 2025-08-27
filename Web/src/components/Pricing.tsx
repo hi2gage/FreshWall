@@ -33,33 +33,36 @@ export function Pricing() {
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-16">Pricing</h2>
           
-          <div className="max-w-md mx-auto bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8 border-2 border-blue-200">
+          <div className="max-w-md mx-auto bg-white rounded-2xl p-8 border-2 border-gray-300">
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Founding Customer Plan</h3>
-              <div className="text-4xl font-bold text-blue-600 mb-2">$99<span className="text-lg text-gray-600">/month</span></div>
+              <div className="text-4xl font-bold text-green-600 mb-2">$99<span className="text-lg text-gray-600">/month</span></div>
               <div className="text-gray-600 line-through">regularly $149</div>
             </div>
             
             <ul className="space-y-3 text-left mb-8">
               <li className="flex items-center text-gray-700">
-                <span className="text-blue-600 mr-3">✓</span>
+                <span className="text-green-600 mr-3">✓</span>
                 Locked rate for the first 10 companies
               </li>
               <li className="flex items-center text-gray-700">
-                <span className="text-blue-600 mr-3">✓</span>
+                <span className="text-green-600 mr-3">✓</span>
                 Unlimited jobs with photos
               </li>
               <li className="flex items-center text-gray-700">
-                <span className="text-blue-600 mr-3">✓</span>
+                <span className="text-green-600 mr-3">✓</span>
                 All features included
               </li>
               <li className="flex items-center text-gray-700">
-                <span className="text-blue-600 mr-3">✓</span>
+                <span className="text-green-600 mr-3">✓</span>
                 Cancel anytime
               </li>
             </ul>
             
-            <a href="mailto:gage@freshwall.app?subject=Demo Request" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors inline-block text-center">
+            <a
+              href="/demo"
+              className="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors inline-block text-center"
+            >
               Request a Demo
             </a>
           </div>
@@ -80,7 +83,7 @@ export function Pricing() {
             <blockquote className="text-2xl italic text-gray-700 mb-6">
               "FreshWall saves us hours every week. Invoicing used to take a day, now it's done in minutes."
             </blockquote>
-            <cite className="text-lg text-blue-600 font-semibold">Montana Graffiti Removal Co.</cite>
+            <cite className="text-lg text-green-600 font-semibold">Montana Graffiti Removal Co.</cite>
           </div>
         </div>
       </section>
