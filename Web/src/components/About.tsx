@@ -26,7 +26,7 @@ export function About() {
             <ul className="space-y-6 text-lg text-gray-700">
               {benefits.map((benefit, index) => (
                 <li key={index} className="flex items-start">
-                  <span className="text-blue-600 mr-4 text-2xl">•</span>
+                  <span className="text-green-600 mr-4 text-2xl">•</span>
                   <span>{benefit}</span>
                 </li>
               ))}
@@ -45,7 +45,7 @@ export function About() {
             <ul className="space-y-6 text-lg text-gray-700">
               {features.map((feature, index) => (
                 <li key={index} className="flex items-start">
-                  <span className="text-blue-600 mr-4 text-2xl">•</span>
+                  <span className="text-green-600 mr-4 text-2xl">•</span>
                   <span>{feature}</span>
                 </li>
               ))}
