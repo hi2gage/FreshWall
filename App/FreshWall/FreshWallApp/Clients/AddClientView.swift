@@ -49,6 +49,7 @@ struct AddClientView: View {
 /// Dummy implementation of `ClientServiceProtocol` for previews.
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
+    func deleteClient(_: String) async throws {}
     func fetchClients() async throws -> [Client] { [] }
     func addClient(_: AddClientInput) async throws -> String { "preview-id" }
     func updateClient(_: String, with _: UpdateClientInput) async throws {}

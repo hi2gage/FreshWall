@@ -7,7 +7,6 @@ import Foundation
 struct IncidentRow: Identifiable, Hashable {
     let id: String
     let description: String
-    let status: String
     let startDate: Date
 }
 
@@ -20,7 +19,6 @@ extension IncidentRow {
             return IncidentRow(
                 id: id,
                 description: incident.description,
-                status: incident.status.capitalized,
                 startDate: incident.startTime.dateValue()
             )
         }

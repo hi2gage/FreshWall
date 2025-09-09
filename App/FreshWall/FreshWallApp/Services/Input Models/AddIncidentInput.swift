@@ -1,3 +1,4 @@
+@preconcurrency import FirebaseFirestore
 import Foundation
 
 /// Input model for creating a new incident via `IncidentService`.
@@ -8,18 +9,14 @@ struct AddIncidentInput: Sendable {
     let description: String
     /// Area affected by the incident (sq ft).
     let area: Double
+    /// Geographic location where the incident occurred.
+    let location: GeoPoint?
     /// Start time of the incident.
     let startTime: Date
     /// End time of the incident.
     let endTime: Date
-    /// Whether the incident is billable.
-    let billable: Bool
     /// Optional rate for billing.
     let rate: Double?
-    /// Title of the project.
-    let projectTitle: String
-    /// Status string (e.g. "open", "completed").
-    let status: String
     /// Optional materials used description.
     let materialsUsed: String?
 }

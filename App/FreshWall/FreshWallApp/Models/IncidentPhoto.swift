@@ -19,12 +19,12 @@ struct IncidentPhoto: Identifiable, Sendable {
 // MARK: Hashable, Equatable
 
 extension IncidentPhoto: Hashable, Equatable {
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(url)
         hasher.combine(captureDate)
     }
 
-    public static func == (lhs: IncidentPhoto, rhs: IncidentPhoto) -> Bool {
+    static func == (lhs: IncidentPhoto, rhs: IncidentPhoto) -> Bool {
         lhs.url == rhs.url && lhs.captureDate == rhs.captureDate
     }
 }

@@ -17,34 +17,31 @@ final class EditIncidentViewModel {
     var startTime: Date
     /// End time for the incident.
     var endTime: Date
-    /// Whether incident is billable.
-    var billable: Bool
     /// Billing rate input as text.
     var rateText: String
-    /// Project title.
-    var projectTitle: String
-    /// Incident status string.
-    var status: String
     /// Materials used description.
     var materialsUsed: String
+    /// Geographic location where incident occurred.
+    var location: GeoPoint?
     /// Photos selected to represent the "before" state.
     var beforePhotos: [PickedPhoto] = []
     /// Photos selected to represent the "after" state.
     var afterPhotos: [PickedPhoto] = []
-    /// Status options for selection.
-    let statusOptions = ["open", "in_progress", "completed"]
     /// Loaded clients for selection.
     var clients: [Client] = []
+    /// Whether to show the delete confirmation alert.
+    var showingDeleteAlert = false
+    /// Whether to show the location map.
+    var showingLocationMap = false
 
     private let incidentId: String
     private let service: IncidentServiceProtocol
     private let clientService: ClientServiceProtocol
 
-    /// Validation: requires a client, description, and project title.
+    /// Validation: requires a client and description.
     var isValid: Bool {
         !clientId.trimmingCharacters(in: .whitespaces).isEmpty &&
-            !description.trimmingCharacters(in: .whitespaces).isEmpty &&
-            !projectTitle.trimmingCharacters(in: .whitespaces).isEmpty
+            !description.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     init(incident: Incident, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
@@ -56,25 +53,24 @@ final class EditIncidentViewModel {
         areaText = String(incident.area)
         startTime = incident.startTime.dateValue()
         endTime = incident.endTime.dateValue()
-        billable = incident.billable
         rateText = incident.rate.map { String($0) } ?? ""
-        projectTitle = incident.projectTitle
-        status = incident.status
         materialsUsed = incident.materialsUsed ?? ""
+        location = incident.location
     }
 
     /// Saves the updated incident using the service along with new photos.
     func save(beforePhotos: [PickedPhoto], afterPhotos: [PickedPhoto]) async throws {
+        // Try to extract location from new photos if not manually set
+        let finalLocation = location ?? LocationService.extractLocation(from: beforePhotos + afterPhotos)
+
         let input = UpdateIncidentInput(
             clientId: clientId.trimmingCharacters(in: .whitespaces),
             description: description,
             area: Double(areaText) ?? 0,
+            location: finalLocation,
             startTime: startTime,
             endTime: endTime,
-            billable: billable,
             rate: Double(rateText),
-            projectTitle: projectTitle,
-            status: status,
             materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed
         )
         try await service.updateIncident(
@@ -83,6 +79,11 @@ final class EditIncidentViewModel {
             beforePhotos: beforePhotos,
             afterPhotos: afterPhotos
         )
+    }
+
+    /// Deletes the incident via the service.
+    func delete() async throws {
+        try await service.deleteIncident(incidentId)
     }
 
     /// Loads available clients for selection.

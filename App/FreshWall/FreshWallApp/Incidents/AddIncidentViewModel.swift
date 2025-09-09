@@ -1,3 +1,4 @@
+@preconcurrency import FirebaseFirestore
 import Foundation
 import Observation
 
@@ -7,8 +8,6 @@ import Observation
 final class AddIncidentViewModel {
     /// Container for all editable incident fields.
     struct Input {
-        /// Title of the project.
-        var projectTitle: String = ""
         /// Selected client document ID or tag for add-new.
         var clientId: String = ""
         /// Notes describing the incident.
@@ -19,28 +18,26 @@ final class AddIncidentViewModel {
         var startTime: Date = .init()
         /// End time of incident.
         var endTime: Date = .init()
-        /// Whether the incident is billable.
-        var billable: Bool = false
         /// Billing rate as text.
         var rateText: String = ""
-        /// Status of the incident.
-        var status: String = "open"
         /// Materials used description.
         var materialsUsed: String = ""
+        /// Geographic location where incident occurred.
+        var location: GeoPoint?
     }
 
     /// Current input being edited.
     var input = Input()
-    /// Available status options.
-    let statusOptions = ["open", "in_progress", "completed"]
     /// Loaded clients for selection.
     var clients: [Client] = []
+    /// Whether to show the location map.
+    var showingLocationMap = false
     private let clientService: ClientServiceProtocol
     private let service: IncidentServiceProtocol
 
-    /// Validation: requires a non-empty project title.
+    /// Validation: requires a non-empty description.
     var isValid: Bool {
-        !input.projectTitle.trimmingCharacters(in: .whitespaces).isEmpty
+        !input.description.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     init(service: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
@@ -53,16 +50,18 @@ final class AddIncidentViewModel {
         let areaValue = Double(input.areaText) ?? 0
         let rateValue = Double(input.rateText)
         let trimmedId = input.clientId.trimmingCharacters(in: .whitespaces)
+
+        // Try to extract location from photos if not manually set
+        let finalLocation = input.location ?? LocationService.extractLocation(from: beforePhotos + afterPhotos)
+
         let input = AddIncidentInput(
             clientId: trimmedId.isEmpty ? nil : trimmedId,
             description: input.description,
             area: areaValue,
+            location: finalLocation,
             startTime: input.startTime,
             endTime: input.endTime,
-            billable: input.billable,
             rate: rateValue,
-            projectTitle: input.projectTitle,
-            status: input.status,
             materialsUsed: input.materialsUsed.isEmpty ? nil : input.materialsUsed
         )
         try await service.addIncident(
