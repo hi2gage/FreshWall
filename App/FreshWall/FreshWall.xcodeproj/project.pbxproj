@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C4FC57D2E5FF37B004C158A /* TPPDF in Frameworks */ = {isa = PBXBuildFile; productRef = 1C4FC57C2E5FF37B004C158A /* TPPDF */; };
+		1C4FC57F2E5FF388004C158A /* TPPDF in Frameworks */ = {isa = PBXBuildFile; productRef = 1C4FC57E2E5FF388004C158A /* TPPDF */; };
+		1C4FC5812E5FF391004C158A /* TPPDF in Frameworks */ = {isa = PBXBuildFile; productRef = 1C4FC5802E5FF391004C158A /* TPPDF */; };
 		1C54365D2DE224C600153F4F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1C54365C2DE224C600153F4F /* FirebaseAuth */; };
 		1C54365F2DE224C600153F4F /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 1C54365E2DE224C600153F4F /* FirebaseFirestore */; };
 		1C5436612DE224C600153F4F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1C5436602DE224C600153F4F /* FirebaseStorage */; };
@@ -117,6 +120,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C4FC57D2E5FF37B004C158A /* TPPDF in Frameworks */,
 				1C54365D2DE224C600153F4F /* FirebaseAuth in Frameworks */,
 				1C54365F2DE224C600153F4F /* FirebaseFirestore in Frameworks */,
 				1C5436612DE224C600153F4F /* FirebaseStorage in Frameworks */,
@@ -142,6 +146,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C4FC5812E5FF391004C158A /* TPPDF in Frameworks */,
 				1CDE5E082E0A72C0005B35FF /* FirebaseAuth in Frameworks */,
 				1CDE5E092E0A72C0005B35FF /* FirebaseFirestore in Frameworks */,
 				1CDE5E0A2E0A72C0005B35FF /* FirebaseStorage in Frameworks */,
@@ -153,6 +158,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C4FC57F2E5FF388004C158A /* TPPDF in Frameworks */,
 				1CDE5E1C2E0A72C9005B35FF /* FirebaseAuth in Frameworks */,
 				1CDE5E1D2E0A72C9005B35FF /* FirebaseFirestore in Frameworks */,
 				1CDE5E1E2E0A72C9005B35FF /* FirebaseStorage in Frameworks */,
@@ -243,6 +249,7 @@
 				1C54365E2DE224C600153F4F /* FirebaseFirestore */,
 				1C5436602DE224C600153F4F /* FirebaseStorage */,
 				1C5437172DE2558400153F4F /* FirebaseFunctions */,
+				1C4FC57C2E5FF37B004C158A /* TPPDF */,
 			);
 			productName = FreshWall;
 			productReference = 1C5435F62DE2223F00153F4F /* FreshWall.app */;
@@ -316,6 +323,7 @@
 				1CDE5E032E0A72C0005B35FF /* FirebaseFirestore */,
 				1CDE5E042E0A72C0005B35FF /* FirebaseStorage */,
 				1CDE5E052E0A72C0005B35FF /* FirebaseFunctions */,
+				1C4FC5802E5FF391004C158A /* TPPDF */,
 			);
 			productName = FreshWall;
 			productReference = 1CDE5E112E0A72C0005B35FF /* FreshWall-Beta.app */;
@@ -343,6 +351,7 @@
 				1CDE5E172E0A72C9005B35FF /* FirebaseFirestore */,
 				1CDE5E182E0A72C9005B35FF /* FirebaseStorage */,
 				1CDE5E192E0A72C9005B35FF /* FirebaseFunctions */,
+				1C4FC57E2E5FF388004C158A /* TPPDF */,
 			);
 			productName = FreshWall;
 			productReference = 1CDE5E252E0A72C9005B35FF /* FreshWall-Dev.app */;
@@ -383,6 +392,7 @@
 			packageReferences = (
 				1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				1C54371C2DE2AB7100153F4F /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				1C4FC57B2E5FF37B004C158A /* XCRemoteSwiftPackageReference "TPPDF" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1C5435F72DE2223F00153F4F /* Products */;
@@ -830,7 +840,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = FreshWallApp/FreshWall.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = KJ66BJ6KYX;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -874,7 +884,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = FreshWallApp/FreshWall.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = KJ66BJ6KYX;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -1116,7 +1126,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = FreshWallApp/FreshWall.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = KJ66BJ6KYX;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1309,6 +1319,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1C4FC57B2E5FF37B004C158A /* XCRemoteSwiftPackageReference "TPPDF" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/techprimate/TPPDF";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.1;
+			};
+		};
 		1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -1344,6 +1362,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1C4FC57C2E5FF37B004C158A /* TPPDF */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1C4FC57B2E5FF37B004C158A /* XCRemoteSwiftPackageReference "TPPDF" */;
+			productName = TPPDF;
+		};
+		1C4FC57E2E5FF388004C158A /* TPPDF */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1C4FC57B2E5FF37B004C158A /* XCRemoteSwiftPackageReference "TPPDF" */;
+			productName = TPPDF;
+		};
+		1C4FC5802E5FF391004C158A /* TPPDF */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1C4FC57B2E5FF37B004C158A /* XCRemoteSwiftPackageReference "TPPDF" */;
+			productName = TPPDF;
+		};
 		1C54365C2DE224C600153F4F /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

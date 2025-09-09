@@ -46,14 +46,10 @@ struct IncidentListCell: View {
             }
 
             VStack(alignment: .leading, spacing: Constants.verticalSpacing) {
-                Text(incident.projectTitle)
+                Text(incident.description.prefix(50))
                     .font(.headline)
-                HStack(spacing: Constants.cellSpacing) {
-                    Text(incident.status.capitalized)
-                        .font(.subheadline)
-                        .padding(Constants.smallPadding)
-                        .background(statusColor.opacity(Constants.statusOpacity))
-                        .cornerRadius(Constants.smallCornerRadius)
+                    .lineLimit(2)
+                HStack {
                     Spacer()
                     Text(incident.startTime.dateValue(), style: .date)
                         .font(.subheadline)
@@ -66,15 +62,6 @@ struct IncidentListCell: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(UIColor.secondarySystemBackground))
         .cornerRadius(Constants.largeCornerRadius)
-    }
-
-    private var statusColor: Color {
-        switch incident.status.lowercased() {
-        case "completed": .green
-        case "in_progress": .orange
-        case "open": .blue
-        default: .gray
-        }
     }
 }
 

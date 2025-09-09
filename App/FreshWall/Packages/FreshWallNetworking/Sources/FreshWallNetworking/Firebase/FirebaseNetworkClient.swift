@@ -37,7 +37,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     // MARK: - Authentication
 
     public func signIn(email: String, password: String) async throws -> AuthenticatedUser {
-        guard let auth = auth else { throw NetworkError.notAuthenticated }
+        guard let auth else { throw NetworkError.notAuthenticated }
 
         do {
             let result = try await auth.signIn(withEmail: email, password: password)
@@ -48,7 +48,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func signUp(email: String, password: String) async throws -> AuthenticatedUser {
-        guard let auth = auth else { throw NetworkError.notAuthenticated }
+        guard let auth else { throw NetworkError.notAuthenticated }
 
         do {
             let result = try await auth.createUser(withEmail: email, password: password)
@@ -59,7 +59,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func signOut() async throws {
-        guard let auth = auth else { throw NetworkError.notAuthenticated }
+        guard let auth else { throw NetworkError.notAuthenticated }
 
         do {
             try auth.signOut()
@@ -77,7 +77,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     // MARK: - Team Operations
 
     public func createTeam(name: String, userId _: String, userName: String) async throws -> String {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             let data = [
@@ -99,7 +99,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func getTeam(teamId: String) async throws -> Team {
-        guard let firestore = firestore else { throw NetworkError.notAuthenticated }
+        guard let firestore else { throw NetworkError.notAuthenticated }
 
         do {
             let document = try await firestore.collection("teams").document(teamId).getDocument()
@@ -116,7 +116,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func getTeamsForUser(userId: String) async throws -> [Team] {
-        guard let firestore = firestore else { throw NetworkError.notAuthenticated }
+        guard let firestore else { throw NetworkError.notAuthenticated }
 
         do {
             // Query all teams where the user exists
@@ -147,7 +147,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     // MARK: - User Operations
 
     public func createUser(userId: String, email: String, name: String, teamId: String, role: UserRole) async throws {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             let data: [String: Any] = [
@@ -165,7 +165,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func getUser(userId: String, teamId: String) async throws -> User {
-        guard let firestore = firestore else { throw NetworkError.notAuthenticated }
+        guard let firestore else { throw NetworkError.notAuthenticated }
 
         do {
             let document = try await firestore
@@ -187,7 +187,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func getUsersForTeam(teamId: String) async throws -> [User] {
-        guard let firestore = firestore else { throw NetworkError.notAuthenticated }
+        guard let firestore else { throw NetworkError.notAuthenticated }
 
         do {
             let snapshot = try await firestore
@@ -206,7 +206,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func updateUser(userId: String, teamId: String, updates: UserUpdate) async throws {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             var data: [String: Any] = [
@@ -229,7 +229,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func deleteUser(userId: String, teamId: String) async throws {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             let data = [
@@ -246,7 +246,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     // MARK: - Client Operations
 
     public func createClient(teamId: String, client: ClientCreate) async throws -> String {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             var data: [String: Any] = [
@@ -272,7 +272,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func getClient(clientId: String, teamId: String) async throws -> Client {
-        guard let firestore = firestore else { throw NetworkError.notAuthenticated }
+        guard let firestore else { throw NetworkError.notAuthenticated }
 
         do {
             let document = try await firestore
@@ -294,7 +294,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func getClientsForTeam(teamId: String) async throws -> [Client] {
-        guard let firestore = firestore else { throw NetworkError.notAuthenticated }
+        guard let firestore else { throw NetworkError.notAuthenticated }
 
         do {
             let snapshot = try await firestore
@@ -314,7 +314,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func updateClient(clientId: String, teamId: String, updates: ClientUpdate) async throws {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             var data: [String: Any] = [
@@ -337,7 +337,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func deleteClient(clientId: String, teamId: String) async throws {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             let data = [
@@ -354,7 +354,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     // MARK: - Incident Operations
 
     public func createIncident(teamId: String, incident: IncidentCreate) async throws -> String {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             let data = mapIncidentCreateToFirestore(teamId: teamId, incident: incident)
@@ -372,7 +372,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func getIncident(incidentId: String, teamId: String) async throws -> Incident {
-        guard let firestore = firestore else { throw NetworkError.notAuthenticated }
+        guard let firestore else { throw NetworkError.notAuthenticated }
 
         do {
             let document = try await firestore
@@ -394,7 +394,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func getIncidentsForClient(clientId: String, teamId: String) async throws -> [Incident] {
-        guard let firestore = firestore else { throw NetworkError.notAuthenticated }
+        guard let firestore else { throw NetworkError.notAuthenticated }
 
         do {
             let clientRef = firestore
@@ -418,7 +418,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func getIncidentsForTeam(teamId: String) async throws -> [Incident] {
-        guard let firestore = firestore else { throw NetworkError.notAuthenticated }
+        guard let firestore else { throw NetworkError.notAuthenticated }
 
         do {
             let snapshot = try await firestore
@@ -435,7 +435,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func updateIncident(incidentId: String, teamId: String, updates: IncidentUpdate) async throws {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             let data = mapIncidentUpdateToFirestore(incidentId: incidentId, teamId: teamId, updates: updates)
@@ -446,7 +446,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func deleteIncident(incidentId: String, teamId: String) async throws {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             let data = [
@@ -463,7 +463,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     // MARK: - Storage Operations
 
     public func uploadImage(data: Data, path: String) async throws -> URL {
-        guard let storage = storage else { throw NetworkError.notAuthenticated }
+        guard let storage else { throw NetworkError.notAuthenticated }
 
         do {
             let storageRef = storage.reference().child(path)
@@ -480,7 +480,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func deleteImage(at url: URL) async throws {
-        guard let storage = storage else { throw NetworkError.notAuthenticated }
+        guard let storage else { throw NetworkError.notAuthenticated }
 
         do {
             let storageRef = storage.reference(forURL: url.absoluteString)
@@ -493,7 +493,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     // MARK: - Invite Operations
 
     public func createInviteCode(teamId: String, createdBy _: String) async throws -> String {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             let data = [
@@ -514,7 +514,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func validateInviteCode(_ code: String) async throws -> InviteCodeInfo {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             let data = ["code": code]
@@ -533,7 +533,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     public func joinTeamWithCode(_ code: String, userId _: String, userName: String, userEmail _: String) async throws {
-        guard let functions = functions else { throw NetworkError.notAuthenticated }
+        guard let functions else { throw NetworkError.notAuthenticated }
 
         do {
             let data = [
@@ -627,7 +627,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     private func mapIncidentFromFirestore(document: DocumentSnapshot, data: [String: Any], teamId _: String) async throws -> Incident {
-        guard let firestore = firestore else { throw NetworkError.notAuthenticated }
+        guard let firestore else { throw NetworkError.notAuthenticated }
         guard let projectTitle = data["projectTitle"] as? String,
               let description = data["description"] as? String,
               let area = data["area"] as? Double,
@@ -647,7 +647,7 @@ public final class FirebaseNetworkClient: NetworkClient {
 
         // Map worker references to IDs
         let workerRefs = data["workerRefs"] as? [DocumentReference] ?? []
-        let workerIds = workerRefs.map { $0.documentID }
+        let workerIds = workerRefs.map(\.documentID)
 
         // Map photos
         let beforePhotos = try mapPhotosFromArray(data["beforePhotos"] as? [[String: Any]] ?? [])
@@ -691,7 +691,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     private func mapPhotosFromArray(_ array: [[String: Any]]) throws -> [IncidentPhoto] {
-        return try array.compactMap { photoData in
+        try array.compactMap { photoData in
             guard let id = photoData["id"] as? String,
                   let url = photoData["url"] as? String else {
                 throw NetworkError.decodingError(NSError(domain: "FirebaseMapper", code: 0))
@@ -718,7 +718,7 @@ public final class FirebaseNetworkClient: NetworkClient {
     }
 
     private func mapIncidentCreateToFirestore(teamId: String, incident: IncidentCreate) -> [String: Any] {
-        guard let firestore = firestore else { return [:] }
+        guard let firestore else { return [:] }
 
         var data: [String: Any] = [
             "teamId": teamId,

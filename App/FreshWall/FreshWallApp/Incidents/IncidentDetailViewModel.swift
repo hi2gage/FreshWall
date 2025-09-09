@@ -55,12 +55,10 @@ final class IncidentDetailViewModel {
             clientId: selectedClientId ?? incident.clientRef?.documentID,
             description: incident.description,
             area: incident.area,
+            location: incident.location,
             startTime: incident.startTime.dateValue(),
             endTime: incident.endTime.dateValue(),
-            billable: incident.billable,
             rate: incident.rate,
-            projectTitle: incident.projectTitle,
-            status: incident.status,
             materialsUsed: incident.materialsUsed
         )
 
@@ -85,12 +83,10 @@ final class IncidentDetailViewModel {
             clientId: selectedClientId ?? incident.clientRef?.documentID,
             description: incident.description,
             area: incident.area,
+            location: incident.location,
             startTime: incident.startTime.dateValue(),
             endTime: incident.endTime.dateValue(),
-            billable: incident.billable,
             rate: incident.rate,
-            projectTitle: incident.projectTitle,
-            status: incident.status,
             materialsUsed: incident.materialsUsed
         )
 
@@ -128,12 +124,10 @@ final class IncidentDetailViewModel {
             clientId: selectedClientId ?? incident.clientRef?.documentID,
             description: incident.description,
             area: incident.area,
+            location: incident.location,
             startTime: incident.startTime.dateValue(),
             endTime: incident.endTime.dateValue(),
-            billable: incident.billable,
             rate: incident.rate,
-            projectTitle: incident.projectTitle,
-            status: incident.status,
             materialsUsed: incident.materialsUsed
         )
 

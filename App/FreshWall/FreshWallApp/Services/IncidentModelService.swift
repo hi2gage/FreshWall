@@ -19,6 +19,9 @@ protocol IncidentModelServiceProtocol: Sendable {
 
     /// Apply the provided data updates to an existing incident document.
     func updateIncident(id: String, teamId: String, data: [String: Any]) async throws
+
+    /// Deletes an existing incident document.
+    func deleteIncident(id: String, teamId: String) async throws
 }
 
 // MARK: - IncidentModelService
@@ -59,5 +62,14 @@ struct IncidentModelService: IncidentModelServiceProtocol {
             .collection("incidents")
             .document(id)
         try await ref.updateData(data)
+    }
+
+    func deleteIncident(id: String, teamId: String) async throws {
+        let ref = firestore
+            .collection("teams")
+            .document(teamId)
+            .collection("incidents")
+            .document(id)
+        try await ref.delete()
     }
 }

@@ -98,6 +98,8 @@ struct IncidentsListView: View {
 
 @MainActor
 private class PreviewIncidentService: IncidentServiceProtocol {
+    func deleteIncident(_: String) async throws {}
+
     func fetchIncidents() async throws -> [Incident] { [] }
     func addIncident(_: Incident) async throws {}
     func addIncident(_: AddIncidentInput, beforePhotos _: [PickedPhoto], afterPhotos _: [PickedPhoto]) async throws {}
@@ -113,6 +115,8 @@ private class PreviewIncidentService: IncidentServiceProtocol {
 
 @MainActor
 private class PreviewClientService: ClientServiceProtocol {
+    func deleteClient(_: String) async throws {}
+
     func fetchClients() async throws -> [Client] {
         [Client(
             id: "client1",
