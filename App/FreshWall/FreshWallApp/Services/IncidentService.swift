@@ -23,6 +23,8 @@ protocol IncidentServiceProtocol: Sendable {
         beforePhotos: [PickedPhoto],
         afterPhotos: [PickedPhoto]
     ) async throws
+    /// Deletes an existing incident.
+    func deleteIncident(_ incidentId: String) async throws
 }
 
 // MARK: - IncidentService
@@ -105,11 +107,10 @@ struct IncidentService: IncidentServiceProtocol {
 
         let newIncident = IncidentDTO(
             id: newDoc.documentID,
-            projectTitle: input.projectTitle,
             clientRef: clientRef,
-            workerRefs: [],
             description: input.description,
             area: input.area,
+            location: input.location,
             createdAt: Timestamp(date: Date()),
             startTime: Timestamp(date: input.startTime),
             endTime: Timestamp(date: input.endTime),
@@ -118,9 +119,7 @@ struct IncidentService: IncidentServiceProtocol {
             createdBy: createdByRef,
             lastModifiedBy: nil,
             lastModifiedAt: nil,
-            billable: input.billable,
             rate: input.rate,
-            status: input.status,
             materialsUsed: input.materialsUsed
         )
         try await modelService.setIncident(newIncident, at: newDoc)
@@ -147,19 +146,21 @@ struct IncidentService: IncidentServiceProtocol {
             "area": input.area,
             "startTime": Timestamp(date: input.startTime),
             "endTime": Timestamp(date: input.endTime),
-            "billable": input.billable,
-            "status": input.status,
             "lastModifiedBy": modifiedByRef,
             "lastModifiedAt": FieldValue.serverTimestamp(),
         ]
+
+        if let location = input.location {
+            data["location"] = location
+        } else {
+            data["location"] = FieldValue.delete()
+        }
 
         if let rate = input.rate {
             data["rate"] = rate
         } else {
             data["rate"] = FieldValue.delete()
         }
-
-        data["projectTitle"] = input.projectTitle
 
         if let materialsUsed = input.materialsUsed {
             data["materialsUsed"] = materialsUsed
@@ -194,6 +195,12 @@ struct IncidentService: IncidentServiceProtocol {
         }
 
         try await modelService.updateIncident(id: incidentId, teamId: teamId, data: data)
+    }
+
+    /// Deletes an existing incident document from Firestore.
+    func deleteIncident(_ incidentId: String) async throws {
+        let teamId = session.teamId
+        try await modelService.deleteIncident(id: incidentId, teamId: teamId)
     }
 }
 

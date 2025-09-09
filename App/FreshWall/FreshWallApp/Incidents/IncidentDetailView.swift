@@ -21,13 +21,6 @@ struct IncidentDetailView: View {
     var body: some View {
         List {
             Section("Project") {
-                HStack {
-                    Text("Project Title")
-                    Spacer()
-                    Text(viewModel.incident.projectTitle)
-                        .foregroundColor(viewModel.incident.projectTitle.isEmpty ? .secondary : .primary)
-                }
-
                 AddableAreaCell(
                     area: $viewModel.incident.area,
                     onSave: {
@@ -41,13 +34,14 @@ struct IncidentDetailView: View {
                         await viewModel.updateIncident()
                     }
                 )
+            }
 
-                HStack {
-                    Text("Status")
-                    Spacer()
-                    Text(viewModel.incident.status.capitalized)
+            if let location = viewModel.incident.location {
+                Section("Location") {
+                    Text("📍 \(location.shortDisplayString)")
                 }
             }
+
             Section("Photos") {
                 if viewModel.incident.beforePhotos.isEmpty {
                     PhotoSourcePicker(
@@ -191,10 +185,7 @@ struct IncidentDetailView: View {
 //        createdBy: dummyRef,
 //        lastModifiedBy: nil,
 //        lastModifiedAt: nil,
-//        billable: true,
 //        rate: 75.0,
-//        projectTitle: "Front Wall Project",
-//        status: "completed",
 //        materialsUsed: "Paint, brushes"
 //    )
 //    FreshWallPreview {

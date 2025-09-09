@@ -5,6 +5,7 @@ import SwiftUI
 /// View for editing an existing client, injecting a service conforming to `ClientServiceProtocol`.
 struct EditClientView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: EditClientViewModel
 
     init(viewModel: EditClientViewModel) {
@@ -19,6 +20,13 @@ struct EditClientView: View {
             Section("Notes") {
                 TextEditor(text: $viewModel.notes)
                     .frame(minHeight: 100)
+            }
+            Section {
+                Button("Delete Client") {
+                    viewModel.showingDeleteAlert = true
+                }
+                .foregroundColor(.red)
+                .frame(maxWidth: .infinity, alignment: .center)
             }
         }
         .navigationTitle("Edit Client")
@@ -36,6 +44,22 @@ struct EditClientView: View {
                 }
                 .disabled(!viewModel.isValid)
             }
+        }
+        .alert("Delete Client", isPresented: $viewModel.showingDeleteAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                Task {
+                    do {
+                        try await viewModel.delete()
+                        // Pop twice: Edit → Detail → List
+                        routerPath.pop(count: 2)
+                    } catch {
+                        // Handle error if needed
+                    }
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete this client? This action cannot be undone.")
         }
     }
 }
@@ -59,6 +83,8 @@ private class PreviewClientService: ClientServiceProtocol {
     func addClient(_: AddClientInput) async throws -> String { "preview-id" }
 
     func updateClient(_: String, with _: UpdateClientInput) async throws {}
+
+    func deleteClient(_: String) async throws {}
 }
 
 #Preview {

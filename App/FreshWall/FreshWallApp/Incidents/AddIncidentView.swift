@@ -20,20 +20,9 @@ struct AddIncidentView: View {
 
     var body: some View {
         Form {
-            Section(header: Text("Project Title")) {
-                TextField("Project Title", text: $viewModel.input.projectTitle)
-            }
             Section(header: Text("Area (sq ft)")) {
                 TextField("Area", text: $viewModel.input.areaText)
                     .keyboardType(.decimalPad)
-            }
-            Section(header: Text("Status")) {
-                Picker("Status", selection: $viewModel.input.status) {
-                    ForEach(viewModel.statusOptions, id: \.self) { option in
-                        Text(option.capitalized).tag(option)
-                    }
-                }
-                .pickerStyle(.segmented)
             }
             if !beforePhotos.isEmpty {
                 Section("Before Photos") {
@@ -104,11 +93,24 @@ struct AddIncidentView: View {
                 TextEditor(text: $viewModel.input.description)
                     .frame(minHeight: 100)
             }
-            Section {
-                Toggle("Billable", isOn: $viewModel.input.billable)
-                if viewModel.input.billable {
-                    TextField("Rate", text: $viewModel.input.rateText)
-                        .keyboardType(.decimalPad)
+            Section("Rate") {
+                TextField("Rate", text: $viewModel.input.rateText)
+                    .keyboardType(.decimalPad)
+            }
+            Section("Location") {
+                if let location = viewModel.input.location {
+                    HStack {
+                        Text("📍 \(location.shortDisplayString)")
+                        Spacer()
+                        Button("Edit") {
+                            viewModel.showingLocationMap = true
+                        }
+                    }
+                } else {
+                    Button("📍 Add Location") {
+                        viewModel.showingLocationMap = true
+                    }
+                    .foregroundColor(.blue)
                 }
             }
             Section(header: Text("Materials Used")) {
@@ -131,6 +133,9 @@ struct AddIncidentView: View {
                 }
                 .disabled(!viewModel.isValid)
             }
+        }
+        .sheet(isPresented: $viewModel.showingLocationMap) {
+            LocationMapView(location: $viewModel.input.location)
         }
         .task {
             await viewModel.loadClients()
@@ -156,6 +161,7 @@ private class PreviewIncidentService: IncidentServiceProtocol {
         beforePhotos _: [PickedPhoto],
         afterPhotos _: [PickedPhoto]
     ) async throws {}
+    func deleteIncident(_: String) async throws {}
 }
 
 // MARK: - PreviewClientService
@@ -175,8 +181,8 @@ private class PreviewClientService: ClientServiceProtocol {
     }
 
     func addClient(_: AddClientInput) async throws -> String { "mock-id" }
-
     func updateClient(_: String, with _: UpdateClientInput) async throws {}
+    func deleteClient(_: String) async throws {}
 }
 
 #Preview {

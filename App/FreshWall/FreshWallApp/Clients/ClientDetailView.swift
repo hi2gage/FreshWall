@@ -8,6 +8,7 @@ struct ClientDetailView: View {
     let clientService: ClientServiceProtocol
     @Environment(RouterPath.self) private var routerPath
     @State private var incidents: [Incident] = []
+    @State private var showingExportOptions = false
 
     init(
         client: Client,
@@ -27,6 +28,63 @@ struct ClientDetailView: View {
         if let updated = updatedClients.first(where: { $0.id == id }) {
             client = updated
         }
+    }
+
+    /// Exports an invoice PDF for billable incidents.
+    private func exportInvoice() {
+        let billableIncidents = incidents
+        let reportPeriod = getCurrentMonthYear()
+
+        let pdfData = PDFService.generateClientInvoice(
+            client: client,
+            incidents: billableIncidents,
+            reportPeriod: reportPeriod
+        )
+
+        sharePDF(data: pdfData, filename: "\(client.name) Invoice \(reportPeriod)")
+    }
+
+    /// Exports a detailed incident tracking report PDF.
+    private func exportDetailedReport() {
+        let reportPeriod = getCurrentMonthYear()
+
+        let pdfData = PDFService.generateIncidentReport(
+            client: client,
+            incidents: incidents,
+            reportPeriod: reportPeriod
+        )
+
+        sharePDF(data: pdfData, filename: "\(client.name) Incident Report \(reportPeriod)")
+    }
+
+    /// Presents a share sheet for the PDF.
+    private func sharePDF(data: Data, filename: String) {
+        // Create a temporary URL for the PDF
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(filename).pdf")
+
+        do {
+            try data.write(to: tempURL)
+
+            // Present share sheet
+            let activityViewController = UIActivityViewController(
+                activityItems: [tempURL],
+                applicationActivities: nil
+            )
+
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                window.rootViewController?.present(activityViewController, animated: true)
+            }
+        } catch {
+            print("Error sharing PDF: \(error)")
+        }
+    }
+
+    /// Gets the current month and year for report naming.
+    private func getCurrentMonthYear() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM yyyy"
+        return formatter.string(from: Date())
     }
 
     var body: some View {
@@ -70,10 +128,10 @@ struct ClientDetailView: View {
                     Text("No incidents for this client.")
                         .italic()
                 } else {
-                    ForEach(incidents) { incident in
-                        Button(incident.projectTitle) {
-                            routerPath.push(.incidentDetail(incident: incident))
-                        }
+                    ForEach(incidents) { _ in
+//                        Button(incident.id) {
+//                            routerPath.push(.incidentDetail(incident: incident))
+//                        }
                     }
                 }
             }
@@ -95,6 +153,23 @@ struct ClientDetailView: View {
             ToolbarItem(placement: .primaryAction) {
                 Button("Edit") { routerPath.push(.editClient(client: client)) }
             }
+            ToolbarItem(placement: .secondaryAction) {
+                Button("Export PDF") {
+                    showingExportOptions = true
+                }
+                .disabled(incidents.isEmpty)
+            }
+        }
+        .confirmationDialog("Export Options", isPresented: $showingExportOptions) {
+            Button("Invoice (Billable Only)") {
+                exportInvoice()
+            }
+            Button("Detailed Incident Report") {
+                exportDetailedReport()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Choose the type of PDF report to generate for \(client.name)")
         }
         .onAppear {
             Task { await reloadClient() }

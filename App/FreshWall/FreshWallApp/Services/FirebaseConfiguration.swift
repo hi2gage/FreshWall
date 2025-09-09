@@ -8,7 +8,7 @@ import Foundation
 /// Handles emulator setup for Firebase services.
 enum FirebaseConfiguration {
     /// IP address of the host running Firebase emulators when testing on device.
-    static let deviceHostIP = "127.0.0.1"
+    static let deviceHostIP = "192.168.1.234"
 
     /// Configure all Firebase services to connect to local emulators.
     private static func configureEmulators() {

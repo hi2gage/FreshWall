@@ -20,6 +20,9 @@ protocol ClientModelServiceProtocol: Sendable {
     /// Updates an existing client document with the supplied data.
     func updateClient(id: String, teamId: String, data: [String: Any]) async throws
 
+    /// Deletes an existing client document.
+    func deleteClient(id: String, teamId: String) async throws
+
     /// Returns a reference to a specific client document.
     func clientDocument(teamId: String, clientId: String) -> DocumentReference
 }
@@ -63,6 +66,15 @@ struct ClientModelService: ClientModelServiceProtocol {
             .collection("clients")
             .document(id)
         try await ref.updateData(data)
+    }
+
+    func deleteClient(id: String, teamId: String) async throws {
+        let ref = firestore
+            .collection("teams")
+            .document(teamId)
+            .collection("clients")
+            .document(id)
+        try await ref.delete()
     }
 
     func clientDocument(teamId: String, clientId: String) -> DocumentReference {
