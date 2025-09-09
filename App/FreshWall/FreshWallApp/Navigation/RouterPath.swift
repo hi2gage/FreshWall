@@ -18,6 +18,13 @@ final class RouterPath {
     func pop() {
         _ = path.popLast()
     }
+
+    /// Pops multiple destinations from the navigation path.
+    func pop(count: Int) {
+        for _ in 0 ..< min(count, path.count) {
+            _ = path.popLast()
+        }
+    }
 }
 
 // MARK: - RouterDestination

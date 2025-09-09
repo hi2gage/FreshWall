@@ -12,6 +12,8 @@ protocol ClientServiceProtocol: Sendable {
     func addClient(_ input: AddClientInput) async throws -> String
     /// Updates an existing client using an input value object.
     func updateClient(_ clientId: String, with input: UpdateClientInput) async throws
+    /// Deletes an existing client.
+    func deleteClient(_ clientId: String) async throws
 }
 
 // MARK: - ClientService
@@ -75,6 +77,12 @@ struct ClientService: ClientServiceProtocol {
         }
 
         try await modelService.updateClient(id: clientId, teamId: teamId, data: data)
+    }
+
+    /// Deletes an existing client document from Firestore.
+    func deleteClient(_ clientId: String) async throws {
+        let teamId = session.teamId
+        try await modelService.deleteClient(id: clientId, teamId: teamId)
     }
 }
 

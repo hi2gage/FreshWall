@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Taking photos of the graffiti</string>
 	<key>FIREBASE_GOOGLE_SERVICE_PLIST</key>
 	<string>$(FIREBASE_CONFIG_FILE)</string>
 </dict>

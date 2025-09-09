@@ -1,5 +1,5 @@
 {
-  "originHash" : "e930e24c9c553650612765cdca20ed1a1250fa5cff303bbfe41305b5b6feb700",
+  "originHash" : "aa406d40f5f0a20cea9c309ac3a116ad6ea5f17f66c22b9ef09f1e589666dc6c",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -125,6 +125,15 @@
       "state" : {
         "revision" : "8545ddf4de043e6f2051c5cf204f39ef778ebf6b",
         "version" : "0.59.1"
+      }
+    },
+    {
+      "identity" : "tppdf",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/techprimate/TPPDF",
+      "state" : {
+        "revision" : "975049c0e1022922580b7927e030901604024925",
+        "version" : "2.6.1"
       }
     }
   ],
