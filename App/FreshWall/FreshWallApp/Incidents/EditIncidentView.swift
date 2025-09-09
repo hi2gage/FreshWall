@@ -7,6 +7,7 @@ import SwiftUI
 /// View for editing an existing incident.
 struct EditIncidentView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: EditIncidentViewModel
     private let addNewTag = "__ADD_NEW__"
 
@@ -51,23 +52,9 @@ struct EditIncidentView: View {
                     displayedComponents: [.date, .hourAndMinute]
                 )
             }
-            Section {
-                Toggle("Billable", isOn: $viewModel.billable)
-                if viewModel.billable {
-                    TextField("Rate", text: $viewModel.rateText)
-                        .keyboardType(.decimalPad)
-                }
-            }
-            Section("Project Title") {
-                TextField("Project Title", text: $viewModel.projectTitle)
-            }
-            Section("Status") {
-                Picker("Status", selection: $viewModel.status) {
-                    ForEach(viewModel.statusOptions, id: \.self) { option in
-                        Text(option.capitalized).tag(option)
-                    }
-                }
-                .pickerStyle(.segmented)
+            Section("Rate") {
+                TextField("Rate", text: $viewModel.rateText)
+                    .keyboardType(.decimalPad)
             }
             Section("Materials Used") {
                 TextEditor(text: $viewModel.materialsUsed)
@@ -111,6 +98,29 @@ struct EditIncidentView: View {
             PhotoSourcePicker(selection: $viewModel.afterPhotos, matching: .images, photoLibrary: .shared()) {
                 Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
             }
+            Section("Location") {
+                if let location = viewModel.location {
+                    HStack {
+                        Text("📍 \(location.shortDisplayString)")
+                        Spacer()
+                        Button("Edit") {
+                            viewModel.showingLocationMap = true
+                        }
+                    }
+                } else {
+                    Button("📍 Add Location") {
+                        viewModel.showingLocationMap = true
+                    }
+                    .foregroundColor(.blue)
+                }
+            }
+            Section {
+                Button("Delete Incident") {
+                    viewModel.showingDeleteAlert = true
+                }
+                .foregroundColor(.red)
+                .frame(maxWidth: .infinity, alignment: .center)
+            }
         }
         .navigationTitle("Edit Incident")
         .toolbar {
@@ -128,6 +138,25 @@ struct EditIncidentView: View {
                 }
                 .disabled(!viewModel.isValid)
             }
+        }
+        .alert("Delete Incident", isPresented: $viewModel.showingDeleteAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                Task {
+                    do {
+                        try await viewModel.delete()
+                        // Pop twice: Edit → Detail → List
+                        routerPath.pop(count: 2)
+                    } catch {
+                        // Handle error if needed
+                    }
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete this incident? This action cannot be undone.")
+        }
+        .sheet(isPresented: $viewModel.showingLocationMap) {
+            LocationMapView(location: $viewModel.location)
         }
         .task {
             await viewModel.loadClients()
@@ -154,6 +183,8 @@ private class PreviewClientService: ClientServiceProtocol {
     func addClient(_: AddClientInput) async throws -> String { "mock-id" }
 
     func updateClient(_: String, with _: UpdateClientInput) async throws {}
+
+    func deleteClient(_: String) async throws {}
 }
 
 // MARK: - PreviewIncidentService
@@ -174,16 +205,17 @@ private class PreviewIncidentService: IncidentServiceProtocol {
         beforePhotos _: [PickedPhoto],
         afterPhotos _: [PickedPhoto]
     ) async throws {}
+
+    func deleteIncident(_: String) async throws {}
 }
 
 #Preview {
     let incident = Incident(
         id: "inc1",
-        projectTitle: "",
         clientRef: Firestore.firestore().document("teams/t/clients/client1"),
-        workerRefs: [],
         description: "Some incident",
         area: 10,
+        location: GeoPoint(latitude: 37.7749, longitude: -122.4194),
         createdAt: .init(),
         startTime: .init(),
         endTime: .init(),
@@ -192,9 +224,7 @@ private class PreviewIncidentService: IncidentServiceProtocol {
         createdBy: Firestore.firestore().document("teams/t/users/u"),
         lastModifiedBy: nil,
         lastModifiedAt: nil,
-        billable: false,
         rate: nil,
-        status: "open",
         materialsUsed: nil
     )
     let service = PreviewIncidentService()

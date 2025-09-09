@@ -26,34 +26,48 @@ struct UserService {
     ) async throws -> UserDTO {
         let authResult = try await auth.createUser(withEmail: email, password: password)
         _ = authResult.user
+        let user = authResult.user
 
-        let result = try await functions
-            .httpsCallable("createTeamCreateUser")
-            .call([
-                "email": email,
-                "teamName": teamName,
-                "displayName": displayName,
-            ])
+        do {
+            let result = try await functions
+                .httpsCallable("createTeamCreateUser")
+                .call([
+                    "email": email,
+                    "teamName": teamName,
+                    "displayName": displayName,
+                ])
 
-        guard
-            let data = result.data as? [String: Any],
-            let teamId = data["teamId"] as? String,
-            let teamCode = data["teamCode"] as? String else {
-            throw NSError(
-                domain: "UserService",
-                code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid response from createTeamCreateUser function"]
+            guard
+                let data = result.data as? [String: Any],
+                let teamId = data["teamId"] as? String,
+                let teamCode = data["teamCode"] as? String else {
+                throw NSError(
+                    domain: "UserService",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "Invalid response from createTeamCreateUser function"]
+                )
+            }
+
+            return UserDTO(
+                id: nil,
+                displayName: displayName,
+                email: email,
+                role: .lead,
+                isDeleted: false,
+                deletedAt: nil
             )
-        }
+        } catch {
+            // If team creation fails, clean up the created user
+            do {
+                try await user.delete()
+            } catch {
+                // Log the cleanup failure but still throw the original error
+                print("Warning: Failed to delete user after team creation failure: \(error)")
+            }
 
-        return UserDTO(
-            id: nil,
-            displayName: displayName,
-            email: email,
-            role: .lead,
-            isDeleted: false,
-            deletedAt: nil
-        )
+            // Re-throw the original error
+            throw error
+        }
     }
 
     /// Creates a new Firebase Auth user and joins an existing team.
@@ -71,32 +85,45 @@ struct UserService {
         teamCode: String
     ) async throws -> UserDTO {
         let authResult = try await auth.createUser(withEmail: email, password: password)
-        _ = authResult.user
+        let user = authResult.user
 
-        let result = try await functions
-            .httpsCallable("joinTeamCreateUser")
-            .call([
-                "email": email,
-                "teamCode": teamCode,
-                "displayName": displayName,
-            ])
+        do {
+            let result = try await functions
+                .httpsCallable("joinTeamCreateUser")
+                .call([
+                    "email": email,
+                    "teamCode": teamCode,
+                    "displayName": displayName,
+                ])
 
-        guard
-            let data = result.data as? [String: Any] else {
-            throw NSError(
-                domain: "UserService",
-                code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid response from joinTeamCreateUser function"]
+            guard
+                let data = result.data as? [String: Any] else {
+                throw NSError(
+                    domain: "UserService",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "Invalid response from joinTeamCreateUser function"]
+                )
+            }
+
+            return UserDTO(
+                id: nil,
+                displayName: displayName,
+                email: email,
+                role: .member,
+                isDeleted: false,
+                deletedAt: nil
             )
-        }
+        } catch {
+            // If team joining fails, clean up the created user
+            do {
+                try await user.delete()
+            } catch {
+                // Log the cleanup failure but still throw the original error
+                print("Warning: Failed to delete user after team joining failure: \(error)")
+            }
 
-        return UserDTO(
-            id: nil,
-            displayName: displayName,
-            email: email,
-            role: .member,
-            isDeleted: false,
-            deletedAt: nil
-        )
+            // Re-throw the original error
+            throw error
+        }
     }
 }

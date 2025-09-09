@@ -1,6 +1,6 @@
 @testable import FreshWall
-import UIKit
 import Testing
+import UIKit
 
 struct CameraPickerTests {
     @Test func makeControllerUsesCamera() {

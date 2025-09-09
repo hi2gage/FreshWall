@@ -59,7 +59,7 @@ public final class MockNetworkClient: NetworkClient {
     }
 
     public func getCurrentUser() async -> AuthenticatedUser? {
-        return currentUser
+        currentUser
     }
 
     // MARK: - Team Operations

@@ -9,6 +9,8 @@ final class EditClientViewModel {
     var name: String
     /// Optional notes for the client.
     var notes: String
+    /// Whether to show the delete confirmation alert.
+    var showingDeleteAlert = false
 
     private let clientId: String
     private let service: ClientServiceProtocol
@@ -32,5 +34,10 @@ final class EditClientViewModel {
             notes: notes.isEmpty ? nil : notes
         )
         try await service.updateClient(clientId, with: input)
+    }
+
+    /// Deletes the client via the service.
+    func delete() async throws {
+        try await service.deleteClient(clientId)
     }
 }
