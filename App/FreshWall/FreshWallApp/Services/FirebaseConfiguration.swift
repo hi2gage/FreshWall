@@ -9,7 +9,9 @@ import TinyStorage
 // MARK: - FirebaseStorageKeys
 
 enum FirebaseStorageKeys: String, TinyStorageKey {
-    case environment = "firebase_environment"
+    case mode = "environment_mode"
+    case firebaseEnvironment = "firebase_environment"
+    case emulatorEnvironment = "emulator_environment"
     case customIP = "firebase_custom_ip"
 }
 
@@ -20,15 +22,31 @@ extension TinyStorage {
     }()
 }
 
-/// Firebase environment configuration options
+/// Firebase backend environment options
 enum FirebaseEnvironment: String, CaseIterable, Codable {
-    case production = "Production"
+    case dev = "Dev"
+    case beta = "Beta"
+    case prod = "Prod"
+
+    var description: String {
+        rawValue
+    }
+}
+
+/// Emulator environment options
+enum EmulatorEnvironment: String, CaseIterable, Codable {
     case localhost = "Localhost"
     case customIP = "Custom IP"
 
     var description: String {
         rawValue
     }
+}
+
+/// Current environment mode
+enum EnvironmentMode: String, CaseIterable, Codable {
+    case firebase
+    case emulator
 }
 
 /// Handles Firebase environment setup and switching.
@@ -52,39 +70,71 @@ enum FirebaseConfiguration {
         }
     }
 
-    /// Current environment - defaults to production in release, localhost in debug
-    static var currentEnvironment: FirebaseEnvironment {
+    /// Current environment mode
+    static var currentMode: EnvironmentMode {
         get {
             TinyStorage.environment.retrieve(
-                type: FirebaseEnvironment.self,
-                forKey: FirebaseStorageKeys.environment
-            ) ?? defaultEnvironment
+                type: EnvironmentMode.self,
+                forKey: FirebaseStorageKeys.mode
+            ) ?? defaultMode
         }
         set {
             TinyStorage.environment.store(
                 newValue,
-                forKey: FirebaseStorageKeys.environment
+                forKey: FirebaseStorageKeys.mode
             )
         }
     }
 
-    /// Default environment based on build configuration
-    private static var defaultEnvironment: FirebaseEnvironment {
+    /// Current Firebase environment (only used when mode is .firebase)
+    static var currentFirebaseEnvironment: FirebaseEnvironment {
+        get {
+            TinyStorage.environment.retrieve(
+                type: FirebaseEnvironment.self,
+                forKey: FirebaseStorageKeys.firebaseEnvironment
+            ) ?? .prod
+        }
+        set {
+            TinyStorage.environment.store(
+                newValue,
+                forKey: FirebaseStorageKeys.firebaseEnvironment
+            )
+        }
+    }
+
+    /// Current emulator environment (only used when mode is .emulator)
+    static var currentEmulatorEnvironment: EmulatorEnvironment {
+        get {
+            TinyStorage.environment.retrieve(
+                type: EmulatorEnvironment.self,
+                forKey: FirebaseStorageKeys.emulatorEnvironment
+            ) ?? .localhost
+        }
+        set {
+            TinyStorage.environment.store(
+                newValue,
+                forKey: FirebaseStorageKeys.emulatorEnvironment
+            )
+        }
+    }
+
+    /// Default environment mode based on build configuration
+    private static var defaultMode: EnvironmentMode {
         #if DEBUG
-            return .localhost
+            return .emulator
         #else
-            return .production
+            return .firebase
         #endif
     }
 
     /// Configure Firebase services based on current environment
     private static func configureEnvironment() {
-        switch currentEnvironment {
-        case .production:
-            // Use production Firebase - no emulator configuration needed
-            print("🚀 Using Production Firebase")
+        switch currentMode {
+        case .firebase:
+            // Use Firebase backend - no emulator configuration needed
+            print("🚀 Using Firebase \(currentFirebaseEnvironment.description)")
 
-        case .localhost, .customIP:
+        case .emulator:
             let host = emulatorHost
             var settings = Firestore.firestore().settings
             settings.host = "\(host):8080"
@@ -96,7 +146,7 @@ enum FirebaseConfiguration {
             Auth.auth().useEmulator(withHost: host, port: 9099)
             Storage.storage().useEmulator(withHost: host, port: 9199)
 
-            print("🔧 Using Firebase Emulator at \(host)")
+            print("🔧 Using Firebase Emulator at \(host) (\(currentEmulatorEnvironment.description))")
         }
     }
 
@@ -147,23 +197,34 @@ enum FirebaseConfiguration {
 
     /// Returns the host for Firebase emulators based on environment and run destination.
     private static var emulatorHost: String {
-        switch currentEnvironment {
-        case .production:
-            return "" // Not used in production
-        case .localhost:
-            return "localhost"
-        case .customIP:
-            #if targetEnvironment(simulator)
-                return "localhost" // Fallback to localhost on simulator
-            #else
-                return customIP
-            #endif
+        switch currentMode {
+        case .firebase:
+            return "" // Not used for Firebase backend
+        case .emulator:
+            switch currentEmulatorEnvironment {
+            case .localhost:
+                return "localhost"
+            case .customIP:
+                #if targetEnvironment(simulator)
+                    return "localhost" // Fallback to localhost on simulator
+                #else
+                    return customIP
+                #endif
+            }
         }
     }
 
-    /// Switch to a different Firebase environment
-    static func switchEnvironment(to environment: FirebaseEnvironment) {
-        currentEnvironment = environment
+    /// Switch to Firebase mode with specific environment
+    static func switchToFirebase(environment: FirebaseEnvironment) {
+        currentMode = .firebase
+        currentFirebaseEnvironment = environment
+        print("⚠️ Environment switched to Firebase \(environment.rawValue). App restart required for changes to take effect.")
+    }
+
+    /// Switch to emulator mode with specific environment
+    static func switchToEmulator(environment: EmulatorEnvironment) {
+        currentMode = .emulator
+        currentEmulatorEnvironment = environment
         print("⚠️ Environment switched to \(environment.rawValue). App restart required for changes to take effect.")
     }
 }

@@ -33,7 +33,7 @@ struct LoginSettingsView: View {
                                 .foregroundColor(.orange)
                             Text("Environment Settings")
                             Spacer()
-                            Text(FirebaseConfiguration.currentEnvironment.description)
+                            Text(currentEnvironmentDescription)
                                 .foregroundColor(.secondary)
                                 .font(.caption)
                         }
@@ -64,6 +64,15 @@ struct LoginSettingsView: View {
 
     private var buildNumber: String {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+    }
+
+    private var currentEnvironmentDescription: String {
+        switch FirebaseConfiguration.currentMode {
+        case .firebase:
+            "Firebase \(FirebaseConfiguration.currentFirebaseEnvironment.description)"
+        case .emulator:
+            FirebaseConfiguration.currentEmulatorEnvironment.description
+        }
     }
 }
 
