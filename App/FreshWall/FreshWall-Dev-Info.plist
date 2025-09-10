@@ -6,5 +6,7 @@
 	<string>Taking photos of the graffiti</string>
 	<key>FIREBASE_GOOGLE_SERVICE_PLIST</key>
 	<string>$(FIREBASE_CONFIG_FILE)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
