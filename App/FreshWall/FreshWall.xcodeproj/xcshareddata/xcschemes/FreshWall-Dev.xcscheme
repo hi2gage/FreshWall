@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1CDE5E132E0A72C9005B35FF"
-               BuildableName = "FreshWall-Dev.app"
-               BlueprintName = "FreshWall-Dev"
+               BlueprintIdentifier = "1C5435F52DE2223F00153F4F"
+               BuildableName = "FreshWall.app"
+               BlueprintName = "FreshWall"
                ReferencedContainer = "container:FreshWall.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,29 +44,28 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1CDE5E132E0A72C9005B35FF"
-            BuildableName = "FreshWall-Dev.app"
-            BlueprintName = "FreshWall-Dev"
+            BlueprintIdentifier = "1C5435F52DE2223F00153F4F"
+            BuildableName = "FreshWall.app"
+            BlueprintName = "FreshWall"
             ReferencedContainer = "container:FreshWall.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Dev"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1CDE5E132E0A72C9005B35FF"
-            BuildableName = "FreshWall-Dev.app"
-            BlueprintName = "FreshWall-Dev"
+            BlueprintIdentifier = "1C5435F52DE2223F00153F4F"
+            BuildableName = "FreshWall.app"
+            BlueprintName = "FreshWall"
             ReferencedContainer = "container:FreshWall.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
