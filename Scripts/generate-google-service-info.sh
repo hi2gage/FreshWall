@@ -15,25 +15,26 @@ echo "🔧 Generating GoogleService-Info.plist files from environment variables.
 # Function to generate a plist file
 generate_plist() {
     local env_name=$1
-    local api_key_var="${env_name}_FIREBASE_API_KEY"
-    local gcm_sender_id_var="${env_name}_FIREBASE_GCM_SENDER_ID"
-    local project_id_var="${env_name}_FIREBASE_PROJECT_ID"
-    local storage_bucket_var="${env_name}_FIREBASE_STORAGE_BUCKET"
-    local google_app_id_var="${env_name}_FIREBASE_GOOGLE_APP_ID"
+    local env_name_upper=$(echo "$env_name" | tr '[:lower:]' '[:upper:]')
+    local api_key_var="${env_name_upper}_FIREBASE_API_KEY"
+    local gcm_sender_id_var="${env_name_upper}_FIREBASE_GCM_SENDER_ID"
+    local project_id_var="${env_name_upper}_FIREBASE_PROJECT_ID"
+    local storage_bucket_var="${env_name_upper}_FIREBASE_STORAGE_BUCKET"
+    local google_app_id_var="${env_name_upper}_FIREBASE_GOOGLE_APP_ID"
     
-    local env_lower=$(echo "$env_name" | tr '[:upper:]' '[:lower:]')
-    local output_file="$PLIST_DIR/GoogleService-Info-${env_lower}.plist"
+    # Use the env_name as-is to match Xcode build settings (Dev, Beta, Prod)
+    local output_file="$PLIST_DIR/GoogleService-Info-${env_name}.plist"
     
     # Generate bundle ID based on environment
     local bundle_id
-    case "$env_lower" in
-        "dev")
+    case "$env_name" in
+        "Dev")
             bundle_id="app.freshwall.dev"
             ;;
-        "beta")
+        "Beta")
             bundle_id="app.freshwall.beta"
             ;;
-        "prod")
+        "Prod")
             bundle_id="app.freshwall"
             ;;
         *)
@@ -99,8 +100,8 @@ mkdir -p "$PLIST_DIR"
 # Generate plist files for all environments since users can switch at runtime
 echo "📝 Generating all environment plist files (required for runtime switching)..."
 
-generate_plist "DEV"
-generate_plist "BETA" 
-generate_plist "PROD"
+generate_plist "Dev"
+generate_plist "Beta" 
+generate_plist "Prod"
 
 echo "🎉 GoogleService-Info.plist files generated successfully!"
