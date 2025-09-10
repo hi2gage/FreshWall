@@ -55,10 +55,21 @@ struct AuthFlowView: View {
                 Button("Sign Up with Team") {
                     routerPath.push(.signupWithTeam)
                 }
+
                 Spacer()
             }
             .padding()
             .navigationTitle("Authenticate")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        routerPath.push(.loginSettings)
+                    }) {
+                        Image(systemName: "gearshape.fill")
+                            .foregroundColor(.blue)
+                    }
+                }
+            }
             .withAppLoginRouter(loginManager: loginManager)
         }
         .environment(routerPath)

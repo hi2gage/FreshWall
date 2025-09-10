@@ -50,7 +50,8 @@ struct MainAppView: View {
                     clientService: clientService,
                     incidentService: incidentService,
                     memberService: memberService,
-                    currentUserId: sessionStore.session.userId
+                    currentUserId: sessionStore.session.userId,
+                    sessionStore: sessionStore
                 )
         }
         .environment(routerPath)
