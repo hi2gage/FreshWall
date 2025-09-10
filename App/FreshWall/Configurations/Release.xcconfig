@@ -2,5 +2,5 @@
 
 // Prod.xcconfig
 APP_DISPLAY_NAME = FreshWall
-BUNDLE_ID_SUFFIX = .prod
+BUNDLE_ID_SUFFIX =
 FIREBASE_CONFIG_FILE = GoogleService-Info-Prod.plist
