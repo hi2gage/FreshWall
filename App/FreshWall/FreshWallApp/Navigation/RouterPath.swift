@@ -51,6 +51,8 @@ enum RouterDestination: Hashable {
     case photoViewer(context: PhotoViewerContext)
     /// Settings screen.
     case settings
+    /// Debug settings screen.
+    case debugSettings
 
     // MARK: - Hashable conformance
 
@@ -81,6 +83,8 @@ enum RouterDestination: Hashable {
         case let (.photoViewer(lhsContext), .photoViewer(rhsContext)):
             lhsContext.selectedPhoto == rhsContext.selectedPhoto
         case (.settings, .settings):
+            true
+        case (.debugSettings, .debugSettings):
             true
         default:
             false
@@ -121,6 +125,8 @@ enum RouterDestination: Hashable {
             hasher.combine(context.selectedPhoto)
         case .settings:
             hasher.combine("settings")
+        case .debugSettings:
+            hasher.combine("debugSettings")
         }
     }
 }
@@ -200,6 +206,8 @@ extension View {
                 SettingsView(
                     sessionStore: sessionStore
                 )
+            case .debugSettings:
+                DebugMenuView()
             }
         }
     }

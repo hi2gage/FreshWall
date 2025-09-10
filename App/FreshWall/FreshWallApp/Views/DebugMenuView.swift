@@ -5,12 +5,16 @@ import SwiftUI
 @MainActor
 @Observable
 class DebugMenuViewModel {
-    var selectedEnvironment: FirebaseEnvironment
+    var environmentMode: EnvironmentMode
+    var selectedFirebaseEnvironment: FirebaseEnvironment
+    var selectedEmulatorEnvironment: EmulatorEnvironment
     var customIP: String
     var showingRestartAlert = false
 
     init() {
-        self.selectedEnvironment = FirebaseConfiguration.currentEnvironment
+        self.environmentMode = FirebaseConfiguration.currentMode
+        self.selectedFirebaseEnvironment = FirebaseConfiguration.currentFirebaseEnvironment
+        self.selectedEmulatorEnvironment = FirebaseConfiguration.currentEmulatorEnvironment
         self.customIP = FirebaseConfiguration.customIP
     }
 
@@ -20,12 +24,21 @@ class DebugMenuViewModel {
             FirebaseConfiguration.customIP = customIP
         }
 
-        FirebaseConfiguration.switchEnvironment(to: selectedEnvironment)
+        // Switch to the selected environment
+        switch environmentMode {
+        case .firebase:
+            FirebaseConfiguration.switchToFirebase(environment: selectedFirebaseEnvironment)
+        case .emulator:
+            FirebaseConfiguration.switchToEmulator(environment: selectedEmulatorEnvironment)
+        }
+
         showingRestartAlert = true
     }
 
     func resetToDefaults() {
-        selectedEnvironment = FirebaseConfiguration.currentEnvironment
+        environmentMode = FirebaseConfiguration.currentMode
+        selectedFirebaseEnvironment = FirebaseConfiguration.currentFirebaseEnvironment
+        selectedEmulatorEnvironment = FirebaseConfiguration.currentEmulatorEnvironment
         customIP = FirebaseConfiguration.customIP
     }
 }
@@ -39,88 +52,104 @@ struct DebugMenuView: View {
     var body: some View {
         NavigationView {
             List {
-                Section(header: Text("Firebase Environment")) {
-                    Picker("Environment", selection: $viewModel.selectedEnvironment) {
-                        ForEach(FirebaseEnvironment.allCases, id: \.self) { env in
-                            Text(env.description).tag(env)
-                        }
-                    }
-                    .pickerStyle(.segmented)
+                // Current Environment Display
+                Section {}
 
+                Section(header: Text("Environment Settings")) {
                     HStack {
-                        Text("Current:")
+                        Image(systemName: "dot.radiowaves.left.and.right")
+                            .foregroundColor(.green)
+                        Text("Current Environment:")
+                            .font(.headline)
                         Spacer()
-                        Text(FirebaseConfiguration.currentEnvironment.description)
-                            .foregroundColor(.secondary)
+                        Text(currentEnvironmentDescription)
+                            .foregroundColor(.primary)
                     }
-                }
+                    .padding(.vertical, 4)
 
-                // Custom IP Configuration
-                if viewModel.selectedEnvironment == .customIP {
-                    Section(header: Text("Custom IP")) {
-                        TextField("IP Address", text: $viewModel.customIP)
-                            .textContentType(.URL)
-                            .keyboardType(.numbersAndPunctuation)
-                            .autocapitalization(.none)
-                    }
-                }
-
-                // Apply button
-                if hasChanges {
-                    Section {
-                        Button("Apply Changes") {
-                            viewModel.switchEnvironment()
+                    VStack {
+                        Picker("Mode", selection: $viewModel.environmentMode) {
+                            Text("Firebase").tag(EnvironmentMode.firebase)
+                            Text("Emulator").tag(EnvironmentMode.emulator)
                         }
-                        .foregroundColor(.blue)
+                        .pickerStyle(.segmented)
+
+                        if viewModel.environmentMode == .firebase {
+                            Picker("Firebase Environment", selection: $viewModel.selectedFirebaseEnvironment) {
+                                ForEach(FirebaseEnvironment.allCases, id: \.self) { env in
+                                    Text(env.description).tag(env)
+                                }
+                            }
+                            .pickerStyle(.segmented)
+                        } else {
+                            Picker("Emulator Environment", selection: $viewModel.selectedEmulatorEnvironment) {
+                                ForEach(EmulatorEnvironment.allCases, id: \.self) { env in
+                                    Text(env.description).tag(env)
+                                }
+                            }
+                            .pickerStyle(.segmented)
+                        }
+
+                        // Custom IP Configuration
+                        if viewModel.environmentMode == .emulator, viewModel.selectedEmulatorEnvironment == .customIP {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Custom IP Address")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+
+                                TextField("192.168.1.100", text: $viewModel.customIP)
+                                    .textContentType(.URL)
+                                    .keyboardType(.numbersAndPunctuation)
+                                    .autocapitalization(.none)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(8)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color(.systemGray4), lineWidth: 1)
+                                    )
+                            }
+                            .padding(.top, 8)
+                        }
+
+                        if hasChanges {
+                            Button("Apply Changes") {
+                                viewModel.switchEnvironment()
+                            }
+                            .foregroundColor(.blue)
+                        }
                     }
-                }
-
-                Section(header: Text("Environment Details")) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Production")
-                            .font(.headline)
-                        Text("• Uses production Firebase backend")
-                        Text("• Real data and authentication")
-
-                        Text("Localhost")
-                            .font(.headline)
-                            .padding(.top)
-                        Text("• Uses Firebase emulators on localhost")
-                        Text("• Simulator and local development")
-
-                        Text("Custom IP")
-                            .font(.headline)
-                            .padding(.top)
-                        Text("• Uses Firebase emulators on custom IP")
-                        Text("• Device testing with emulators")
-                        Text("• Current IP: \(FirebaseConfiguration.customIP)")
-                    }
-                    .font(.caption)
-                    .foregroundColor(.secondary)
                 }
             }
             .navigationTitle("Debug Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
             .alert("Restart Required", isPresented: $viewModel.showingRestartAlert) {
-                Button("OK") {
+                Button("Restart App") {
+                    exit(0)
+                }
+                Button("Later") {
                     dismiss()
                 }
             } message: {
-                Text("The environment has been changed to \(viewModel.selectedEnvironment.description). Please restart the app for changes to take effect.")
+                Text("The environment has been changed. Would you like to restart the app now for changes to take effect?")
             }
         }
     }
 
     private var hasChanges: Bool {
-        viewModel.selectedEnvironment != FirebaseConfiguration.currentEnvironment ||
+        viewModel.environmentMode != FirebaseConfiguration.currentMode ||
+            viewModel.selectedFirebaseEnvironment != FirebaseConfiguration.currentFirebaseEnvironment ||
+            viewModel.selectedEmulatorEnvironment != FirebaseConfiguration.currentEmulatorEnvironment ||
             viewModel.customIP != FirebaseConfiguration.customIP
+    }
+
+    private var currentEnvironmentDescription: String {
+        switch FirebaseConfiguration.currentMode {
+        case .firebase:
+            "Firebase \(FirebaseConfiguration.currentFirebaseEnvironment.description)"
+        case .emulator:
+            FirebaseConfiguration.currentEmulatorEnvironment.description
+        }
     }
 }
 

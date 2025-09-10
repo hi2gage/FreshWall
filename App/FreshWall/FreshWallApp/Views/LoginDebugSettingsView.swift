@@ -5,48 +5,83 @@ struct LoginDebugSettingsView: View {
 
     var body: some View {
         List {
-            Section(header: Text("Firebase Environment")) {
-                Picker("Environment", selection: $viewModel.selectedEnvironment) {
-                    ForEach(FirebaseEnvironment.allCases, id: \.self) { env in
-                        Text(env.description).tag(env)
-                    }
-                }
-                .pickerStyle(.segmented)
+            // Current Environment Display
+            Section {}
 
+            Section(header: Text("Environment Settings")) {
                 HStack {
-                    Text("Current:")
-                    Spacer()
-                    Text(FirebaseConfiguration.currentEnvironment.description)
-                        .foregroundColor(.secondary)
-                }
-            }
-
-            // Custom IP Configuration
-            if viewModel.selectedEnvironment == .customIP {
-                Section(header: Text("Custom IP")) {
-                    TextField("IP Address", text: $viewModel.customIP)
-                        .textContentType(.URL)
-                        .keyboardType(.numbersAndPunctuation)
-                        .autocapitalization(.none)
-                }
-            }
-
-            // Apply button
-            if hasChanges {
-                Section {
-                    Button("Apply Changes") {
-                        viewModel.switchEnvironment()
-                    }
-                    .foregroundColor(.blue)
-                }
-            }
-
-            Section(header: Text("Why Change Environment?")) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("🚀 Production")
+                    Image(systemName: "dot.radiowaves.left.and.right")
+                        .foregroundColor(.green)
+                    Text("Current Environment:")
                         .font(.headline)
-                    Text("• Test with real backend")
-                    Text("• Use existing accounts")
+                    Spacer()
+                    Text(currentEnvironmentDescription)
+                        .foregroundColor(.primary)
+                }
+                .padding(.vertical, 4)
+
+                VStack {
+                    Picker("Mode", selection: $viewModel.environmentMode) {
+                        Text("Firebase").tag(EnvironmentMode.firebase)
+                        Text("Emulator").tag(EnvironmentMode.emulator)
+                    }
+                    .pickerStyle(.segmented)
+
+                    if viewModel.environmentMode == .firebase {
+                        Picker("Firebase Environment", selection: $viewModel.selectedFirebaseEnvironment) {
+                            ForEach(FirebaseEnvironment.allCases, id: \.self) { env in
+                                Text(env.description).tag(env)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    } else {
+                        Picker("Emulator Environment", selection: $viewModel.selectedEmulatorEnvironment) {
+                            ForEach(EmulatorEnvironment.allCases, id: \.self) { env in
+                                Text(env.description).tag(env)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
+
+                    // Custom IP Configuration
+                    if viewModel.environmentMode == .emulator, viewModel.selectedEmulatorEnvironment == .customIP {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Custom IP Address")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+
+                            TextField("192.168.1.100", text: $viewModel.customIP)
+                                .textContentType(.URL)
+                                .keyboardType(.numbersAndPunctuation)
+                                .autocapitalization(.none)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(8)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color(.systemGray4), lineWidth: 1)
+                                )
+                        }
+                        .padding(.top, 8)
+                    }
+
+                    if hasChanges {
+                        Button("Apply Changes") {
+                            viewModel.switchEnvironment()
+                        }
+                        .foregroundColor(.blue)
+                    }
+                }
+            }
+
+            Section(header: Text("Environment Options")) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("🚀 Firebase Environments")
+                        .font(.headline)
+                    Text("• Dev: Development Firebase backend")
+                    Text("• Beta: Beta testing Firebase backend")
+                    Text("• Prod: Production Firebase backend")
 
                     Text("🏠 Localhost")
                         .font(.headline)
@@ -68,15 +103,29 @@ struct LoginDebugSettingsView: View {
         .navigationTitle("Environment Settings")
         .navigationBarTitleDisplayMode(.inline)
         .alert("Restart Required", isPresented: $viewModel.showingRestartAlert) {
-            Button("OK") {}
+            Button("Restart App") {
+                exit(0)
+            }
+            Button("Later") {}
         } message: {
-            Text("The environment has been changed to \(viewModel.selectedEnvironment.description). Please restart the app for changes to take effect.")
+            Text("The environment has been changed. Would you like to restart the app now for changes to take effect?")
         }
     }
 
     private var hasChanges: Bool {
-        viewModel.selectedEnvironment != FirebaseConfiguration.currentEnvironment ||
+        viewModel.environmentMode != FirebaseConfiguration.currentMode ||
+            viewModel.selectedFirebaseEnvironment != FirebaseConfiguration.currentFirebaseEnvironment ||
+            viewModel.selectedEmulatorEnvironment != FirebaseConfiguration.currentEmulatorEnvironment ||
             viewModel.customIP != FirebaseConfiguration.customIP
+    }
+
+    private var currentEnvironmentDescription: String {
+        switch FirebaseConfiguration.currentMode {
+        case .firebase:
+            "Firebase \(FirebaseConfiguration.currentFirebaseEnvironment.description)"
+        case .emulator:
+            FirebaseConfiguration.currentEmulatorEnvironment.description
+        }
     }
 }
 

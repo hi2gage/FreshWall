@@ -1,8 +1,44 @@
 import SwiftUI
 
+// MARK: - EnvironmentType
+
+enum EnvironmentType: String, CaseIterable {
+    case firebase = "Firebase"
+    case localhost = "Localhost"
+    case customIP = "Custom IP"
+
+    var description: String { rawValue }
+
+    var emulatorEnvironment: EmulatorEnvironment? {
+        switch self {
+        case .localhost: .localhost
+        case .customIP: .customIP
+        case .firebase: nil
+        }
+    }
+}
+
+// MARK: - SettingsView
+
 struct SettingsView: View {
     let sessionStore: AuthenticatedSessionStore
-    @State private var showingDebugMenu = false
+    @State private var showingRestartAlert = false
+
+    // Environment type selection
+    @State private var environmentType: EnvironmentType = switch FirebaseConfiguration.currentMode {
+    case .firebase:
+        .firebase
+    case .emulator:
+        switch FirebaseConfiguration.currentEmulatorEnvironment {
+        case .localhost:
+            .localhost
+        case .customIP:
+            .customIP
+        }
+    }
+
+    @State private var selectedFirebaseEnvironment = FirebaseConfiguration.currentFirebaseEnvironment
+    @State private var selectedEmulatorEnvironment = FirebaseConfiguration.currentEmulatorEnvironment
 
     var body: some View {
         List {
@@ -73,30 +109,26 @@ struct SettingsView: View {
             #if DEBUG
                 // Debug Section
                 Section(header: Text("Debug")) {
-                    Button(action: {
-                        showingDebugMenu = true
-                    }) {
+                    NavigationLink(value: RouterDestination.debugSettings) {
                         HStack {
                             Image(systemName: "gear.badge")
                                 .foregroundColor(.orange)
                             Text("Debug Settings")
                             Spacer()
-                            Text(FirebaseConfiguration.currentEnvironment.description)
-                                .foregroundColor(.secondary)
-                                .font(.caption)
-                            Image(systemName: "chevron.right")
+                            Text(currentEnvironmentDescription)
                                 .foregroundColor(.secondary)
                                 .font(.caption)
                         }
                     }
-                    .foregroundColor(.primary)
                 }
             #endif
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showingDebugMenu) {
-            DebugMenuView()
+        .alert("Restart Required", isPresented: $showingRestartAlert) {
+            Button("OK") {}
+        } message: {
+            Text("The environment has been changed to \(currentEnvironmentDescription). Please restart the app for changes to take effect.")
         }
     }
 
@@ -106,6 +138,32 @@ struct SettingsView: View {
 
     private var buildNumber: String {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+    }
+
+    private var currentEnvironmentDescription: String {
+        switch FirebaseConfiguration.currentMode {
+        case .firebase:
+            "Firebase \(FirebaseConfiguration.currentFirebaseEnvironment.description)"
+        case .emulator:
+            FirebaseConfiguration.currentEmulatorEnvironment.description
+        }
+    }
+
+    private func updateEnvironmentFromSelection() {
+        switch environmentType {
+        case .firebase:
+            FirebaseConfiguration.currentMode = .firebase
+        // Keep current Firebase environment
+        case .localhost:
+            FirebaseConfiguration.currentMode = .emulator
+            FirebaseConfiguration.currentEmulatorEnvironment = .localhost
+            selectedEmulatorEnvironment = .localhost
+        case .customIP:
+            FirebaseConfiguration.currentMode = .emulator
+            FirebaseConfiguration.currentEmulatorEnvironment = .customIP
+            selectedEmulatorEnvironment = .customIP
+        }
+        showingRestartAlert = true
     }
 }
 
