@@ -12,13 +12,14 @@
 		1C54365F2DE224C600153F4F /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 1C54365E2DE224C600153F4F /* FirebaseFirestore */; };
 		1C5436612DE224C600153F4F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1C5436602DE224C600153F4F /* FirebaseStorage */; };
 		1C5437182DE2558400153F4F /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 1C5437172DE2558400153F4F /* FirebaseFunctions */; };
+		1C783F3E2E71E17E008AFA63 /* TinyStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1C783F3D2E71E17E008AFA63 /* TinyStorage */; };
+		1C783F3F2E71E1BB008AFA63 /* TinyStorage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1C783F3D2E71E17E008AFA63 /* TinyStorage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		1C88DD9D2E0BB8FC000D7CD0 /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DD9B2E0BB8FC000D7CD0 /* Release.xcconfig */; };
 		1C88DD9E2E0BB8FC000D7CD0 /* Beta.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DD992E0BB8FC000D7CD0 /* Beta.xcconfig */; };
 		1C88DD9F2E0BB8FC000D7CD0 /* Dev.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DD9A2E0BB8FC000D7CD0 /* Dev.xcconfig */; };
 		1C88DDAF2E0BBCA2000D7CD0 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */; };
 		1C9B64CA2E51779800323C91 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C9B64C92E51779800323C91 /* Debug.xcconfig */; };
 		1CA3B46A2E0281F200A04DB7 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */; };
-		1CDE5B272E71578B00708E0C /* TinyStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1CDE5B262E71578B00708E0C /* TinyStorage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +38,20 @@
 			remoteInfo = FreshWall;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1C783F402E71E1BB008AFA63 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1C783F3F2E71E1BB008AFA63 /* TinyStorage in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1C5435F62DE2223F00153F4F /* FreshWall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreshWall.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,7 +93,7 @@
 			files = (
 				1C4FC57D2E5FF37B004C158A /* TPPDF in Frameworks */,
 				1C54365D2DE224C600153F4F /* FirebaseAuth in Frameworks */,
-				1CDE5B272E71578B00708E0C /* TinyStorage in Frameworks */,
+				1C783F3E2E71E17E008AFA63 /* TinyStorage in Frameworks */,
 				1C54365F2DE224C600153F4F /* FirebaseFirestore in Frameworks */,
 				1C5436612DE224C600153F4F /* FirebaseStorage in Frameworks */,
 				1C5437182DE2558400153F4F /* FirebaseFunctions in Frameworks */,
@@ -165,6 +180,7 @@
 				1C5435F22DE2223F00153F4F /* Sources */,
 				1C5435F32DE2223F00153F4F /* Frameworks */,
 				1C5435F42DE2223F00153F4F /* Resources */,
+				1C783F402E71E1BB008AFA63 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -181,7 +197,7 @@
 				1C5436602DE224C600153F4F /* FirebaseStorage */,
 				1C5437172DE2558400153F4F /* FirebaseFunctions */,
 				1C4FC57C2E5FF37B004C158A /* TPPDF */,
-				1CDE5B262E71578B00708E0C /* TinyStorage */,
+				1C783F3D2E71E17E008AFA63 /* TinyStorage */,
 			);
 			productName = FreshWall;
 			productReference = 1C5435F62DE2223F00153F4F /* FreshWall.app */;
@@ -269,7 +285,7 @@
 				1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				1C54371C2DE2AB7100153F4F /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				1C4FC57B2E5FF37B004C158A /* XCRemoteSwiftPackageReference "TPPDF" */,
-				1CDE5B252E71578B00708E0C /* XCRemoteSwiftPackageReference "TinyStorage" */,
+				1C783F3C2E71E17E008AFA63 /* XCRemoteSwiftPackageReference "TinyStorage" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1C5435F72DE2223F00153F4F /* Products */;
@@ -889,7 +905,7 @@
 				minimumVersion = 0.59.1;
 			};
 		};
-		1CDE5B252E71578B00708E0C /* XCRemoteSwiftPackageReference "TinyStorage" */ = {
+		1C783F3C2E71E17E008AFA63 /* XCRemoteSwiftPackageReference "TinyStorage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/christianselig/TinyStorage.git";
 			requirement = {
@@ -930,9 +946,9 @@
 			package = 1C54371C2DE2AB7100153F4F /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
-		1CDE5B262E71578B00708E0C /* TinyStorage */ = {
+		1C783F3D2E71E17E008AFA63 /* TinyStorage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1CDE5B252E71578B00708E0C /* XCRemoteSwiftPackageReference "TinyStorage" */;
+			package = 1C783F3C2E71E17E008AFA63 /* XCRemoteSwiftPackageReference "TinyStorage" */;
 			productName = TinyStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
