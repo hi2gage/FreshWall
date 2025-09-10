@@ -28,6 +28,10 @@ extension LoginRouterPath {
         /// Sign up screen for new users.
         case signup
         case signupWithTeam
+        /// Login settings screen.
+        case loginSettings
+        /// Debug settings screen.
+        case debugSettings
     }
 }
 
@@ -42,6 +46,10 @@ extension View {
                 SignupWithNewTeamView(loginManager: loginManager)
             case .signupWithTeam:
                 SignupWithExistingTeamView(loginManager: loginManager)
+            case .loginSettings:
+                LoginSettingsView()
+            case .debugSettings:
+                LoginDebugSettingsView()
             }
         }
     }

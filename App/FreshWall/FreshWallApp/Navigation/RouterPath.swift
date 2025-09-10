@@ -49,6 +49,8 @@ enum RouterDestination: Hashable {
     case memberDetail(member: Member)
     /// Screen for viewing a photo in full screen.
     case photoViewer(context: PhotoViewerContext)
+    /// Settings screen.
+    case settings
 
     // MARK: - Hashable conformance
 
@@ -78,6 +80,8 @@ enum RouterDestination: Hashable {
             lhsMember.id == rhsMember.id
         case let (.photoViewer(lhsContext), .photoViewer(rhsContext)):
             lhsContext.selectedPhoto == rhsContext.selectedPhoto
+        case (.settings, .settings):
+            true
         default:
             false
         }
@@ -115,6 +119,8 @@ enum RouterDestination: Hashable {
         case let .photoViewer(context):
             hasher.combine("photoViewer")
             hasher.combine(context.selectedPhoto)
+        case .settings:
+            hasher.combine("settings")
         }
     }
 }
@@ -126,7 +132,8 @@ extension View {
         clientService: ClientServiceProtocol,
         incidentService: IncidentServiceProtocol,
         memberService: MemberServiceProtocol,
-        currentUserId: String
+        currentUserId: String,
+        sessionStore: AuthenticatedSessionStore
     ) -> some View {
         navigationDestination(for: RouterDestination.self) { destination in
             switch destination {
@@ -189,6 +196,10 @@ extension View {
                 MemberDetailView(member: member)
             case let .photoViewer(context):
                 PhotoViewer(photos: context.photos, selectedPhoto: context.selectedPhoto)
+            case .settings:
+                SettingsView(
+                    sessionStore: sessionStore
+                )
             }
         }
     }

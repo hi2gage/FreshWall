@@ -32,8 +32,11 @@ struct MainListView: View {
         .navigationTitle("Dashboard")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Log Out") {
-                    sessionStore.logout()
+                Button(action: {
+                    routerPath.push(.settings)
+                }) {
+                    Image(systemName: "gearshape.fill")
+                        .foregroundColor(.blue)
                 }
             }
         }
