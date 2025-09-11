@@ -12,7 +12,7 @@ NC='\033[0m' # No Color
 # Get the current directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-XCODE_PROJECT="$PROJECT_DIR/App/FreshWall/FreshWall.xcodeproj/project.pbxproj"
+XCCONFIG_FILE="$PROJECT_DIR/App/FreshWall/Configurations/Base.xcconfig"
 
 echo -e "${BLUE}🚀 FreshWall Release Script${NC}"
 echo "=============================="
@@ -80,20 +80,21 @@ if [[ ! $CONFIRM =~ ^[Yy]$ ]]; then
 fi
 
 echo ""
-echo -e "${BLUE}🔧 Updating version in Xcode project...${NC}"
+echo -e "${BLUE}🔧 Updating version in Base.xcconfig...${NC}"
 
-# Update version in project.pbxproj
-if [ -f "$XCODE_PROJECT" ]; then
-    # Update MARKETING_VERSION (CFBundleShortVersionString)
-    sed -i '' "s/MARKETING_VERSION = [^;]*/MARKETING_VERSION = $NEW_VERSION/g" "$XCODE_PROJECT"
+# Update version in Base.xcconfig
+if [ -f "$XCCONFIG_FILE" ]; then
+    # Update IDENTITY_VERSION
+    sed -i '' "s/IDENTITY_VERSION = .*/IDENTITY_VERSION = $NEW_VERSION/" "$XCCONFIG_FILE"
     
-    # Increment build number (CFBundleVersion) - use current timestamp for uniqueness
+    # Increment build number - use current timestamp for uniqueness
     BUILD_NUMBER=$(date +%Y%m%d%H%M)
-    sed -i '' "s/CURRENT_PROJECT_VERSION = [^;]*/CURRENT_PROJECT_VERSION = $BUILD_NUMBER/g" "$XCODE_PROJECT"
+    sed -i '' "s/IDENTITY_BUILD = .*/IDENTITY_BUILD = $BUILD_NUMBER/" "$XCCONFIG_FILE"
     
-    echo -e "${GREEN}✅ Updated version to ${NEW_VERSION} and build to ${BUILD_NUMBER}${NC}"
+    echo -e "${GREEN}✅ Updated version to ${NEW_VERSION} and build to ${BUILD_NUMBER} in Base.xcconfig${NC}"
 else
-    echo -e "${YELLOW}⚠️  Xcode project not found at expected location${NC}"
+    echo -e "${RED}❌ Base.xcconfig not found at expected location: $XCCONFIG_FILE${NC}"
+    exit 1
 fi
 
 echo -e "${BLUE}📝 Committing version bump...${NC}"
