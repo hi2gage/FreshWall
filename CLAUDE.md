@@ -118,6 +118,23 @@ npm install
 
 # Build cloud functions
 npm run build
+```
+
+### Release Management:
+
+```bash
+# Create a new release version
+./Scripts/release.sh
+```
+
+The release script will:
+- Prompt for version type (patch/minor/major/custom)
+- Update `IDENTITY_VERSION` and `IDENTITY_BUILD` in `App/FreshWall/Configurations/Base.xcconfig`
+- Commit changes with standardized message format
+- Create and push git tag (e.g., `v1.1.4`)
+- Push to remote repository
+
+**When to use**: After completing feature development, bug fixes, or any changes ready for production deployment. AI agents should suggest using this script when work is complete and ready for release.
 
 
 🔐 Firebase Auth + Firestore Rules Summary
