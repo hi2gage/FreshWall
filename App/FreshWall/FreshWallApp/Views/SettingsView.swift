@@ -106,22 +106,19 @@ struct SettingsView: View {
                 }
             }
 
-            #if DEBUG
-                // Debug Section
-                Section(header: Text("Debug")) {
-                    NavigationLink(value: RouterDestination.debugSettings) {
-                        HStack {
-                            Image(systemName: "gear.badge")
-                                .foregroundColor(.orange)
-                            Text("Debug Settings")
-                            Spacer()
-                            Text(currentEnvironmentDescription)
-                                .foregroundColor(.secondary)
-                                .font(.caption)
-                        }
+            Section(header: Text("Debug")) {
+                NavigationLink(value: RouterDestination.debugSettings) {
+                    HStack {
+                        Image(systemName: "gear.badge")
+                            .foregroundColor(.orange)
+                        Text("Debug Settings")
+                        Spacer()
+                        Text(currentEnvironmentDescription)
+                            .foregroundColor(.secondary)
+                            .font(.caption)
                     }
                 }
-            #endif
+            }
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
