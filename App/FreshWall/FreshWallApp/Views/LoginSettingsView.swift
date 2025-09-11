@@ -24,22 +24,20 @@ struct LoginSettingsView: View {
                 }
             }
 
-            #if DEBUG
-                // Debug Section
-                Section(header: Text("Development")) {
-                    NavigationLink(value: LoginRouterPath.RouterDestination.debugSettings) {
-                        HStack {
-                            Image(systemName: "gear.badge")
-                                .foregroundColor(.orange)
-                            Text("Environment Settings")
-                            Spacer()
-                            Text(currentEnvironmentDescription)
-                                .foregroundColor(.secondary)
-                                .font(.caption)
-                        }
+            // Debug Section
+            Section(header: Text("Development")) {
+                NavigationLink(value: LoginRouterPath.RouterDestination.debugSettings) {
+                    HStack {
+                        Image(systemName: "gear.badge")
+                            .foregroundColor(.orange)
+                        Text("Environment Settings")
+                        Spacer()
+                        Text(currentEnvironmentDescription)
+                            .foregroundColor(.secondary)
+                            .font(.caption)
                     }
                 }
-            #endif
+            }
 
             // Help Section
             Section(header: Text("Support")) {
