@@ -11,48 +11,150 @@ service cloud.firestore {
       return exists(/databases/$(database)/documents/teams/$(teamId)/users/$(request.auth.uid));
     }
 
-    function isLead(teamId) {
-      return get(/databases/$(database)/documents/teams/$(teamId)/users/$(request.auth.uid)).data.role == "lead";
+
+    // New role-based permission functions
+    function getUserRole(teamId) {
+      return get(/databases/$(database)/documents/teams/$(teamId)/users/$(request.auth.uid)).data.role;
     }
 
-    // 👤 User documents - team members can read all, users can update their own
+    function isAdmin(teamId) {
+      let role = getUserRole(teamId);
+      return role == "admin";
+    }
+
+    function isManager(teamId) {
+      let role = getUserRole(teamId);
+      return role == "manager" || isAdmin(teamId);
+    }
+
+    function isFieldWorker(teamId) {
+      let role = getUserRole(teamId);
+      return role == "field_worker" || isManager(teamId);
+    }
+
+    // Check if user can manage other users (admin only)
+    function canManageUsers(teamId) {
+      return isAdmin(teamId);
+    }
+
+    // Check if user can manage clients (admin and manager)
+    function canManageClients(teamId) {
+      return isManager(teamId);
+    }
+
+    // Check if user can manage all incidents (admin and manager)  
+    function canManageAllIncidents(teamId) {
+      return isManager(teamId);
+    }
+
+    // Check if user can access their own data
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // 👤 User documents with enhanced role-based access
     match /teams/{teamId}/users/{userId} {
+      // All team members can read user info (for collaboration)
       allow read: if isSignedIn() && isInTeam(teamId);
-      allow write: if isSignedIn() && request.auth.uid == userId;
+      
+      // Users can update their own profile info (but not role)
+      allow update: if isSignedIn() && isOwner(userId) 
+                   && !("role" in request.resource.data.diff(resource.data).affectedKeys());
+      
+      // Only admins can create users, update roles, or delete users
+      allow create: if isSignedIn() && canManageUsers(teamId);
+      allow delete: if isSignedIn() && canManageUsers(teamId);
+      
+      // Only admins can update user roles
+      allow update: if isSignedIn() && canManageUsers(teamId) 
+                   && ("role" in request.resource.data.diff(resource.data).affectedKeys());
     }
 
+    // Team documents
     match /teams/{teamId} {
       allow read: if isSignedIn();
       allow create: if isSignedIn(); // ✅ allow any signed-in user to create a new team
+      allow update: if isSignedIn() && isAdmin(teamId); // Only admins can update team
+      allow delete: if isSignedIn() && isAdmin(teamId); // Only admins can delete team
     }
 
-    // 🧑‍💼 Clients
+    // 🧑‍💼 Clients with role-based permissions
     match /teams/{teamId}/clients/{clientId} {
+      // All team members can read client info
       allow read: if isSignedIn() && isInTeam(teamId);
-      // Allow team members to create clients; only leads may update or delete
-      allow create: if isSignedIn() && isInTeam(teamId);
-      allow update, delete: if isSignedIn() && isLead(teamId);
+      
+      // Managers and admins can manage clients
+      allow create, update, delete: if isSignedIn() && canManageClients(teamId);
     }
 
-    // 🎯 Incidents under client-specific path
+    // 🎯 Incidents under client-specific path with role-based access
     match /teams/{teamId}/clients/{clientId}/incidents/{incidentId} {
+      // All team members can read incidents
       allow read: if isSignedIn() && isInTeam(teamId);
+      
+      // All team members can create incidents
       allow create: if isSignedIn() && isInTeam(teamId);
-      allow update, delete: if isSignedIn() && isLead(teamId);
+      
+      // Field workers can only update their own incidents
+      // Managers and admins can update any incident
+      allow update: if isSignedIn() && isInTeam(teamId) && 
+                   (canManageAllIncidents(teamId) || 
+                    resource.data.createdBy == request.auth.uid ||
+                    resource.data.assignedTo == request.auth.uid);
+      
+      // Only managers and admins can delete incidents
+      allow delete: if isSignedIn() && canManageAllIncidents(teamId);
     }
 
-    // 🎯 Top-level incidents collection for the team
+    // 🎯 Top-level incidents collection for the team with role-based access
     match /teams/{teamId}/incidents/{incidentId} {
+      // All team members can read incidents
       allow read: if isSignedIn() && isInTeam(teamId);
+      
+      // All team members can create incidents
       allow create: if isSignedIn() && isInTeam(teamId);
-      allow update, delete: if isSignedIn() && isLead(teamId);
+      
+      // Field workers can only update their own incidents
+      // Managers and admins can update any incident
+      allow update: if isSignedIn() && isInTeam(teamId) && 
+                   (canManageAllIncidents(teamId) || 
+                    resource.data.createdBy == request.auth.uid ||
+                    resource.data.assignedTo == request.auth.uid);
+      
+      // Only managers and admins can delete incidents
+      allow delete: if isSignedIn() && canManageAllIncidents(teamId);
     }
 
-    // 📧 Invite Codes for joining a team
-    match /teams/{teamId}/inviteCodes/{code} {
-      // Only team leads may view codes; writes occur via Cloud Functions
-      allow read: if isSignedIn() && isLead(teamId);
-      allow write: if false;
+    // 📧 Invitation system with role-based permissions
+    match /teams/{teamId}/invitations/{invitationId} {
+      // Only users who can create invitations can read them
+      allow read: if isSignedIn() && isManager(teamId);
+      allow write: if false; // All writes go through Cloud Functions
+    }
+
+
+    // 📊 Audit logs - only admins can read
+    match /teams/{teamId}/auditLogs/{logId} {
+      allow read: if isSignedIn() && isAdmin(teamId);
+      allow write: if false; // All writes go through Cloud Functions
+    }
+
+    // 📈 Reports and analytics
+    match /teams/{teamId}/reports/{reportId} {
+      // Managers and admins can read all reports
+      // Field workers can only read basic reports they created
+      allow read: if isSignedIn() && isInTeam(teamId) && 
+                 (isManager(teamId) || resource.data.createdBy == request.auth.uid);
+      
+      // Only managers and admins can create advanced reports
+      allow create: if isSignedIn() && isManager(teamId);
+      
+      // Users can update their own reports, managers can update any
+      allow update: if isSignedIn() && isInTeam(teamId) && 
+                   (isManager(teamId) || resource.data.createdBy == request.auth.uid);
+      
+      // Only managers and admins can delete reports
+      allow delete: if isSignedIn() && isManager(teamId);
     }
   }
 }

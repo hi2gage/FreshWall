@@ -1,4 +1,4 @@
-import { randomBytes } from "crypto";
+import { randomBytes } from "node:crypto";
 import * as admin from "firebase-admin";
 import { Timestamp, FieldValue } from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
