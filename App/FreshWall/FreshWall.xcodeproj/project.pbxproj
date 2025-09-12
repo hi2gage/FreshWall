@@ -506,7 +506,7 @@
 				ENABLE_PREVIEWS = YES;
 				FIREBASE_GOOGLE_SERVICE_PLIST = "$(FIREBASE_GOOGLE_SERVICE_PLIST)";
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "FreshWall-Info.plist";
+				INFOPLIST_FILE = "FreshWall-Dev-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				INFOPLIST_KEY_NSCameraUsageDescription = "ability for user to take photos of the graffati";
