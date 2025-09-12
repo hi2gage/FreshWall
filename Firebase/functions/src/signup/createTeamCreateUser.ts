@@ -1,8 +1,9 @@
-import { randomBytes } from "crypto";
+import { randomBytes } from "node:crypto";
 import * as admin from "firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
 import { onCall } from "firebase-functions/v2/https";
+import { createAuditLog } from "../permissions/utils";
 
 export const createTeamCreateUser = onCall(async (request) => {
 	try {
@@ -31,9 +32,25 @@ export const createTeamCreateUser = onCall(async (request) => {
 		await teamRef.collection("users").doc(uid).set({
 			displayName,
 			email,
-			role: "lead",
+			role: "admin", // New teams start with admin instead of lead
 			isDeleted: false,
 			createdAt: FieldValue.serverTimestamp(),
+			lastModified: FieldValue.serverTimestamp(),
+			modifiedBy: uid,
+		});
+
+		// Create audit log for team creation and first admin assignment
+		await createAuditLog({
+			action: 'role_granted',
+			actorId: uid,
+			actorDisplayName: displayName,
+			targetUserId: uid,
+			targetDisplayName: displayName,
+			teamId,
+			details: {
+				toRole: 'admin',
+				reason: 'Team creator - first admin'
+			}
 		});
 
 		logger.info(

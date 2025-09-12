@@ -2,6 +2,8 @@ import * as admin from "firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
 import { onCall } from "firebase-functions/v2/https";
+import type { UserRole } from "../permissions/types";
+import { createAuditLog } from "../permissions/utils";
 
 export const joinTeamCreateUser = onCall(async (request) => {
   try {
@@ -49,7 +51,9 @@ export const joinTeamCreateUser = onCall(async (request) => {
     const expiresAt = inviteData.expiresAt as admin.firestore.Timestamp;
     const maxUses = inviteData.maxUses as number;
     const usedCount = inviteData.usedCount as number;
-    const role = inviteData.role as string;
+    const inviteRole = inviteData.role as UserRole;
+    
+    const assignedRole = inviteRole;
 
     if (expiresAt.toMillis() <= Date.now()) {
       throw new Error("Code expired.");
@@ -86,14 +90,30 @@ export const joinTeamCreateUser = onCall(async (request) => {
       tx.set(teamRef.collection("users").doc(uid), {
         displayName,
         email,
-        role: role || "member",
+        role: assignedRole,
         isDeleted: false,
         createdAt: FieldValue.serverTimestamp(),
+        lastModified: FieldValue.serverTimestamp(),
+        modifiedBy: uid,
       });
     });
 
-    logger.info(`✅ joinTeamCreateUser success: user ${uid} joined team ${teamId}`);
-    return { teamId };
+    // Create audit log for user joining team
+    await createAuditLog({
+      action: 'role_granted',
+      actorId: uid,
+      actorDisplayName: displayName,
+      targetUserId: uid,
+      targetDisplayName: displayName,
+      teamId,
+      details: {
+        toRole: assignedRole,
+        reason: `Joined team via invite code ${inviteCode}`
+      }
+    });
+
+    logger.info(`✅ joinTeamCreateUser success: user ${uid} joined team ${teamId} with role ${assignedRole}`);
+    return { teamId, assignedRole };
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "unknown error";
     logger.error(`❌ joinTeamCreateUser failed: ${message}`);
