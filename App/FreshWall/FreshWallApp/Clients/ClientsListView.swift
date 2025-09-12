@@ -7,11 +7,16 @@ struct ClientsListView: View {
     @State private var viewModel: ClientsListViewModel
 
     /// Initializes the view with services for clients and incidents.
-    init(clientService: ClientServiceProtocol, incidentService: IncidentServiceProtocol) {
+    init(
+        clientService: ClientServiceProtocol,
+        incidentService: IncidentServiceProtocol,
+        userSession: UserSession
+    ) {
         _viewModel = State(
             wrappedValue: ClientsListViewModel(
                 clientService: clientService,
-                incidentService: incidentService
+                incidentService: incidentService,
+                userSession: userSession
             )
         )
     }
@@ -57,7 +62,7 @@ struct ClientsListView: View {
 
 #Preview {
     let firestore = Firestore.firestore()
-    let session = UserSession(userId: "", displayName: "", teamId: "team123")
+    let session = UserSession(userId: "preview", displayName: "Preview User", teamId: "team123", role: .admin)
 
     let incidentModelService = IncidentModelService(firestore: firestore)
     let incidentPhotoService = IncidentPhotoService()
@@ -76,7 +81,8 @@ struct ClientsListView: View {
         NavigationStack {
             ClientsListView(
                 clientService: clientService,
-                incidentService: incidentService
+                incidentService: incidentService,
+                userSession: session
             )
         }
     }

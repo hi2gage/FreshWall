@@ -10,4 +10,15 @@ struct UserSession: Sendable, Equatable {
 
     /// Firestore team identifier
     let teamId: String
+
+    /// User's role within the team for permission checking
+    let role: UserRole
+
+    /// Convenience initializer for backward compatibility
+    init(userId: String, displayName: String, teamId: String, role: UserRole = .fieldWorker) {
+        self.userId = userId
+        self.displayName = displayName
+        self.teamId = teamId
+        self.role = role
+    }
 }

@@ -225,7 +225,12 @@ private class PreviewIncidentService: IncidentServiceProtocol {
         lastModifiedBy: nil,
         lastModifiedAt: nil,
         rate: nil,
-        materialsUsed: nil
+        materialsUsed: nil,
+        status: .open,
+        enhancedLocation: nil,
+        surfaceType: nil,
+        enhancedNotes: nil,
+        customSurfaceDescription: nil
     )
     let service = PreviewIncidentService()
     let clientService = PreviewClientService()

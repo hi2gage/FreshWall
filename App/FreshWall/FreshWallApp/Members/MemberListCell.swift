@@ -14,19 +14,27 @@ struct MemberListCell: View {
                     .foregroundColor(.secondary)
             }
             Spacer()
-            Text(member.role.rawValue.capitalized)
+            Text(member.role.displayName)
                 .font(.subheadline)
-                .padding(4)
-                .background(roleColor.opacity(0.3))
-                .cornerRadius(4)
+                .foregroundColor(roleColor)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(roleColor.opacity(0.15))
+                .cornerRadius(6)
         }
         .listCellStyle()
     }
 
     private var roleColor: Color {
         switch member.role {
-        case .lead: .blue
-        case .member: .gray
+        case .admin:
+            .red
+        case .manager:
+            .blue
+        case .fieldWorker:
+            .green
+        default:
+            .gray
         }
     }
 }

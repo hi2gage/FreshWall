@@ -173,7 +173,8 @@ struct SettingsView: View {
                     session: UserSession(
                         userId: "user123",
                         displayName: "John Doe",
-                        teamId: "team123"
+                        teamId: "team123",
+                        role: .admin
                     )
                 )
             )

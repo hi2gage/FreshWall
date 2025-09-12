@@ -120,7 +120,8 @@ struct IncidentService: IncidentServiceProtocol {
             lastModifiedBy: nil,
             lastModifiedAt: nil,
             rate: input.rate,
-            materialsUsed: input.materialsUsed
+            materialsUsed: input.materialsUsed,
+            status: .inProgress
         )
         try await modelService.setIncident(newIncident, at: newDoc)
         try await fetchIncidents()

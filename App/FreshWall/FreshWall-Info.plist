@@ -6,5 +6,11 @@
 	<string>$(FIREBASE_CONFIG_FILE)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>FreshWall needs location access to capture GPS coordinates for incident reports. This helps accurately track where graffiti removal work is performed for client documentation.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>FreshWall needs location access to capture GPS coordinates for incident reports. This helps accurately track where graffiti removal work is performed for client documentation.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Taking photos of the graffiti</string>
 </dict>
 </plist>

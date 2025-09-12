@@ -89,7 +89,22 @@ struct AddIncidentView: View {
                     }
                 }
             }
-            Section(header: Text("Notes")) {
+            Section("Surface Type") {
+                SurfaceTypeRow(
+                    surfaceType: viewModel.input.surfaceType,
+                    customDescription: viewModel.input.customSurfaceDescription
+                ) {
+                    viewModel.showingSurfaceTypeSelection = true
+                }
+            }
+
+            Section("Enhanced Notes") {
+                EnhancedNotesRow(notes: viewModel.input.enhancedNotes) {
+                    viewModel.showingEnhancedNotes = true
+                }
+            }
+
+            Section(header: Text("Quick Notes (Legacy)")) {
                 TextEditor(text: $viewModel.input.description)
                     .frame(minHeight: 100)
             }
@@ -98,17 +113,32 @@ struct AddIncidentView: View {
                     .keyboardType(.decimalPad)
             }
             Section("Location") {
-                if let location = viewModel.input.location {
+                if let enhancedLocation = viewModel.input.enhancedLocation {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text("📍 \(enhancedLocation.shortDisplayString)")
+                                .font(.headline)
+                            Spacer()
+                            Button("Edit") {
+                                viewModel.showingEnhancedLocationCapture = true
+                            }
+                        }
+
+                        Text(enhancedLocation.captureMethod.displayName)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                } else if let location = viewModel.input.location {
                     HStack {
                         Text("📍 \(location.shortDisplayString)")
                         Spacer()
                         Button("Edit") {
-                            viewModel.showingLocationMap = true
+                            viewModel.showingEnhancedLocationCapture = true
                         }
                     }
                 } else {
-                    Button("📍 Add Location") {
-                        viewModel.showingLocationMap = true
+                    Button("📍 Capture Location") {
+                        viewModel.showingEnhancedLocationCapture = true
                     }
                     .foregroundColor(.blue)
                 }
@@ -136,6 +166,18 @@ struct AddIncidentView: View {
         }
         .sheet(isPresented: $viewModel.showingLocationMap) {
             LocationMapView(location: $viewModel.input.location)
+        }
+        .sheet(isPresented: $viewModel.showingEnhancedLocationCapture) {
+            EnhancedLocationCaptureView(location: $viewModel.input.enhancedLocation)
+        }
+        .sheet(isPresented: $viewModel.showingSurfaceTypeSelection) {
+            SurfaceTypeSelectionView(
+                surfaceType: $viewModel.input.surfaceType,
+                customDescription: $viewModel.input.customSurfaceDescription
+            )
+        }
+        .sheet(isPresented: $viewModel.showingEnhancedNotes) {
+            EnhancedNotesView(notes: $viewModel.input.enhancedNotes)
         }
         .task {
             await viewModel.loadClients()

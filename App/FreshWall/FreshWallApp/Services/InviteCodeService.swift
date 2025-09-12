@@ -14,7 +14,10 @@ struct InviteCodeService: InviteCodeGenerating {
 
     init() {}
 
-    func generateInviteCode(role: UserRole = .member, maxUses: Int = 10) async throws -> String {
+    func generateInviteCode(
+        role: UserRole = .fieldWorker,
+        maxUses: Int = 10
+    ) async throws -> String {
         let result = try await functions.httpsCallable("generateInviteCode").call([
             "role": role.rawValue,
             "maxUses": maxUses,

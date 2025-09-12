@@ -24,6 +24,17 @@ final class AddIncidentViewModel {
         var materialsUsed: String = ""
         /// Geographic location where incident occurred.
         var location: GeoPoint?
+
+        // MARK: - Enhanced Metadata
+
+        /// Enhanced location data with address and capture method
+        var enhancedLocation: IncidentLocation?
+        /// Type of surface being worked on
+        var surfaceType: SurfaceType?
+        /// Structured notes system for different work stages
+        var enhancedNotes: IncidentNotes?
+        /// Custom surface description when surfaceType is .other
+        var customSurfaceDescription: String?
     }
 
     /// Current input being edited.
@@ -32,12 +43,20 @@ final class AddIncidentViewModel {
     var clients: [Client] = []
     /// Whether to show the location map.
     var showingLocationMap = false
+    /// Whether to show the enhanced location capture view.
+    var showingEnhancedLocationCapture = false
+    /// Whether to show surface type selection.
+    var showingSurfaceTypeSelection = false
+    /// Whether to show enhanced notes editing.
+    var showingEnhancedNotes = false
     private let clientService: ClientServiceProtocol
     private let service: IncidentServiceProtocol
 
-    /// Validation: requires a non-empty description.
+    /// Validation: requires either legacy description or enhanced notes with content.
     var isValid: Bool {
-        !input.description.trimmingCharacters(in: .whitespaces).isEmpty
+        let hasLegacyDescription = !input.description.trimmingCharacters(in: .whitespaces).isEmpty
+        let hasEnhancedNotes = input.enhancedNotes?.hasAnyNotes == true
+        return hasLegacyDescription || hasEnhancedNotes
     }
 
     init(service: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
@@ -54,6 +73,9 @@ final class AddIncidentViewModel {
         // Try to extract location from photos if not manually set
         let finalLocation = input.location ?? LocationService.extractLocation(from: beforePhotos + afterPhotos)
 
+        // Use enhanced location if available, otherwise create from legacy location
+        let finalEnhancedLocation = input.enhancedLocation ?? finalLocation.map { IncidentLocation(photoMetadataCoordinates: $0) }
+
         let input = AddIncidentInput(
             clientId: trimmedId.isEmpty ? nil : trimmedId,
             description: input.description,
@@ -62,7 +84,11 @@ final class AddIncidentViewModel {
             startTime: input.startTime,
             endTime: input.endTime,
             rate: rateValue,
-            materialsUsed: input.materialsUsed.isEmpty ? nil : input.materialsUsed
+            materialsUsed: input.materialsUsed.isEmpty ? nil : input.materialsUsed,
+            enhancedLocation: finalEnhancedLocation,
+            surfaceType: input.surfaceType,
+            enhancedNotes: input.enhancedNotes,
+            customSurfaceDescription: input.customSurfaceDescription
         )
         try await service.addIncident(
             input,

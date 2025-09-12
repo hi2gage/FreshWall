@@ -28,7 +28,8 @@ struct SessionService {
                 return UserSession(
                     userId: user.uid,
                     displayName: userModel.displayName,
-                    teamId: teamDoc.documentID
+                    teamId: teamDoc.documentID,
+                    role: userModel.role
                 )
             }
         }

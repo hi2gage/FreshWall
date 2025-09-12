@@ -12,6 +12,11 @@ final class IncidentsListViewModel {
     /// Selected grouping option for incidents.
     var groupOption: IncidentGroupOption?
 
+    // Simple filter properties for dropdown filtering
+    var statusFilter: IncidentStatus?
+    var surfaceTypeFilter: SurfaceType?
+    var clientFilter: String?
+
     /// The field by which incidents are currently sorted.
     var sortField: IncidentSortField {
         get { sort.field }
@@ -28,16 +33,69 @@ final class IncidentsListViewModel {
 
     private let service: IncidentServiceProtocol
     private let clientService: ClientServiceProtocol
+    private let userSession: UserSession
+
+    /// Permission checker for role-based functionality
+    var permissions: PermissionChecker {
+        PermissionChecker(userRole: userSession.role)
+    }
 
     /// Initializes the view model with a service conforming to `IncidentServiceProtocol`.
-    init(incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
+    init(
+        incidentService: IncidentServiceProtocol,
+        clientService: ClientServiceProtocol,
+        userSession: UserSession
+    ) {
         service = incidentService
         self.clientService = clientService
+        self.userSession = userSession
     }
 
     /// Loads incidents from the service.
     func loadIncidents() async {
         incidents = await (try? service.fetchIncidents()) ?? []
+    }
+
+    /// Computed property for filtered incidents based on dropdown filters
+    private var filteredIncidents: [Incident] {
+        var filtered = incidents
+
+        // Apply status filter
+        if let statusFilter {
+            filtered = filtered.filter { $0.status == statusFilter }
+        }
+
+        // Apply surface type filter
+        if let surfaceTypeFilter {
+            filtered = filtered.filter { $0.surfaceType == surfaceTypeFilter }
+        }
+
+        // Apply client filter
+        if let clientFilter {
+            filtered = filtered.filter { $0.clientRef?.documentID == clientFilter }
+        }
+
+        // Apply role-based filtering for field workers
+        if userSession.role == .fieldWorker {
+            filtered = filtered.filter { incident in
+                incident.createdBy.documentID == userSession.userId
+                // TODO: Also check assigned workers when that field is added
+            }
+        }
+
+        return filtered
+    }
+
+    /// Whether any filters are currently active
+    var hasActiveFilters: Bool {
+        statusFilter != nil || surfaceTypeFilter != nil || clientFilter != nil
+    }
+
+    /// Clears all active filters
+    func clearFilters() {
+        statusFilter = nil
+        surfaceTypeFilter = nil
+        clientFilter = nil
     }
 
     /// Returns incidents grouped according to the provided option and clients.
@@ -53,10 +111,10 @@ final class IncidentsListViewModel {
     func groupedIncidents() -> [(title: String?, items: [Incident])] {
         switch groupOption {
         case .none:
-            let sorted = sort(incidents)
+            let sorted = sort(filteredIncidents)
             return [(nil, sorted)]
         case .client:
-            let groups = Dictionary(grouping: incidents) { incident in
+            let groups = Dictionary(grouping: filteredIncidents) { incident in
                 incident.clientRef?.documentID ?? ""
             }
             return groups
@@ -70,7 +128,7 @@ final class IncidentsListViewModel {
                     return isAscending ? lhsName < rhsName : lhsName > rhsName
                 }
         case .date:
-            let dayGroups = Dictionary(grouping: incidents) { incident in
+            let dayGroups = Dictionary(grouping: filteredIncidents) { incident in
                 Calendar.current.startOfDay(for: incident.startTime.dateValue())
             }
             let formatter = DateFormatter()

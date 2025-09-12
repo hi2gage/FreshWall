@@ -35,6 +35,19 @@ struct IncidentDTO: Codable, Identifiable, Sendable, Hashable {
     var rate: Double?
     /// Materials used during the incident work (optional details).
     var materialsUsed: String?
+    /// Current status of the incident
+    var status: IncidentStatus
+
+    // MARK: - Enhanced Metadata
+
+    /// Enhanced location data with address and capture method
+    var enhancedLocation: IncidentLocation?
+    /// Type of surface being worked on
+    var surfaceType: SurfaceType?
+    /// Structured notes system for different work stages
+    var enhancedNotes: IncidentNotes?
+    /// Custom surface description when surfaceType is .other
+    var customSurfaceDescription: String?
 }
 
 extension Collection {
