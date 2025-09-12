@@ -1,4 +1,5 @@
-import FirebaseFirestore
+@preconcurrency import FirebaseFirestore
+@preconcurrency import FirebaseFunctions
 import SwiftUI
 
 struct MainAppView: View {
@@ -50,6 +51,7 @@ struct MainAppView: View {
                     clientService: clientService,
                     incidentService: incidentService,
                     memberService: memberService,
+                    userSession: sessionStore.session,
                     currentUserId: sessionStore.session.userId,
                     sessionStore: sessionStore
                 )
@@ -65,8 +67,9 @@ struct MainAppView: View {
                 sessionStore: SessionStore(),
                 session: UserSession(
                     userId: "user123",
-                    displayName: "",
-                    teamId: "team123"
+                    displayName: "Preview User",
+                    teamId: "team123",
+                    role: .admin
                 )
             )
         )

@@ -22,9 +22,9 @@ struct IncidentsListView: View {
             content: { incident in
                 IncidentListCell(incident: incident)
             },
-            plusButtonAction: {
+            plusButtonAction: viewModel.permissions.canCreateIncidents ? {
                 routerPath.push(.addIncident)
-            },
+            } : {},
             refreshAction: {
                 await viewModel.loadIncidents()
                 await viewModel.loadClients()
@@ -69,6 +69,46 @@ struct IncidentsListView: View {
         } else {
             SortButton(for: .date, sort: $viewModel.sort)
             collapseToggleButton(groups: groups, collapsedGroups: collapsedGroups)
+        }
+
+        // Enhanced filtering options using dropdowns
+        Divider()
+
+        Text("Filter By")
+            .font(.caption)
+            .foregroundColor(.secondary)
+
+        // Status Filter
+        Picker("Status", selection: $viewModel.statusFilter) {
+            Text("All Statuses").tag(IncidentStatus?.none)
+            ForEach(IncidentStatus.allCases, id: \.self) { status in
+                Text(status.displayName).tag(Optional.some(status))
+            }
+        }
+
+        // Surface Type Filter
+        Picker("Surface Type", selection: $viewModel.surfaceTypeFilter) {
+            Text("All Surface Types").tag(SurfaceType?.none)
+            ForEach(SurfaceType.allCases, id: \.self) { surface in
+                Text(surface.displayName).tag(Optional.some(surface))
+            }
+        }
+
+        // Client Filter
+        if !viewModel.clients.isEmpty {
+            Picker("Client", selection: $viewModel.clientFilter) {
+                Text("All Clients").tag(String?.none)
+                ForEach(viewModel.clients, id: \.id) { client in
+                    Text(client.name).tag(Optional.some(client.id))
+                }
+            }
+        }
+
+        // Clear Filters
+        if viewModel.hasActiveFilters {
+            Button("Clear All Filters") {
+                viewModel.clearFilters()
+            }
         }
     }
 
@@ -139,7 +179,13 @@ private class PreviewClientService: ClientServiceProtocol {
     let clientService = PreviewClientService()
     let viewModel = IncidentsListViewModel(
         incidentService: incidentService,
-        clientService: clientService
+        clientService: clientService,
+        userSession: UserSession(
+            userId: "preview",
+            displayName: "Preview User",
+            teamId: "preview-team",
+            role: .admin
+        )
     )
     FreshWallPreview {
         NavigationStack {

@@ -28,11 +28,22 @@ final class ClientsListViewModel {
 
     private let clientService: ClientServiceProtocol
     private let incidentService: IncidentServiceProtocol
+    private let userSession: UserSession
+
+    /// Permission checker for role-based functionality
+    var permissions: PermissionChecker {
+        PermissionChecker(userRole: userSession.role)
+    }
 
     /// Initializes the view model with required services.
-    init(clientService: ClientServiceProtocol, incidentService: IncidentServiceProtocol) {
+    init(
+        clientService: ClientServiceProtocol,
+        incidentService: IncidentServiceProtocol,
+        userSession: UserSession
+    ) {
         self.clientService = clientService
         self.incidentService = incidentService
+        self.userSession = userSession
     }
 
     /// Loads clients from the service.

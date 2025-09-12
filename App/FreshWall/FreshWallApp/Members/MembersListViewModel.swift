@@ -38,7 +38,7 @@ final class MembersListViewModel {
     func groupedMembers() -> [(title: String?, items: [Member])] {
         switch groupOption {
         case .role:
-            let groups = Dictionary(grouping: members) { $0.role.rawValue.capitalized }
+            let groups = Dictionary(grouping: members) { $0.role.displayName }
             return groups
                 .map { key, value in
                     (title: key, items: sortMembers(value))
@@ -46,12 +46,20 @@ final class MembersListViewModel {
                 .sorted { lhs, rhs in
                     let lhsTitle = lhs.title ?? ""
                     let rhsTitle = rhs.title ?? ""
-                    return sort.isAscending ? lhsTitle < rhsTitle : lhsTitle > rhsTitle
+                    // Sort by role hierarchy level instead of alphabetically
+                    let lhsLevel = value(for: lhsTitle)?.role.hierarchyLevel ?? 0
+                    let rhsLevel = value(for: rhsTitle)?.role.hierarchyLevel ?? 0
+                    return sort.isAscending ? lhsLevel > rhsLevel : lhsLevel < rhsLevel
                 }
         case nil:
             let sorted = sortedMembers()
             return [(nil, sorted)]
         }
+    }
+
+    /// Helper to get a member by role display name
+    private func value(for roleDisplayName: String) -> Member? {
+        members.first { $0.role.displayName == roleDisplayName }
     }
 
     /// Returns members sorted based on the current sort field and direction.
@@ -80,12 +88,12 @@ final class MembersListViewModel {
             }
         case .role:
             items.sorted { lhs, rhs in
-                let lhsRole = lhs.role.rawValue
-                let rhsRole = rhs.role.rawValue
+                let lhsLevel = lhs.role.hierarchyLevel
+                let rhsLevel = rhs.role.hierarchyLevel
                 if sort.isAscending {
-                    return lhsRole < rhsRole
+                    return lhsLevel > rhsLevel // Higher level first when ascending
                 } else {
-                    return lhsRole > rhsRole
+                    return lhsLevel < rhsLevel // Lower level first when descending
                 }
             }
         }

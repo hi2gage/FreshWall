@@ -52,7 +52,7 @@ enum EnvironmentMode: String, CaseIterable, Codable {
 /// Handles Firebase environment setup and switching.
 enum FirebaseConfiguration {
     /// Default IP address for Firebase emulators when testing on device.
-    private static let defaultDeviceHostIP = "192.168.1.234"
+    private static let defaultDeviceHostIP = "192.168.0.99"
 
     /// Current custom IP address for Firebase emulators.
     static var customIP: String {
@@ -134,8 +134,13 @@ enum FirebaseConfiguration {
             // Use Firebase backend - no emulator configuration needed
             print("🚀 Using Firebase \(currentFirebaseEnvironment.description)")
 
+            // Clear network caches on simulator to avoid stale QUIC connections
+            #if targetEnvironment(simulator)
+                clearSimulatorNetworkCache()
+            #endif
+
         case .emulator:
-            let host = emulatorHost
+            let host = "192.168.0.99"
             var settings = Firestore.firestore().settings
             settings.host = "\(host):8080"
             settings.isSSLEnabled = false
@@ -149,6 +154,19 @@ enum FirebaseConfiguration {
             print("🔧 Using Firebase Emulator at \(host) (\(currentEmulatorEnvironment.description))")
         }
     }
+
+    /// Clear network caches on simulator to prevent stale QUIC connections
+    #if targetEnvironment(simulator)
+        private static func clearSimulatorNetworkCache() {
+            // Clear URLSession caches to remove stale HTTP/3 connections
+            URLCache.shared.removeAllCachedResponses()
+
+            // Invalidate the default URLSession to force new connections
+            URLSession.shared.invalidateAndCancel()
+
+            print("🧹 Simulator: Cleared network cache to avoid stale QUIC connections")
+        }
+    #endif
 
     static func configureFirebase() {
         guard
@@ -199,17 +217,13 @@ enum FirebaseConfiguration {
     private static var emulatorHost: String {
         switch currentMode {
         case .firebase:
-            return "" // Not used for Firebase backend
+            "" // Not used for Firebase backend
         case .emulator:
             switch currentEmulatorEnvironment {
             case .localhost:
-                return "localhost"
+                "localhost"
             case .customIP:
-                #if targetEnvironment(simulator)
-                    return "localhost" // Fallback to localhost on simulator
-                #else
-                    return customIP
-                #endif
+                customIP
             }
         }
     }

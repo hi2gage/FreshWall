@@ -20,6 +20,18 @@ struct Incident: Identifiable, Hashable, Sendable {
     var lastModifiedAt: Timestamp?
     var rate: Double?
     var materialsUsed: String?
+    var status: IncidentStatus
+
+    // MARK: - Enhanced Metadata
+
+    /// Enhanced location data with address and capture method
+    var enhancedLocation: IncidentLocation?
+    /// Type of surface being worked on
+    var surfaceType: SurfaceType?
+    /// Structured notes system for different work stages
+    var enhancedNotes: IncidentNotes?
+    /// Custom surface description when surfaceType is .other
+    var customSurfaceDescription: String?
 }
 
 extension Incident {
@@ -40,6 +52,13 @@ extension Incident {
         lastModifiedAt = dto.lastModifiedAt
         rate = dto.rate
         materialsUsed = dto.materialsUsed
+        status = dto.status
+
+        // Enhanced metadata
+        enhancedLocation = dto.enhancedLocation
+        surfaceType = dto.surfaceType
+        enhancedNotes = dto.enhancedNotes
+        customSurfaceDescription = dto.customSurfaceDescription
     }
 
     /// Converts the domain model back to a DTO for persistence.
@@ -59,7 +78,56 @@ extension Incident {
             lastModifiedBy: lastModifiedBy,
             lastModifiedAt: lastModifiedAt,
             rate: rate,
-            materialsUsed: materialsUsed
+            materialsUsed: materialsUsed,
+            status: status,
+            enhancedLocation: enhancedLocation,
+            surfaceType: surfaceType,
+            enhancedNotes: enhancedNotes,
+            customSurfaceDescription: customSurfaceDescription
         )
+    }
+}
+
+// MARK: - Convenience Properties
+
+extension Incident {
+    /// Returns the best available location data, prioritizing enhanced location over legacy
+    var bestLocation: IncidentLocation? {
+        if let enhancedLocation {
+            return enhancedLocation
+        }
+
+        // Convert legacy location to enhanced location for consistent access
+        if let legacyLocation = location {
+            return IncidentLocation(legacyGeoPoint: legacyLocation)
+        }
+
+        return nil
+    }
+
+    /// Returns the best available notes, prioritizing enhanced notes over legacy description
+    var bestNotes: IncidentNotes {
+        if let enhancedNotes {
+            return enhancedNotes
+        }
+
+        // Convert legacy description to enhanced notes for consistent access
+        return IncidentNotes(legacyDescription: description.isEmpty ? nil : description)
+    }
+
+    /// Returns display-ready surface type string
+    var surfaceDisplayName: String {
+        guard let surfaceType else { return "Unknown Surface" }
+
+        if surfaceType == .other, let customDescription = customSurfaceDescription, !customDescription.trimmingCharacters(in: .whitespaces).isEmpty {
+            return customDescription
+        }
+
+        return surfaceType.displayName
+    }
+
+    /// Whether this incident has enhanced metadata (used for migration tracking)
+    var hasEnhancedMetadata: Bool {
+        enhancedLocation != nil || surfaceType != nil || enhancedNotes != nil
     }
 }

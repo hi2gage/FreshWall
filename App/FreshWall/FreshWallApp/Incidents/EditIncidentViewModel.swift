@@ -71,8 +71,13 @@ final class EditIncidentViewModel {
             startTime: startTime,
             endTime: endTime,
             rate: Double(rateText),
-            materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed
+            materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed,
+            enhancedLocation: nil,
+            surfaceType: nil,
+            enhancedNotes: nil,
+            customSurfaceDescription: nil
         )
+
         try await service.updateIncident(
             incidentId,
             with: input,

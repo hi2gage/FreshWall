@@ -52,7 +52,7 @@ struct UserService {
                 id: nil,
                 displayName: displayName,
                 email: email,
-                role: .lead,
+                role: .admin,
                 isDeleted: false,
                 deletedAt: nil
             )
@@ -109,7 +109,7 @@ struct UserService {
                 id: nil,
                 displayName: displayName,
                 email: email,
-                role: .member,
+                role: .fieldWorker,
                 isDeleted: false,
                 deletedAt: nil
             )

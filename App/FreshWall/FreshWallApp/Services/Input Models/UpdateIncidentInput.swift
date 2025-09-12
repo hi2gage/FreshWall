@@ -19,4 +19,15 @@ struct UpdateIncidentInput: Sendable {
     let rate: Double?
     /// Optional materials used description.
     let materialsUsed: String?
+
+    // MARK: - Enhanced Metadata
+
+    /// Enhanced location data with address and capture method
+    let enhancedLocation: IncidentLocation?
+    /// Type of surface being worked on
+    let surfaceType: SurfaceType?
+    /// Structured notes system for different work stages
+    let enhancedNotes: IncidentNotes?
+    /// Custom surface description when surfaceType is .other
+    let customSurfaceDescription: String?
 }

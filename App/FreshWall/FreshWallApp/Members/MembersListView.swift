@@ -1,16 +1,24 @@
 @preconcurrency import FirebaseFirestore
 import SwiftUI
 
+// MARK: - MembersListView
+
 /// A view displaying a list of team members.
 struct MembersListView: View {
     let service: MemberServiceProtocol
+    let userSession: UserSession
     let currentUserId: String
     @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: MembersListViewModel
 
     /// Initializes the view with a member service implementing `MemberServiceProtocol`.
-    init(service: MemberServiceProtocol, currentUserId: String) {
+    init(
+        service: MemberServiceProtocol,
+        userSession: UserSession,
+        currentUserId: String
+    ) {
         self.service = service
+        self.userSession = userSession
         self.currentUserId = currentUserId
         _viewModel = State(
             wrappedValue: MembersListViewModel(
@@ -103,23 +111,31 @@ struct MembersListView: View {
     }
 }
 
-#Preview {
-    let userService = UserService()
-    let firestore = Firestore.firestore()
-    let service = MemberService(
-        firestore: firestore,
-        session: .init(
-            userId: "",
-            displayName: "",
-            teamId: ""
-        )
-    )
-    FreshWallPreview {
-        NavigationStack {
-            MembersListView(
-                service: service,
-                currentUserId: ""
-            )
-        }
-    }
-}
+//
+// #Preview {
+//    let userService = UserService()
+//    let firestore = Firestore.firestore()
+//    let service = MemberService(
+//        firestore: firestore,
+//        session: .init(
+//            userId: "",
+//            displayName: "",
+//            teamId: ""
+//        )
+//    )
+//    FreshWallPreview {
+//        NavigationStack {
+//            MembersListView(
+//                service: service,
+//                invitationService: MockInvitationService(),
+//                userSession: UserSession(
+//                    userId: "preview_user",
+//                    displayName: "Preview User",
+//                    teamId: "preview_team",
+//                    role: .admin
+//                ),
+//                currentUserId: ""
+//            )
+//        }
+//    }
+// }

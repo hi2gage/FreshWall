@@ -13,7 +13,10 @@ final class InviteMemberViewModel {
 
     func generate() async {
         do {
-            code = try await service.generateInviteCode(role: .member, maxUses: 10)
+            code = try await service.generateInviteCode(
+                role: .fieldWorker,
+                maxUses: 10
+            )
         } catch {
             code = nil
         }

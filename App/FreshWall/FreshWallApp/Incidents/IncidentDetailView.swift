@@ -36,9 +36,126 @@ struct IncidentDetailView: View {
                 )
             }
 
-            if let location = viewModel.incident.location {
+            if let bestLocation = viewModel.incident.bestLocation {
                 Section("Location") {
-                    Text("📍 \(location.shortDisplayString)")
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Image(systemName: "location.fill")
+                                .foregroundColor(.blue)
+                            Text(bestLocation.displayString)
+                                .font(.headline)
+                        }
+
+                        if let coordinates = bestLocation.coordinates {
+                            Text(coordinates.displayString)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+
+                        HStack {
+                            Text("Capture Method:")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(bestLocation.captureMethod.displayName)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+
+                        if let accuracy = bestLocation.accuracy {
+                            Text("Accuracy: ±\(Int(accuracy))m")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+            }
+
+            if viewModel.incident.surfaceType != nil {
+                Section("Surface Type") {
+                    HStack {
+                        if let surfaceType = viewModel.incident.surfaceType {
+                            Image(systemName: surfaceType.iconName)
+                                .foregroundColor(.accentColor)
+                                .frame(width: 24)
+                        }
+
+                        VStack(alignment: .leading) {
+                            Text(viewModel.incident.surfaceDisplayName)
+                                .font(.headline)
+
+                            if let surfaceType = viewModel.incident.surfaceType, surfaceType == .other,
+                               let customDescription = viewModel.incident.customSurfaceDescription {
+                                Text(customDescription)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+
+                        Spacer()
+                    }
+                }
+            }
+
+            if let enhancedNotes = viewModel.incident.enhancedNotes, enhancedNotes.hasAnyNotes {
+                Section("Notes") {
+                    VStack(alignment: .leading, spacing: 12) {
+                        if let beforeWork = enhancedNotes.beforeWork, !beforeWork.trimmingCharacters(in: .whitespaces).isEmpty {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Image(systemName: "eye.fill")
+                                        .foregroundColor(.blue)
+                                    Text("Before Work")
+                                        .font(.headline)
+                                }
+                                Text(beforeWork)
+                                    .font(.body)
+                            }
+                        }
+
+                        if let duringWork = enhancedNotes.duringWork, !duringWork.trimmingCharacters(in: .whitespaces).isEmpty {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Image(systemName: "hammer.fill")
+                                        .foregroundColor(.orange)
+                                    Text("During Work")
+                                        .font(.headline)
+                                }
+                                Text(duringWork)
+                                    .font(.body)
+                            }
+                        }
+
+                        if let completion = enhancedNotes.completion, !completion.trimmingCharacters(in: .whitespaces).isEmpty {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.green)
+                                    Text("Completion")
+                                        .font(.headline)
+                                }
+                                Text(completion)
+                                    .font(.body)
+                            }
+                        }
+
+                        if let general = enhancedNotes.general, !general.trimmingCharacters(in: .whitespaces).isEmpty {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Image(systemName: "note.text")
+                                        .foregroundColor(.gray)
+                                    Text("General Notes")
+                                        .font(.headline)
+                                }
+                                Text(general)
+                                    .font(.body)
+                            }
+                        }
+                    }
+                }
+            } else if !viewModel.incident.description.trimmingCharacters(in: .whitespaces).isEmpty {
+                Section("Notes") {
+                    Text(viewModel.incident.description)
+                        .font(.body)
                 }
             }
 

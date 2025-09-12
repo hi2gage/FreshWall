@@ -46,6 +46,7 @@ enum RouterDestination: Hashable {
     case membersList
     /// Screen for adding a new member.
     case inviteMember
+    /// Screen for managing team invitations.
     case memberDetail(member: Member)
     /// Screen for viewing a photo in full screen.
     case photoViewer(context: PhotoViewerContext)
@@ -138,6 +139,7 @@ extension View {
         clientService: ClientServiceProtocol,
         incidentService: IncidentServiceProtocol,
         memberService: MemberServiceProtocol,
+        userSession: UserSession,
         currentUserId: String,
         sessionStore: AuthenticatedSessionStore
     ) -> some View {
@@ -146,7 +148,8 @@ extension View {
             case .clientsList:
                 ClientsListView(
                     clientService: clientService,
-                    incidentService: incidentService
+                    incidentService: incidentService,
+                    userSession: userSession
                 )
             case let .addClient(onClientCreated):
                 AddClientView(
@@ -167,7 +170,8 @@ extension View {
                 IncidentsListView(
                     viewModel: IncidentsListViewModel(
                         incidentService: incidentService,
-                        clientService: clientService
+                        clientService: clientService,
+                        userSession: userSession
                     )
                 )
             case .addIncident:
@@ -194,12 +198,16 @@ extension View {
             case .membersList:
                 MembersListView(
                     service: memberService,
+                    userSession: userSession,
                     currentUserId: currentUserId
                 )
             case .inviteMember:
                 InviteMemberView(service: InviteCodeService())
             case let .memberDetail(member):
-                MemberDetailView(member: member)
+                MemberDetailView(
+                    member: member,
+                    currentUserSession: userSession
+                )
             case let .photoViewer(context):
                 PhotoViewer(photos: context.photos, selectedPhoto: context.selectedPhoto)
             case .settings:

@@ -59,7 +59,11 @@ final class IncidentDetailViewModel {
             startTime: incident.startTime.dateValue(),
             endTime: incident.endTime.dateValue(),
             rate: incident.rate,
-            materialsUsed: incident.materialsUsed
+            materialsUsed: incident.materialsUsed,
+            enhancedLocation: incident.enhancedLocation,
+            surfaceType: incident.surfaceType,
+            enhancedNotes: incident.enhancedNotes,
+            customSurfaceDescription: incident.customSurfaceDescription
         )
 
         do {
@@ -87,7 +91,11 @@ final class IncidentDetailViewModel {
             startTime: incident.startTime.dateValue(),
             endTime: incident.endTime.dateValue(),
             rate: incident.rate,
-            materialsUsed: incident.materialsUsed
+            materialsUsed: incident.materialsUsed,
+            enhancedLocation: incident.enhancedLocation,
+            surfaceType: incident.surfaceType,
+            enhancedNotes: incident.enhancedNotes,
+            customSurfaceDescription: incident.customSurfaceDescription
         )
 
         do {
@@ -128,7 +136,11 @@ final class IncidentDetailViewModel {
             startTime: incident.startTime.dateValue(),
             endTime: incident.endTime.dateValue(),
             rate: incident.rate,
-            materialsUsed: incident.materialsUsed
+            materialsUsed: incident.materialsUsed,
+            enhancedLocation: incident.enhancedLocation,
+            surfaceType: incident.surfaceType,
+            enhancedNotes: incident.enhancedNotes,
+            customSurfaceDescription: incident.customSurfaceDescription
         )
 
         do {
