@@ -1,0 +1,99 @@
+#!/bin/zsh
+
+# Parse command line arguments
+AUTO_ACCEPT=false
+CONFIG_PATH=""
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --auto-accept|-a)
+      AUTO_ACCEPT=true
+      shift
+      ;;
+    --config|-c)
+      CONFIG_PATH="$2"
+      shift 2
+      ;;
+    --help|-h)
+      echo "Usage: $0 [OPTIONS]"
+      echo ""
+      echo "Options:"
+      echo "  -a, --auto-accept    Automatically accept and stage formatted files"
+      echo "  -c, --config PATH    Path to SwiftFormat config file"
+      echo "  -h, --help          Show this help message"
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Use --help for usage information"
+      exit 1
+      ;;
+  esac
+done
+
+# Path to the SwiftFormat config (use absolute path for worktree compatibility)
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# Set default config path if not provided
+if [[ -z "$CONFIG_PATH" ]]; then
+  CONFIG_PATH="$REPO_ROOT/App/FreshWall/.swiftformat"
+fi
+
+MINTFILE_PATH="$REPO_ROOT/Mintfile"
+
+# Check SwiftFormat version
+if [[ -f "$MINTFILE_PATH" ]]; then
+  EXPECTED_VERSION=$(grep -o 'SwiftFormat@[0-9.]*' "$MINTFILE_PATH" | cut -d'@' -f2)
+  ACTUAL_VERSION=$(mint run swiftformat --version 2>/dev/null | grep -o '[0-9.]*' | head -1)
+  
+  if [[ "$EXPECTED_VERSION" != "$ACTUAL_VERSION" ]]; then
+    echo "⚠️  SwiftFormat version mismatch!"
+    echo "   Expected: $EXPECTED_VERSION (from Mintfile)"
+    echo "   Actual: $ACTUAL_VERSION"
+    echo ""
+    echo "Please run: mint bootstrap"
+    echo ""
+  fi
+fi
+
+# Get staged Swift files (Added, Copied, Modified, or Renamed)
+staged_files=("${(@f)$(git diff --cached --name-only --diff-filter=ACMR | grep '\.swift$')}")
+
+if [[ ${#staged_files[@]} -eq 0 ]]; then
+  exit 0
+fi
+
+echo "🔧 Running SwiftFormat using $CONFIG_PATH on staged Swift files..."
+
+# Track whether any files were modified
+files_changed=0
+
+for file in $staged_files; do
+  if [[ -f "$file" ]]; then
+    original_hash=$(shasum "$file")
+    mint run nicklockwood/SwiftFormat --config "$CONFIG_PATH" "$file"
+    new_hash=$(shasum "$file")
+    
+    if [[ "$original_hash" != "$new_hash" ]]; then
+      echo "⚠️  File formatted: $file"
+      files_changed=1
+    fi
+  fi
+done
+
+if [[ $files_changed -eq 1 ]]; then
+  if [[ "$AUTO_ACCEPT" == "true" ]]; then
+    echo "✅ SwiftFormat made changes. Auto-staging formatted files..."
+    for file in $staged_files; do
+      if [[ -f "$file" ]]; then
+        git add "$file"
+      fi
+    done
+    echo "✅ All formatted files have been staged."
+    exit 0
+  else
+    echo "❌ SwiftFormat made changes. Please review and stage the formatted files."
+    exit 1
+  fi
+fi
+
+echo "✅ SwiftFormat passed with no changes."
