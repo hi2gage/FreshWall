@@ -4,6 +4,8 @@ import SwiftUI
 
 /// View for editing an existing client, injecting a service conforming to `ClientServiceProtocol`.
 struct EditClientView: View {
+    typealias BillingMethod = ClientDTO.BillingMethod
+
     @Environment(\.dismiss) private var dismiss
     @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: EditClientViewModel

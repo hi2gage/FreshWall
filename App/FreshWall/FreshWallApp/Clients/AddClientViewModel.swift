@@ -5,6 +5,9 @@ import Observation
 @MainActor
 @Observable
 final class AddClientViewModel {
+    typealias BillingMethod = ClientDTO.BillingMethod
+    typealias ClientDefaults = ClientDTO.ClientDefaults
+
     /// Name of the new client.
     var name: String = ""
     /// Optional notes for the new client.

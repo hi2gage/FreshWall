@@ -32,6 +32,8 @@ struct Incident: Identifiable, Hashable, Sendable {
     var enhancedNotes: IncidentNotes?
     /// Custom surface description when surfaceType is .other
     var customSurfaceDescription: String?
+    /// Billing configuration for this incident
+    var billing: IncidentBilling?
 }
 
 extension Incident {
@@ -59,6 +61,7 @@ extension Incident {
         surfaceType = dto.surfaceType
         enhancedNotes = dto.enhancedNotes
         customSurfaceDescription = dto.customSurfaceDescription
+        billing = dto.billing
     }
 
     /// Converts the domain model back to a DTO for persistence.
@@ -82,7 +85,8 @@ extension Incident {
             enhancedLocation: enhancedLocation,
             surfaceType: surfaceType,
             enhancedNotes: enhancedNotes,
-            customSurfaceDescription: customSurfaceDescription
+            customSurfaceDescription: customSurfaceDescription,
+            billing: billing
         )
     }
 }

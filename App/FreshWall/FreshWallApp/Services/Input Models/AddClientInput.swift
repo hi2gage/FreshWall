@@ -3,6 +3,8 @@ import Foundation
 
 /// Input model for creating a new client via `ClientService`.
 struct AddClientInput: Sendable {
+    typealias ClientDefaults = ClientDTO.ClientDefaults
+
     /// Name of the new client.
     let name: String
     /// Optional notes for the new client.

@@ -4,6 +4,8 @@ import SwiftUI
 
 /// View for adding a new client, injecting a service conforming to `ClientServiceProtocol`.
 struct AddClientView: View {
+    typealias BillingMethod = ClientDTO.BillingMethod
+
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: AddClientViewModel
     private let onClientCreated: ((String) -> Void)?
