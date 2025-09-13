@@ -123,6 +123,36 @@ struct ClientDetailView: View {
                     }
                 }
             }
+
+            Section("Billing Defaults") {
+                if let defaults = client.defaults {
+                    HStack {
+                        Text("Billing Method")
+                        Spacer()
+                        Text(defaults.billingMethod.displayName)
+                            .foregroundColor(.secondary)
+                    }
+
+                    HStack {
+                        Text("Minimum Billable Quantity")
+                        Spacer()
+                        Text("\(defaults.minimumBillableQuantity, specifier: "%.1f") \(defaults.billingMethod.unitLabel)")
+                            .foregroundColor(.secondary)
+                    }
+
+                    HStack {
+                        Text("Amount Per Unit")
+                        Spacer()
+                        Text("$\(defaults.amountPerUnit, specifier: "%.2f") per \(defaults.billingMethod.unitLabel)")
+                            .foregroundColor(.secondary)
+                    }
+                } else {
+                    Text("No billing defaults configured")
+                        .italic()
+                        .foregroundColor(.secondary)
+                }
+            }
+
             Section(header: Text("Incidents (\(incidents.count))")) {
                 if incidents.isEmpty {
                     Text("No incidents for this client.")

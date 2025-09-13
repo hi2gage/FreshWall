@@ -9,11 +9,27 @@ final class AddClientViewModel {
     var name: String = ""
     /// Optional notes for the new client.
     var notes: String = ""
+
+    // Defaults configuration
+    var billingMethod: BillingMethod = .squareFootage
+    var minimumBillableQuantity: String = ""
+    var amountPerUnit: String = ""
+    var includeDefaults: Bool = false
+
     private let service: ClientServiceProtocol
 
     /// Validation: name must not be empty.
     var isValid: Bool {
-        !name.trimmingCharacters(in: .whitespaces).isEmpty
+        let nameValid = !name.trimmingCharacters(in: .whitespaces).isEmpty
+        if !includeDefaults {
+            return nameValid
+        }
+
+        // If including defaults, validate the billing configuration
+        let quantityValid = Double(minimumBillableQuantity) != nil && Double(minimumBillableQuantity)! >= 0
+        let amountValid = Double(amountPerUnit) != nil && Double(amountPerUnit)! >= 0
+
+        return nameValid && quantityValid && amountValid
     }
 
     init(service: ClientServiceProtocol) {
@@ -23,9 +39,20 @@ final class AddClientViewModel {
     /// Saves the new client via the service.
     /// - Returns: The ID of the newly created client.
     func save() async throws -> String {
+        let defaults: ClientDefaults? = if includeDefaults {
+            ClientDefaults(
+                billingMethod: billingMethod,
+                minimumBillableQuantity: Double(minimumBillableQuantity) ?? 0,
+                amountPerUnit: Double(amountPerUnit) ?? 0
+            )
+        } else {
+            nil
+        }
+
         let input = AddClientInput(
             name: name.trimmingCharacters(in: .whitespaces),
             notes: notes.isEmpty ? nil : notes,
+            defaults: defaults,
             lastIncidentAt: .init()
         )
         return try await service.addClient(input)

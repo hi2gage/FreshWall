@@ -8,6 +8,7 @@ struct Client: Identifiable, Hashable, Sendable {
     var id: String?
     var name: String
     var notes: String?
+    var defaults: ClientDefaults?
     var isDeleted: Bool
     var deletedAt: Timestamp?
     var createdAt: Timestamp
@@ -20,6 +21,7 @@ extension Client {
         id = dto.id
         name = dto.name
         notes = dto.notes
+        defaults = dto.defaults
         isDeleted = dto.isDeleted
         deletedAt = dto.deletedAt
         createdAt = dto.createdAt
@@ -32,6 +34,7 @@ extension Client {
             id: id,
             name: name,
             notes: notes,
+            defaults: defaults,
             isDeleted: isDeleted,
             deletedAt: deletedAt,
             createdAt: createdAt,
