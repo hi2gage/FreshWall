@@ -1,3 +1,4 @@
+import CoreLocation
 @preconcurrency import FirebaseFirestore
 import Foundation
 import Observation
@@ -74,6 +75,8 @@ final class AddIncidentViewModel {
     var showingSurfaceTypeSelection = false
     /// Whether to show enhanced notes editing.
     var showingEnhancedNotes = false
+    /// Pending location captured when camera is selected
+    var pendingCameraLocation: IncidentLocation?
     private let clientService: ClientServiceProtocol
     private let service: IncidentServiceProtocol
 
@@ -296,6 +299,65 @@ final class AddIncidentViewModel {
                 afterPhotos: afterPhotos
             )
             input.enhancedLocation = extractedLocation
+        }
+    }
+
+    // MARK: - Camera Location Capture
+
+    /// Handles camera selection by capturing location in background
+    func handleCameraSelected() {
+        Task {
+            do {
+                var location = try await LocationService.getCurrentLocationOnce()
+
+                // Try to resolve address immediately if we have coordinates
+                if let coordinates = location.coordinates {
+                    // Check cache first
+                    let locationCache = ServiceContainer.shared.locationCache
+                    if let cachedAddress = await locationCache.getCachedAddress(for: coordinates) {
+                        location.address = cachedAddress
+                    } else {
+                        // Resolve address in background
+                        Task {
+                            do {
+                                let coordinate = CLLocationCoordinate2D(latitude: coordinates.latitude, longitude: coordinates.longitude)
+                                let address = try await ModernLocationManager.reverseGeocode(coordinate: coordinate)
+
+                                // Cache the address
+                                await locationCache.cacheAddress(address, for: coordinates)
+
+                                // Update location with address
+                                await MainActor.run {
+                                    if pendingCameraLocation?.coordinates?.latitude == coordinates.latitude,
+                                       pendingCameraLocation?.coordinates?.longitude == coordinates.longitude {
+                                        pendingCameraLocation?.address = address
+                                    }
+                                    if input.enhancedLocation?.coordinates?.latitude == coordinates.latitude,
+                                       input.enhancedLocation?.coordinates?.longitude == coordinates.longitude {
+                                        input.enhancedLocation?.address = address
+                                    }
+                                }
+                            } catch {
+                                // Silently continue if address resolution fails
+                            }
+                        }
+                    }
+                }
+
+                await MainActor.run {
+                    pendingCameraLocation = location
+                }
+            } catch {
+                // Continue without location if it fails
+            }
+        }
+    }
+
+    /// Applies pending camera location when photos are changed
+    func applyPendingCameraLocation() {
+        if let pendingLocation = pendingCameraLocation {
+            input.enhancedLocation = pendingLocation
+            pendingCameraLocation = nil
         }
     }
 }
