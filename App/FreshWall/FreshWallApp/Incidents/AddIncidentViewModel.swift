@@ -104,12 +104,10 @@ final class AddIncidentViewModel {
         let trimmedId = input.clientId.trimmingCharacters(in: .whitespaces)
 
         // Use enhanced location if available, otherwise extract from photos
-        let finalEnhancedLocation = input.enhancedLocation ?? {
-            if let photoLocation = LocationService.extractLocation(from: beforePhotos + afterPhotos) {
-                return IncidentLocation(photoMetadataCoordinates: photoLocation)
-            }
-            return nil
-        }()
+        let finalEnhancedLocation = input.enhancedLocation ?? LocationService.extractEnhancedLocation(
+            from: beforePhotos,
+            afterPhotos: afterPhotos
+        )
 
         // Create billing configuration if configured
         let billingConfig: IncidentBilling? = if input.hasBillingConfiguration {
@@ -138,11 +136,23 @@ final class AddIncidentViewModel {
             customSurfaceDescription: input.customSurfaceDescription,
             billing: billingConfig
         )
-        try await service.addIncident(
+
+        // Create the incident first
+        let incidentId = try await service.addIncident(
             input,
             beforePhotos: beforePhotos,
             afterPhotos: afterPhotos
         )
+
+        // Queue address resolution for photo locations if location lacks address
+        if let location = finalEnhancedLocation,
+           location.address == nil,
+           let coordinates = location.coordinates {
+            ServiceContainer.shared.addressResolutionService.queueAddressResolution(
+                for: incidentId,
+                coordinates: coordinates
+            )
+        }
     }
 
     /// Loads available clients for the picker.
@@ -281,10 +291,11 @@ final class AddIncidentViewModel {
 
         // Auto-populate location if not already manually set
         if input.enhancedLocation == nil {
-            input.enhancedLocation = LocationService.extractEnhancedLocation(
+            let extractedLocation = LocationService.extractEnhancedLocation(
                 from: beforePhotos,
                 afterPhotos: afterPhotos
             )
+            input.enhancedLocation = extractedLocation
         }
     }
 }

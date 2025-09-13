@@ -42,12 +42,15 @@ final class EnhancedLocationCaptureViewModel {
         }
     }
 
-    private func resolveAddressInBackground(for location: IncidentLocation, coordinates: GeoPoint) async {
+    private func resolveAddressInBackground(
+        for location: IncidentLocation,
+        coordinates: GeoPoint
+    ) async {
         isResolvingAddress = true
         defer { isResolvingAddress = false }
 
         // Check cache first
-        if let cachedAddress = LocationCache.shared.getCachedAddress(for: coordinates) {
+        if let cachedAddress = await ServiceContainer.shared.locationCache.getCachedAddress(for: coordinates) {
             await MainActor.run {
                 if var current = capturedLocation,
                    current.coordinates == location.coordinates,
@@ -59,13 +62,13 @@ final class EnhancedLocationCaptureViewModel {
             return
         }
 
-        // Resolve address via geocoding
+        // Resolve address via geocoding using modern API
         let coordinate = LocationService.coordinate(from: coordinates)
-        let oneTimeManager = OneTimeLocationManager()
+        let address = try? await ModernLocationManager.reverseGeocode(coordinate: coordinate)
 
-        if let address = try? await oneTimeManager.reverseGeocode(coordinate: coordinate) {
+        if let address {
             // Cache the result
-            LocationCache.shared.cacheAddress(address, for: coordinates)
+            await ServiceContainer.shared.locationCache.cacheAddress(address, for: coordinates)
 
             // Update UI if this location is still current
             await MainActor.run {

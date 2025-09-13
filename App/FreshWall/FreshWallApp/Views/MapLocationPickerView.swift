@@ -187,8 +187,7 @@ struct MapLocationPickerView: View {
         defer { isGeocodingAddress = false }
 
         do {
-            let oneTimeManager = OneTimeLocationManager()
-            let address = try await oneTimeManager.reverseGeocode(coordinate: coordinate)
+            let address = try await ModernLocationManager.reverseGeocode(coordinate: coordinate)
             selectedAddress = address
         } catch {
             // If geocoding fails, keep coordinates visible

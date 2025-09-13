@@ -15,17 +15,20 @@ struct PickedPhoto: Identifiable, Sendable, Equatable {
     let captureDate: Date?
     /// Location where the photo was captured, if available.
     let location: CLLocation?
+    /// Resolved address for the location, if available (from camera).
+    let resolvedAddress: String?
 
     /// Create a ``PickedPhoto`` from raw image data using a metadata service.
     /// - Parameters:
     ///   - data: Raw image bytes.
     ///   - service: Service used to extract metadata.
     /// - Returns: A ``PickedPhoto`` if the data can be converted to an image.
-    init(id: String, image: UIImage, captureDate: Date?, location: CLLocation?) {
+    init(id: String, image: UIImage, captureDate: Date?, location: CLLocation?, resolvedAddress: String? = nil) {
         self.id = id
         self.image = image
         self.captureDate = captureDate
         self.location = location
+        self.resolvedAddress = resolvedAddress
     }
 
     static func make(
@@ -36,7 +39,7 @@ struct PickedPhoto: Identifiable, Sendable, Equatable {
         guard let image = UIImage(data: data) else { return nil }
 
         let meta = service.metadata(from: data)
-        return PickedPhoto(id: id, image: image, captureDate: meta.captureDate, location: meta.location)
+        return PickedPhoto(id: id, image: image, captureDate: meta.captureDate, location: meta.location, resolvedAddress: nil)
     }
 }
 

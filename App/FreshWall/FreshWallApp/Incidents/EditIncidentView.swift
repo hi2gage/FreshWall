@@ -199,7 +199,7 @@ private class PreviewIncidentService: IncidentServiceProtocol {
         _: AddIncidentInput,
         beforePhotos _: [PickedPhoto],
         afterPhotos _: [PickedPhoto]
-    ) async throws {}
+    ) async throws -> String { "preview-incident-id" }
     func updateIncident(
         _: String,
         with _: UpdateIncidentInput,

@@ -10,6 +10,7 @@ struct PhotoSourcePicker<Label: View>: View {
     private let filter: PHPickerFilter?
     private let preferredItemEncoding: PhotosPickerItem.EncodingDisambiguationPolicy
     private let photoLibrary: PHPhotoLibrary
+    private let onCameraSelected: (() -> Void)?
     private let label: () -> Label
 
     @State private var showDialog = false
@@ -25,6 +26,7 @@ struct PhotoSourcePicker<Label: View>: View {
         preferredItemEncoding: PhotosPickerItem.EncodingDisambiguationPolicy = .automatic,
         photoLibrary: PHPhotoLibrary,
         metadataService: PhotoMetadataServiceProtocol = PhotoMetadataService(),
+        onCameraSelected: (() -> Void)? = nil,
         @ViewBuilder label: @escaping () -> Label
     ) {
         _selection = selection
@@ -34,13 +36,17 @@ struct PhotoSourcePicker<Label: View>: View {
         self.preferredItemEncoding = preferredItemEncoding
         self.photoLibrary = photoLibrary
         self.metadataService = metadataService
+        self.onCameraSelected = onCameraSelected
         self.label = label
     }
 
     var body: some View {
         Button(action: { showDialog = true }, label: label)
             .confirmationDialog("Add Photo", isPresented: $showDialog) {
-                Button("Camera") { showCamera = true }
+                Button("Camera") {
+                    onCameraSelected?()
+                    showCamera = true
+                }
                 Button("Photo Library") { showLibrary = true }
                 Button("Cancel", role: .cancel) {}
             }
@@ -55,12 +61,16 @@ struct PhotoSourcePicker<Label: View>: View {
             )
             .fullScreenCover(isPresented: $showCamera) {
                 CameraPicker { data in
-                    if let data,
-                       let photo = PickedPhoto.make(
-                           id: UUID().uuidString,
-                           from: data,
-                           using: metadataService
-                       ) {
+                    if let data, let image = UIImage(data: data) {
+                        // Create PickedPhoto without location (will be handled in AddIncidentView)
+                        let photo = PickedPhoto(
+                            id: UUID().uuidString,
+                            image: image,
+                            captureDate: Date(), // Camera photos taken now
+                            location: nil,
+                            resolvedAddress: nil
+                        )
+
                         selection.append(photo)
                     }
                     showCamera = false

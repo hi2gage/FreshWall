@@ -15,7 +15,7 @@ protocol IncidentServiceProtocol: Sendable {
         _ input: AddIncidentInput,
         beforePhotos: [PickedPhoto],
         afterPhotos: [PickedPhoto]
-    ) async throws
+    ) async throws -> String
     /// Updates an existing incident using an input value object and optional images.
     func updateIncident(
         _ incidentId: String,
@@ -78,7 +78,7 @@ struct IncidentService: IncidentServiceProtocol {
         _ input: AddIncidentInput,
         beforePhotos: [PickedPhoto],
         afterPhotos: [PickedPhoto]
-    ) async throws {
+    ) async throws -> String {
         let teamId = session.teamId
 
         let newDoc = modelService.newIncidentDocument(teamId: teamId)
@@ -128,6 +128,7 @@ struct IncidentService: IncidentServiceProtocol {
         )
         try await modelService.setIncident(newIncident, at: newDoc)
         try await fetchIncidents()
+        return newDoc.documentID
     }
 
     /// Updates an existing incident document in Firestore.
