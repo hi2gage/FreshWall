@@ -2,21 +2,28 @@ import CoreLocation
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - LocationCacheProtocol
+
+/// Protocol for caching address lookups
+protocol LocationCacheProtocol: Actor {
+    /// Gets cached address for coordinates if available and not expired
+    func getCachedAddress(for coordinates: GeoPoint) async -> String?
+    /// Stores address in cache for given coordinates
+    func cacheAddress(_ address: String, for coordinates: GeoPoint) async
+    /// Clears all cached addresses
+    func clearCache() async
+}
+
 // MARK: - LocationCache
 
 /// Cache for storing address lookups to speed up repeated location operations
-@MainActor
-final class LocationCache {
-    static let shared = LocationCache()
-
+actor LocationCache: LocationCacheProtocol {
     private var addressCache: [String: CachedAddress] = [:]
     private let cacheExpirationInterval: TimeInterval = 24 * 60 * 60 // 24 hours
     private let proximityThreshold: CLLocationDistance = 100 // 100 meters
 
-    private init() {}
-
     /// Gets cached address for coordinates if available and not expired
-    func getCachedAddress(for coordinates: GeoPoint) -> String? {
+    func getCachedAddress(for coordinates: GeoPoint) async -> String? {
         let key = cacheKey(for: coordinates)
 
         // Check exact match first
@@ -50,7 +57,7 @@ final class LocationCache {
     }
 
     /// Stores address in cache for given coordinates
-    func cacheAddress(_ address: String, for coordinates: GeoPoint) {
+    func cacheAddress(_ address: String, for coordinates: GeoPoint) async {
         let key = cacheKey(for: coordinates)
         addressCache[key] = CachedAddress(
             coordinates: coordinates,
@@ -63,7 +70,7 @@ final class LocationCache {
     }
 
     /// Clears all cached addresses
-    func clearCache() {
+    func clearCache() async {
         addressCache.removeAll()
     }
 
