@@ -56,6 +56,7 @@ struct ClientService: ClientServiceProtocol {
             id: newDoc.documentID,
             name: input.name,
             notes: input.notes,
+            defaults: input.defaults,
             isDeleted: false,
             deletedAt: nil,
             createdAt: Timestamp(date: Date()),
@@ -74,6 +75,12 @@ struct ClientService: ClientServiceProtocol {
             data["notes"] = notes
         } else {
             data["notes"] = FieldValue.delete()
+        }
+
+        if let defaults = input.defaults {
+            data["defaults"] = try Firestore.Encoder().encode(defaults)
+        } else {
+            data["defaults"] = FieldValue.delete()
         }
 
         try await modelService.updateClient(id: clientId, teamId: teamId, data: data)

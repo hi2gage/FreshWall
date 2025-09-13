@@ -19,9 +19,59 @@ struct AddClientView: View {
             Section("Name") {
                 TextField("Client Name", text: $viewModel.name)
             }
+
             Section("Notes") {
                 TextEditor(text: $viewModel.notes)
                     .frame(minHeight: 100)
+            }
+
+            Section("Billing Defaults") {
+                Toggle("Configure billing defaults", isOn: $viewModel.includeDefaults)
+
+                if viewModel.includeDefaults {
+                    VStack(alignment: .leading, spacing: 16) {
+                        // Billing Method Picker
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Billing Method")
+                                .font(.headline)
+                            Picker("Billing Method", selection: $viewModel.billingMethod) {
+                                ForEach(BillingMethod.allCases, id: \.self) { method in
+                                    Text(method.displayName).tag(method)
+                                }
+                            }
+                            .pickerStyle(.segmented)
+                        }
+
+                        // Minimum Billable Quantity
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Minimum Billable Quantity")
+                                .font(.headline)
+                            HStack {
+                                TextField("0", text: $viewModel.minimumBillableQuantity)
+                                    .keyboardType(.decimalPad)
+                                    .textFieldStyle(.roundedBorder)
+                                Text(viewModel.billingMethod.unitLabel)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+
+                        // Amount Per Unit
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Amount Per Unit")
+                                .font(.headline)
+                            HStack {
+                                Text("$")
+                                    .foregroundColor(.secondary)
+                                TextField("0.00", text: $viewModel.amountPerUnit)
+                                    .keyboardType(.decimalPad)
+                                    .textFieldStyle(.roundedBorder)
+                                Text("per \(viewModel.billingMethod.unitLabel)")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 8)
+                }
             }
         }
         .navigationTitle("Add Client")

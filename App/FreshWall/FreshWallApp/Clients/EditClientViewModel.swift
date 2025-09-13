@@ -12,12 +12,27 @@ final class EditClientViewModel {
     /// Whether to show the delete confirmation alert.
     var showingDeleteAlert = false
 
+    // Defaults configuration
+    var billingMethod: BillingMethod = .squareFootage
+    var minimumBillableQuantity: String = ""
+    var amountPerUnit: String = ""
+    var includeDefaults: Bool = false
+
     private let clientId: String
     private let service: ClientServiceProtocol
 
     /// Validation: name must not be empty.
     var isValid: Bool {
-        !name.trimmingCharacters(in: .whitespaces).isEmpty
+        let nameValid = !name.trimmingCharacters(in: .whitespaces).isEmpty
+        if !includeDefaults {
+            return nameValid
+        }
+
+        // If including defaults, validate the billing configuration
+        let quantityValid = Double(minimumBillableQuantity) != nil && Double(minimumBillableQuantity)! >= 0
+        let amountValid = Double(amountPerUnit) != nil && Double(amountPerUnit)! >= 0
+
+        return nameValid && quantityValid && amountValid
     }
 
     init(client: Client, service: ClientServiceProtocol) {
@@ -25,13 +40,32 @@ final class EditClientViewModel {
         self.service = service
         name = client.name
         notes = client.notes ?? ""
+
+        // Load existing defaults if available
+        if let defaults = client.defaults {
+            billingMethod = defaults.billingMethod
+            minimumBillableQuantity = String(defaults.minimumBillableQuantity)
+            amountPerUnit = String(defaults.amountPerUnit)
+            includeDefaults = true
+        }
     }
 
     /// Saves the updated client via the service.
     func save() async throws {
+        let defaults: ClientDefaults? = if includeDefaults {
+            ClientDefaults(
+                billingMethod: billingMethod,
+                minimumBillableQuantity: Double(minimumBillableQuantity) ?? 0,
+                amountPerUnit: Double(amountPerUnit) ?? 0
+            )
+        } else {
+            nil
+        }
+
         let input = UpdateClientInput(
             name: name.trimmingCharacters(in: .whitespaces),
-            notes: notes.isEmpty ? nil : notes
+            notes: notes.isEmpty ? nil : notes,
+            defaults: defaults
         )
         try await service.updateClient(clientId, with: input)
     }

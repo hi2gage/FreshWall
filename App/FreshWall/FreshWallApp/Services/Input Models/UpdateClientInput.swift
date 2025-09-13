@@ -7,4 +7,6 @@ struct UpdateClientInput: Sendable {
     let name: String
     /// Optional updated notes for the client.
     let notes: String?
+    /// Optional updated billing defaults for the client.
+    let defaults: ClientDefaults?
 }

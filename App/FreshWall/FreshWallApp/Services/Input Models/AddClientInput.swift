@@ -7,6 +7,8 @@ struct AddClientInput: Sendable {
     let name: String
     /// Optional notes for the new client.
     let notes: String?
+    /// Optional billing defaults for the client.
+    let defaults: ClientDefaults?
 
     let lastIncidentAt: Timestamp
 }
