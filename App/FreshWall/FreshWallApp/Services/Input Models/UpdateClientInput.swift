@@ -3,6 +3,8 @@ import Foundation
 
 /// Input model for updating an existing client via `ClientService`.
 struct UpdateClientInput: Sendable {
+    typealias ClientDefaults = ClientDTO.ClientDefaults
+
     /// Updated name for the client.
     let name: String
     /// Optional updated notes for the client.

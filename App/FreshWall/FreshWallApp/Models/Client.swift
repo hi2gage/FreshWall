@@ -5,6 +5,8 @@ import Foundation
 
 /// Domain model representing a client used by the UI layer.
 struct Client: Identifiable, Hashable, Sendable {
+    typealias ClientDefaults = ClientDTO.ClientDefaults
+
     var id: String?
     var name: String
     var notes: String?

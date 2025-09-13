@@ -18,130 +18,116 @@ struct AddIncidentView: View {
         _viewModel = State(wrappedValue: viewModel)
     }
 
+    /// Unit label for minimum quantity display
+    private var quantityUnitLabel: String {
+        if viewModel.input.billingMethod == .custom {
+            viewModel.input.customUnitDescription.isEmpty ? "units" : viewModel.input.customUnitDescription
+        } else {
+            viewModel.input.billingMethod.unitLabel
+        }
+    }
+
+    /// Unit label for amount per unit display
+    private var amountUnitLabel: String {
+        if viewModel.input.billingMethod == .custom {
+            let customUnit = viewModel.input.customUnitDescription.isEmpty ? "unit" : viewModel.input.customUnitDescription
+            return "per \(customUnit)"
+        } else {
+            return "per \(viewModel.input.billingMethod.unitLabel)"
+        }
+    }
+
     var body: some View {
         Form {
-            Section(header: Text("Area (sq ft)")) {
-                TextField("Area", text: $viewModel.input.areaText)
-                    .keyboardType(.decimalPad)
-            }
-            if !beforePhotos.isEmpty {
-                Section("Before Photos") {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(beforePhotos.indices, id: \.self) { idx in
-                                Image(uiImage: beforePhotos[idx].image)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 100, height: 100)
-                                    .clipped()
-                            }
-                        }
-                    }
-                    .frame(height: 120)
+            // MARK: - Photos Section (Top Priority)
+
+            IncidentPhotosSection(
+                beforePhotos: $beforePhotos,
+                afterPhotos: $afterPhotos,
+                onPhotosChanged: {
+                    viewModel.autoPopulateFromPhotos(beforePhotos: beforePhotos, afterPhotos: afterPhotos)
                 }
-            }
-            PhotoSourcePicker(selection: $beforePhotos, matching: .images, photoLibrary: .shared()) {
-                Label("Add Before Photos", systemImage: "photo.on.rectangle")
-            }
-            if !afterPhotos.isEmpty {
-                Section("After Photos") {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(afterPhotos.indices, id: \.self) { idx in
-                                Image(uiImage: afterPhotos[idx].image)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 100, height: 100)
-                                    .clipped()
-                            }
-                        }
-                    }
-                    .frame(height: 120)
-                }
-            }
-            PhotoSourcePicker(selection: $afterPhotos, matching: .images, photoLibrary: .shared()) {
-                Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
-            }
-            Section(header: Text("Timeframe")) {
-                DatePicker(
-                    "Start Time",
-                    selection: $viewModel.input.startTime,
-                    displayedComponents: [.date, .hourAndMinute]
-                )
-                DatePicker(
-                    "End Time",
-                    selection: $viewModel.input.endTime,
-                    displayedComponents: [.date, .hourAndMinute]
-                )
-            }
-            Section(header: Text("Client")) {
-                Picker("Select Client", selection: $viewModel.input.clientId) {
-                    Text("Add New Client...").tag(addNewTag)
-                    ForEach(viewModel.validClients, id: \.id) { item in
-                        Text(item.name).tag(item.id)
-                    }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: viewModel.input.clientId) { _, newValue in
+            )
+
+            // MARK: - Time & Duration Section
+
+            TimeStampsSection(
+                startTime: $viewModel.input.startTime,
+                endTime: $viewModel.input.endTime,
+                showTimeBillingDetails: viewModel.showTimeBillingDetails,
+                timeDisplayInfo: viewModel.timeDisplayInfo
+            )
+
+            // MARK: - Client Selection
+
+            ClientSelectionSection(
+                clientId: $viewModel.input.clientId,
+                validClients: viewModel.validClients,
+                addNewTag: addNewTag,
+                onClientChange: { newValue in
                     if newValue == addNewTag {
                         routerPath.push(.addClient())
                         viewModel.input.clientId = ""
+                    } else {
+                        viewModel.updateBillingFromClient()
                     }
                 }
-            }
+            )
+
+            // MARK: - Surface Type Section
+
             Section("Surface Type") {
                 SurfaceTypeRow(
                     surfaceType: viewModel.input.surfaceType,
-                    customDescription: viewModel.input.customSurfaceDescription
-                ) {
-                    viewModel.showingSurfaceTypeSelection = true
+                    customDescription: viewModel.input.customSurfaceDescription,
+                    onTap: { viewModel.showingSurfaceTypeSelection = true }
+                )
+            }
+
+            // MARK: - Location Section
+
+            LocationSection(
+                enhancedLocation: viewModel.input.enhancedLocation,
+                onLocationCapture: { currentLocation, completion in
+                    routerPath.presentLocationCapture(currentLocation: currentLocation, onLocationSelected: { newLocation in
+                        viewModel.input.enhancedLocation = newLocation
+                        completion(newLocation)
+                    })
+                }
+            )
+
+            // MARK: - Billing Configuration Section
+
+            BillingConfigurationSection(
+                hasBillingConfiguration: $viewModel.input.hasBillingConfiguration,
+                billingMethod: $viewModel.input.billingMethod,
+                minimumBillableQuantity: $viewModel.input.minimumBillableQuantity,
+                amountPerUnit: $viewModel.input.amountPerUnit,
+                customUnitDescription: $viewModel.input.customUnitDescription,
+                quantityUnitLabel: quantityUnitLabel,
+                amountUnitLabel: amountUnitLabel
+            )
+
+            // MARK: - Area Section (Conditional)
+
+            if viewModel.showSquareFootageBillingDetails {
+                Section(header: Text("Area (sq ft)")) {
+                    TextField("Area", text: $viewModel.input.areaText)
+                        .keyboardType(.decimalPad)
                 }
             }
 
-            Section("Enhanced Notes") {
-                EnhancedNotesRow(notes: viewModel.input.enhancedNotes) {
-                    viewModel.showingEnhancedNotes = true
-                }
-            }
+            // MARK: - Materials Section
 
-            Section(header: Text("Quick Notes (Legacy)")) {
-                TextEditor(text: $viewModel.input.description)
-                    .frame(minHeight: 100)
-            }
-            Section("Rate") {
-                TextField("Rate", text: $viewModel.input.rateText)
-                    .keyboardType(.decimalPad)
-            }
-            Section("Location") {
-                if let enhancedLocation = viewModel.input.enhancedLocation {
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text("📍 \(enhancedLocation.shortDisplayString)")
-                                .font(.headline)
-                            Spacer()
-                            Button("Edit") {
-                                routerPath.presentLocationCapture(currentLocation: viewModel.input.enhancedLocation) { newLocation in
-                                    viewModel.input.enhancedLocation = newLocation
-                                }
-                            }
-                        }
-
-                        Text(enhancedLocation.captureMethod.displayName)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                } else {
-                    Button("📍 Capture Location") {
-                        routerPath.presentLocationCapture(currentLocation: viewModel.input.enhancedLocation) { newLocation in
-                            viewModel.input.enhancedLocation = newLocation
-                        }
-                    }
-                    .foregroundColor(.blue)
-                }
-            }
             Section(header: Text("Materials Used")) {
                 TextEditor(text: $viewModel.input.materialsUsed)
                     .frame(minHeight: 80)
+            }
+
+            // MARK: - Notes Section
+
+            Section("Enhanced Notes") {
+                EnhancedNotesRow(notes: viewModel.input.enhancedNotes, onTap: { viewModel.showingEnhancedNotes = true })
             }
         }
         .navigationTitle("Add Incident")
@@ -157,7 +143,6 @@ struct AddIncidentView: View {
                         }
                     }
                 }
-                .disabled(!viewModel.isValid)
             }
         }
         .sheet(isPresented: $viewModel.showingSurfaceTypeSelection) {
@@ -215,6 +200,243 @@ private class PreviewClientService: ClientServiceProtocol {
     func addClient(_: AddClientInput) async throws -> String { "mock-id" }
     func updateClient(_: String, with _: UpdateClientInput) async throws {}
     func deleteClient(_: String) async throws {}
+}
+
+// MARK: - IncidentPhotosSection
+
+/// Photos section with before and after photo pickers
+struct IncidentPhotosSection: View {
+    @Binding var beforePhotos: [PickedPhoto]
+    @Binding var afterPhotos: [PickedPhoto]
+    let onPhotosChanged: () -> Void
+
+    var body: some View {
+        if !beforePhotos.isEmpty {
+            Section("Before Photos") {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(beforePhotos.indices, id: \.self) { idx in
+                            Image(uiImage: beforePhotos[idx].image)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 100, height: 100)
+                                .clipped()
+                        }
+                    }
+                }
+                .frame(height: 120)
+            }
+        }
+        PhotoSourcePicker(selection: $beforePhotos, matching: .images, photoLibrary: .shared()) {
+            Label("Add Before Photos", systemImage: "photo.on.rectangle")
+        }
+        .onChange(of: beforePhotos) { _, _ in
+            onPhotosChanged()
+        }
+
+        if !afterPhotos.isEmpty {
+            Section("After Photos") {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(afterPhotos.indices, id: \.self) { idx in
+                            Image(uiImage: afterPhotos[idx].image)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 100, height: 100)
+                                .clipped()
+                        }
+                    }
+                }
+                .frame(height: 120)
+            }
+        }
+        PhotoSourcePicker(selection: $afterPhotos, matching: .images, photoLibrary: .shared()) {
+            Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
+        }
+        .onChange(of: afterPhotos) { _, _ in
+            onPhotosChanged()
+        }
+    }
+}
+
+// MARK: - TimeStampsSection
+
+/// Timestamps section with optional time billing display
+struct TimeStampsSection: View {
+    @Binding var startTime: Date
+    @Binding var endTime: Date
+    let showTimeBillingDetails: Bool
+    let timeDisplayInfo: (hours: Double, status: AddIncidentViewModel.TimeStatus, message: String)
+
+    var body: some View {
+        Section(header: Text("Timeframe")) {
+            DatePicker(
+                "Start Time",
+                selection: $startTime,
+                displayedComponents: [.date, .hourAndMinute]
+            )
+            DatePicker(
+                "End Time",
+                selection: $endTime,
+                displayedComponents: [.date, .hourAndMinute]
+            )
+
+            if showTimeBillingDetails {
+                HStack {
+                    Text("Duration")
+                        .font(.headline)
+                    Spacer()
+                    VStack(alignment: .trailing) {
+                        Text(timeDisplayInfo.message)
+                            .font(.subheadline)
+                            .foregroundColor(timeDisplayInfo.status == .sufficient ? .green : .orange)
+                        if timeDisplayInfo.status == .belowThreshold {
+                            Text("Minimum billing applies")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - BillingConfigurationSection
+
+/// Billing configuration section
+struct BillingConfigurationSection: View {
+    @Binding var hasBillingConfiguration: Bool
+    @Binding var billingMethod: IncidentBilling.BillingMethod
+    @Binding var minimumBillableQuantity: String
+    @Binding var amountPerUnit: String
+    @Binding var customUnitDescription: String
+    let quantityUnitLabel: String
+    let amountUnitLabel: String
+
+    var body: some View {
+        Section("Billing Configuration") {
+            Toggle("Configure billing for this incident", isOn: $hasBillingConfiguration)
+
+            if hasBillingConfiguration {
+                VStack(alignment: .leading, spacing: 16) {
+                    // Billing Method Picker
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Billing Method")
+                            .font(.headline)
+                        Picker("Billing Method", selection: $billingMethod) {
+                            ForEach(IncidentBilling.BillingMethod.allCases, id: \.self) { method in
+                                Text(method.displayName).tag(method)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
+
+                    // Custom Unit Description (for custom billing method)
+                    if billingMethod == .custom {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Unit Description")
+                                .font(.headline)
+                            TextField("Enter unit description (e.g., 'panels', 'sections')", text: $customUnitDescription)
+                                .textFieldStyle(.roundedBorder)
+                        }
+                    }
+
+                    // Minimum Billable Quantity
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Minimum Billable Quantity")
+                            .font(.headline)
+                        HStack {
+                            TextField("0", text: $minimumBillableQuantity)
+                                .keyboardType(.decimalPad)
+                                .textFieldStyle(.roundedBorder)
+                            Text(quantityUnitLabel)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    // Amount Per Unit
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Amount Per Unit")
+                            .font(.headline)
+                        HStack {
+                            Text("$")
+                                .foregroundColor(.secondary)
+                            TextField("0.00", text: $amountPerUnit)
+                                .keyboardType(.decimalPad)
+                                .textFieldStyle(.roundedBorder)
+                            Text(amountUnitLabel)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .padding(.vertical, 8)
+            }
+        }
+    }
+}
+
+// MARK: - ClientSelectionSection
+
+/// Client selection section
+struct ClientSelectionSection: View {
+    @Binding var clientId: String
+    let validClients: [(id: String, name: String)]
+    let addNewTag: String
+    let onClientChange: (String) -> Void
+
+    var body: some View {
+        Section(header: Text("Client")) {
+            Picker("Select Client", selection: $clientId) {
+                Text("Add New Client...").tag(addNewTag)
+                ForEach(validClients, id: \.id) { item in
+                    Text(item.name).tag(item.id)
+                }
+            }
+            .pickerStyle(.menu)
+            .onChange(of: clientId) { _, newValue in
+                onClientChange(newValue)
+            }
+        }
+    }
+}
+
+// MARK: - LocationSection
+
+/// Location capture section
+struct LocationSection: View {
+    let enhancedLocation: IncidentLocation?
+    let onLocationCapture: (IncidentLocation?, @escaping (IncidentLocation?) -> Void) -> Void
+
+    var body: some View {
+        Section("Location") {
+            if let enhancedLocation {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("📍 \(enhancedLocation.address ?? enhancedLocation.shortDisplayString)")
+                            .font(.headline)
+                        Spacer()
+                        Button("Edit") {
+                            onLocationCapture(enhancedLocation) { _ in
+                                // Update handled by parent through closure
+                            }
+                        }
+                    }
+
+                    Text(enhancedLocation.captureMethod.displayName)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            } else {
+                Button("📍 Capture Location") {
+                    onLocationCapture(nil) { _ in
+                        // Update handled by parent through closure
+                    }
+                }
+                .foregroundColor(.blue)
+            }
+        }
+    }
 }
 
 #Preview {

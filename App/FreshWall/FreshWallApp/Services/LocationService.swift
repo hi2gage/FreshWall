@@ -74,6 +74,41 @@ struct LocationService: Sendable {
         let manager = OneTimeLocationManager()
         return try await manager.getCurrentLocation()
     }
+
+    // MARK: - Photo Timestamp Extraction
+
+    /// Extracts the earliest capture date from before photos for start time
+    static func extractStartTime(from beforePhotos: [PickedPhoto]) -> Date? {
+        let dates = beforePhotos.compactMap(\.captureDate)
+        return dates.min()
+    }
+
+    /// Extracts the latest capture date from after photos for end time
+    static func extractEndTime(from afterPhotos: [PickedPhoto]) -> Date? {
+        let dates = afterPhotos.compactMap(\.captureDate)
+        return dates.max()
+    }
+
+    /// Extracts location from photos, preferring before photos
+    static func extractEnhancedLocation(from beforePhotos: [PickedPhoto], afterPhotos: [PickedPhoto]) -> IncidentLocation? {
+        // Try before photos first (incident scene)
+        for photo in beforePhotos {
+            if let clLocation = photo.location {
+                let geoPoint = GeoPoint(latitude: clLocation.coordinate.latitude, longitude: clLocation.coordinate.longitude)
+                return IncidentLocation(photoMetadataCoordinates: geoPoint)
+            }
+        }
+
+        // Fall back to after photos
+        for photo in afterPhotos {
+            if let clLocation = photo.location {
+                let geoPoint = GeoPoint(latitude: clLocation.coordinate.latitude, longitude: clLocation.coordinate.longitude)
+                return IncidentLocation(photoMetadataCoordinates: geoPoint)
+            }
+        }
+
+        return nil
+    }
 }
 
 // MARK: - GeoPoint Extensions for Display

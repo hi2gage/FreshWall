@@ -11,6 +11,7 @@ final class EnhancedLocationCaptureViewModel {
     var capturedLocation: IncidentLocation?
     var locationError: String?
     var isCapturingGPS = false
+    var isResolvingAddress = false
 
     init(initialLocation: IncidentLocation?) {
         self.capturedLocation = initialLocation
@@ -18,30 +19,63 @@ final class EnhancedLocationCaptureViewModel {
 
     func captureGPSLocation() async {
         isCapturingGPS = true
-        defer { isCapturingGPS = false }
         locationError = nil
 
         do {
-            // Use the simple one-time location service
+            // Fast: Get GPS coordinates first (0.5-1 seconds)
             let gpsLocation = try await LocationService.getCurrentLocationOnce()
 
-            // Try to get address for the captured location
+            // Immediately update UI with coordinates
+            capturedLocation = gpsLocation
+            isCapturingGPS = false
+
+            // Background: Start address resolution
             if let coordinates = gpsLocation.coordinates {
-                let coordinate = LocationService.coordinate(from: coordinates)
-
-                // Try reverse geocoding
-                let oneTimeManager = OneTimeLocationManager()
-                let address = try? await oneTimeManager.reverseGeocode(coordinate: coordinate)
-
-                var enhancedLocation = gpsLocation
-                enhancedLocation.address = address
-
-                capturedLocation = enhancedLocation
-            } else {
-                capturedLocation = gpsLocation
+                Task {
+                    await resolveAddressInBackground(for: gpsLocation, coordinates: coordinates)
+                }
             }
+
         } catch {
             locationError = error.localizedDescription
+            isCapturingGPS = false
+        }
+    }
+
+    private func resolveAddressInBackground(for location: IncidentLocation, coordinates: GeoPoint) async {
+        isResolvingAddress = true
+        defer { isResolvingAddress = false }
+
+        // Check cache first
+        if let cachedAddress = LocationCache.shared.getCachedAddress(for: coordinates) {
+            await MainActor.run {
+                if var current = capturedLocation,
+                   current.coordinates == location.coordinates,
+                   current.capturedAt == location.capturedAt {
+                    current.address = cachedAddress
+                    capturedLocation = current
+                }
+            }
+            return
+        }
+
+        // Resolve address via geocoding
+        let coordinate = LocationService.coordinate(from: coordinates)
+        let oneTimeManager = OneTimeLocationManager()
+
+        if let address = try? await oneTimeManager.reverseGeocode(coordinate: coordinate) {
+            // Cache the result
+            LocationCache.shared.cacheAddress(address, for: coordinates)
+
+            // Update UI if this location is still current
+            await MainActor.run {
+                if var current = capturedLocation,
+                   current.coordinates == location.coordinates,
+                   current.capturedAt == location.capturedAt {
+                    current.address = address
+                    capturedLocation = current
+                }
+            }
         }
     }
 
@@ -111,6 +145,19 @@ struct EnhancedLocationCaptureView: View {
         }
     }
 
+    /// Smart location display text based on available data
+    private var locationDisplayText: String {
+        guard let location = viewModel.capturedLocation else { return "No location" }
+
+        if let address = location.address {
+            return address // Full address when available
+        } else if let coordinates = location.coordinates {
+            return "📍 \(coordinates.displayString)" // Coordinates while waiting
+        } else {
+            return "Location captured"
+        }
+    }
+
     @ViewBuilder
     private var currentLocationSection: some View {
         Section("Current Location") {
@@ -119,8 +166,19 @@ struct EnhancedLocationCaptureView: View {
                     HStack {
                         Image(systemName: "location.fill")
                             .foregroundColor(.blue)
-                        Text(location.displayString)
-                            .font(.headline)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(locationDisplayText)
+                                .font(.headline)
+                            if viewModel.isResolvingAddress {
+                                HStack(spacing: 4) {
+                                    ProgressView()
+                                        .scaleEffect(0.6)
+                                    Text("Resolving address...")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
                         Spacer()
                         Text(location.captureMethod.displayName)
                             .font(.caption)

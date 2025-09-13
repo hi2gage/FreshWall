@@ -120,8 +120,10 @@ struct SurfaceTypeRow: View {
                     .foregroundColor(.secondary)
                     .font(.caption)
             }
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
