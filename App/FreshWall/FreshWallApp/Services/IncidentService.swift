@@ -110,7 +110,6 @@ struct IncidentService: IncidentServiceProtocol {
             clientRef: clientRef,
             description: input.description,
             area: input.area,
-            location: input.location,
             createdAt: Timestamp(date: Date()),
             startTime: Timestamp(date: input.startTime),
             endTime: Timestamp(date: input.endTime),
@@ -121,7 +120,11 @@ struct IncidentService: IncidentServiceProtocol {
             lastModifiedAt: nil,
             rate: input.rate,
             materialsUsed: input.materialsUsed,
-            status: .inProgress
+            status: .inProgress,
+            enhancedLocation: input.enhancedLocation,
+            surfaceType: input.surfaceType,
+            enhancedNotes: input.enhancedNotes,
+            customSurfaceDescription: input.customSurfaceDescription
         )
         try await modelService.setIncident(newIncident, at: newDoc)
         try await fetchIncidents()
@@ -151,11 +154,11 @@ struct IncidentService: IncidentServiceProtocol {
             "lastModifiedAt": FieldValue.serverTimestamp(),
         ]
 
-        if let location = input.location {
-            data["location"] = location
-        } else {
-            data["location"] = FieldValue.delete()
-        }
+//        if let location = input.location {
+//            data["location"] = location
+//        } else {
+//            data["location"] = FieldValue.delete()
+//        }
 
         if let rate = input.rate {
             data["rate"] = rate
@@ -167,6 +170,31 @@ struct IncidentService: IncidentServiceProtocol {
             data["materialsUsed"] = materialsUsed
         } else {
             data["materialsUsed"] = FieldValue.delete()
+        }
+
+        // Enhanced metadata fields
+        if let enhancedLocation = input.enhancedLocation {
+            data["enhancedLocation"] = enhancedLocation.dictionary
+        } else {
+            data["enhancedLocation"] = FieldValue.delete()
+        }
+
+        if let surfaceType = input.surfaceType {
+            data["surfaceType"] = surfaceType.rawValue
+        } else {
+            data["surfaceType"] = FieldValue.delete()
+        }
+
+        if let enhancedNotes = input.enhancedNotes {
+            data["enhancedNotes"] = enhancedNotes.dictionary
+        } else {
+            data["enhancedNotes"] = FieldValue.delete()
+        }
+
+        if let customSurfaceDescription = input.customSurfaceDescription {
+            data["customSurfaceDescription"] = customSurfaceDescription
+        } else {
+            data["customSurfaceDescription"] = FieldValue.delete()
         }
 
         let beforeData = beforePhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }

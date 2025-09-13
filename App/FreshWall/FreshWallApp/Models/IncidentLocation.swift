@@ -114,6 +114,23 @@ struct IncidentLocation: Codable, Sendable, Hashable {
     }
 }
 
+// MARK: - Firestore Support
+
+extension IncidentLocation {
+    /// Dictionary representation for use with Firestore update operations.
+    var dictionary: [String: Any] {
+        var dict: [String: Any] = ["captureMethod": captureMethod.rawValue]
+
+        if let coordinates { dict["coordinates"] = coordinates }
+        if let address { dict["address"] = address }
+        if let locationName { dict["locationName"] = locationName }
+        if let capturedAt { dict["capturedAt"] = Timestamp(date: capturedAt) }
+        if let accuracy { dict["accuracy"] = accuracy }
+
+        return dict
+    }
+}
+
 // MARK: - Legacy GeoPoint Support
 
 extension IncidentLocation {

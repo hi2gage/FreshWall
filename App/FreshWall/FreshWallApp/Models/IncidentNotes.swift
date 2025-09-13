@@ -109,6 +109,22 @@ struct IncidentNotes: Codable, Sendable, Hashable {
     }
 }
 
+// MARK: - Firestore Support
+
+extension IncidentNotes {
+    /// Dictionary representation for use with Firestore update operations.
+    var dictionary: [String: Any] {
+        var dict: [String: Any] = [:]
+
+        if let beforeWork { dict["beforeWork"] = beforeWork }
+        if let duringWork { dict["duringWork"] = duringWork }
+        if let completion { dict["completion"] = completion }
+        if let general { dict["general"] = general }
+
+        return dict
+    }
+}
+
 // MARK: IncidentNotes.Stage
 
 extension IncidentNotes {

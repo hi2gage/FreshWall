@@ -21,8 +21,6 @@ final class EditIncidentViewModel {
     var rateText: String
     /// Materials used description.
     var materialsUsed: String
-    /// Geographic location where incident occurred.
-    var location: GeoPoint?
     /// Photos selected to represent the "before" state.
     var beforePhotos: [PickedPhoto] = []
     /// Photos selected to represent the "after" state.
@@ -31,8 +29,23 @@ final class EditIncidentViewModel {
     var clients: [Client] = []
     /// Whether to show the delete confirmation alert.
     var showingDeleteAlert = false
-    /// Whether to show the location map.
-    var showingLocationMap = false
+    /// Whether to show the enhanced location capture view.
+    var showingEnhancedLocationCapture = false
+    /// Whether to show surface type selection.
+    var showingSurfaceTypeSelection = false
+    /// Whether to show enhanced notes editing.
+    var showingEnhancedNotes = false
+
+    // MARK: - Enhanced Metadata
+
+    /// Enhanced location data with address and capture method
+    var enhancedLocation: IncidentLocation?
+    /// Type of surface being worked on
+    var surfaceType: SurfaceType?
+    /// Structured notes system for different work stages
+    var enhancedNotes: IncidentNotes?
+    /// Custom surface description when surfaceType is .other
+    var customSurfaceDescription: String?
 
     private let incidentId: String
     private let service: IncidentServiceProtocol
@@ -55,27 +68,36 @@ final class EditIncidentViewModel {
         endTime = incident.endTime.dateValue()
         rateText = incident.rate.map { String($0) } ?? ""
         materialsUsed = incident.materialsUsed ?? ""
-        location = incident.location
+
+        // Initialize enhanced metadata
+        enhancedLocation = incident.enhancedLocation
+        surfaceType = incident.surfaceType
+        enhancedNotes = incident.enhancedNotes
+        customSurfaceDescription = incident.customSurfaceDescription
     }
 
     /// Saves the updated incident using the service along with new photos.
     func save(beforePhotos: [PickedPhoto], afterPhotos: [PickedPhoto]) async throws {
-        // Try to extract location from new photos if not manually set
-        let finalLocation = location ?? LocationService.extractLocation(from: beforePhotos + afterPhotos)
+        // Use enhanced location if available, otherwise extract from photos
+        let finalEnhancedLocation = enhancedLocation ?? {
+            if let photoLocation = LocationService.extractLocation(from: beforePhotos + afterPhotos) {
+                return IncidentLocation(photoMetadataCoordinates: photoLocation)
+            }
+            return nil
+        }()
 
         let input = UpdateIncidentInput(
             clientId: clientId.trimmingCharacters(in: .whitespaces),
             description: description,
             area: Double(areaText) ?? 0,
-            location: finalLocation,
             startTime: startTime,
             endTime: endTime,
             rate: Double(rateText),
             materialsUsed: materialsUsed.isEmpty ? nil : materialsUsed,
-            enhancedLocation: nil,
-            surfaceType: nil,
-            enhancedNotes: nil,
-            customSurfaceDescription: nil
+            enhancedLocation: finalEnhancedLocation,
+            surfaceType: surfaceType,
+            enhancedNotes: enhancedNotes,
+            customSurfaceDescription: customSurfaceDescription
         )
 
         try await service.updateIncident(
