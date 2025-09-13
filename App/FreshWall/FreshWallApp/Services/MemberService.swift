@@ -53,7 +53,7 @@ struct MemberService: MemberServiceProtocol {
             .collection("users")
         let newDoc = usersRef.document()
         let newMember = UserDTO(
-            id: newDoc.documentID,
+            id: nil,
             displayName: input.displayName,
             email: input.email,
             role: input.role,
