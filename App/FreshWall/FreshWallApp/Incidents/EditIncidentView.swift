@@ -17,105 +17,86 @@ struct EditIncidentView: View {
 
     var body: some View {
         Form {
-            Section("Client") {
-                Picker("Select Client", selection: $viewModel.clientId) {
-                    Text("Add New Client...").tag(addNewTag)
-                    ForEach(viewModel.validClients, id: \.id) { item in
-                        Text(item.name).tag(item.id)
-                    }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: viewModel.clientId) { _, newValue in
+            // MARK: - Photos Section (Top Priority)
+
+            EditIncidentPhotosSection(
+                beforePhotos: $viewModel.beforePhotos,
+                afterPhotos: $viewModel.afterPhotos
+            )
+
+            // MARK: - Time & Duration Section
+
+            EditTimeStampsSection(
+                startTime: $viewModel.startTime,
+                endTime: $viewModel.endTime
+            )
+
+            // MARK: - Client Selection
+
+            EditClientSelectionSection(
+                clientId: $viewModel.clientId,
+                validClients: viewModel.validClients,
+                addNewTag: addNewTag,
+                onClientChange: { newValue in
                     if newValue == addNewTag {
                         // For previews this does nothing. Real usage pushes via router.
                         viewModel.clientId = ""
                     }
                 }
+            )
+
+            // MARK: - Surface Type Section
+
+            if let surfaceType = viewModel.surfaceType {
+                Section("Surface Type") {
+                    SurfaceTypeRow(
+                        surfaceType: surfaceType,
+                        customDescription: viewModel.customSurfaceDescription,
+                        onTap: { viewModel.showingSurfaceTypeSelection = true }
+                    )
+                }
             }
-            Section("Description") {
-                TextEditor(text: $viewModel.description)
-                    .frame(minHeight: 100)
-            }
+
+            // MARK: - Location Section
+
+            EditLocationSection(
+                enhancedLocation: viewModel.enhancedLocation,
+                onLocationCapture: { currentLocation, completion in
+                    routerPath.presentLocationCapture(currentLocation: currentLocation, onLocationSelected: { newLocation in
+                        viewModel.enhancedLocation = newLocation
+                        completion(newLocation)
+                    })
+                }
+            )
+
+            // MARK: - Area Section
+
             Section("Area (sq ft)") {
                 TextField("Area", text: $viewModel.areaText)
                     .keyboardType(.decimalPad)
             }
-            Section("Timeframe") {
-                DatePicker(
-                    "Start Time",
-                    selection: $viewModel.startTime,
-                    displayedComponents: [.date, .hourAndMinute]
-                )
-                DatePicker(
-                    "End Time",
-                    selection: $viewModel.endTime,
-                    displayedComponents: [.date, .hourAndMinute]
-                )
-            }
-            Section("Rate") {
-                TextField("Rate", text: $viewModel.rateText)
-                    .keyboardType(.decimalPad)
-            }
+
+            // MARK: - Materials Section
+
             Section("Materials Used") {
                 TextEditor(text: $viewModel.materialsUsed)
                     .frame(minHeight: 80)
             }
-            if !viewModel.beforePhotos.isEmpty {
-                Section("Before Photos") {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(viewModel.beforePhotos.indices, id: \.self) { idx in
-                                Image(uiImage: viewModel.beforePhotos[idx].image)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 100, height: 100)
-                                    .clipped()
-                            }
-                        }
-                    }
-                    .frame(height: 120)
+
+            // MARK: - Enhanced Notes Section
+
+            if let enhancedNotes = viewModel.enhancedNotes {
+                Section("Enhanced Notes") {
+                    EnhancedNotesRow(notes: enhancedNotes, onTap: { viewModel.showingEnhancedNotes = true })
                 }
             }
-            PhotoSourcePicker(selection: $viewModel.beforePhotos, matching: .images, photoLibrary: .shared()) {
-                Label("Add Before Photos", systemImage: "photo.on.rectangle")
-            }
-            if !viewModel.afterPhotos.isEmpty {
-                Section("After Photos") {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(viewModel.afterPhotos.indices, id: \.self) { idx in
-                                Image(uiImage: viewModel.afterPhotos[idx].image)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 100, height: 100)
-                                    .clipped()
-                            }
-                        }
-                    }
-                    .frame(height: 120)
-                }
-            }
-            PhotoSourcePicker(selection: $viewModel.afterPhotos, matching: .images, photoLibrary: .shared()) {
-                Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
-            }
-            Section("Location") {
-                if let location = viewModel.enhancedLocation {
-                    HStack {
-                        Text("📍 \(location.displayString)")
-                        Spacer()
-                        Button("Edit") {
-                            routerPath.presentLocationCapture(currentLocation: viewModel.enhancedLocation) { newLocation in
-                                viewModel.enhancedLocation = newLocation
-                            }
-                        }
-                    }
-                } else {
-                    Button("📍 Add Location") {
-                        routerPath.presentLocationCapture(currentLocation: viewModel.enhancedLocation) { newLocation in
-                            viewModel.enhancedLocation = newLocation
-                        }
-                    }
-                    .foregroundColor(.blue)
+
+            // MARK: - Legacy Description (if no enhanced notes)
+
+            if viewModel.enhancedNotes == nil {
+                Section("Description") {
+                    TextEditor(text: $viewModel.description)
+                        .frame(minHeight: 100)
                 }
             }
             Section {
@@ -140,8 +121,16 @@ struct EditIncidentView: View {
                         } catch {}
                     }
                 }
-                .disabled(!viewModel.isValid)
             }
+        }
+        .sheet(isPresented: $viewModel.showingSurfaceTypeSelection) {
+            SurfaceTypeSelectionView(
+                surfaceType: $viewModel.surfaceType,
+                customDescription: $viewModel.customSurfaceDescription
+            )
+        }
+        .sheet(isPresented: $viewModel.showingEnhancedNotes) {
+            EnhancedNotesView(notes: $viewModel.enhancedNotes)
         }
         .alert("Delete Incident", isPresented: $viewModel.showingDeleteAlert) {
             Button("Cancel", role: .cancel) {}
@@ -208,6 +197,153 @@ private class PreviewIncidentService: IncidentServiceProtocol {
     ) async throws {}
 
     func deleteIncident(_: String) async throws {}
+}
+
+// MARK: - EditIncidentPhotosSection
+
+/// Photos section for edit incident view
+struct EditIncidentPhotosSection: View {
+    @Binding var beforePhotos: [PickedPhoto]
+    @Binding var afterPhotos: [PickedPhoto]
+
+    var body: some View {
+        if !beforePhotos.isEmpty {
+            Section("Before Photos") {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(beforePhotos.indices, id: \.self) { idx in
+                            Image(uiImage: beforePhotos[idx].image)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 100, height: 100)
+                                .clipped()
+                        }
+                    }
+                }
+                .frame(height: 120)
+            }
+        }
+        PhotoSourcePicker(selection: $beforePhotos, matching: .images, photoLibrary: .shared()) {
+            Label("Add Before Photos", systemImage: "photo.on.rectangle")
+        }
+
+        if !afterPhotos.isEmpty {
+            Section("After Photos") {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(afterPhotos.indices, id: \.self) { idx in
+                            Image(uiImage: afterPhotos[idx].image)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 100, height: 100)
+                                .clipped()
+                        }
+                    }
+                }
+                .frame(height: 120)
+            }
+        }
+        PhotoSourcePicker(selection: $afterPhotos, matching: .images, photoLibrary: .shared()) {
+            Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
+        }
+    }
+}
+
+// MARK: - EditTimeStampsSection
+
+/// Timestamps section for edit incident view
+struct EditTimeStampsSection: View {
+    @Binding var startTime: Date
+    @Binding var endTime: Date
+
+    var body: some View {
+        Section("Timeframe") {
+            DatePicker(
+                "Start Time",
+                selection: $startTime,
+                displayedComponents: [.date, .hourAndMinute]
+            )
+            DatePicker(
+                "End Time",
+                selection: $endTime,
+                displayedComponents: [.date, .hourAndMinute]
+            )
+
+            // Show duration
+            HStack {
+                Text("Duration")
+                    .font(.headline)
+                Spacer()
+                let hours = endTime.timeIntervalSince(startTime) / 3600
+                Text(String(format: "%.1f hours", hours))
+                    .font(.subheadline)
+                    .foregroundColor(.green)
+            }
+        }
+    }
+}
+
+// MARK: - EditClientSelectionSection
+
+/// Client selection section for edit incident view
+struct EditClientSelectionSection: View {
+    @Binding var clientId: String
+    let validClients: [(id: String, name: String)]
+    let addNewTag: String
+    let onClientChange: (String) -> Void
+
+    var body: some View {
+        Section("Client") {
+            Picker("Select Client", selection: $clientId) {
+                Text("Add New Client...").tag(addNewTag)
+                ForEach(validClients, id: \.id) { item in
+                    Text(item.name).tag(item.id)
+                }
+            }
+            .pickerStyle(.menu)
+            .onChange(of: clientId) { _, newValue in
+                onClientChange(newValue)
+            }
+        }
+    }
+}
+
+// MARK: - EditLocationSection
+
+/// Location section for edit incident view
+struct EditLocationSection: View {
+    let enhancedLocation: IncidentLocation?
+    let onLocationCapture: (IncidentLocation?, @escaping (IncidentLocation?) -> Void) -> Void
+
+    var body: some View {
+        Section("Location") {
+            if let enhancedLocation {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("📍 \(enhancedLocation.address ?? enhancedLocation.shortDisplayString)")
+                            .font(.headline)
+                        Spacer()
+                        Button("Edit") {
+                            onLocationCapture(enhancedLocation) { _ in
+                                // Update handled by parent through closure
+                            }
+                        }
+                    }
+
+                    Text(enhancedLocation.captureMethod.displayName)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            } else {
+                Button("📍 Capture Location") {
+                    onLocationCapture(nil) { _ in
+                        // Update handled by parent through closure
+                    }
+                }
+                .foregroundColor(.blue)
+            }
+        }
+    }
 }
 
 #Preview {

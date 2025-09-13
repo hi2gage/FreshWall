@@ -106,7 +106,7 @@ struct IncidentService: IncidentServiceProtocol {
         let afterPhotosDTO = afterPhotos.toIncidentPhotoDTOs(urls: afterUrls)
 
         let newIncident = IncidentDTO(
-            id: newDoc.documentID,
+            id: nil,
             clientRef: clientRef,
             description: input.description,
             area: input.area,

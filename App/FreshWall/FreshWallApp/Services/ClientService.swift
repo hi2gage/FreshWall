@@ -53,7 +53,7 @@ struct ClientService: ClientServiceProtocol {
 
         let newDoc = modelService.newClientDocument(teamId: teamId)
         let newClient = ClientDTO(
-            id: newDoc.documentID,
+            id: nil,
             name: input.name,
             notes: input.notes,
             defaults: input.defaults,
