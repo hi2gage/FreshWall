@@ -120,7 +120,9 @@ struct AddIncidentView: View {
                                 .font(.headline)
                             Spacer()
                             Button("Edit") {
-                                viewModel.showingEnhancedLocationCapture = true
+                                routerPath.presentLocationCapture(currentLocation: viewModel.input.enhancedLocation) { newLocation in
+                                    viewModel.input.enhancedLocation = newLocation
+                                }
                             }
                         }
 
@@ -128,17 +130,11 @@ struct AddIncidentView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                } else if let location = viewModel.input.location {
-                    HStack {
-                        Text("📍 \(location.shortDisplayString)")
-                        Spacer()
-                        Button("Edit") {
-                            viewModel.showingEnhancedLocationCapture = true
-                        }
-                    }
                 } else {
                     Button("📍 Capture Location") {
-                        viewModel.showingEnhancedLocationCapture = true
+                        routerPath.presentLocationCapture(currentLocation: viewModel.input.enhancedLocation) { newLocation in
+                            viewModel.input.enhancedLocation = newLocation
+                        }
                     }
                     .foregroundColor(.blue)
                 }
@@ -163,12 +159,6 @@ struct AddIncidentView: View {
                 }
                 .disabled(!viewModel.isValid)
             }
-        }
-        .sheet(isPresented: $viewModel.showingLocationMap) {
-            LocationMapView(location: $viewModel.input.location)
-        }
-        .sheet(isPresented: $viewModel.showingEnhancedLocationCapture) {
-            EnhancedLocationCaptureView(location: $viewModel.input.enhancedLocation)
         }
         .sheet(isPresented: $viewModel.showingSurfaceTypeSelection) {
             SurfaceTypeSelectionView(

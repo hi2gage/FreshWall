@@ -25,6 +25,22 @@ final class RouterPath {
             _ = path.popLast()
         }
     }
+
+    /// Presents the map location picker with completion callback.
+    func presentMapPicker(
+        currentLocation: IncidentLocation?,
+        onLocationSelected: @escaping (IncidentLocation) -> Void
+    ) {
+        push(.mapLocationPicker(initialLocation: currentLocation, onLocationSelected: onLocationSelected))
+    }
+
+    /// Presents the enhanced location capture with completion callback.
+    func presentLocationCapture(
+        currentLocation: IncidentLocation?,
+        onLocationSelected: @escaping (IncidentLocation?) -> Void
+    ) {
+        push(.enhancedLocationCapture(initialLocation: currentLocation, onLocationSelected: onLocationSelected))
+    }
 }
 
 // MARK: - RouterDestination
@@ -54,6 +70,10 @@ enum RouterDestination: Hashable {
     case settings
     /// Debug settings screen.
     case debugSettings
+    /// Map location picker screen.
+    case mapLocationPicker(initialLocation: IncidentLocation?, onLocationSelected: (IncidentLocation) -> Void)
+    /// Enhanced location capture screen.
+    case enhancedLocationCapture(initialLocation: IncidentLocation?, onLocationSelected: (IncidentLocation?) -> Void)
 
     // MARK: - Hashable conformance
 
@@ -86,6 +106,10 @@ enum RouterDestination: Hashable {
         case (.settings, .settings):
             true
         case (.debugSettings, .debugSettings):
+            true
+        case (.mapLocationPicker, .mapLocationPicker):
+            true
+        case (.enhancedLocationCapture, .enhancedLocationCapture):
             true
         default:
             false
@@ -128,6 +152,10 @@ enum RouterDestination: Hashable {
             hasher.combine("settings")
         case .debugSettings:
             hasher.combine("debugSettings")
+        case .mapLocationPicker:
+            hasher.combine("mapLocationPicker")
+        case .enhancedLocationCapture:
+            hasher.combine("enhancedLocationCapture")
         }
     }
 }
@@ -216,6 +244,16 @@ extension View {
                 )
             case .debugSettings:
                 DebugMenuView()
+            case let .mapLocationPicker(initialLocation, onLocationSelected):
+                MapLocationPickerView(
+                    initialLocation: initialLocation,
+                    onLocationSelected: onLocationSelected
+                )
+            case let .enhancedLocationCapture(initialLocation, onLocationSelected):
+                EnhancedLocationCaptureView(
+                    initialLocation: initialLocation,
+                    onLocationSelected: onLocationSelected
+                )
             }
         }
     }

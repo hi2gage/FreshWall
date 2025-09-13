@@ -13,8 +13,6 @@ struct IncidentDTO: Codable, Identifiable, Sendable, Hashable {
     var description: String
     /// Area affected by the incident.
     var area: Double
-    /// Geographic location where the incident occurred.
-    var location: GeoPoint?
     /// Timestamp when the incident record was created.
     var createdAt: Timestamp
     /// Start time of the incident.

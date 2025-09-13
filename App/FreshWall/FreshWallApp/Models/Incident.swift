@@ -41,7 +41,7 @@ extension Incident {
         clientRef = dto.clientRef
         description = dto.description
         area = dto.area
-        location = dto.location
+        location = nil // Legacy field, data is now in enhancedLocation
         createdAt = dto.createdAt
         startTime = dto.startTime
         endTime = dto.endTime
@@ -68,7 +68,6 @@ extension Incident {
             clientRef: clientRef,
             description: description,
             area: area,
-            location: location,
             createdAt: createdAt,
             startTime: startTime,
             endTime: endTime,

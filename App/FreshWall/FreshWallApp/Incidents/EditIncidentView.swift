@@ -99,17 +99,21 @@ struct EditIncidentView: View {
                 Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
             }
             Section("Location") {
-                if let location = viewModel.location {
+                if let location = viewModel.enhancedLocation {
                     HStack {
-                        Text("📍 \(location.shortDisplayString)")
+                        Text("📍 \(location.displayString)")
                         Spacer()
                         Button("Edit") {
-                            viewModel.showingLocationMap = true
+                            routerPath.presentLocationCapture(currentLocation: viewModel.enhancedLocation) { newLocation in
+                                viewModel.enhancedLocation = newLocation
+                            }
                         }
                     }
                 } else {
                     Button("📍 Add Location") {
-                        viewModel.showingLocationMap = true
+                        routerPath.presentLocationCapture(currentLocation: viewModel.enhancedLocation) { newLocation in
+                            viewModel.enhancedLocation = newLocation
+                        }
                     }
                     .foregroundColor(.blue)
                 }
@@ -154,9 +158,6 @@ struct EditIncidentView: View {
             }
         } message: {
             Text("Are you sure you want to delete this incident? This action cannot be undone.")
-        }
-        .sheet(isPresented: $viewModel.showingLocationMap) {
-            LocationMapView(location: $viewModel.location)
         }
         .task {
             await viewModel.loadClients()

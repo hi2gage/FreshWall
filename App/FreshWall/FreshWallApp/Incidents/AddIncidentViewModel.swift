@@ -22,8 +22,6 @@ final class AddIncidentViewModel {
         var rateText: String = ""
         /// Materials used description.
         var materialsUsed: String = ""
-        /// Geographic location where incident occurred.
-        var location: GeoPoint?
 
         // MARK: - Enhanced Metadata
 
@@ -41,8 +39,6 @@ final class AddIncidentViewModel {
     var input = Input()
     /// Loaded clients for selection.
     var clients: [Client] = []
-    /// Whether to show the location map.
-    var showingLocationMap = false
     /// Whether to show the enhanced location capture view.
     var showingEnhancedLocationCapture = false
     /// Whether to show surface type selection.
@@ -70,17 +66,18 @@ final class AddIncidentViewModel {
         let rateValue = Double(input.rateText)
         let trimmedId = input.clientId.trimmingCharacters(in: .whitespaces)
 
-        // Try to extract location from photos if not manually set
-        let finalLocation = input.location ?? LocationService.extractLocation(from: beforePhotos + afterPhotos)
-
-        // Use enhanced location if available, otherwise create from legacy location
-        let finalEnhancedLocation = input.enhancedLocation ?? finalLocation.map { IncidentLocation(photoMetadataCoordinates: $0) }
+        // Use enhanced location if available, otherwise extract from photos
+        let finalEnhancedLocation = input.enhancedLocation ?? {
+            if let photoLocation = LocationService.extractLocation(from: beforePhotos + afterPhotos) {
+                return IncidentLocation(photoMetadataCoordinates: photoLocation)
+            }
+            return nil
+        }()
 
         let input = AddIncidentInput(
             clientId: trimmedId.isEmpty ? nil : trimmedId,
             description: input.description,
             area: areaValue,
-            location: finalLocation,
             startTime: input.startTime,
             endTime: input.endTime,
             rate: rateValue,
