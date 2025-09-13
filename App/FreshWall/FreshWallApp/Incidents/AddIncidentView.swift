@@ -1,4 +1,3 @@
-import CoreLocation
 import PhotosUI
 import SwiftUI
 
@@ -13,7 +12,6 @@ struct AddIncidentView: View {
     private let addNewTag = "__ADD_NEW__"
     @State private var beforePhotos: [PickedPhoto] = []
     @State private var afterPhotos: [PickedPhoto] = []
-    @State private var pendingCameraLocation: IncidentLocation?
 
     /// Initializes the view with a view model.
     init(viewModel: AddIncidentViewModel) {
@@ -47,60 +45,11 @@ struct AddIncidentView: View {
                 beforePhotos: $beforePhotos,
                 afterPhotos: $afterPhotos,
                 onPhotosChanged: {
-                    // Combine pending camera location with photos when they arrive
-                    if let pendingLocation = pendingCameraLocation {
-                        viewModel.input.enhancedLocation = pendingLocation
-                        pendingCameraLocation = nil
-                    }
+                    viewModel.applyPendingCameraLocation()
                     viewModel.autoPopulateFromPhotos(beforePhotos: beforePhotos, afterPhotos: afterPhotos)
                 },
                 onCameraSelected: {
-                    // Start location capture when camera is selected
-                    Task {
-                        do {
-                            var location = try await LocationService.getCurrentLocationOnce()
-
-                            // Try to resolve address immediately if we have coordinates
-                            if let coordinates = location.coordinates {
-                                // Check cache first
-                                let locationCache = ServiceContainer.shared.locationCache
-                                if let cachedAddress = await locationCache.getCachedAddress(for: coordinates) {
-                                    location.address = cachedAddress
-                                } else {
-                                    // Resolve address in background
-                                    Task {
-                                        do {
-                                            let coordinate = CLLocationCoordinate2D(latitude: coordinates.latitude, longitude: coordinates.longitude)
-                                            let address = try await ModernLocationManager.reverseGeocode(coordinate: coordinate)
-
-                                            // Cache the address
-                                            await locationCache.cacheAddress(address, for: coordinates)
-
-                                            // Update location with address
-                                            await MainActor.run {
-                                                if pendingCameraLocation?.coordinates?.latitude == coordinates.latitude,
-                                                   pendingCameraLocation?.coordinates?.longitude == coordinates.longitude {
-                                                    pendingCameraLocation?.address = address
-                                                }
-                                                if viewModel.input.enhancedLocation?.coordinates?.latitude == coordinates.latitude,
-                                                   viewModel.input.enhancedLocation?.coordinates?.longitude == coordinates.longitude {
-                                                    viewModel.input.enhancedLocation?.address = address
-                                                }
-                                            }
-                                        } catch {
-                                            // Silently continue if address resolution fails
-                                        }
-                                    }
-                                }
-                            }
-
-                            await MainActor.run {
-                                pendingCameraLocation = location
-                            }
-                        } catch {
-                            // Continue without location if it fails
-                        }
-                    }
+                    viewModel.handleCameraSelected()
                 }
             )
 
