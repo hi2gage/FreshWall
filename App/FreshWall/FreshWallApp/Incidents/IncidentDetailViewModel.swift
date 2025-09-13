@@ -78,6 +78,40 @@ final class IncidentDetailViewModel {
         }
     }
 
+    /// Updates the incident with a new location.
+    func updateIncidentLocation(_ newLocation: IncidentLocation) async {
+        guard let id = incident.id else { return }
+
+        // Update the incident's location
+        incident.enhancedLocation = newLocation
+
+        let input = UpdateIncidentInput(
+            clientId: selectedClientId ?? incident.clientRef?.documentID,
+            description: incident.description,
+            area: incident.area,
+            startTime: incident.startTime.dateValue(),
+            endTime: incident.endTime.dateValue(),
+            rate: incident.rate,
+            materialsUsed: incident.materialsUsed,
+            enhancedLocation: newLocation,
+            surfaceType: incident.surfaceType,
+            enhancedNotes: incident.enhancedNotes,
+            customSurfaceDescription: incident.customSurfaceDescription
+        )
+
+        do {
+            try await incidentService.updateIncident(
+                id,
+                with: input,
+                beforePhotos: [],
+                afterPhotos: []
+            )
+            await reloadIncident()
+        } catch {
+            print("Failed to update incident location: \(error)")
+        }
+    }
+
     /// Updates the incident with current values.
     func updateIncident() async {
         guard let id = incident.id else { return }
