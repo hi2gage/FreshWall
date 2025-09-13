@@ -36,8 +36,65 @@ struct IncidentDetailView: View {
                 )
             }
 
-            if let bestLocation = viewModel.incident.bestLocation {
-                Section("Location") {
+            Section("Photos") {
+                if viewModel.incident.beforePhotos.isEmpty {
+                    PhotoSourcePicker(
+                        selection: $viewModel.pickedBeforePhotos,
+                        maxSelectionCount: 10,
+                        matching: .images,
+                        photoLibrary: .shared()
+                    ) {
+                        Label("Add Before Photos", systemImage: "camera.fill")
+                    }
+                } else if let beforePhotos = viewModel.incident.beforePhotos.nullIfEmpty {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text("Before Photos")
+                            Spacer()
+                            PhotoSourcePicker(
+                                selection: $viewModel.pickedBeforePhotos,
+                                maxSelectionCount: 10,
+                                matching: .images,
+                                photoLibrary: .shared()
+                            ) {
+                                Image(systemName: "plus.circle")
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
+                        PhotoCarousel(photos: beforePhotos)
+                    }
+                }
+                if viewModel.incident.afterPhotos.isEmpty {
+                    PhotoSourcePicker(
+                        selection: $viewModel.pickedAfterPhotos,
+                        maxSelectionCount: 10,
+                        matching: .images,
+                        photoLibrary: .shared()
+                    ) {
+                        Label("Add After Photos", systemImage: "camera.fill")
+                    }
+                } else if let afterPhotos = viewModel.incident.afterPhotos.nullIfEmpty {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text("After Photos")
+                            Spacer()
+                            PhotoSourcePicker(
+                                selection: $viewModel.pickedAfterPhotos,
+                                maxSelectionCount: 10,
+                                matching: .images,
+                                photoLibrary: .shared()
+                            ) {
+                                Image(systemName: "plus.circle")
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
+                        PhotoCarousel(photos: afterPhotos)
+                    }
+                }
+            }
+
+            Section("Location") {
+                if let bestLocation = viewModel.incident.bestLocation {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Image(systemName: "location.fill")
@@ -66,6 +123,18 @@ struct IncidentDetailView: View {
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
+                    }
+                } else {
+                    Button(action: {
+                        routerPath.presentLocationCapture(currentLocation: nil) { newLocation in
+                            if let newLocation {
+                                Task {
+                                    await viewModel.updateIncidentLocation(newLocation)
+                                }
+                            }
+                        }
+                    }) {
+                        Label("Add Location", systemImage: "location")
                     }
                 }
             }
@@ -159,62 +228,6 @@ struct IncidentDetailView: View {
                 }
             }
 
-            Section("Photos") {
-                if viewModel.incident.beforePhotos.isEmpty {
-                    PhotoSourcePicker(
-                        selection: $viewModel.pickedBeforePhotos,
-                        maxSelectionCount: 10,
-                        matching: .images,
-                        photoLibrary: .shared()
-                    ) {
-                        Label("Add Before Photos", systemImage: "camera.fill")
-                    }
-                } else if let beforePhotos = viewModel.incident.beforePhotos.nullIfEmpty {
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Text("Before Photos")
-                            Spacer()
-                            PhotoSourcePicker(
-                                selection: $viewModel.pickedBeforePhotos,
-                                maxSelectionCount: 10,
-                                matching: .images,
-                                photoLibrary: .shared()
-                            ) {
-                                Image(systemName: "plus.circle")
-                                    .foregroundColor(.accentColor)
-                            }
-                        }
-                        PhotoCarousel(photos: beforePhotos)
-                    }
-                }
-                if viewModel.incident.afterPhotos.isEmpty {
-                    PhotoSourcePicker(
-                        selection: $viewModel.pickedAfterPhotos,
-                        maxSelectionCount: 10,
-                        matching: .images,
-                        photoLibrary: .shared()
-                    ) {
-                        Label("Add After Photos", systemImage: "camera.fill")
-                    }
-                } else if let afterPhotos = viewModel.incident.afterPhotos.nullIfEmpty {
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Text("After Photos")
-                            Spacer()
-                            PhotoSourcePicker(
-                                selection: $viewModel.pickedAfterPhotos,
-                                maxSelectionCount: 10,
-                                matching: .images,
-                                photoLibrary: .shared()
-                            ) {
-                                Image(systemName: "plus.circle")
-                                    .foregroundColor(.accentColor)
-                            }
-                        }
-                        PhotoCarousel(photos: afterPhotos)
-                    }
-                }
-            }
             Section("Timeline") {
                 HStack {
                     Text("Start Time")
