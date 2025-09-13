@@ -299,6 +299,13 @@ final class AddIncidentViewModel {
                 afterPhotos: afterPhotos
             )
             input.enhancedLocation = extractedLocation
+
+            // If we found a location from photos but no address, resolve it
+            if let location = extractedLocation,
+               location.address == nil,
+               let coordinates = location.coordinates {
+                resolveAddressForLocation(coordinates: coordinates)
+            }
         }
     }
 
@@ -358,6 +365,41 @@ final class AddIncidentViewModel {
         if let pendingLocation = pendingCameraLocation {
             input.enhancedLocation = pendingLocation
             pendingCameraLocation = nil
+        }
+    }
+
+    /// Resolves address for a location with coordinates but no address
+    private func resolveAddressForLocation(coordinates: GeoPoint) {
+        Task {
+            do {
+                // Check cache first
+                let locationCache = ServiceContainer.shared.locationCache
+                if let cachedAddress = await locationCache.getCachedAddress(for: coordinates) {
+                    await MainActor.run {
+                        if input.enhancedLocation?.coordinates?.latitude == coordinates.latitude,
+                           input.enhancedLocation?.coordinates?.longitude == coordinates.longitude {
+                            input.enhancedLocation?.address = cachedAddress
+                        }
+                    }
+                } else {
+                    // Resolve address in background
+                    let coordinate = CLLocationCoordinate2D(latitude: coordinates.latitude, longitude: coordinates.longitude)
+                    let address = try await ModernLocationManager.reverseGeocode(coordinate: coordinate)
+
+                    // Cache the address
+                    await locationCache.cacheAddress(address, for: coordinates)
+
+                    // Update location with address
+                    await MainActor.run {
+                        if input.enhancedLocation?.coordinates?.latitude == coordinates.latitude,
+                           input.enhancedLocation?.coordinates?.longitude == coordinates.longitude {
+                            input.enhancedLocation?.address = address
+                        }
+                    }
+                }
+            } catch {
+                // Silently continue if address resolution fails
+            }
         }
     }
 }
