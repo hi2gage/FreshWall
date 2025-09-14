@@ -16,16 +16,20 @@ struct IncidentListCell: View {
                         image
                             .resizable()
                             .scaledToFill()
-                            .frame(maxWidth: Constants.maxImageWidth)
-                            .frame(maxHeight: Constants.imageSize)
+                            .frame(width: Constants.imageSize, height: Constants.imageSize)
                             .clipped()
                             .cornerRadius(Constants.smallCornerRadius)
                     } else if state.error != nil {
-                        Image(systemName: "photo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: Constants.imageSize, height: Constants.imageSize)
-                            .foregroundColor(.secondary)
+                        ZStack {
+                            RoundedRectangle(cornerRadius: Constants.smallCornerRadius)
+                                .fill(Color.gray.opacity(0.1))
+                            Image(systemName: "photo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: Constants.iconSize, height: Constants.iconSize)
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(width: Constants.imageSize, height: Constants.imageSize)
                     } else {
                         // Loading state
                         ZStack {
@@ -55,17 +59,21 @@ struct IncidentListCell: View {
             }
 
             VStack(alignment: .leading, spacing: Constants.verticalSpacing) {
-                Text(incident.description.prefix(50))
+                Text(incident.enhancedLocation?.address ?? "Unknown Address")
                     .font(.headline)
+                    .foregroundColor(.primary)
                     .lineLimit(2)
-                HStack {
-                    Spacer()
-                    Text(incident.startTime.dateValue(), style: .date)
-                        .font(.subheadline)
-                }
+                    .multilineTextAlignment(.leading)
+
+                Spacer(minLength: 0)
+
+                Text(incident.startTime.dateValue().formatted(date: .abbreviated, time: .shortened))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical)
+            .padding(.top, Constants.smallPadding)
+            .padding(.vertical, Constants.smallPadding)
         }
         .padding(.trailing)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -78,9 +86,8 @@ struct IncidentListCell: View {
 
 /// Layout constants for `IncidentListCell`.
 private enum Constants {
-    static let imageSize: CGFloat = 80
+    static let imageSize: CGFloat = 84 // Increased from 80 to compensate for padding
     static let iconSize: CGFloat = 20
-    static let maxImageWidth: CGFloat = 90
     static let smallCornerRadius: CGFloat = 4
     static let largeCornerRadius: CGFloat = 8
     static let cellSpacing: CGFloat = 12
