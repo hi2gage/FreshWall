@@ -20,6 +20,9 @@
 		1C88DDAF2E0BBCA2000D7CD0 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */; };
 		1C9B64CA2E51779800323C91 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C9B64C92E51779800323C91 /* Debug.xcconfig */; };
 		1CA3B46A2E0281F200A04DB7 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */; };
+		1CE7DC352E76B4EF0088910A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC342E76B4EF0088910A /* Nuke */; };
+		1CE7DC372E76B4EF0088910A /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC362E76B4EF0088910A /* NukeExtensions */; };
+		1CE7DC392E76B4EF0088910A /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC382E76B4EF0088910A /* NukeUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,9 +95,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C4FC57D2E5FF37B004C158A /* TPPDF in Frameworks */,
+				1CE7DC372E76B4EF0088910A /* NukeExtensions in Frameworks */,
 				1C54365D2DE224C600153F4F /* FirebaseAuth in Frameworks */,
+				1CE7DC352E76B4EF0088910A /* Nuke in Frameworks */,
 				1C783F3E2E71E17E008AFA63 /* TinyStorage in Frameworks */,
 				1C54365F2DE224C600153F4F /* FirebaseFirestore in Frameworks */,
+				1CE7DC392E76B4EF0088910A /* NukeUI in Frameworks */,
 				1C5436612DE224C600153F4F /* FirebaseStorage in Frameworks */,
 				1C5437182DE2558400153F4F /* FirebaseFunctions in Frameworks */,
 			);
@@ -198,6 +204,9 @@
 				1C5437172DE2558400153F4F /* FirebaseFunctions */,
 				1C4FC57C2E5FF37B004C158A /* TPPDF */,
 				1C783F3D2E71E17E008AFA63 /* TinyStorage */,
+				1CE7DC342E76B4EF0088910A /* Nuke */,
+				1CE7DC362E76B4EF0088910A /* NukeExtensions */,
+				1CE7DC382E76B4EF0088910A /* NukeUI */,
 			);
 			productName = FreshWall;
 			productReference = 1C5435F62DE2223F00153F4F /* FreshWall.app */;
@@ -286,6 +295,7 @@
 				1C54371C2DE2AB7100153F4F /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				1C4FC57B2E5FF37B004C158A /* XCRemoteSwiftPackageReference "TPPDF" */,
 				1C783F3C2E71E17E008AFA63 /* XCRemoteSwiftPackageReference "TinyStorage" */,
+				1CE7DC332E76B4EF0088910A /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1C5435F72DE2223F00153F4F /* Products */;
@@ -913,6 +923,14 @@
 				minimumVersion = 1.0.17;
 			};
 		};
+		1CE7DC332E76B4EF0088910A /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -950,6 +968,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1C783F3C2E71E17E008AFA63 /* XCRemoteSwiftPackageReference "TinyStorage" */;
 			productName = TinyStorage;
+		};
+		1CE7DC342E76B4EF0088910A /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CE7DC332E76B4EF0088910A /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		1CE7DC362E76B4EF0088910A /* NukeExtensions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CE7DC332E76B4EF0088910A /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeExtensions;
+		};
+		1CE7DC382E76B4EF0088910A /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CE7DC332E76B4EF0088910A /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
