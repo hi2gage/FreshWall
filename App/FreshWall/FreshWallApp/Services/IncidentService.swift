@@ -74,6 +74,7 @@ struct IncidentService: IncidentServiceProtocol {
     }
 
     /// Adds a new incident using an input value object and optional images.
+    /// Photos are uploaded in the background after incident creation for immediate user feedback.
     func addIncident(
         _ input: AddIncidentInput,
         beforePhotos: [PickedPhoto],
@@ -87,23 +88,6 @@ struct IncidentService: IncidentServiceProtocol {
         }
         let uid = Auth.auth().currentUser?.uid ?? ""
         let createdByRef = userModelService.userDocument(teamId: teamId, userId: uid)
-        let beforeData = beforePhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
-        let beforeUrls = try await photoService.uploadBeforePhotos(
-            teamId: teamId,
-            incidentId: newDoc.documentID,
-            images: beforeData
-        )
-
-        let afterData = afterPhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
-        let afterUrls = try await photoService.uploadAfterPhotos(
-            teamId: teamId,
-            incidentId: newDoc.documentID,
-            images: afterData
-        )
-
-        let beforePhotosDTO = beforePhotos.toIncidentPhotoDTOs(urls: beforeUrls)
-
-        let afterPhotosDTO = afterPhotos.toIncidentPhotoDTOs(urls: afterUrls)
 
         let newIncident = IncidentDTO(
             id: nil,
@@ -113,8 +97,8 @@ struct IncidentService: IncidentServiceProtocol {
             createdAt: Timestamp(date: Date()),
             startTime: Timestamp(date: input.startTime),
             endTime: Timestamp(date: input.endTime),
-            beforePhotos: beforePhotosDTO,
-            afterPhotos: afterPhotosDTO,
+            beforePhotos: [],
+            afterPhotos: [],
             createdBy: createdByRef,
             lastModifiedBy: nil,
             lastModifiedAt: nil,
@@ -126,8 +110,18 @@ struct IncidentService: IncidentServiceProtocol {
             enhancedNotes: input.enhancedNotes,
             customSurfaceDescription: input.customSurfaceDescription
         )
+
         try await modelService.setIncident(newIncident, at: newDoc)
-        try await fetchIncidents()
+
+        if !beforePhotos.isEmpty || !afterPhotos.isEmpty {
+            await BackgroundUploadService.shared.startUpload(
+                incidentId: newDoc.documentID,
+                teamId: teamId,
+                beforePhotos: beforePhotos,
+                afterPhotos: afterPhotos
+            )
+        }
+
         return newDoc.documentID
     }
 

@@ -27,15 +27,28 @@ struct IncidentPhotoService: IncidentPhotoServiceProtocol {
         self.storage = storage
     }
 
-    func uploadBeforePhotos(teamId: String, incidentId: String, images: [Data]) async throws -> [String] {
+    func uploadBeforePhotos(
+        teamId: String,
+        incidentId: String,
+        images: [Data]
+    ) async throws -> [String] {
         try await upload(images: images, teamId: teamId, incidentId: incidentId, folder: "before")
     }
 
-    func uploadAfterPhotos(teamId: String, incidentId: String, images: [Data]) async throws -> [String] {
+    func uploadAfterPhotos(
+        teamId: String,
+        incidentId: String,
+        images: [Data]
+    ) async throws -> [String] {
         try await upload(images: images, teamId: teamId, incidentId: incidentId, folder: "after")
     }
 
-    private func upload(images: [Data], teamId: String, incidentId: String, folder: String) async throws -> [String] {
+    private func upload(
+        images: [Data],
+        teamId: String,
+        incidentId: String,
+        folder: String
+    ) async throws -> [String] {
         var urls: [String] = []
         for data in images {
             let path = "teams/\(teamId)/incidents/\(incidentId)/\(folder)/\(UUID().uuidString).jpg"
