@@ -7,6 +7,7 @@ import SwiftUI
 struct IncidentsListView: View {
     @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: IncidentsListViewModel
+    @State private var showCustomDateAlert = false
 
     /// Initializes the view with a configured `IncidentsListViewModel`.
     init(viewModel: IncidentsListViewModel) {
@@ -18,7 +19,8 @@ struct IncidentsListView: View {
             groups: viewModel.groupedIncidents(),
             title: "Incidents",
             groupOption: $viewModel.groupOption,
-            routerDestination: { incident in .incidentDetail(incident: incident) },
+            routerDestination: { incident in .incidentDetail(incident: incident)
+            },
             content: { incident in
                 IncidentListCell(incident: incident)
             },
@@ -30,16 +32,32 @@ struct IncidentsListView: View {
                 await viewModel.loadClients()
             },
             menu: { collapsedGroups in
-                Menu {
-                    groupingMenu(groups: viewModel.groupedIncidents(), collapsedGroups: collapsedGroups)
-                } label: {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
+                HStack {
+                    Menu {
+                        dateRangeMenu()
+                    } label: {
+                        Image(systemName: "calendar")
+                    }
+
+                    Menu {
+                        groupingMenu(
+                            groups: viewModel.groupedIncidents(),
+                            collapsedGroups: collapsedGroups
+                        )
+                    } label: {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                    }
                 }
             }
         )
         .task {
             await viewModel.loadIncidents()
             await viewModel.loadClients()
+        }
+        .alert("Custom Date Range", isPresented: $showCustomDateAlert) {
+            Button("OK") {}
+        } message: {
+            Text("Not finished yet, coming soon!")
         }
     }
 
@@ -78,22 +96,6 @@ struct IncidentsListView: View {
             .font(.caption)
             .foregroundColor(.secondary)
 
-        // Status Filter
-        Picker("Status", selection: $viewModel.statusFilter) {
-            Text("All Statuses").tag(IncidentStatus?.none)
-            ForEach(IncidentStatus.allCases, id: \.self) { status in
-                Text(status.displayName).tag(Optional.some(status))
-            }
-        }
-
-        // Surface Type Filter
-        Picker("Surface Type", selection: $viewModel.surfaceTypeFilter) {
-            Text("All Surface Types").tag(SurfaceType?.none)
-            ForEach(SurfaceType.allCases, id: \.self) { surface in
-                Text(surface.displayName).tag(Optional.some(surface))
-            }
-        }
-
         // Client Filter
         if !viewModel.clients.isEmpty {
             Picker("Client", selection: $viewModel.clientFilter) {
@@ -108,6 +110,32 @@ struct IncidentsListView: View {
         if viewModel.hasActiveFilters {
             Button("Clear All Filters") {
                 viewModel.clearFilters()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func dateRangeMenu() -> some View {
+        Text("Date Range")
+            .font(.caption)
+            .foregroundColor(.secondary)
+
+        Picker("Date Range", selection: $viewModel.dateRangeFilter) {
+            Text("All Dates").tag(DateRangeOption?.none)
+            ForEach(DateRangeOption.allCases, id: \.self) { range in
+                Text(range.displayName).tag(Optional.some(range))
+            }
+        }
+        .onChange(of: viewModel.dateRangeFilter) { _, newValue in
+            if newValue == .custom {
+                showCustomDateAlert = true
+                viewModel.dateRangeFilter = nil
+            }
+        }
+
+        if viewModel.dateRangeFilter != nil {
+            Button("Clear Date Filter") {
+                viewModel.dateRangeFilter = nil
             }
         }
     }

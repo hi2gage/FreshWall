@@ -262,4 +262,13 @@ final class IncidentDetailViewModel {
             print("Failed to update incident: \(error)")
         }
     }
+
+    /// Deletes the incident.
+    func deleteIncident() async throws {
+        guard let id = incident.id else {
+            throw NSError(domain: "IncidentDetailViewModel", code: 1, userInfo: [NSLocalizedDescriptionKey: "Incident ID not found"])
+        }
+
+        try await incidentService.deleteIncident(id)
+    }
 }

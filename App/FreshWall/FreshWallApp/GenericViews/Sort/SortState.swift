@@ -5,7 +5,7 @@
 //  Created by Gage Halverson on 6/21/25.
 //
 
-struct SortState<Field: Equatable>: Equatable {
+struct SortState<Field: Equatable & Codable & Sendable>: Equatable, Codable, Sendable {
     var field: Field
     var isAscending: Bool
 
