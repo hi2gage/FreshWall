@@ -42,9 +42,80 @@ final class IncidentDetailViewModel {
 
     /// Loads the client associated with this incident and all available clients.
     func loadClient() async {
-        clients = await (try? clientService.fetchClients()) ?? []
-        client = clients.first { $0.id == incident.clientRef?.documentID }
+        print("🔄 Loading client data...")
+
+        // Set the selected client ID from the incident first
         selectedClientId = incident.clientRef?.documentID
+
+        // Try cache first
+        let cache = ClientCache.shared
+        let cachedClients = cache.getAllClients()
+        let cachedClient = selectedClientId.flatMap { cache.getClient(id: $0) }
+
+        if let cachedClients, let selectedClientId, let cachedClient {
+            // Cache hit - use cached data instantly
+            client = cachedClient
+            clients = [cachedClient] + cachedClients.filter { $0.id != selectedClientId }
+            print("⚡ Used cached client data: \(cachedClient.name)")
+            return
+        }
+
+        print("💾 Cache miss - fetching from Firestore...")
+
+        // Cache miss - fetch from Firestore
+        async let allClientsTask = clientService.fetchClients()
+        async let specificClientTask = loadSpecificClient()
+
+        // Await both results
+        let allClientsResult = await (try? allClientsTask) ?? []
+        let specificClient = await specificClientTask
+
+        // Update cache with fresh data
+        cache.updateCache(clients: allClientsResult)
+        if let specificClient {
+            cache.updateClient(specificClient)
+        }
+
+        // Set the specific client first (priority)
+        client = specificClient
+        print("✅ Specific client loaded: \(client?.name ?? "No client")")
+
+        // Then set all clients, but ensure the selected client appears first in the list
+        if let selectedClient = client {
+            // Put the selected client first, then all others
+            clients = [selectedClient] + allClientsResult.filter { $0.id != selectedClient.id }
+            print("✅ Loaded \(allClientsResult.count) clients with selected client first")
+        } else {
+            clients = allClientsResult
+            print("✅ Loaded \(allClientsResult.count) clients")
+        }
+
+        print("✅ Client loading complete")
+    }
+
+    /// Helper method to load the specific client using DocumentReference
+    private func loadSpecificClient() async -> Client? {
+        guard let clientRef = incident.clientRef else {
+            print("ℹ️ No client reference found")
+            return nil
+        }
+
+        print("📖 Fetching specific client directly from reference...")
+        do {
+            let clientDoc = try await clientRef.getDocument()
+            if clientDoc.exists {
+                let clientDTO = try clientDoc.data(as: ClientDTO.self)
+                let client = Client(dto: clientDTO)
+                print("✅ Fetched client directly: \(client.name)")
+                return client
+            } else {
+                print("⚠️ Client document doesn't exist")
+                return nil
+            }
+        } catch {
+            print("⚠️ Direct fetch failed: \(error)")
+            return nil
+        }
     }
 
     /// Updates the incident with new photos.
@@ -151,6 +222,9 @@ final class IncidentDetailViewModel {
 
     /// Handles when a new client is created
     func handleNewClientCreated(_ clientId: String) async {
+        // Invalidate cache since we have new client data
+        ClientCache.shared.invalidate()
+
         // Load the updated client list
         clients = await (try? clientService.fetchClients()) ?? []
 

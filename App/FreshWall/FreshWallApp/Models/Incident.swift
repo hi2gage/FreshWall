@@ -20,7 +20,7 @@ struct Incident: Identifiable, Hashable, Sendable {
     var lastModifiedAt: Timestamp?
     var rate: Double?
     var materialsUsed: String?
-    var status: IncidentStatus
+    var status: IncidentStatus?
 
     // MARK: - Enhanced Metadata
 

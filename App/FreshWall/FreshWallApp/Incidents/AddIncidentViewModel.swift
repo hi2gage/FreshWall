@@ -141,11 +141,32 @@ final class AddIncidentViewModel {
         )
 
         // Create the incident first
-        let incidentId = try await service.addIncident(
-            input,
-            beforePhotos: beforePhotos,
-            afterPhotos: afterPhotos
-        )
+        print("🚀 Starting incident creation process...")
+        print("📝 Input data: clientId=\(input.clientId ?? "nil"), area=\(input.area), photos: before=\(beforePhotos.count), after=\(afterPhotos.count)")
+
+        let incidentId: String
+        do {
+            print("⏳ Calling service.addIncident...")
+            incidentId = try await service.addIncident(
+                input,
+                beforePhotos: beforePhotos,
+                afterPhotos: afterPhotos
+            )
+            print("✅ Incident created successfully with ID: \(incidentId)")
+        } catch {
+            print("❌ Failed to create incident: \(error)")
+            print("📊 Error type: \(type(of: error))")
+            print("📊 Error description: \(error.localizedDescription)")
+
+            if let nsError = error as NSError? {
+                print("🔍 NSError domain: \(nsError.domain)")
+                print("🔍 NSError code: \(nsError.code)")
+                print("🔍 NSError userInfo: \(nsError.userInfo)")
+            }
+
+            // Re-throw the error so the UI can handle it
+            throw error
+        }
 
         // Queue address resolution for photo locations if location lacks address
         if let location = finalEnhancedLocation,

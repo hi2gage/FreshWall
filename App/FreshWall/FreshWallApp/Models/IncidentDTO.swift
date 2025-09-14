@@ -108,7 +108,7 @@ struct IncidentDTO: Codable, Identifiable, Sendable, Hashable {
     /// Materials used during the incident work (optional details).
     var materialsUsed: String?
     /// Current status of the incident
-    var status: IncidentStatus
+    var status: IncidentStatus?
 
     // MARK: - Enhanced Metadata
 
