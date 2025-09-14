@@ -6,6 +6,8 @@
 	<string>Taking photos of the graffiti</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>FreshWall saves photos to your Camera Roll for backup and easy access outside the app.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>FreshWall accesses your photo library to organize incident photos in a dedicated FreshWall album.</string>
 	<key>FIREBASE_GOOGLE_SERVICE_PLIST</key>
 	<string>$(FIREBASE_CONFIG_FILE)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
