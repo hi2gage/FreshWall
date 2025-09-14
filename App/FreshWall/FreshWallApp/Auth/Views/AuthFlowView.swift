@@ -73,6 +73,9 @@ struct AuthFlowView: View {
             .withAppLoginRouter(loginManager: loginManager)
         }
         .environment(routerPath)
+        .onShake {
+            routerPath.push(.debugSettings)
+        }
     }
 }
 

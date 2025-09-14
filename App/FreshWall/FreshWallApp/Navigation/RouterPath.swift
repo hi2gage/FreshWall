@@ -70,6 +70,8 @@ enum RouterDestination: Hashable {
     case settings
     /// Debug settings screen.
     case debugSettings
+    /// Persistence debug screen.
+    case persistenceDebug
     /// Map location picker screen.
     case mapLocationPicker(initialLocation: IncidentLocation?, onLocationSelected: (IncidentLocation) -> Void)
     /// Enhanced location capture screen.
@@ -106,6 +108,8 @@ enum RouterDestination: Hashable {
         case (.settings, .settings):
             true
         case (.debugSettings, .debugSettings):
+            true
+        case (.persistenceDebug, .persistenceDebug):
             true
         case (.mapLocationPicker, .mapLocationPicker):
             true
@@ -152,6 +156,8 @@ enum RouterDestination: Hashable {
             hasher.combine("settings")
         case .debugSettings:
             hasher.combine("debugSettings")
+        case .persistenceDebug:
+            hasher.combine("persistenceDebug")
         case .mapLocationPicker:
             hasher.combine("mapLocationPicker")
         case .enhancedLocationCapture:
@@ -244,6 +250,8 @@ extension View {
                 )
             case .debugSettings:
                 DebugMenuView()
+            case .persistenceDebug:
+                TinyStorageDebugView()
             case let .mapLocationPicker(initialLocation, onLocationSelected):
                 MapLocationPickerView(
                     initialLocation: initialLocation,

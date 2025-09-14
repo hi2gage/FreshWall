@@ -48,12 +48,35 @@ class DebugMenuViewModel {
 struct DebugMenuView: View {
     @State private var viewModel = DebugMenuViewModel()
     @Environment(\.dismiss) private var dismiss
+    @Environment(RouterPath.self) private var routerPath
 
     var body: some View {
         NavigationView {
             List {
                 // Current Environment Display
                 Section {}
+
+                // Debug Tools Section
+                Section(header: Text("Debug Tools")) {
+                    NavigationLink(value: RouterDestination.persistenceDebug) {
+                        HStack {
+                            Image(systemName: "externaldrive.badge.plus")
+                                .foregroundColor(.purple)
+                            VStack(alignment: .leading) {
+                                Text("Persistence Debug")
+                                    .font(.headline)
+                                Text("View and manage app persistence data")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                                .font(.caption)
+                        }
+                    }
+                    .padding(.vertical, 2)
+                }
 
                 Section(header: Text("Environment Settings")) {
                     HStack {
