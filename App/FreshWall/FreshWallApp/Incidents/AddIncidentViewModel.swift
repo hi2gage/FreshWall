@@ -2,6 +2,8 @@ import CoreLocation
 @preconcurrency import FirebaseFirestore
 import Foundation
 import Observation
+import Photos
+import UniformTypeIdentifiers
 
 // MARK: - IncidentValidationError
 
@@ -168,6 +170,9 @@ final class AddIncidentViewModel {
             throw error
         }
 
+        // Save photos to Camera Roll with location metadata
+        await savePhotosToLibrary(beforePhotos: beforePhotos, afterPhotos: afterPhotos, location: finalEnhancedLocation)
+
         // Queue address resolution for photo locations if location lacks address
         if let location = finalEnhancedLocation,
            location.address == nil,
@@ -176,6 +181,51 @@ final class AddIncidentViewModel {
                 for: incidentId,
                 coordinates: coordinates
             )
+        }
+    }
+
+    /// Saves photos to Camera Roll with location metadata
+    private func savePhotosToLibrary(beforePhotos: [PickedPhoto], afterPhotos: [PickedPhoto], location: IncidentLocation?) async {
+        let allPhotos = beforePhotos + afterPhotos
+        guard !allPhotos.isEmpty else { return }
+
+        print("📸 Saving \(allPhotos.count) photos to Camera Roll with location: \(location?.coordinates != nil)")
+
+        // Convert IncidentLocation to CLLocation if coordinates available
+        let clLocation: CLLocation? = {
+            guard let coordinates = location?.coordinates else { return nil }
+
+            return CLLocation(latitude: coordinates.latitude, longitude: coordinates.longitude)
+        }()
+
+        // Save photos in background queue to avoid dispatch queue issues
+        for (index, photo) in allPhotos.enumerated() {
+            await withCheckedContinuation { continuation in
+                DispatchQueue.global(qos: .background).async {
+                    guard let imageData = photo.image.jpegData(compressionQuality: 0.9) else {
+                        print("❌ Failed to convert image \(index + 1) to JPEG")
+                        continuation.resume()
+                        return
+                    }
+
+                    PHPhotoLibrary.shared().performChanges({
+                        let req = PHAssetCreationRequest.forAsset()
+                        req.creationDate = Date()
+                        req.location = clLocation // Add GPS coordinates if available
+
+                        let opts = PHAssetResourceCreationOptions()
+                        opts.uniformTypeIdentifier = UTType.jpeg.identifier
+                        req.addResource(with: .photo, data: imageData, options: opts)
+                    }) { success, error in
+                        if success {
+                            print("✅ Photo \(index + 1)/\(allPhotos.count) saved to Camera Roll with location: \(clLocation != nil)")
+                        } else {
+                            print("❌ Failed to save photo \(index + 1): \(error?.localizedDescription ?? "unknown")")
+                        }
+                        continuation.resume()
+                    }
+                }
+            }
         }
     }
 

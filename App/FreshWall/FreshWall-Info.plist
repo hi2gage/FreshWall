@@ -12,5 +12,7 @@
 	<string>FreshWall needs location access to capture GPS coordinates for incident reports. This helps accurately track where graffiti removal work is performed for client documentation.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Taking photos of the graffiti</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>FreshWall saves photos to your Camera Roll for backup and easy access outside the app.</string>
 </dict>
 </plist>

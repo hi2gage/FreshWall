@@ -14,20 +14,26 @@ struct CameraPicker: UIViewControllerRepresentable {
         }
 
         func imagePickerController(
-            _: UIImagePickerController,
+            _ picker: UIImagePickerController,
             didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
         ) {
-            defer { parent.onImagePicked(parent.extractData(from: info)) }
+            // Get the original image and convert to JPEG
+            guard let image = info[.originalImage] as? UIImage,
+                  let jpeg = image.jpegData(compressionQuality: 0.9) else {
+                picker.dismiss(animated: true) { self.parent.onImagePicked(nil) }
+                return
+            }
+
+            // Camera Roll saving is now handled in AddIncidentViewModel
+            picker.dismiss(animated: true) { self.parent.onImagePicked(jpeg) }
         }
 
-        func imagePickerControllerDidCancel(_: UIImagePickerController) {
-            parent.onImagePicked(nil)
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true) { self.parent.onImagePicked(nil) }
         }
     }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
-    }
+    func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
@@ -37,11 +43,4 @@ struct CameraPicker: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_: UIImagePickerController, context _: Context) {}
-
-    private func extractData(from info: [UIImagePickerController.InfoKey: Any]) -> Data? {
-        guard let image = info[.originalImage] as? UIImage else { return nil }
-
-        // Simple JPEG conversion - location is passed separately now
-        return image.jpegData(compressionQuality: 0.8)
-    }
 }

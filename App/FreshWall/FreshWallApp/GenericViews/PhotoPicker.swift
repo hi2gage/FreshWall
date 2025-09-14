@@ -39,7 +39,13 @@ struct PickedPhoto: Identifiable, Sendable, Equatable {
         guard let image = UIImage(data: data) else { return nil }
 
         let meta = service.metadata(from: data)
-        return PickedPhoto(id: id, image: image, captureDate: meta.captureDate, location: meta.location, resolvedAddress: nil)
+        return PickedPhoto(
+            id: id,
+            image: image,
+            captureDate: meta.captureDate,
+            location: meta.location,
+            resolvedAddress: nil
+        )
     }
 }
 

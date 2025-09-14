@@ -45,18 +45,23 @@ struct MainAppView: View {
     }
 
     var body: some View {
-        NavigationStack(path: $routerPath.path) {
-            MainListView(sessionStore: sessionStore)
-                .withAppRouter(
-                    clientService: clientService,
-                    incidentService: incidentService,
-                    memberService: memberService,
-                    userSession: sessionStore.session,
-                    currentUserId: sessionStore.session.userId,
-                    sessionStore: sessionStore
-                )
+        VStack(spacing: 0) {
+            BackgroundUploadIndicatorView()
+
+            NavigationStack(path: $routerPath.path) {
+                MainListView(sessionStore: sessionStore)
+                    .withAppRouter(
+                        clientService: clientService,
+                        incidentService: incidentService,
+                        memberService: memberService,
+                        userSession: sessionStore.session,
+                        currentUserId: sessionStore.session.userId,
+                        sessionStore: sessionStore
+                    )
+            }
+            .environment(routerPath)
         }
-        .environment(routerPath)
+//        .environment(BackgroundUploadService.shared)
     }
 }
 
