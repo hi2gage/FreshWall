@@ -140,10 +140,28 @@ struct AddIncidentView: View {
                 Button("Save") {
                     Task {
                         do {
+                            print("🚀 Save button pressed - starting incident creation")
+                            print("📊 Form data: clientId=\(viewModel.input.clientId), area=\(viewModel.input.areaText)")
+                            print("📸 Photos: before=\(beforePhotos.count), after=\(afterPhotos.count)")
+                            print("📍 Location: \(viewModel.input.enhancedLocation?.address ?? "None")")
+
                             try await viewModel.save(beforePhotos: beforePhotos, afterPhotos: afterPhotos)
+
+                            print("✅ Incident saved successfully, dismissing view")
                             dismiss()
                         } catch {
-                            // Handle error if needed
+                            print("❌ Error saving incident: \(error)")
+                            print("📊 Error type: \(type(of: error))")
+                            print("📊 Error description: \(error.localizedDescription)")
+
+                            if let nsError = error as NSError? {
+                                print("🔍 NSError domain: \(nsError.domain)")
+                                print("🔍 NSError code: \(nsError.code)")
+                                print("🔍 NSError userInfo: \(nsError.userInfo)")
+                            }
+
+                            // For now, just print the error. You can add alert handling later
+                            print("⚠️ Incident creation failed - user should be notified")
                         }
                     }
                 }

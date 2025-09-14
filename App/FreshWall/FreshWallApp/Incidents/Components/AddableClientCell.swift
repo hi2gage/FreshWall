@@ -12,7 +12,11 @@ struct AddableClientCell: View {
     var selectedClient: Client? {
         guard let selectedClientId else { return nil }
 
-        return validClients.first { $0.id == selectedClientId }
+        // Optimized: selected client is guaranteed to be first in the array
+        // Fall back to linear search if not found (defensive programming)
+        return validClients.first?.id == selectedClientId
+            ? validClients.first
+            : validClients.first { $0.id == selectedClientId }
     }
 
     var body: some View {

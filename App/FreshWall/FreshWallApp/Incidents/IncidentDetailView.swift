@@ -120,9 +120,6 @@ struct IncidentDetailView: View {
                 Button("Edit") { routerPath.push(.editIncident(incident: viewModel.incident)) }
             }
         }
-        .onAppear {
-            Task { await viewModel.reloadIncident() }
-        }
         .task {
             await viewModel.loadClient()
         }
