@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SortButton<Field: SortFieldRepresentable>: View {
+struct SortButton<Field: SortFieldRepresentable & Codable & Sendable>: View {
     let field: Field
     @Binding var sort: SortState<Field>
 

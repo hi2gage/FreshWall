@@ -1,7 +1,7 @@
 import Foundation
 
 /// Fields available for sorting incidents.
-enum IncidentSortField: SortFieldRepresentable {
+enum IncidentSortField: SortFieldRepresentable, Codable, Sendable {
     case alphabetical
     case date
 

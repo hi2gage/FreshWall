@@ -9,6 +9,7 @@ struct ClientDetailView: View {
     @Environment(RouterPath.self) private var routerPath
     @State private var incidents: [Incident] = []
     @State private var showingExportOptions = false
+    @State private var showingDeleteConfirmation = false
 
     init(
         client: Client,
@@ -85,6 +86,18 @@ struct ClientDetailView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
         return formatter.string(from: Date())
+    }
+
+    /// Deletes the client.
+    private func deleteClient() async {
+        guard let id = client.id else { return }
+
+        do {
+            try await clientService.deleteClient(id)
+            routerPath.pop()
+        } catch {
+            print("Failed to delete client: \(error)")
+        }
     }
 
     var body: some View {
@@ -189,6 +202,11 @@ struct ClientDetailView: View {
                 }
                 .disabled(incidents.isEmpty)
             }
+            ToolbarItem(placement: .secondaryAction) {
+                Button("Delete Client", role: .destructive) {
+                    showingDeleteConfirmation = true
+                }
+            }
         }
         .confirmationDialog("Export Options", isPresented: $showingExportOptions) {
             Button("Invoice (Billable Only)") {
@@ -200,6 +218,16 @@ struct ClientDetailView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Choose the type of PDF report to generate for \(client.name)")
+        }
+        .alert("Delete Client", isPresented: $showingDeleteConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                Task {
+                    await deleteClient()
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete '\(client.name)'? This action cannot be undone.")
         }
         .onAppear {
             Task { await reloadClient() }

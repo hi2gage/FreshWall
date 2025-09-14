@@ -6,6 +6,7 @@ import SwiftUI
 /// A view displaying detailed information for a specific incident.
 struct IncidentDetailView: View {
     @State private var viewModel: IncidentDetailViewModel
+    @State private var showingDeleteConfirmation = false
     @Environment(RouterPath.self) private var routerPath
 
     init(
@@ -18,6 +19,15 @@ struct IncidentDetailView: View {
             incidentService: incidentService,
             clientService: clientService
         ))
+    }
+
+    private func deleteIncident() async {
+        do {
+            try await viewModel.deleteIncident()
+            routerPath.pop()
+        } catch {
+            print("Failed to delete incident: \(error)")
+        }
     }
 
     var body: some View {
@@ -119,6 +129,21 @@ struct IncidentDetailView: View {
             ToolbarItem(placement: .primaryAction) {
                 Button("Edit") { routerPath.push(.editIncident(incident: viewModel.incident)) }
             }
+            ToolbarItem(placement: .secondaryAction) {
+                Button("Delete Incident", role: .destructive) {
+                    showingDeleteConfirmation = true
+                }
+            }
+        }
+        .alert("Delete Incident", isPresented: $showingDeleteConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                Task {
+                    await deleteIncident()
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete this incident? This action cannot be undone.")
         }
         .task {
             await viewModel.loadClient()

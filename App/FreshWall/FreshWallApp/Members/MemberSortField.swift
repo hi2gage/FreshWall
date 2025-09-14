@@ -1,7 +1,7 @@
 import Foundation
 
 /// Fields available for sorting members.
-enum MemberSortField: SortFieldRepresentable {
+enum MemberSortField: SortFieldRepresentable, Codable, Sendable {
     /// Sort by display name alphabetically.
     case alphabetical
     /// Sort by role type.

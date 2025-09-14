@@ -1,6 +1,20 @@
 import Foundation
 import Observation
 
+// MARK: - DateRangeOption
+
+enum DateRangeOption: String, CaseIterable, Codable, Sendable {
+    case today = "Today"
+    case thisWeek = "This Week"
+    case thisMonth = "This Month"
+    case thisYear = "This Year"
+    case custom = "Custom"
+
+    var displayName: String { rawValue }
+}
+
+// MARK: - IncidentsListViewModel
+
 /// ViewModel responsible for incident list presentation and data operations.
 @MainActor
 @Observable
@@ -9,13 +23,36 @@ final class IncidentsListViewModel {
     var incidents: [Incident] = []
     /// Clients used for grouping by client name.
     var clients: [Client] = []
-    /// Selected grouping option for incidents.
-    var groupOption: IncidentGroupOption?
 
-    // Simple filter properties for dropdown filtering
-    var statusFilter: IncidentStatus?
-    var surfaceTypeFilter: SurfaceType?
-    var clientFilter: String?
+    /// Flag to prevent didSet during initialization
+    private var isInitializing = true
+
+    /// Selected grouping option for incidents - cached locally, synced with FilterManager
+    var groupOption: IncidentGroupOption? {
+        didSet {
+            guard !isInitializing else { return }
+
+            FilterManager.incidentsGroupOption = groupOption
+        }
+    }
+
+    /// Client filter - cached locally, synced with FilterManager
+    var clientFilter: String? {
+        didSet {
+            guard !isInitializing else { return }
+
+            FilterManager.incidentsClientFilter = clientFilter
+        }
+    }
+
+    /// Date range filter - cached locally, synced with FilterManager
+    var dateRangeFilter: DateRangeOption? {
+        didSet {
+            guard !isInitializing else { return }
+
+            FilterManager.incidentsDateRangeFilter = dateRangeFilter
+        }
+    }
 
     /// The field by which incidents are currently sorted.
     var sortField: IncidentSortField {
@@ -29,7 +66,13 @@ final class IncidentsListViewModel {
         set { sort.isAscending = newValue }
     }
 
-    var sort: SortState<IncidentSortField> = .init(field: .date, isAscending: true)
+    var sort: SortState<IncidentSortField> = .init(field: .date, isAscending: true) {
+        didSet {
+            guard !isInitializing else { return }
+
+            FilterManager.incidentsSort = sort
+        }
+    }
 
     private let service: IncidentServiceProtocol
     private let clientService: ClientServiceProtocol
@@ -49,6 +92,21 @@ final class IncidentsListViewModel {
         service = incidentService
         self.clientService = clientService
         self.userSession = userSession
+
+        // Load cached filter preferences from FilterManager
+        loadCachedFilters()
+
+        // Enable storage sync after initialization
+        isInitializing = false
+    }
+
+    /// Loads previously saved filter preferences from FilterManager
+    private func loadCachedFilters() {
+        // Load filters while isInitializing=true prevents didSet from writing to storage
+        groupOption = FilterManager.incidentsGroupOption
+        clientFilter = FilterManager.incidentsClientFilter
+        dateRangeFilter = FilterManager.incidentsDateRangeFilter
+        sort = FilterManager.incidentsSort
     }
 
     /// Loads incidents from the service.
@@ -60,19 +118,49 @@ final class IncidentsListViewModel {
     private var filteredIncidents: [Incident] {
         var filtered = incidents
 
-        // Apply status filter
-        if let statusFilter {
-            filtered = filtered.filter { $0.status == statusFilter }
-        }
-
-        // Apply surface type filter
-        if let surfaceTypeFilter {
-            filtered = filtered.filter { $0.surfaceType == surfaceTypeFilter }
-        }
-
         // Apply client filter
         if let clientFilter {
             filtered = filtered.filter { $0.clientRef?.documentID == clientFilter }
+        }
+
+        // Apply date range filter
+        if let dateRangeFilter {
+            let calendar = Calendar.current
+            let now = Date()
+
+            let dateRange: (start: Date, end: Date)? = {
+                switch dateRangeFilter {
+                case .today:
+                    let startOfDay = calendar.startOfDay(for: now)
+                    let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) ?? now
+                    return (startOfDay, endOfDay)
+                case .thisWeek:
+                    guard let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: now)?.start,
+                          let endOfWeek = calendar.dateInterval(of: .weekOfYear, for: now)?.end else { return nil }
+
+                    return (startOfWeek, endOfWeek)
+                case .thisMonth:
+                    guard let startOfMonth = calendar.dateInterval(of: .month, for: now)?.start,
+                          let endOfMonth = calendar.dateInterval(of: .month, for: now)?.end else { return nil }
+
+                    return (startOfMonth, endOfMonth)
+                case .thisYear:
+                    guard let startOfYear = calendar.dateInterval(of: .year, for: now)?.start,
+                          let endOfYear = calendar.dateInterval(of: .year, for: now)?.end else { return nil }
+
+                    return (startOfYear, endOfYear)
+                case .custom:
+                    // Custom range not implemented yet
+                    return nil
+                }
+            }()
+
+            if let dateRange {
+                filtered = filtered.filter { incident in
+                    let incidentDate = incident.startTime.dateValue()
+                    return incidentDate >= dateRange.start && incidentDate < dateRange.end
+                }
+            }
         }
 
         // Apply role-based filtering for field workers
@@ -88,14 +176,14 @@ final class IncidentsListViewModel {
 
     /// Whether any filters are currently active
     var hasActiveFilters: Bool {
-        statusFilter != nil || surfaceTypeFilter != nil || clientFilter != nil
+        clientFilter != nil || dateRangeFilter != nil
     }
 
     /// Clears all active filters
     func clearFilters() {
-        statusFilter = nil
-        surfaceTypeFilter = nil
         clientFilter = nil
+        dateRangeFilter = nil
+        // This will automatically sync to FilterManager via didSet
     }
 
     /// Returns incidents grouped according to the provided option and clients.
