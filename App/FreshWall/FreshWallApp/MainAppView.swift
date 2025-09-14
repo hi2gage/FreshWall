@@ -61,6 +61,9 @@ struct MainAppView: View {
             }
             .environment(routerPath)
         }
+        .onShake {
+            routerPath.push(.debugSettings)
+        }
 //        .environment(BackgroundUploadService.shared)
     }
 }
