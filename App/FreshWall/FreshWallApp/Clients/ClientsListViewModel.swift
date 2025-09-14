@@ -10,7 +10,7 @@ final class ClientsListViewModel {
     /// Incidents fetched from the incident service.
     var incidents: [Incident] = []
 
-    var sort: SortState<ClientSortField> = .init(field: .incidentDate, isAscending: false)
+    var sort: SortState<ClientSortField> = .init(field: .alphabetical, isAscending: true)
 
     /// The current field used for sorting clients.
     var sortField: ClientSortField {

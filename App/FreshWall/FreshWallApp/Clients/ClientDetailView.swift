@@ -170,11 +170,33 @@ struct ClientDetailView: View {
                 if incidents.isEmpty {
                     Text("No incidents for this client.")
                         .italic()
+                        .foregroundColor(.secondary)
                 } else {
-                    ForEach(incidents) { _ in
-//                        Button(incident.id) {
-//                            routerPath.push(.incidentDetail(incident: incident))
-//                        }
+                    ForEach(incidents.sorted(by: { $0.startTime.dateValue() > $1.startTime.dateValue() })) { incident in
+                        Button(action: {
+                            routerPath.push(.incidentDetail(incident: incident))
+                        }) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(incident.enhancedLocation?.address ?? "Unknown Address")
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                        .multilineTextAlignment(.leading)
+
+                                    Text(incident.startTime.dateValue().formatted(date: .abbreviated, time: .shortened))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.secondary)
+                                    .font(.caption)
+                            }
+                            .padding(.vertical, 2)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
