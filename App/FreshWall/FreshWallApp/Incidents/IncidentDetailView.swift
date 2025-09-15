@@ -597,8 +597,6 @@ struct DetailBillingSection: View {
                             .foregroundColor(.green)
                     }
                     .padding(.vertical, 4)
-                    .background(Color(.systemBackground))
-                    .cornerRadius(8)
 
                     // Minimum billing note if applicable
                     if billingQuantity == defaults.minimumBillableQuantity {

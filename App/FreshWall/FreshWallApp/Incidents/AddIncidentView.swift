@@ -316,140 +316,100 @@ struct BillingConfigurationSection: View {
 
     var body: some View {
         Section("Billing Configuration") {
-            // State 1: No Client Selected
-            if !isClientSelected {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Select a client first")
-                        .foregroundColor(.secondary)
-                        .font(.subheadline)
-
-                    Toggle("Manual Override", isOn: $showManualOverride)
-                        .foregroundColor(.red)
-                        .onChange(of: showManualOverride) { _, newValue in
-                            hasBillingConfiguration = newValue
-                            if newValue {
-                                billingSource = .manual
+            // OVERRIDE TOGGLE - Always at the top
+            VStack(alignment: .leading, spacing: 12) {
+                Toggle(showManualOverride ? "Manual Override" : "Override", isOn: $showManualOverride)
+                    .foregroundColor(showManualOverride ? .red : .primary)
+                    .onChange(of: showManualOverride) { _, newValue in
+                        if newValue {
+                            hasBillingConfiguration = true
+                            billingSource = .manual
+                            // Copy client defaults as starting point for override if available
+                            if let defaults = selectedClient?.defaults {
+                                billingMethod = IncidentBilling.BillingMethod(from: defaults.billingMethod)
+                                minimumBillableQuantity = String(defaults.minimumBillableQuantity)
+                                amountPerUnit = String(defaults.amountPerUnit)
+                            }
+                        } else {
+                            if isClientSelected, hasClientDefaults {
+                                billingSource = .client
+                            } else {
+                                hasBillingConfiguration = false
                             }
                         }
-                }
+                    }
             }
-            // State 2: Client Selected, No Defaults
-            else if !hasClientDefaults {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Please configure billing defaults in client settings, or use manual override")
-                        .foregroundColor(.secondary)
+
+            // CONTENT BASED ON STATE
+            if showManualOverride {
+                // Show manual billing form when override is enabled
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Manual Configuration")
                         .font(.subheadline)
-
-                    Toggle("Manual Override", isOn: $showManualOverride)
-                        .foregroundColor(.red)
-                        .onChange(of: showManualOverride) { _, newValue in
-                            hasBillingConfiguration = newValue
-                            if newValue {
-                                billingSource = .manual
-                            }
-                        }
+                        .foregroundColor(.secondary)
                 }
-            }
-            // State 3: Client Selected, Has Defaults
-            else {
-                VStack(alignment: .leading, spacing: 12) {
-                    if !showManualOverride {
-                        // Show client defaults (read-only)
-                        if let defaults = selectedClient?.defaults {
-                            VStack(alignment: .leading, spacing: 12) {
-                                // Header with icon
-                                HStack {
-                                    Image(systemName: "creditcard.fill")
-                                        .foregroundColor(.green)
-                                        .frame(width: 24)
-                                    VStack(alignment: .leading) {
-                                        Text("Billing Method")
-                                            .font(.headline)
-                                        Text(defaults.billingMethod.displayName)
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
+            } else if !isClientSelected {
+                Text("Select a client first")
+                    .foregroundColor(.secondary)
+                    .font(.subheadline)
+            } else if !hasClientDefaults {
+                Text("Please configure billing defaults in client settings, or use override above")
+                    .foregroundColor(.secondary)
+                    .font(.subheadline)
+            } else {
+                // Show client defaults (read-only) when client has defaults
+                if let defaults = selectedClient?.defaults {
+                    VStack(alignment: .leading, spacing: 12) {
+                        // Header with icon
+                        HStack {
+                            Image(systemName: "creditcard.fill")
+                                .foregroundColor(.green)
+                                .frame(width: 24)
+                            VStack(alignment: .leading) {
+                                Text("Billing Method")
+                                    .font(.headline)
+                                Text(defaults.billingMethod.displayName)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
 
-                                        // Show time rounding configuration
-                                        if defaults.billingMethod == .time, let timeRounding = defaults.timeRounding {
-                                            Text(timeRounding.displayName)
-                                                .font(.caption2)
-                                                .foregroundColor(.blue)
-                                        }
-                                    }
-                                    Spacer()
-                                }
-
-                                // Quantity info
-                                HStack {
-                                    Image(systemName: "number")
+                                // Show time rounding configuration
+                                if defaults.billingMethod == .time, let timeRounding = defaults.timeRounding {
+                                    Text(timeRounding.displayName)
+                                        .font(.caption2)
                                         .foregroundColor(.blue)
-                                        .frame(width: 24)
-                                    VStack(alignment: .leading) {
-                                        Text("Minimum Quantity")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                        Text("\(defaults.minimumBillableQuantity, specifier: "%.1f") \(defaults.billingMethod.unitLabel)")
-                                            .font(.headline)
-                                    }
-                                    Spacer()
-                                }
-
-                                // Rate info
-                                HStack {
-                                    Image(systemName: "dollarsign.circle.fill")
-                                        .foregroundColor(.orange)
-                                        .frame(width: 24)
-                                    VStack(alignment: .leading) {
-                                        Text("Rate")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                        Text("$\(defaults.amountPerUnit, specifier: "%.2f")/\(defaults.billingMethod.unitLabel)")
-                                            .font(.headline)
-                                    }
-                                    Spacer()
                                 }
                             }
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
+                            Spacer()
                         }
 
-                        Toggle("Override", isOn: $showManualOverride)
-                            .onChange(of: showManualOverride) { _, newValue in
-                                if newValue {
-                                    hasBillingConfiguration = true
-                                    billingSource = .manual
-                                    // Copy client defaults as starting point for override
-                                    if let defaults = selectedClient?.defaults {
-                                        billingMethod = IncidentBilling.BillingMethod(from: defaults.billingMethod)
-                                        minimumBillableQuantity = String(defaults.minimumBillableQuantity)
-                                        amountPerUnit = String(defaults.amountPerUnit)
-                                    }
-                                } else {
-                                    billingSource = .client
-                                }
-                            }
-                    } else {
-                        // Manual override mode
-                        VStack(alignment: .leading, spacing: 12) {
-                            Toggle("Manual Override", isOn: $showManualOverride)
-                                .foregroundColor(.red)
-                                .onChange(of: showManualOverride) { _, newValue in
-                                    if !newValue {
-                                        billingSource = .client
-                                    }
-                                }
-
-                            // Show update button if client has defaults
-                            if let selectedClient, let defaults = selectedClient.defaults {
-                                Button("Update to use client's current defaults") {
-                                    billingMethod = IncidentBilling.BillingMethod(from: defaults.billingMethod)
-                                    minimumBillableQuantity = String(defaults.minimumBillableQuantity)
-                                    amountPerUnit = String(defaults.amountPerUnit)
-                                }
+                        // Quantity info
+                        HStack {
+                            Image(systemName: "number")
                                 .foregroundColor(.blue)
-                                .font(.subheadline)
+                                .frame(width: 24)
+                            VStack(alignment: .leading) {
+                                Text("Minimum Quantity")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text("\(defaults.minimumBillableQuantity, specifier: "%.1f") \(defaults.billingMethod.unitLabel)")
+                                    .font(.headline)
                             }
+                            Spacer()
+                        }
+
+                        // Rate info
+                        HStack {
+                            Image(systemName: "dollarsign.circle.fill")
+                                .foregroundColor(.orange)
+                                .frame(width: 24)
+                            VStack(alignment: .leading) {
+                                Text("Rate")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text("$\(defaults.amountPerUnit, specifier: "%.2f")/\(defaults.billingMethod.unitLabel)")
+                                    .font(.headline)
+                            }
+                            Spacer()
                         }
                     }
                 }
