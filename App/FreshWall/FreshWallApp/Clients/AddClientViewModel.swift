@@ -15,10 +15,10 @@ final class AddClientViewModel {
     var notes: String = ""
 
     // Defaults configuration
-    var billingMethod: BillingMethod = .squareFootage
+    var billingMethod: BillingMethod = .time
     var minimumBillableQuantity: String = ""
     var amountPerUnit: String = ""
-    var includeDefaults: Bool = false
+    var includeDefaults: Bool = true
     var timeRounding: TimeRounding?
 
     private let service: ClientServiceProtocol
