@@ -94,6 +94,7 @@ extension ClientDTO {
 
         /// Common presets for easy selection.
         static let presets: [TimeRounding] = [
+            TimeRounding(roundingIncrement: 1.0 / 60.0), // Round to 1-min
             TimeRounding(roundingIncrement: 0.25), // Round to 15-min
             TimeRounding(roundingIncrement: 0.5), // Round to 30-min
             TimeRounding(roundingIncrement: 1.0), // Round to 1-hour
