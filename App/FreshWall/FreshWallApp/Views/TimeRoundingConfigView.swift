@@ -127,7 +127,7 @@ struct TimeRoundingConfigView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
 
-                    let examples = [1.2, 1.75, 2.3, 3.1, 4.67]
+                    let examples = [0.08333333, 0.16666667, 0.25, 0.5, 1.2, 1.75, 2.3, 3.1, 4.67]
 
                     VStack(alignment: .leading, spacing: 6) {
                         ForEach(examples, id: \.self) { rawHours in
@@ -145,13 +145,13 @@ struct TimeRoundingConfigView: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
 
-                                Text("\(roundedHours, specifier: "%.1f")h")
+                                Text("\(roundedHours, specifier: "%.2f")h")
                                     .frame(width: 35, alignment: .leading)
                                     .font(.caption)
                                     .fontWeight(.medium)
 
                                 if billableHours != roundedHours {
-                                    Text("(min: \(billableHours, specifier: "%.1f")h)")
+                                    Text("(min: \(billableHours, specifier: "%.2f")h)")
                                         .font(.caption)
                                         .foregroundColor(.orange)
                                         .frame(width: 70, alignment: .leading)
@@ -232,8 +232,8 @@ struct TimeRoundingConfigView: View {
 
     let sampleDefaults = ClientDTO.ClientDefaults(
         billingMethod: .time,
-        minimumBillableQuantity: 2.0,
-        amountPerUnit: 85.0,
+        minimumBillableQuantity: 0.5,
+        amountPerUnit: 80,
         timeRounding: timeRounding
     )
 
