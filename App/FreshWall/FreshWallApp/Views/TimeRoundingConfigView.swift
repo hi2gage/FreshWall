@@ -108,7 +108,7 @@ struct RoundingExample: View {
 struct TimeRoundingConfigView: View {
     @Binding var clientDefaults: ClientDTO.ClientDefaults
 
-    @State private var selectedPresetIndex: Int = 0
+    @State private var selectedPresetIndex: Int = 2
     @State private var isCustom = false
     @State private var customRoundingMinutes: Int = 30
 
