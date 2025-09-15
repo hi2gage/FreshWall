@@ -10,9 +10,11 @@ struct PresetOptions {
     static let all: [PresetOptions] = [
         PresetOptions(displayName: "No buffer, round to 15 min", bufferHours: 0.0, roundingHours: 0.25),
         PresetOptions(displayName: "No buffer, round to 30 min", bufferHours: 0.0, roundingHours: 0.5),
-        PresetOptions(displayName: "15 min buffer, round to 30 min", bufferHours: 0.2499, roundingHours: 0.5), // Shows as 15 min, uses 0.2499
+        // Shows as 15 min, uses 0.2499
+        PresetOptions(displayName: "15 min buffer, round to 30 min", bufferHours: 0.2499, roundingHours: 0.5),
         PresetOptions(displayName: "Excel formula equivalent", bufferHours: 0.2499, roundingHours: 0.5),
-        PresetOptions(displayName: "30 min buffer, round to 1 hour", bufferHours: 0.4999, roundingHours: 1.0), // Shows as 30 min, uses 0.4999
+        // Shows as 30 min, uses 0.4999
+        PresetOptions(displayName: "30 min buffer, round to 1 hour", bufferHours: 0.4999, roundingHours: 1.0),
     ]
 }
 
