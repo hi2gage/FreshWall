@@ -115,7 +115,7 @@ struct PhotoPicker<Label: View>: View {
 }
 
 #Preview {
-    @State var photos: [PickedPhoto] = []
+    @Previewable @State var photos: [PickedPhoto] = []
 
     return FreshWallPreview {
         VStack {

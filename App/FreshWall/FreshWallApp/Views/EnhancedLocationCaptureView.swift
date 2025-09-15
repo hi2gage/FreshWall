@@ -265,7 +265,7 @@ struct EnhancedLocationCaptureView: View {
 // MARK: - Preview
 
 #Preview {
-    @State var location: IncidentLocation? = nil
+    @Previewable @State var location: IncidentLocation? = nil
 
     FreshWallPreview {
         EnhancedLocationCaptureView(location: $location)
