@@ -70,6 +70,15 @@ struct IncidentDetailView: View {
                 }
             )
 
+            // MARK: - Billing Section
+
+            if let selectedClient = viewModel.clients.first(where: { $0.id == viewModel.selectedClientId }) {
+                DetailBillingSection(
+                    client: selectedClient,
+                    incident: viewModel.incident
+                )
+            }
+
             // MARK: - Surface Type Section
 
             if viewModel.incident.surfaceType != nil {
@@ -468,6 +477,157 @@ struct DetailNotesSection: View {
                     description: .constant(description),
                     onSave: onDescriptionUpdate
                 )
+            }
+        }
+    }
+}
+
+// MARK: - DetailBillingSection
+
+/// Billing section for incident detail view
+struct DetailBillingSection: View {
+    let client: Client
+    let incident: Incident
+
+    private var billingAmount: Double {
+        guard let defaults = client.defaults else { return 0.0 }
+
+        let quantity: Double
+        switch defaults.billingMethod {
+        case .time:
+            // Calculate hours from start/end time
+            let hours = incident.endTime.dateValue().timeIntervalSince(incident.startTime.dateValue()) / 3600
+            quantity = max(hours, defaults.minimumBillableQuantity)
+        case .squareFootage:
+            // Use incident area
+            quantity = max(incident.area, defaults.minimumBillableQuantity)
+        }
+
+        return quantity * defaults.amountPerUnit
+    }
+
+    private var billingQuantity: Double {
+        guard let defaults = client.defaults else { return 0.0 }
+
+        switch defaults.billingMethod {
+        case .time:
+            let rawHours = incident.endTime.dateValue().timeIntervalSince(incident.startTime.dateValue()) / 3600
+            let roundedHours: Double = if let timeRounding = defaults.timeRounding {
+                timeRounding.applyRounding(to: rawHours)
+            } else {
+                rawHours
+            }
+
+            return max(roundedHours, defaults.minimumBillableQuantity)
+        case .squareFootage:
+            return max(incident.area, defaults.minimumBillableQuantity)
+        }
+    }
+
+    var body: some View {
+        Section("Billing") {
+            if let defaults = client.defaults {
+                VStack(alignment: .leading, spacing: 12) {
+                    // Billing Method
+                    HStack {
+                        Image(systemName: "creditcard.fill")
+                            .foregroundColor(.green)
+                            .frame(width: 24)
+                        VStack(alignment: .leading) {
+                            Text("Billing Method")
+                                .font(.headline)
+                            Text(defaults.billingMethod.displayName)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+
+                            // Show time rounding configuration
+                            if defaults.billingMethod == .time, let timeRounding = defaults.timeRounding {
+                                Text(timeRounding.displayName)
+                                    .font(.caption2)
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                        Spacer()
+                    }
+
+                    Divider()
+
+                    // Quantity & Rate
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Quantity")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text("\(billingQuantity, specifier: "%.1f") \(defaults.billingMethod.unitLabel)")
+                                .font(.headline)
+
+                            // Show rounding info for time-based billing
+                            if defaults.billingMethod == .time, let timeRounding = defaults.timeRounding {
+                                let rawHours = incident.endTime.dateValue().timeIntervalSince(incident.startTime.dateValue()) / 3600
+                                if rawHours != billingQuantity {
+                                    Text("(\(rawHours, specifier: "%.2f") raw → rounded)")
+                                        .font(.caption2)
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                        }
+
+                        Spacer()
+
+                        VStack(alignment: .trailing) {
+                            Text("Rate")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text("$\(defaults.amountPerUnit, specifier: "%.2f")/\(defaults.billingMethod.unitLabel)")
+                                .font(.headline)
+                        }
+                    }
+
+                    Divider()
+
+                    // Total Amount
+                    HStack {
+                        Text("Total Amount")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        Spacer()
+                        Text("$\(billingAmount, specifier: "%.2f")")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.green)
+                    }
+                    .padding(.vertical, 4)
+                    .background(Color(.systemBackground))
+                    .cornerRadius(8)
+
+                    // Minimum billing note if applicable
+                    if billingQuantity == defaults.minimumBillableQuantity {
+                        HStack {
+                            Image(systemName: "info.circle.fill")
+                                .foregroundColor(.blue)
+                                .font(.caption)
+                            Text("Minimum billing quantity applied")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .padding(.vertical, 8)
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.orange)
+                        Text("No billing method configured")
+                            .font(.headline)
+                            .foregroundColor(.orange)
+                    }
+
+                    Text("This client needs billing defaults to calculate charges. Set up billing information in the client details.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.vertical, 8)
             }
         }
     }

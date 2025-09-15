@@ -28,4 +28,6 @@ struct UpdateIncidentInput: Sendable {
     let enhancedNotes: IncidentNotes?
     /// Custom surface description when surfaceType is .other
     let customSurfaceDescription: String?
+    /// Billing configuration for this incident
+    let billing: IncidentBilling?
 }

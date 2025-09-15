@@ -99,6 +99,22 @@ struct EditIncidentView: View {
                         .frame(minHeight: 100)
                 }
             }
+
+            // MARK: - Billing Configuration Section
+
+            BillingConfigurationSection(
+                hasBillingConfiguration: $viewModel.hasBillingConfiguration,
+                billingMethod: $viewModel.billingMethod,
+                minimumBillableQuantity: $viewModel.minimumBillableQuantity,
+                amountPerUnit: $viewModel.amountPerUnit,
+                customUnitDescription: $viewModel.customUnitDescription,
+                billingSource: $viewModel.billingSource,
+                quantityUnitLabel: viewModel.billingMethod.unitLabel,
+                amountUnitLabel: viewModel.billingMethod.unitLabel,
+                selectedClientId: viewModel.clientId,
+                selectedClient: viewModel.selectedClient
+            )
+
             Section {
                 Button("Delete Incident") {
                     viewModel.showingDeleteAlert = true
@@ -109,6 +125,12 @@ struct EditIncidentView: View {
         }
         .navigationTitle("Edit Incident")
         .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") {
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                }
+            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     Task {

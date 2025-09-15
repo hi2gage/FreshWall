@@ -108,8 +108,11 @@ struct AddIncidentView: View {
                 minimumBillableQuantity: $viewModel.input.minimumBillableQuantity,
                 amountPerUnit: $viewModel.input.amountPerUnit,
                 customUnitDescription: $viewModel.input.customUnitDescription,
+                billingSource: $viewModel.input.billingSource,
                 quantityUnitLabel: quantityUnitLabel,
-                amountUnitLabel: amountUnitLabel
+                amountUnitLabel: amountUnitLabel,
+                selectedClientId: viewModel.input.clientId,
+                selectedClient: viewModel.selectedClient
             )
 
             // MARK: - Area Section (Conditional)
@@ -318,6 +321,15 @@ struct TimeStampsSection: View {
     }
 }
 
+// MARK: - BillingConfigurationSection.FocusedField
+
+extension BillingConfigurationSection {
+    enum FocusedField: Hashable {
+        case minimumQuantity
+        case amountPerUnit
+    }
+}
+
 // MARK: - BillingConfigurationSection
 
 /// Billing configuration section
@@ -327,68 +339,252 @@ struct BillingConfigurationSection: View {
     @Binding var minimumBillableQuantity: String
     @Binding var amountPerUnit: String
     @Binding var customUnitDescription: String
+    @Binding var billingSource: BillingSource
     let quantityUnitLabel: String
     let amountUnitLabel: String
+    let selectedClientId: String
+    let selectedClient: Client?
+
+    @FocusState private var focusedField: BillingConfigurationSection.FocusedField?
+    @State private var showManualOverride = false
+
+    private var hasClientDefaults: Bool {
+        selectedClient?.defaults != nil
+    }
+
+    private var isClientSelected: Bool {
+        !selectedClientId.isEmpty
+    }
 
     var body: some View {
         Section("Billing Configuration") {
-            Toggle("Configure billing for this incident", isOn: $hasBillingConfiguration)
+            // State 1: No Client Selected
+            if !isClientSelected {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Select a client first")
+                        .foregroundColor(.secondary)
+                        .font(.subheadline)
 
-            if hasBillingConfiguration {
-                VStack(alignment: .leading, spacing: 16) {
-                    // Billing Method Picker
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Billing Method")
-                            .font(.headline)
-                        Picker("Billing Method", selection: $billingMethod) {
-                            ForEach(IncidentBilling.BillingMethod.allCases, id: \.self) { method in
-                                Text(method.displayName).tag(method)
+                    Toggle("Manual Override", isOn: $showManualOverride)
+                        .foregroundColor(.red)
+                        .onChange(of: showManualOverride) { _, newValue in
+                            hasBillingConfiguration = newValue
+                            if newValue {
+                                billingSource = .manual
                             }
                         }
-                        .pickerStyle(.segmented)
-                    }
+                }
+            }
+            // State 2: Client Selected, No Defaults
+            else if !hasClientDefaults {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Please configure billing defaults in client settings, or use manual override")
+                        .foregroundColor(.secondary)
+                        .font(.subheadline)
 
-                    // Custom Unit Description (for custom billing method)
-                    if billingMethod == .custom {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Unit Description")
-                                .font(.headline)
-                            TextField("Enter unit description (e.g., 'panels', 'sections')", text: $customUnitDescription)
-                                .textFieldStyle(.roundedBorder)
+                    Toggle("Manual Override", isOn: $showManualOverride)
+                        .foregroundColor(.red)
+                        .onChange(of: showManualOverride) { _, newValue in
+                            hasBillingConfiguration = newValue
+                            if newValue {
+                                billingSource = .manual
+                            }
                         }
-                    }
+                }
+            }
+            // State 3: Client Selected, Has Defaults
+            else {
+                VStack(alignment: .leading, spacing: 12) {
+                    if !showManualOverride {
+                        // Show client defaults (read-only)
+                        if let defaults = selectedClient?.defaults {
+                            VStack(alignment: .leading, spacing: 12) {
+                                // Header with icon
+                                HStack {
+                                    Image(systemName: "creditcard.fill")
+                                        .foregroundColor(.green)
+                                        .frame(width: 24)
+                                    VStack(alignment: .leading) {
+                                        Text("Billing Method")
+                                            .font(.headline)
+                                        Text(defaults.billingMethod.displayName)
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
 
-                    // Minimum Billable Quantity
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Minimum Billable Quantity")
-                            .font(.headline)
-                        HStack {
-                            TextField("0", text: $minimumBillableQuantity)
-                                .keyboardType(.decimalPad)
-                                .textFieldStyle(.roundedBorder)
-                            Text(quantityUnitLabel)
-                                .foregroundColor(.secondary)
+                                        // Show time rounding configuration
+                                        if defaults.billingMethod == .time, let timeRounding = defaults.timeRounding {
+                                            Text(timeRounding.displayName)
+                                                .font(.caption2)
+                                                .foregroundColor(.blue)
+                                        }
+                                    }
+                                    Spacer()
+                                }
+
+                                // Quantity info
+                                HStack {
+                                    Image(systemName: "number")
+                                        .foregroundColor(.blue)
+                                        .frame(width: 24)
+                                    VStack(alignment: .leading) {
+                                        Text("Minimum Quantity")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        Text("\(defaults.minimumBillableQuantity, specifier: "%.1f") \(defaults.billingMethod.unitLabel)")
+                                            .font(.headline)
+                                    }
+                                    Spacer()
+                                }
+
+                                // Rate info
+                                HStack {
+                                    Image(systemName: "dollarsign.circle.fill")
+                                        .foregroundColor(.orange)
+                                        .frame(width: 24)
+                                    VStack(alignment: .leading) {
+                                        Text("Rate")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        Text("$\(defaults.amountPerUnit, specifier: "%.2f")/\(defaults.billingMethod.unitLabel)")
+                                            .font(.headline)
+                                    }
+                                    Spacer()
+                                }
+                            }
+                            .padding()
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
                         }
-                    }
 
-                    // Amount Per Unit
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Amount Per Unit")
-                            .font(.headline)
-                        HStack {
-                            Text("$")
-                                .foregroundColor(.secondary)
-                            TextField("0.00", text: $amountPerUnit)
-                                .keyboardType(.decimalPad)
-                                .textFieldStyle(.roundedBorder)
-                            Text(amountUnitLabel)
-                                .foregroundColor(.secondary)
+                        Toggle("Override", isOn: $showManualOverride)
+                            .onChange(of: showManualOverride) { _, newValue in
+                                if newValue {
+                                    hasBillingConfiguration = true
+                                    billingSource = .manual
+                                    // Copy client defaults as starting point for override
+                                    if let defaults = selectedClient?.defaults {
+                                        billingMethod = IncidentBilling.BillingMethod(from: defaults.billingMethod)
+                                        minimumBillableQuantity = String(defaults.minimumBillableQuantity)
+                                        amountPerUnit = String(defaults.amountPerUnit)
+                                    }
+                                } else {
+                                    billingSource = .client
+                                }
+                            }
+                    } else {
+                        // Manual override mode
+                        VStack(alignment: .leading, spacing: 12) {
+                            Toggle("Manual Override", isOn: $showManualOverride)
+                                .foregroundColor(.red)
+                                .onChange(of: showManualOverride) { _, newValue in
+                                    if !newValue {
+                                        billingSource = .client
+                                    }
+                                }
+
+                            // Show update button if client has defaults
+                            if let selectedClient, let defaults = selectedClient.defaults {
+                                Button("Update to use client's current defaults") {
+                                    billingMethod = IncidentBilling.BillingMethod(from: defaults.billingMethod)
+                                    minimumBillableQuantity = String(defaults.minimumBillableQuantity)
+                                    amountPerUnit = String(defaults.amountPerUnit)
+                                }
+                                .foregroundColor(.blue)
+                                .font(.subheadline)
+                            }
                         }
                     }
                 }
-                .padding(.vertical, 8)
+            }
+
+            // Show billing form when in manual override mode
+            if showManualOverride, hasBillingConfiguration {
+                billingFormContent
             }
         }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                if focusedField != nil {
+                    Spacer()
+                    Button("Done") {
+                        focusedField = nil
+                    }
+                }
+            }
+        }
+        .onAppear {
+            // Set initial state based on existing configuration
+            if hasBillingConfiguration {
+                if billingSource == .manual {
+                    showManualOverride = true
+                } else if isClientSelected, hasClientDefaults {
+                    showManualOverride = false
+                    billingSource = .client
+                }
+            } else if isClientSelected, hasClientDefaults {
+                // Auto-enable billing from client defaults
+                hasBillingConfiguration = true
+                billingSource = .client
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var billingFormContent: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Billing Method Picker
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Billing Method")
+                    .font(.headline)
+                Picker("Billing Method", selection: $billingMethod) {
+                    ForEach(IncidentBilling.BillingMethod.allCases, id: \.self) { method in
+                        Text(method.displayName).tag(method)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
+
+            // Custom Unit Description (for custom billing method)
+            if billingMethod == .custom {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Unit Description")
+                        .font(.headline)
+                    TextField("Enter unit description (e.g., 'panels', 'sections')", text: $customUnitDescription)
+                        .textFieldStyle(.roundedBorder)
+                }
+            }
+
+            // Minimum Billable Quantity
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Minimum Billable Quantity")
+                    .font(.headline)
+                HStack {
+                    TextField("0", text: $minimumBillableQuantity)
+                        .keyboardType(.decimalPad)
+                        .textFieldStyle(.roundedBorder)
+                        .focused($focusedField, equals: .minimumQuantity)
+                    Text(quantityUnitLabel)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            // Amount Per Unit
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Amount Per Unit")
+                    .font(.headline)
+                HStack {
+                    Text("$")
+                        .foregroundColor(.secondary)
+                    TextField("0.00", text: $amountPerUnit)
+                        .keyboardType(.decimalPad)
+                        .textFieldStyle(.roundedBorder)
+                        .focused($focusedField, equals: .amountPerUnit)
+                    Text(amountUnitLabel)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .padding(.vertical, 8)
     }
 }
 

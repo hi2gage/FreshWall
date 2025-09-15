@@ -133,7 +133,8 @@ final class IncidentDetailViewModel {
             enhancedLocation: incident.enhancedLocation,
             surfaceType: incident.surfaceType,
             enhancedNotes: incident.enhancedNotes,
-            customSurfaceDescription: incident.customSurfaceDescription
+            customSurfaceDescription: incident.customSurfaceDescription,
+            billing: incident.billing
         )
 
         do {
@@ -167,7 +168,8 @@ final class IncidentDetailViewModel {
             enhancedLocation: newLocation,
             surfaceType: incident.surfaceType,
             enhancedNotes: incident.enhancedNotes,
-            customSurfaceDescription: incident.customSurfaceDescription
+            customSurfaceDescription: incident.customSurfaceDescription,
+            billing: incident.billing
         )
 
         do {
@@ -198,7 +200,8 @@ final class IncidentDetailViewModel {
             enhancedLocation: incident.enhancedLocation,
             surfaceType: incident.surfaceType,
             enhancedNotes: incident.enhancedNotes,
-            customSurfaceDescription: incident.customSurfaceDescription
+            customSurfaceDescription: incident.customSurfaceDescription,
+            billing: incident.billing
         )
 
         do {
@@ -245,7 +248,8 @@ final class IncidentDetailViewModel {
             enhancedLocation: incident.enhancedLocation,
             surfaceType: incident.surfaceType,
             enhancedNotes: incident.enhancedNotes,
-            customSurfaceDescription: incident.customSurfaceDescription
+            customSurfaceDescription: incident.customSurfaceDescription,
+            billing: incident.billing
         )
 
         do {
