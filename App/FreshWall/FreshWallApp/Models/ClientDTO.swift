@@ -76,43 +76,32 @@ extension ClientDTO {
 
     /// Time rounding configuration for time-based billing.
     struct TimeRounding: Codable, Hashable, Sendable {
-        /// Buffer time added before rounding (in hours).
-        var bufferHours: Double
-        /// Increment to round to (in hours). E.g., 0.5 = 30 minutes, 0.25 = 15 minutes.
+        /// Increment to round up to (in hours). E.g., 0.5 = 30 minutes, 0.25 = 15 minutes.
         var roundingIncrement: Double
 
-        init(bufferHours: Double = 0.25, roundingIncrement: Double = 0.5) {
-            self.bufferHours = bufferHours
+        init(roundingIncrement: Double = 0.25) {
             self.roundingIncrement = roundingIncrement
         }
 
         /// Applies the rounding logic to raw hours.
         func applyRounding(to rawHours: Double) -> Double {
-            let bufferedHours = rawHours + bufferHours
-            return (bufferedHours / roundingIncrement).rounded(.up) * roundingIncrement
+            // Round up to next increment
+            (rawHours / roundingIncrement).rounded(.up) * roundingIncrement
         }
 
-        /// Default rounding configuration matching your friend's Excel formula.
-        static let `default` = TimeRounding(bufferHours: 0.2499, roundingIncrement: 0.5)
+        /// Default rounding configuration.
+        static let `default` = TimeRounding(roundingIncrement: 0.25)
 
         /// Common presets for easy selection.
         static let presets: [TimeRounding] = [
-            TimeRounding(bufferHours: 0.0, roundingIncrement: 0.25), // No buffer, 15-min increments
-            TimeRounding(bufferHours: 0.0, roundingIncrement: 0.5), // No buffer, 30-min increments
-            TimeRounding(bufferHours: 0.25, roundingIncrement: 0.5), // 15-min buffer, 30-min increments
-            TimeRounding(bufferHours: 0.2499, roundingIncrement: 0.5), // Excel formula equivalent
-            TimeRounding(bufferHours: 0.5, roundingIncrement: 1.0), // 30-min buffer, 1-hour increments
+            TimeRounding(roundingIncrement: 0.25), // Round to 15-min
+            TimeRounding(roundingIncrement: 0.5), // Round to 30-min
+            TimeRounding(roundingIncrement: 1.0), // Round to 1-hour
         ]
 
         var displayName: String {
-            let bufferMinutes = Int(bufferHours * 60)
             let incrementMinutes = Int(roundingIncrement * 60)
-
-            if bufferHours == 0 {
-                return "Round to \(incrementMinutes) min"
-            } else {
-                return "+\(bufferMinutes) min, round to \(incrementMinutes) min"
-            }
+            return "Round to \(incrementMinutes) min"
         }
     }
 }
