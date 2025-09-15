@@ -3,14 +3,15 @@ import SwiftUI
 // MARK: - PresetOptions
 
 struct PresetOptions {
-    let displayName: String
+    let displayName: String // Full name for picker menu
+    let shortName: String // Short name for selected state
     let roundingHours: Double
 
     static let all: [PresetOptions] = [
-        PresetOptions(displayName: "Round to 1 min", roundingHours: 1.0 / 60.0),
-        PresetOptions(displayName: "Round to 15 min", roundingHours: 0.25),
-        PresetOptions(displayName: "Round to 30 min", roundingHours: 0.5),
-        PresetOptions(displayName: "Round to 1 hour", roundingHours: 1.0),
+        PresetOptions(displayName: "Round to 1 min", shortName: "1 minute", roundingHours: 1.0 / 60.0),
+        PresetOptions(displayName: "Round to 15 min", shortName: "15 minutes", roundingHours: 0.25),
+        PresetOptions(displayName: "Round to 30 min", shortName: "30 minutes", roundingHours: 0.5),
+        PresetOptions(displayName: "Round to 1 hour", shortName: "1 hour", roundingHours: 1.0),
     ]
 }
 
@@ -96,6 +97,50 @@ struct BillingDefaultsConfigView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
 
+                    // Preset Selection
+                    HStack(spacing: 8) {
+                        Text("Round to:")
+                            .foregroundColor(.primary)
+
+                        Menu {
+                            ForEach(presetOptions.indices, id: \.self) { index in
+                                Button(presetOptions[index].displayName) {
+                                    selectedPresetIndex = index
+                                }
+                            }
+                            Button("Custom") {
+                                selectedPresetIndex = -1
+                            }
+                        } label: {
+                            HStack {
+                                Text(selectedPresetIndex == -1 ? "Custom" : presetOptions[selectedPresetIndex].shortName)
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .foregroundColor(.secondary)
+                                    .font(.caption)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                        }
+                        .onChange(of: selectedPresetIndex) { _, newValue in
+                            if newValue == -1 {
+                                isCustom = true
+                                timeRounding = ClientDTO.TimeRounding(
+                                    roundingIncrement: Double(customRoundingMinutes) / 60.0
+                                )
+                            } else {
+                                isCustom = false
+                                let preset = presetOptions[newValue]
+                                timeRounding = ClientDTO.TimeRounding(
+                                    roundingIncrement: preset.roundingHours
+                                )
+                            }
+                        }
+                    }
+
                     // Custom Configuration
                     if isCustom {
                         VStack(alignment: .leading, spacing: 12) {
@@ -115,7 +160,7 @@ struct BillingDefaultsConfigView: View {
                                         in: 1 ... 60,
                                         step: 1
                                     )
-                                    Text("\\(customRoundingMinutes) min")
+                                    Text("\(customRoundingMinutes) min")
                                         .frame(width: 50, alignment: .trailing)
                                         .font(.caption)
                                         .foregroundColor(.secondary)
@@ -126,31 +171,6 @@ struct BillingDefaultsConfigView: View {
                             if isCustom {
                                 timeRounding = ClientDTO.TimeRounding(
                                     roundingIncrement: Double(customRoundingMinutes) / 60.0
-                                )
-                            }
-                        }
-                    }
-
-                    // Preset Selection
-                    VStack(alignment: .leading, spacing: 8) {
-                        Picker("Rounding \\nMethod", selection: $selectedPresetIndex) {
-                            ForEach(presetOptions.indices, id: \.self) { index in
-                                Text(presetOptions[index].displayName).tag(index)
-                            }
-                            Text("Custom").tag(-1)
-                        }
-                        .pickerStyle(.menu)
-                        .onChange(of: selectedPresetIndex) { _, newValue in
-                            if newValue == -1 {
-                                isCustom = true
-                                timeRounding = ClientDTO.TimeRounding(
-                                    roundingIncrement: Double(customRoundingMinutes) / 60.0
-                                )
-                            } else {
-                                isCustom = false
-                                let preset = presetOptions[newValue]
-                                timeRounding = ClientDTO.TimeRounding(
-                                    roundingIncrement: preset.roundingHours
                                 )
                             }
                         }
