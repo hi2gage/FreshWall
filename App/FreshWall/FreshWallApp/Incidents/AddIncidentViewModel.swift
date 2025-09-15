@@ -65,6 +65,8 @@ final class AddIncidentViewModel {
         var customUnitDescription: String = ""
         /// Whether user has configured billing (auto-populated from client defaults)
         var hasBillingConfiguration: Bool = false
+        /// Source of the billing configuration
+        var billingSource: BillingSource = .manual
     }
 
     /// Current input being edited.
@@ -120,6 +122,7 @@ final class AddIncidentViewModel {
                 billingMethod: input.billingMethod,
                 minimumBillableQuantity: Double(input.minimumBillableQuantity) ?? 0,
                 amountPerUnit: Double(input.amountPerUnit) ?? 0,
+                billingSource: input.billingSource,
                 wasOverridden: billingWasOverridden,
                 customUnitDescription: input.billingMethod == .custom ? input.customUnitDescription : nil
             )

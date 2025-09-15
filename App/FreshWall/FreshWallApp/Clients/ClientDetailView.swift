@@ -1,5 +1,8 @@
 import FirebaseFirestore
+import Shimmer
 import SwiftUI
+
+// MARK: - ClientDetailView
 
 /// A view displaying detailed information for a specific client.
 struct ClientDetailView: View {
@@ -10,6 +13,7 @@ struct ClientDetailView: View {
     @State private var incidents: [Incident] = []
     @State private var showingExportOptions = false
     @State private var showingDeleteConfirmation = false
+    @State private var isLoadingIncidents = true
 
     init(
         client: Client,
@@ -166,8 +170,10 @@ struct ClientDetailView: View {
                 }
             }
 
-            Section(header: Text("Incidents (\(incidents.count))")) {
-                if incidents.isEmpty {
+            Section(header: Text("Incidents (\(isLoadingIncidents ? "..." : "\(incidents.count)"))")) {
+                if isLoadingIncidents {
+                    IncidentSkeletonRows()
+                } else if incidents.isEmpty {
                     Text("No incidents for this client.")
                         .italic()
                         .foregroundColor(.secondary)
@@ -205,12 +211,19 @@ struct ClientDetailView: View {
         .navigationTitle("Client Details")
         .task {
             let all = await (try? incidentService.fetchIncidents()) ?? []
-            incidents = all.filter { $0.clientRef?.documentID == client.id }
+            withAnimation(.easeInOut(duration: 0.3)) {
+                incidents = all.filter { $0.clientRef?.documentID == client.id }
+                isLoadingIncidents = false
+            }
         }
         .refreshable {
+            isLoadingIncidents = true
             await reloadClient()
             let all = await (try? incidentService.fetchIncidents()) ?? []
-            incidents = all.filter { $0.clientRef?.documentID == client.id }
+            withAnimation(.easeInOut(duration: 0.3)) {
+                incidents = all.filter { $0.clientRef?.documentID == client.id }
+                isLoadingIncidents = false
+            }
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Client Details")
@@ -253,6 +266,39 @@ struct ClientDetailView: View {
         }
         .onAppear {
             Task { await reloadClient() }
+        }
+    }
+}
+
+// MARK: - IncidentSkeletonRows
+
+/// Skeleton placeholder for incident rows while loading
+struct IncidentSkeletonRows: View {
+    var body: some View {
+        ForEach(0 ..< 3, id: \.self) { _ in
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Rectangle()
+                        .fill(Color(.systemGray4))
+                        .frame(height: 20)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .shimmering()
+
+                    Rectangle()
+                        .fill(Color(.systemGray5))
+                        .frame(height: 14)
+                        .frame(maxWidth: 120, alignment: .leading)
+                        .shimmering()
+                }
+
+                Spacer()
+
+                Rectangle()
+                    .fill(Color(.systemGray5))
+                    .frame(width: 8, height: 12)
+                    .shimmering()
+            }
+            .padding(.vertical, 2)
         }
     }
 }

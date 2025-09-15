@@ -1,6 +1,14 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
 
+// MARK: - BillingSource
+
+/// Source of the billing configuration for an incident.
+enum BillingSource: String, Codable, Hashable, Sendable {
+    case client
+    case manual
+}
+
 // MARK: - IncidentBilling
 
 /// Billing configuration for a specific incident.
@@ -11,6 +19,8 @@ struct IncidentBilling: Codable, Hashable, Sendable {
     var minimumBillableQuantity: Double
     /// Amount charged per unit.
     var amountPerUnit: Double
+    /// Source of the billing configuration.
+    var billingSource: BillingSource
     /// Whether the user overrode client defaults for this incident.
     var wasOverridden: Bool
     /// Custom unit description when using custom billing method.
@@ -20,12 +30,14 @@ struct IncidentBilling: Codable, Hashable, Sendable {
         billingMethod: BillingMethod,
         minimumBillableQuantity: Double,
         amountPerUnit: Double,
+        billingSource: BillingSource,
         wasOverridden: Bool = false,
         customUnitDescription: String? = nil
     ) {
         self.billingMethod = billingMethod
         self.minimumBillableQuantity = minimumBillableQuantity
         self.amountPerUnit = amountPerUnit
+        self.billingSource = billingSource
         self.wasOverridden = wasOverridden
         self.customUnitDescription = customUnitDescription
     }

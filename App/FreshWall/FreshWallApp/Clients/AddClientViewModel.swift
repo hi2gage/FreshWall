@@ -7,6 +7,7 @@ import Observation
 final class AddClientViewModel {
     typealias BillingMethod = ClientDTO.BillingMethod
     typealias ClientDefaults = ClientDTO.ClientDefaults
+    typealias TimeRounding = ClientDTO.TimeRounding
 
     /// Name of the new client.
     var name: String = ""
@@ -18,6 +19,7 @@ final class AddClientViewModel {
     var minimumBillableQuantity: String = ""
     var amountPerUnit: String = ""
     var includeDefaults: Bool = false
+    var timeRounding: TimeRounding?
 
     private let service: ClientServiceProtocol
 
@@ -46,7 +48,8 @@ final class AddClientViewModel {
             ClientDefaults(
                 billingMethod: billingMethod,
                 minimumBillableQuantity: Double(minimumBillableQuantity) ?? 0,
-                amountPerUnit: Double(amountPerUnit) ?? 0
+                amountPerUnit: Double(amountPerUnit) ?? 0,
+                timeRounding: billingMethod == .time ? timeRounding : nil
             )
         } else {
             nil

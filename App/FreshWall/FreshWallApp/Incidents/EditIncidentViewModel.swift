@@ -47,6 +47,21 @@ final class EditIncidentViewModel {
     /// Custom surface description when surfaceType is .other
     var customSurfaceDescription: String?
 
+    // MARK: - Billing Configuration
+
+    /// Billing method for this incident
+    var billingMethod: IncidentBilling.BillingMethod = .squareFootage
+    /// Minimum billable quantity as text
+    var minimumBillableQuantity: String = ""
+    /// Amount per unit as text
+    var amountPerUnit: String = ""
+    /// Custom unit description for custom billing method
+    var customUnitDescription: String = ""
+    /// Whether user has configured billing
+    var hasBillingConfiguration: Bool = false
+    /// Source of the billing configuration
+    var billingSource: BillingSource = .manual
+
     private let incidentId: String
     private let service: IncidentServiceProtocol
     private let clientService: ClientServiceProtocol
@@ -74,6 +89,18 @@ final class EditIncidentViewModel {
         surfaceType = incident.surfaceType
         enhancedNotes = incident.enhancedNotes
         customSurfaceDescription = incident.customSurfaceDescription
+
+        // Initialize billing configuration
+        if let billing = incident.billing {
+            hasBillingConfiguration = true
+            billingMethod = billing.billingMethod
+            minimumBillableQuantity = String(billing.minimumBillableQuantity)
+            amountPerUnit = String(billing.amountPerUnit)
+            billingSource = billing.billingSource
+            customUnitDescription = billing.customUnitDescription ?? ""
+        } else {
+            hasBillingConfiguration = false
+        }
     }
 
     /// Saves the updated incident using the service along with new photos.
@@ -86,6 +113,20 @@ final class EditIncidentViewModel {
             return nil
         }()
 
+        // Create billing configuration if configured
+        let billingConfig: IncidentBilling? = if hasBillingConfiguration {
+            IncidentBilling(
+                billingMethod: billingMethod,
+                minimumBillableQuantity: Double(minimumBillableQuantity) ?? 0,
+                amountPerUnit: Double(amountPerUnit) ?? 0,
+                billingSource: billingSource,
+                wasOverridden: billingWasOverridden,
+                customUnitDescription: billingMethod == .custom ? customUnitDescription : nil
+            )
+        } else {
+            nil
+        }
+
         let input = UpdateIncidentInput(
             clientId: clientId.trimmingCharacters(in: .whitespaces),
             description: description,
@@ -97,7 +138,8 @@ final class EditIncidentViewModel {
             enhancedLocation: finalEnhancedLocation,
             surfaceType: surfaceType,
             enhancedNotes: enhancedNotes,
-            customSurfaceDescription: customSurfaceDescription
+            customSurfaceDescription: customSurfaceDescription,
+            billing: billingConfig
         )
 
         try await service.updateIncident(
@@ -125,5 +167,26 @@ final class EditIncidentViewModel {
 
             return (id: id, name: client.name)
         }
+    }
+
+    /// Selected client based on clientId
+    var selectedClient: Client? {
+        clients.first { $0.id == clientId }
+    }
+
+    /// Check if billing values were overridden from client defaults
+    var billingWasOverridden: Bool {
+        guard let client = selectedClient,
+              let defaults = client.defaults else {
+            return hasBillingConfiguration // If no defaults, any config is an override
+        }
+
+        let originalMethod = IncidentBilling.BillingMethod(from: defaults.billingMethod)
+        let originalQuantity = String(defaults.minimumBillableQuantity)
+        let originalAmount = String(defaults.amountPerUnit)
+
+        return billingMethod != originalMethod ||
+            minimumBillableQuantity != originalQuantity ||
+            amountPerUnit != originalAmount
     }
 }

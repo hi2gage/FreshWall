@@ -22,12 +22,21 @@ struct AddableClientCell: View {
     var body: some View {
         if let client = selectedClient {
             // Show selected client with edit button
-            HStack {
-                Button(client.name) {
-                    onNavigateToClient(client)
+            Button(action: {
+                onNavigateToClient(client)
+            }) {
+                HStack {
+                    Text(client.name)
+                        .foregroundStyle(.primary)
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
                 }
-                .foregroundStyle(.primary)
             }
+            .buttonStyle(.plain)
         } else {
             // Show picker when no client selected
             Picker("Select Client", selection: $selectedClientId) {

@@ -23,6 +23,7 @@
 		1CE7DC352E76B4EF0088910A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC342E76B4EF0088910A /* Nuke */; };
 		1CE7DC372E76B4EF0088910A /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC362E76B4EF0088910A /* NukeExtensions */; };
 		1CE7DC392E76B4EF0088910A /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC382E76B4EF0088910A /* NukeUI */; };
+		1CE7DC422E772F3D0088910A /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC412E772F3D0088910A /* Shimmer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +101,7 @@
 				1CE7DC352E76B4EF0088910A /* Nuke in Frameworks */,
 				1C783F3E2E71E17E008AFA63 /* TinyStorage in Frameworks */,
 				1C54365F2DE224C600153F4F /* FirebaseFirestore in Frameworks */,
+				1CE7DC422E772F3D0088910A /* Shimmer in Frameworks */,
 				1CE7DC392E76B4EF0088910A /* NukeUI in Frameworks */,
 				1C5436612DE224C600153F4F /* FirebaseStorage in Frameworks */,
 				1C5437182DE2558400153F4F /* FirebaseFunctions in Frameworks */,
@@ -207,6 +209,7 @@
 				1CE7DC342E76B4EF0088910A /* Nuke */,
 				1CE7DC362E76B4EF0088910A /* NukeExtensions */,
 				1CE7DC382E76B4EF0088910A /* NukeUI */,
+				1CE7DC412E772F3D0088910A /* Shimmer */,
 			);
 			productName = FreshWall;
 			productReference = 1C5435F62DE2223F00153F4F /* FreshWall.app */;
@@ -296,6 +299,7 @@
 				1C4FC57B2E5FF37B004C158A /* XCRemoteSwiftPackageReference "TPPDF" */,
 				1C783F3C2E71E17E008AFA63 /* XCRemoteSwiftPackageReference "TinyStorage" */,
 				1CE7DC332E76B4EF0088910A /* XCRemoteSwiftPackageReference "Nuke" */,
+				1CE7DC402E772F3D0088910A /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1C5435F72DE2223F00153F4F /* Products */;
@@ -931,6 +935,14 @@
 				minimumVersion = 12.8.0;
 			};
 		};
+		1CE7DC402E772F3D0088910A /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/markiv/SwiftUI-Shimmer";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -983,6 +995,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1CE7DC332E76B4EF0088910A /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = NukeUI;
+		};
+		1CE7DC412E772F3D0088910A /* Shimmer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CE7DC402E772F3D0088910A /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;
+			productName = Shimmer;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
