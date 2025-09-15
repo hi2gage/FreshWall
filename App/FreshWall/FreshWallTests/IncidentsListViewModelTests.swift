@@ -4,22 +4,9 @@ import Testing
 
 @MainActor
 struct IncidentsListViewModelTests {
-    final class MockService: IncidentServiceProtocol {
-        func fetchIncidents() async throws -> [Incident] { [] }
-        func addIncident(_: Incident) async throws {}
-        func addIncident(_: AddIncidentInput, beforePhotos _: [PickedPhoto], afterPhotos _: [PickedPhoto]) async throws {}
-        func updateIncident(_: String, with _: UpdateIncidentInput, beforePhotos _: [PickedPhoto], afterPhotos _: [PickedPhoto]) async throws {}
-    }
-
-    final class MockClientService: ClientServiceProtocol {
-        func fetchClients() async throws -> [Client] { [] }
-        func addClient(_: AddClientInput) async throws -> String { "mock-id" }
-        func updateClient(_: String, with _: UpdateClientInput) async throws {}
-    }
-
     @Test func groupingByClient() {
-        let service = MockService()
-        let clientService = MockClientService()
+        let service = IncidentServiceProtocolMock()
+        let clientService = ClientServiceProtocolMock()
         let vm = IncidentsListViewModel(incidentService: service, clientService: clientService)
         let clientRefA = Firestore.firestore().document("teams/t/clients/a")
         let clientRefB = Firestore.firestore().document("teams/t/clients/b")
@@ -61,8 +48,8 @@ struct IncidentsListViewModelTests {
     }
 
     @Test func groupingNone() {
-        let service = MockService()
-        let clientService = MockClientService()
+        let service = IncidentServiceProtocolMock()
+        let clientService = ClientServiceProtocolMock()
         let vm = IncidentsListViewModel(incidentService: service, clientService: clientService)
         vm.groupOption = .none
         vm.incidents = []
@@ -73,8 +60,8 @@ struct IncidentsListViewModelTests {
     }
 
     @Test func groupingByDate() {
-        let service = MockService()
-        let clientService = MockClientService()
+        let service = IncidentServiceProtocolMock()
+        let clientService = ClientServiceProtocolMock()
         let vm = IncidentsListViewModel(incidentService: service, clientService: clientService)
         let clientRef = Firestore.firestore().document("teams/t/clients/a")
         let baseDate = Date()
@@ -121,8 +108,8 @@ struct IncidentsListViewModelTests {
     }
 
     @Test func sortAlphabeticalAscending() {
-        let service = MockService()
-        let clientService = MockClientService()
+        let service = IncidentServiceProtocolMock()
+        let clientService = ClientServiceProtocolMock()
         let vm = IncidentsListViewModel(incidentService: service, clientService: clientService)
         let clientRef = Firestore.firestore().document("teams/t/clients/a")
         var first = Incident(
@@ -158,8 +145,8 @@ struct IncidentsListViewModelTests {
     }
 
     @Test func sortByDateDescendingGroupDate() {
-        let service = MockService()
-        let clientService = MockClientService()
+        let service = IncidentServiceProtocolMock()
+        let clientService = ClientServiceProtocolMock()
         let vm = IncidentsListViewModel(incidentService: service, clientService: clientService)
         let clientRef = Firestore.firestore().document("teams/t/clients/a")
         let baseDate = Date()

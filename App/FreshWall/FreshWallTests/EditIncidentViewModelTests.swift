@@ -4,34 +4,9 @@ import Testing
 
 @MainActor
 struct EditIncidentViewModelTests {
-    final class MockIncidentService: IncidentServiceProtocol {
-        var updateArgs: (String, UpdateIncidentInput)?
-        func fetchIncidents() async throws -> [Incident] { [] }
-        func addIncident(_: Incident) async throws {}
-        func addIncident(
-            _: AddIncidentInput,
-            beforePhotos _: [PickedPhoto],
-            afterPhotos _: [PickedPhoto]
-        ) async throws {}
-        func updateIncident(
-            _ id: String,
-            with input: UpdateIncidentInput,
-            beforePhotos _: [PickedPhoto],
-            afterPhotos _: [PickedPhoto]
-        ) async throws {
-            updateArgs = (id, input)
-        }
-    }
-
-    final class MockClientService: ClientServiceProtocol {
-        func fetchClients() async throws -> [Client] { [] }
-        func addClient(_: AddClientInput) async throws -> String { "mock-id" }
-        func updateClient(_: String, with _: UpdateClientInput) async throws {}
-    }
-
     @Test func validation() {
-        let incidentService = MockIncidentService()
-        let clientService = MockClientService()
+        let incidentService = IncidentServiceProtocolMock()
+        let clientService = ClientServiceProtocolMock()
         let incident = Incident(
             id: "1",
             clientRef: Firestore.firestore().document("teams/t/clients/c"),
@@ -64,8 +39,8 @@ struct EditIncidentViewModelTests {
     }
 
     @Test func saveCallsService() async throws {
-        let incidentService = MockIncidentService()
-        let clientService = MockClientService()
+        let incidentService = IncidentServiceProtocolMock()
+        let clientService = ClientServiceProtocolMock()
         let incident = Incident(
             id: "1",
             clientRef: Firestore.firestore().document("teams/t/clients/c"),

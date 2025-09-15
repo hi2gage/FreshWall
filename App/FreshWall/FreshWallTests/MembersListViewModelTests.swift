@@ -3,13 +3,8 @@ import Testing
 
 @MainActor
 struct MembersListViewModelTests {
-    final class MockService: MemberServiceProtocol {
-        func fetchMembers() async throws -> [Member] { [] }
-        func addMember(_: AddMemberInput) async throws {}
-    }
-
     @Test func groupingByRole() {
-        let service = MockService()
+        let service = MemberServiceProtocolMock()
         let vm = MembersListViewModel(service: service, currentUserId: "1")
         vm.members = [
             Member(id: "1", displayName: "Alice", email: "a", role: .lead, isDeleted: false, deletedAt: nil),
@@ -22,7 +17,7 @@ struct MembersListViewModelTests {
     }
 
     @Test func defaultSortPinsCurrentUser() {
-        let service = MockService()
+        let service = MemberServiceProtocolMock()
         let vm = MembersListViewModel(service: service, currentUserId: "2")
         vm.members = [
             Member(id: "1", displayName: "A", email: "", role: .member, isDeleted: false, deletedAt: nil),
@@ -33,7 +28,7 @@ struct MembersListViewModelTests {
     }
 
     @Test func userSortRemovesPin() {
-        let service = MockService()
+        let service = MemberServiceProtocolMock()
         let vm = MembersListViewModel(service: service, currentUserId: "2")
         vm.members = [
             Member(id: "1", displayName: "A", email: "", role: .lead, isDeleted: false, deletedAt: nil),
