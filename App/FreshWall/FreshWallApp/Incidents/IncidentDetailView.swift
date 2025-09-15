@@ -97,7 +97,7 @@ struct IncidentDetailView: View {
                     routerPath.presentLocationCapture(currentLocation: nil) { newLocation in
                         if let newLocation {
                             Task {
-                                await viewModel.updateIncidentLocation(newLocation)
+                                await viewModel.updateIncident(newLocation: newLocation)
                             }
                         }
                     }
@@ -154,7 +154,7 @@ struct IncidentDetailView: View {
         .onChange(of: viewModel.pickedBeforePhotos) { _, newPhotos in
             if !newPhotos.isEmpty {
                 Task {
-                    await viewModel.updateIncidentWithPhotos(beforePhotos: newPhotos, afterPhotos: [])
+                    await viewModel.updateIncident(beforePhotos: newPhotos)
                     viewModel.pickedBeforePhotos.removeAll()
                 }
             }
@@ -162,7 +162,7 @@ struct IncidentDetailView: View {
         .onChange(of: viewModel.pickedAfterPhotos) { _, newPhotos in
             if !newPhotos.isEmpty {
                 Task {
-                    await viewModel.updateIncidentWithPhotos(beforePhotos: [], afterPhotos: newPhotos)
+                    await viewModel.updateIncident(afterPhotos: newPhotos)
                     viewModel.pickedAfterPhotos.removeAll()
                 }
             }
