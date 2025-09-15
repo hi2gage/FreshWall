@@ -4,17 +4,8 @@ import Testing
 
 @MainActor
 struct EditClientViewModelTests {
-    final class MockService: ClientServiceProtocol {
-        var updateArgs: (String, UpdateClientInput)?
-        func fetchClients() async throws -> [Client] { [] }
-        func addClient(_: AddClientInput) async throws -> String { "mock-id" }
-        func updateClient(_ clientId: String, with input: UpdateClientInput) async throws {
-            updateArgs = (clientId, input)
-        }
-    }
-
     @Test func validation() {
-        let service = MockService()
+        let service = ClientServiceProtocolMock()
         let dto = Client(
             id: "1",
             name: "Test",
@@ -32,7 +23,7 @@ struct EditClientViewModelTests {
     }
 
     @Test func saveCallsService() async throws {
-        let service = MockService()
+        let service = ClientServiceProtocolMock()
         let dto = Client(
             id: "1",
             name: "Old",
