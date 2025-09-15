@@ -118,12 +118,25 @@ final class IncidentDetailViewModel {
         }
     }
 
-    /// Updates the incident with new photos.
-    func updateIncidentWithPhotos(beforePhotos: [PickedPhoto], afterPhotos: [PickedPhoto]) async {
+    /// Updates the incident with optional modifications.
+    func updateIncident(
+        newLocation: IncidentLocation? = nil,
+        beforePhotos: [PickedPhoto] = [],
+        afterPhotos: [PickedPhoto] = [],
+        newClientId: String? = nil
+    ) async {
         guard let id = incident.id else { return }
 
+        // Apply any location changes to the incident model
+        if let newLocation {
+            incident.enhancedLocation = newLocation
+        }
+
+        // Determine the client ID to use
+        let clientId = newClientId ?? selectedClientId ?? incident.clientRef?.documentID
+
         let input = UpdateIncidentInput(
-            clientId: selectedClientId ?? incident.clientRef?.documentID,
+            clientId: clientId,
             description: incident.description,
             area: incident.area,
             startTime: incident.startTime.dateValue(),
@@ -143,73 +156,6 @@ final class IncidentDetailViewModel {
                 with: input,
                 beforePhotos: beforePhotos,
                 afterPhotos: afterPhotos
-            )
-            await reloadIncident()
-        } catch {
-            print("Failed to update incident with photos: \(error)")
-        }
-    }
-
-    /// Updates the incident with a new location.
-    func updateIncidentLocation(_ newLocation: IncidentLocation) async {
-        guard let id = incident.id else { return }
-
-        // Update the incident's location
-        incident.enhancedLocation = newLocation
-
-        let input = UpdateIncidentInput(
-            clientId: selectedClientId ?? incident.clientRef?.documentID,
-            description: incident.description,
-            area: incident.area,
-            startTime: incident.startTime.dateValue(),
-            endTime: incident.endTime.dateValue(),
-            rate: incident.rate,
-            materialsUsed: incident.materialsUsed,
-            enhancedLocation: newLocation,
-            surfaceType: incident.surfaceType,
-            enhancedNotes: incident.enhancedNotes,
-            customSurfaceDescription: incident.customSurfaceDescription,
-            billing: incident.billing
-        )
-
-        do {
-            try await incidentService.updateIncident(
-                id,
-                with: input,
-                beforePhotos: [],
-                afterPhotos: []
-            )
-            await reloadIncident()
-        } catch {
-            print("Failed to update incident location: \(error)")
-        }
-    }
-
-    /// Updates the incident with current values.
-    func updateIncident() async {
-        guard let id = incident.id else { return }
-
-        let input = UpdateIncidentInput(
-            clientId: selectedClientId ?? incident.clientRef?.documentID,
-            description: incident.description,
-            area: incident.area,
-            startTime: incident.startTime.dateValue(),
-            endTime: incident.endTime.dateValue(),
-            rate: incident.rate,
-            materialsUsed: incident.materialsUsed,
-            enhancedLocation: incident.enhancedLocation,
-            surfaceType: incident.surfaceType,
-            enhancedNotes: incident.enhancedNotes,
-            customSurfaceDescription: incident.customSurfaceDescription,
-            billing: incident.billing
-        )
-
-        do {
-            try await incidentService.updateIncident(
-                id,
-                with: input,
-                beforePhotos: [],
-                afterPhotos: []
             )
             await reloadIncident()
         } catch {
@@ -235,36 +181,10 @@ final class IncidentDetailViewModel {
         selectedClientId = clientId
 
         // Update the incident with the new client selection
-        guard let id = incident.id else { return }
+        await updateIncident(newClientId: clientId)
 
-        let input = UpdateIncidentInput(
-            clientId: selectedClientId ?? incident.clientRef?.documentID,
-            description: incident.description,
-            area: incident.area,
-            startTime: incident.startTime.dateValue(),
-            endTime: incident.endTime.dateValue(),
-            rate: incident.rate,
-            materialsUsed: incident.materialsUsed,
-            enhancedLocation: incident.enhancedLocation,
-            surfaceType: incident.surfaceType,
-            enhancedNotes: incident.enhancedNotes,
-            customSurfaceDescription: incident.customSurfaceDescription,
-            billing: incident.billing
-        )
-
-        do {
-            try await incidentService.updateIncident(id, with: input, beforePhotos: [], afterPhotos: [])
-
-            // Reload the incident data but preserve our client selection
-            let updated = await (try? incidentService.fetchIncidents()) ?? []
-            if let match = updated.first(where: { $0.id == id }) {
-                incident = match
-            }
-            // Update the client object to match our selection
-            client = clients.first { $0.id == selectedClientId }
-        } catch {
-            print("Failed to update incident: \(error)")
-        }
+        // Update the client object to match our selection
+        client = clients.first { $0.id == selectedClientId }
     }
 
     /// Deletes the incident.
