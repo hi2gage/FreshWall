@@ -226,7 +226,7 @@ struct TimeRoundingConfigView: View {
 }
 
 #Preview {
-    @State var timeRounding: ClientDTO.TimeRounding? = ClientDTO.TimeRounding.default
+    @Previewable @State var timeRounding: ClientDTO.TimeRounding? = ClientDTO.TimeRounding.default
 
     let sampleDefaults = ClientDTO.ClientDefaults(
         billingMethod: .time,

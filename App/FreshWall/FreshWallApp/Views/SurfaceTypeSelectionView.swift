@@ -130,7 +130,7 @@ struct SurfaceTypeRow: View {
 // MARK: - Preview
 
 #Preview {
-    @State var surfaceType: SurfaceType? = .concrete
+    @Previewable @State var surfaceType: SurfaceType? = .concrete
     @State var customDescription: String? = nil
 
     FreshWallPreview {

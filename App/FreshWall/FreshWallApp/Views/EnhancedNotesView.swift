@@ -315,7 +315,7 @@ struct EnhancedNotesRow: View {
 // MARK: - Preview
 
 #Preview {
-    @State var notes: IncidentNotes? = IncidentNotes(
+    @Previewable @State var notes: IncidentNotes? = IncidentNotes(
         beforeWork: "Surface shows heavy graffiti damage",
         completion: "Work completed successfully"
     )

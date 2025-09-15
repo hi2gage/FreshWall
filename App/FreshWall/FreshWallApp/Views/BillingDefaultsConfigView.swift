@@ -93,7 +93,7 @@ struct BillingDefaultsConfigView: View {
 }
 
 #Preview {
-    @State var billingMethod: ClientDTO.BillingMethod = .time
+    @Previewable @State var billingMethod: ClientDTO.BillingMethod = .time
     @State var minimumQuantity = "2.0"
     @State var amountPerUnit = "85.0"
     @State var timeRounding: ClientDTO.TimeRounding? = ClientDTO.TimeRounding.default
