@@ -47,14 +47,11 @@ struct EditIncidentView: View {
 
             // MARK: - Surface Type Section
 
-            if let surfaceType = viewModel.surfaceType {
-                Section("Surface Type") {
-                    SurfaceTypeRow(
-                        surfaceType: surfaceType,
-                        customDescription: viewModel.customSurfaceDescription,
-                        onTap: { viewModel.showingSurfaceTypeSelection = true }
-                    )
-                }
+            Section("Surface Type") {
+                SurfaceTypeSelectionView(
+                    surfaceType: $viewModel.surfaceType,
+                    customDescription: $viewModel.customSurfaceDescription
+                )
             }
 
             // MARK: - Location Section
@@ -144,12 +141,6 @@ struct EditIncidentView: View {
                     }
                 }
             }
-        }
-        .sheet(isPresented: $viewModel.showingSurfaceTypeSelection) {
-            SurfaceTypeSelectionView(
-                surfaceType: $viewModel.surfaceType,
-                customDescription: $viewModel.customSurfaceDescription
-            )
         }
         .sheet(isPresented: $viewModel.showingEnhancedNotes) {
             EnhancedNotesView(notes: $viewModel.enhancedNotes)

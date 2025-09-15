@@ -75,8 +75,6 @@ final class AddIncidentViewModel {
     var clients: [Client] = []
     /// Whether to show the enhanced location capture view.
     var showingEnhancedLocationCapture = false
-    /// Whether to show surface type selection.
-    var showingSurfaceTypeSelection = false
     /// Whether to show enhanced notes editing.
     var showingEnhancedNotes = false
     /// Pending location captured when camera is selected

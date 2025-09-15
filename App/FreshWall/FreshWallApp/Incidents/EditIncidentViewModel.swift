@@ -31,8 +31,6 @@ final class EditIncidentViewModel {
     var showingDeleteAlert = false
     /// Whether to show the enhanced location capture view.
     var showingEnhancedLocationCapture = false
-    /// Whether to show surface type selection.
-    var showingSurfaceTypeSelection = false
     /// Whether to show enhanced notes editing.
     var showingEnhancedNotes = false
 
