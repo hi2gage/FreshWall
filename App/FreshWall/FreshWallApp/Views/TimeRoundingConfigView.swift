@@ -1,5 +1,23 @@
 import SwiftUI
 
+// MARK: - PresetOptions
+
+struct PresetOptions {
+    let displayName: String
+    let bufferHours: Double
+    let roundingHours: Double
+
+    static let all: [PresetOptions] = [
+        PresetOptions(displayName: "No buffer, round to 15 min", bufferHours: 0.0, roundingHours: 0.25),
+        PresetOptions(displayName: "No buffer, round to 30 min", bufferHours: 0.0, roundingHours: 0.5),
+        PresetOptions(displayName: "15 min buffer, round to 30 min", bufferHours: 0.2499, roundingHours: 0.5), // Shows as 15 min, uses 0.2499
+        PresetOptions(displayName: "Excel formula equivalent", bufferHours: 0.2499, roundingHours: 0.5),
+        PresetOptions(displayName: "30 min buffer, round to 1 hour", bufferHours: 0.4999, roundingHours: 1.0), // Shows as 30 min, uses 0.4999
+    ]
+}
+
+// MARK: - TimeRoundingConfigView
+
 struct TimeRoundingConfigView: View {
     @Binding var timeRounding: ClientDTO.TimeRounding?
     let clientDefaults: ClientDTO.ClientDefaults?
@@ -12,13 +30,7 @@ struct TimeRoundingConfigView: View {
     private let presets = ClientDTO.TimeRounding.presets
 
     // User-friendly preset options with precise internal values
-    private let presetOptions: [(displayName: String, bufferHours: Double, roundingHours: Double)] = [
-        ("No buffer, round to 15 min", 0.0, 0.25),
-        ("No buffer, round to 30 min", 0.0, 0.5),
-        ("15 min buffer, round to 30 min", 0.2499, 0.5), // Shows as 15 min, uses 0.2499
-        ("Excel formula equivalent", 0.2499, 0.5),
-        ("30 min buffer, round to 1 hour", 0.4999, 1.0), // Shows as 30 min, uses 0.4999
-    ]
+    private let presetOptions = PresetOptions.all
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -28,30 +40,6 @@ struct TimeRoundingConfigView: View {
             Text("Configure how time is rounded for billing calculations.")
                 .font(.caption)
                 .foregroundColor(.secondary)
-
-            // Preset Selection
-            VStack(alignment: .leading, spacing: 8) {
-                Picker("Rounding Method", selection: $selectedPresetIndex) {
-                    ForEach(presetOptions.indices, id: \.self) { index in
-                        Text(presetOptions[index].displayName).tag(index)
-                    }
-                    Text("Custom").tag(-1)
-                }
-                .pickerStyle(.menu)
-                .onChange(of: selectedPresetIndex) { _, newValue in
-                    if newValue == -1 {
-                        isCustom = true
-                        updateTimeRounding()
-                    } else {
-                        isCustom = false
-                        let preset = presetOptions[newValue]
-                        timeRounding = ClientDTO.TimeRounding(
-                            bufferHours: preset.bufferHours,
-                            roundingIncrement: preset.roundingHours
-                        )
-                    }
-                }
-            }
 
             // Custom Configuration
             if isCustom {
@@ -100,6 +88,30 @@ struct TimeRoundingConfigView: View {
                 }
                 .onChange(of: customBufferMinutes) { _, _ in updateTimeRounding() }
                 .onChange(of: customRoundingMinutes) { _, _ in updateTimeRounding() }
+            }
+
+            // Preset Selection
+            VStack(alignment: .leading, spacing: 8) {
+                Picker("Rounding Method", selection: $selectedPresetIndex) {
+                    ForEach(presetOptions.indices, id: \.self) { index in
+                        Text(presetOptions[index].displayName).tag(index)
+                    }
+                    Text("Custom").tag(-1)
+                }
+                .pickerStyle(.menu)
+                .onChange(of: selectedPresetIndex) { _, newValue in
+                    if newValue == -1 {
+                        isCustom = true
+                        updateTimeRounding()
+                    } else {
+                        isCustom = false
+                        let preset = presetOptions[newValue]
+                        timeRounding = ClientDTO.TimeRounding(
+                            bufferHours: preset.bufferHours,
+                            roundingIncrement: preset.roundingHours
+                        )
+                    }
+                }
             }
 
             // Billing Examples
