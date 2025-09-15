@@ -4,29 +4,22 @@ import SwiftUI
 
 struct PresetOptions {
     let displayName: String
-    let bufferHours: Double
     let roundingHours: Double
 
     static let all: [PresetOptions] = [
-        PresetOptions(displayName: "No buffer, round to 15 min", bufferHours: 0.0, roundingHours: 0.25),
-        PresetOptions(displayName: "No buffer, round to 30 min", bufferHours: 0.0, roundingHours: 0.5),
-        // Shows as 15 min, uses 0.2499
-        PresetOptions(displayName: "15 min buffer, round to 30 min", bufferHours: 0.2499, roundingHours: 0.5),
-        PresetOptions(displayName: "Excel formula equivalent", bufferHours: 0.2499, roundingHours: 0.5),
-        // Shows as 30 min, uses 0.4999
-        PresetOptions(displayName: "30 min buffer, round to 1 hour", bufferHours: 0.4999, roundingHours: 1.0),
+        PresetOptions(displayName: "Round to 15 min", roundingHours: 0.25),
+        PresetOptions(displayName: "Round to 30 min", roundingHours: 0.5),
+        PresetOptions(displayName: "Round to 1 hour", roundingHours: 1.0),
     ]
 }
 
 // MARK: - TimeRoundingConfigView
 
 struct TimeRoundingConfigView: View {
-    @Binding var timeRounding: ClientDTO.TimeRounding?
-    let clientDefaults: ClientDTO.ClientDefaults?
+    @Binding var clientDefaults: ClientDTO.ClientDefaults
 
     @State private var selectedPresetIndex: Int = 0
     @State private var isCustom = false
-    @State private var customBufferMinutes: Int = 15
     @State private var customRoundingMinutes: Int = 30
 
     private let presets = ClientDTO.TimeRounding.presets
@@ -51,25 +44,6 @@ struct TimeRoundingConfigView: View {
                         .fontWeight(.medium)
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Buffer Time (minutes)")
-                            .font(.caption)
-                        HStack {
-                            Slider(
-                                value: Binding(
-                                    get: { Double(customBufferMinutes) },
-                                    set: { customBufferMinutes = Int($0) }
-                                ),
-                                in: 0 ... 30,
-                                step: 1
-                            )
-                            Text("\(customBufferMinutes) min")
-                                .frame(width: 50, alignment: .trailing)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-
-                    VStack(alignment: .leading, spacing: 8) {
                         Text("Round To (minutes)")
                             .font(.caption)
                         HStack {
@@ -88,13 +62,18 @@ struct TimeRoundingConfigView: View {
                         }
                     }
                 }
-                .onChange(of: customBufferMinutes) { _, _ in updateTimeRounding() }
-                .onChange(of: customRoundingMinutes) { _, _ in updateTimeRounding() }
+                .onChange(of: customRoundingMinutes) { _, _ in
+                    if isCustom {
+                        clientDefaults.timeRounding = ClientDTO.TimeRounding(
+                            roundingIncrement: Double(customRoundingMinutes) / 60.0
+                        )
+                    }
+                }
             }
 
             // Preset Selection
             VStack(alignment: .leading, spacing: 8) {
-                Picker("Rounding Method", selection: $selectedPresetIndex) {
+                Picker("Rounding \nMethod", selection: $selectedPresetIndex) {
                     ForEach(presetOptions.indices, id: \.self) { index in
                         Text(presetOptions[index].displayName).tag(index)
                     }
@@ -104,12 +83,13 @@ struct TimeRoundingConfigView: View {
                 .onChange(of: selectedPresetIndex) { _, newValue in
                     if newValue == -1 {
                         isCustom = true
-                        updateTimeRounding()
+                        clientDefaults.timeRounding = ClientDTO.TimeRounding(
+                            roundingIncrement: Double(customRoundingMinutes) / 60.0
+                        )
                     } else {
                         isCustom = false
                         let preset = presetOptions[newValue]
-                        timeRounding = ClientDTO.TimeRounding(
-                            bufferHours: preset.bufferHours,
+                        clientDefaults.timeRounding = ClientDTO.TimeRounding(
                             roundingIncrement: preset.roundingHours
                         )
                     }
@@ -117,13 +97,13 @@ struct TimeRoundingConfigView: View {
             }
 
             // Billing Examples
-            if let rounding = timeRounding, let defaults = clientDefaults {
+            if let rounding = clientDefaults.timeRounding {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Billing Examples")
                         .font(.subheadline)
                         .fontWeight(.medium)
 
-                    Text("Rate: $\(defaults.amountPerUnit, specifier: "%.2f")/hour • Minimum: \(defaults.minimumBillableQuantity, specifier: "%.1f") hours")
+                    Text("Rate: $\(clientDefaults.amountPerUnit, specifier: "%.2f")/hour • Minimum: \(clientDefaults.minimumBillableQuantity, specifier: "%.1f") hours")
                         .font(.caption)
                         .foregroundColor(.secondary)
 
@@ -132,8 +112,8 @@ struct TimeRoundingConfigView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         ForEach(examples, id: \.self) { rawHours in
                             let roundedHours = rounding.applyRounding(to: rawHours)
-                            let billableHours = max(roundedHours, defaults.minimumBillableQuantity)
-                            let totalCost = billableHours * defaults.amountPerUnit
+                            let billableHours = max(roundedHours, clientDefaults.minimumBillableQuantity)
+                            let totalCost = billableHours * clientDefaults.amountPerUnit
 
                             HStack {
                                 Text("\(rawHours, specifier: "%.2f")h")
@@ -181,11 +161,10 @@ struct TimeRoundingConfigView: View {
     }
 
     private func setupInitialSelection() {
-        if let currentRounding = timeRounding {
+        if let currentRounding = clientDefaults.timeRounding {
             // Check if it matches any preset
             if let presetIndex = presetOptions.firstIndex(where: { preset in
-                abs(preset.bufferHours - currentRounding.bufferHours) < 0.001 &&
-                    abs(preset.roundingHours - currentRounding.roundingIncrement) < 0.001
+                abs(preset.roundingHours - currentRounding.roundingIncrement) < 0.001
             }) {
                 selectedPresetIndex = presetIndex
                 isCustom = false
@@ -194,55 +173,32 @@ struct TimeRoundingConfigView: View {
                 selectedPresetIndex = -1
                 isCustom = true
                 // Convert to user-friendly minutes for display
-                customBufferMinutes = Int(round(currentRounding.bufferHours * 60))
                 customRoundingMinutes = Int(round(currentRounding.roundingIncrement * 60))
             }
         } else {
-            // Default to the Excel formula equivalent (index 3)
-            selectedPresetIndex = 3
-            let preset = presetOptions[3]
-            timeRounding = ClientDTO.TimeRounding(
-                bufferHours: preset.bufferHours,
+            // Default to 15 min rounding (index 0)
+            selectedPresetIndex = 0
+            let preset = presetOptions[0]
+            clientDefaults.timeRounding = ClientDTO.TimeRounding(
                 roundingIncrement: preset.roundingHours
-            )
-        }
-    }
-
-    private func updateTimeRounding() {
-        if isCustom {
-            // Use precise 0.2499 if user selects 15 minutes, otherwise use exact conversion
-            let bufferHours = if customBufferMinutes == 15 {
-                0.2499
-            } else if customBufferMinutes == 30 {
-                0.4999
-            } else {
-                Double(customBufferMinutes) / 60.0
-            }
-
-            timeRounding = ClientDTO.TimeRounding(
-                bufferHours: bufferHours,
-                roundingIncrement: Double(customRoundingMinutes) / 60.0
             )
         }
     }
 }
 
 #Preview {
-    @Previewable @State var timeRounding: ClientDTO.TimeRounding? = ClientDTO.TimeRounding.default
-
-    let sampleDefaults = ClientDTO.ClientDefaults(
+    @Previewable @State var sampleDefaults = ClientDTO.ClientDefaults(
         billingMethod: .time,
         minimumBillableQuantity: 0.5,
         amountPerUnit: 80,
-        timeRounding: timeRounding
+        timeRounding: ClientDTO.TimeRounding.default
     )
 
     return FreshWallPreview {
         Form {
             Section("Time Rounding") {
                 TimeRoundingConfigView(
-                    timeRounding: $timeRounding,
-                    clientDefaults: sampleDefaults
+                    clientDefaults: $sampleDefaults
                 )
             }
         }

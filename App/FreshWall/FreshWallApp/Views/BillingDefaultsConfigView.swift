@@ -67,15 +67,20 @@ struct BillingDefaultsConfigView: View {
 
             // Time Rounding Configuration (only for time-based billing)
             if billingMethod == .time {
-                let currentDefaults = ClientDTO.ClientDefaults(
-                    billingMethod: billingMethod,
-                    minimumBillableQuantity: Double(minimumBillableQuantity) ?? 0,
-                    amountPerUnit: Double(amountPerUnit) ?? 0,
-                    timeRounding: timeRounding
-                )
                 TimeRoundingConfigView(
-                    timeRounding: $timeRounding,
-                    clientDefaults: currentDefaults
+                    clientDefaults: Binding(
+                        get: {
+                            ClientDTO.ClientDefaults(
+                                billingMethod: billingMethod,
+                                minimumBillableQuantity: Double(minimumBillableQuantity) ?? 0,
+                                amountPerUnit: Double(amountPerUnit) ?? 0,
+                                timeRounding: timeRounding
+                            )
+                        },
+                        set: { newDefaults in
+                            timeRounding = newDefaults.timeRounding
+                        }
+                    )
                 )
             }
         }
@@ -94,8 +99,8 @@ struct BillingDefaultsConfigView: View {
 
 #Preview {
     @Previewable @State var billingMethod: ClientDTO.BillingMethod = .time
-    @Previewable @State var minimumQuantity = "2.0"
-    @Previewable @State var amountPerUnit = "85.0"
+    @Previewable @State var minimumQuantity = "0.5"
+    @Previewable @State var amountPerUnit = "80.0"
     @Previewable @State var timeRounding: ClientDTO.TimeRounding? = ClientDTO.TimeRounding.default
 
     return FreshWallPreview {
