@@ -81,29 +81,6 @@ struct EditClientView: View {
     }
 }
 
-// MARK: - PreviewClientService
-
-@MainActor
-private class PreviewClientService: ClientServiceProtocol {
-    func fetchClients() async throws -> [Client] {
-        [Client(
-            id: "client1",
-            name: "Sample Client",
-            notes: "Preview client",
-            isDeleted: false,
-            deletedAt: nil,
-            createdAt: .init(),
-            lastIncidentAt: .init()
-        )]
-    }
-
-    func addClient(_: AddClientInput) async throws -> String { "preview-id" }
-
-    func updateClient(_: String, with _: UpdateClientInput) async throws {}
-
-    func deleteClient(_: String) async throws {}
-}
-
 #Preview {
     let sampleClient = Client(
         id: "client123",

@@ -131,7 +131,7 @@ struct SurfaceTypeRow: View {
 
 #Preview {
     @Previewable @State var surfaceType: SurfaceType? = .concrete
-    @State var customDescription: String? = nil
+    @Previewable @State var customDescription: String? = nil
 
     FreshWallPreview {
         NavigationStack {
