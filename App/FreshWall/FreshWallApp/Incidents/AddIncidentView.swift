@@ -81,10 +81,9 @@ struct AddIncidentView: View {
             // MARK: - Surface Type Section
 
             Section("Surface Type") {
-                SurfaceTypeRow(
-                    surfaceType: viewModel.input.surfaceType,
-                    customDescription: viewModel.input.customSurfaceDescription,
-                    onTap: { viewModel.showingSurfaceTypeSelection = true }
+                SurfaceTypeSelectionView(
+                    surfaceType: $viewModel.input.surfaceType,
+                    customDescription: $viewModel.input.customSurfaceDescription
                 )
             }
 
@@ -115,15 +114,6 @@ struct AddIncidentView: View {
                 selectedClient: viewModel.selectedClient
             )
 
-            // MARK: - Area Section (Conditional)
-
-            if viewModel.showSquareFootageBillingDetails {
-                Section(header: Text("Area (sq ft)")) {
-                    TextField("Area", text: $viewModel.input.areaText)
-                        .keyboardType(.decimalPad)
-                }
-            }
-
             // MARK: - Materials Section
 
             Section(header: Text("Materials Used")) {
@@ -152,12 +142,6 @@ struct AddIncidentView: View {
                     dismiss()
                 }
             }
-        }
-        .sheet(isPresented: $viewModel.showingSurfaceTypeSelection) {
-            SurfaceTypeSelectionView(
-                surfaceType: $viewModel.input.surfaceType,
-                customDescription: $viewModel.input.customSurfaceDescription
-            )
         }
         .sheet(isPresented: $viewModel.showingEnhancedNotes) {
             EnhancedNotesView(notes: $viewModel.input.enhancedNotes)
