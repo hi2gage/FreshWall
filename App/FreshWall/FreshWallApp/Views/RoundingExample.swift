@@ -30,10 +30,10 @@ struct RoundingExample: View {
                         .foregroundColor(.secondary)
                         .animation(.easeInOut(duration: 0.2), value: showExamples)
                 }
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
             }
             .buttonStyle(.plain)
-            .background(Color(.systemGray6))
-            .cornerRadius(8)
 
             // Collapsible content (expands below button)
             if showExamples {
@@ -51,7 +51,7 @@ struct RoundingExample: View {
                             let totalCost = billableHours * amountPerUnit
 
                             HStack {
-                                Text("\\(rawHours, specifier: \"%.2f\")h")
+                                Text("\(rawHours, specifier: "%.2f")h")
                                     .frame(width: 45, alignment: .leading)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
@@ -60,13 +60,13 @@ struct RoundingExample: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
 
-                                Text("\\(roundedHours, specifier: \"%.2f\")h")
+                                Text("\(roundedHours, specifier: "%.2f")h")
                                     .frame(width: 35, alignment: .leading)
                                     .font(.caption)
                                     .fontWeight(.medium)
 
                                 if billableHours != roundedHours {
-                                    Text("(min: \\(billableHours, specifier: \"%.2f\")h)")
+                                    Text("(min: \(billableHours, specifier: "%.2f")h)")
                                         .font(.caption)
                                         .foregroundColor(.orange)
                                         .frame(width: 70, alignment: .leading)
@@ -77,7 +77,7 @@ struct RoundingExample: View {
 
                                 Spacer()
 
-                                Text("$\\(totalCost, specifier: \"%.2f\")")
+                                Text("$\(totalCost, specifier: "%.2f")")
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
@@ -85,6 +85,7 @@ struct RoundingExample: View {
                         }
                     }
                 }
+                .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
             }
