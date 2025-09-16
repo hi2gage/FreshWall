@@ -45,5 +45,8 @@
         "./scripts/deploy-prep.sh"
       ]
     }
-  ]
+  ],
+  "extensions": {
+    "storage-resize-images": "firebase/storage-resize-images@0.2.10"
+  }
 }
