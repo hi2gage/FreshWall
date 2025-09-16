@@ -38,12 +38,8 @@ final class IncidentDetailViewModel {
     func reloadIncident() async {
         guard let id = incident.id else { return }
 
-        print("🔄 Reloading incident \(id) efficiently...")
         if let freshIncident = try? await incidentService.fetchIncident(id: id) {
             incident = freshIncident
-            print("✅ Successfully reloaded incident")
-        } else {
-            print("⚠️ Failed to reload incident - keeping existing data")
         }
         await loadClient()
     }
@@ -76,7 +72,6 @@ final class IncidentDetailViewModel {
         afterPhotos: [PickedPhoto] = [],
         newClientId: String? = nil
     ) async {
-        print("🔄 IncidentDetailViewModel.updateIncident called with newClientId: '\(newClientId ?? "nil")'")
         guard let id = incident.id else { return }
 
         // Apply any location changes to the incident model
@@ -116,10 +111,7 @@ final class IncidentDetailViewModel {
             let hasLocationChange = newLocation != nil
 
             if hasPhotos || hasLocationChange {
-                print("🔄 Full reload needed due to photos or location change")
                 await reloadIncident()
-            } else {
-                print("✅ Update completed - no full reload needed")
             }
         } catch {
             print("Failed to update incident: \(error)")

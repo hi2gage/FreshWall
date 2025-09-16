@@ -63,7 +63,6 @@ struct IncidentDetailView: View {
                     }))
                 },
                 onClientSelected: {
-                    print("🔄 DetailClientSection.onClientSelected called with selectedClientId: '\(viewModel.selectedClientId ?? "nil")'")
                     await viewModel.updateIncident(newClientId: viewModel.selectedClientId)
                 },
                 onNavigateToClient: { client in
