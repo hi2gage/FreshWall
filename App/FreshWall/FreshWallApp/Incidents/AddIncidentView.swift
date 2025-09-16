@@ -69,10 +69,13 @@ struct AddIncidentView: View {
                 validClients: viewModel.validClients,
                 addNewTag: addNewTag,
                 onClientChange: { newValue in
+                    print("🔄 ClientSelectionSection.onClientChange called with: '\(newValue)'")
                     if newValue == addNewTag {
+                        print("🔄 Add new client selected, navigating to add client")
                         routerPath.push(.addClient())
                         viewModel.input.clientId = ""
                     } else {
+                        print("🔄 Client selected: '\(newValue)', updating billing")
                         viewModel.updateBillingFromClient()
                     }
                 }
@@ -502,15 +505,21 @@ struct ClientSelectionSection: View {
     var body: some View {
         Section(header: Text("Client")) {
             Picker("Select Client", selection: $clientId) {
+                Text("Select Client").tag("")
                 Text("Add New Client...").tag(addNewTag)
                 ForEach(validClients, id: \.id) { item in
                     Text(item.name).tag(item.id)
                 }
             }
             .pickerStyle(.menu)
-            .onChange(of: clientId) { _, newValue in
+            .onChange(of: clientId) { oldValue, newValue in
+                print("🔄 ClientSelectionSection Picker.onChange: '\(oldValue)' → '\(newValue)'")
+                print("🔄 Available tags: addNewTag='\(addNewTag)', clients=\(validClients.map { "'\($0.id)'" }.joined(separator: ", "))")
                 onClientChange(newValue)
             }
+        }
+        .onAppear {
+            print("🔄 ClientSelectionSection.onAppear - clientId: '\(clientId)', validClients count: \(validClients.count)")
         }
     }
 }

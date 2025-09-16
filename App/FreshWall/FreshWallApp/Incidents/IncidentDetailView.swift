@@ -63,7 +63,8 @@ struct IncidentDetailView: View {
                     }))
                 },
                 onClientSelected: {
-                    await viewModel.updateIncident()
+                    print("🔄 DetailClientSection.onClientSelected called with selectedClientId: '\(viewModel.selectedClientId ?? "nil")'")
+                    await viewModel.updateIncident(newClientId: viewModel.selectedClientId)
                 },
                 onNavigateToClient: { client in
                     routerPath.push(.clientDetail(client: client))
@@ -146,7 +147,7 @@ struct IncidentDetailView: View {
             Text("Are you sure you want to delete this incident? This action cannot be undone.")
         }
         .task {
-            await viewModel.loadClient()
+            await viewModel.reloadIncident()
         }
         .refreshable {
             await viewModel.reloadIncident()
@@ -284,15 +285,25 @@ struct DetailClientSection: View {
     let onClientSelected: () async -> Void
     let onNavigateToClient: (Client) -> Void
 
+    private let addNewTag = "ADD_NEW_CLIENT"
+
     var body: some View {
         Section("Client") {
             AddableClientCell(
                 selectedClientId: $selectedClientId,
                 validClients: validClients,
-                onAddNewClient: onAddNewClient,
-                onClientSelected: onClientSelected,
                 onNavigateToClient: onNavigateToClient
             )
+            .onChange(of: selectedClientId) { _, newValue in
+                if newValue == addNewTag {
+                    onAddNewClient()
+                    selectedClientId = nil
+                } else if newValue != nil {
+                    Task {
+                        await onClientSelected()
+                    }
+                }
+            }
         }
     }
 }
@@ -473,6 +484,99 @@ struct DetailNotesSection: View {
     }
 }
 
+// MARK: - BillingDisplayModel
+
+/// Consolidated billing display logic that prioritizes incident billing over client defaults
+private struct BillingDisplayModel {
+    let methodName: String
+    let unitLabel: String
+    let quantity: Double
+    let rate: Double
+    let totalAmount: Double
+    let isFromIncident: Bool
+    let timeRounding: ClientDTO.TimeRounding?
+    let rawHours: Double?
+    let isMinimumApplied: Bool
+
+    init(incident: Incident, client: Client) {
+        // Determine billing source and extract configuration
+        if let incidentBilling = incident.billing {
+            // Incident has its own billing configuration
+            methodName = incidentBilling.billingMethod.displayName
+            rate = incidentBilling.amountPerUnit
+            isFromIncident = true
+            timeRounding = nil // Incident billing doesn't have time rounding yet
+
+            unitLabel = incidentBilling.billingMethod == .custom
+                ? (incidentBilling.customUnitDescription ?? "units")
+                : incidentBilling.billingMethod.unitLabel
+
+            // Calculate quantity based on method
+            let rawQuantity: Double
+            var calculatedRawHours: Double? = nil
+
+            switch incidentBilling.billingMethod {
+            case .time:
+                calculatedRawHours = incident.durationHours
+                rawQuantity = incident.durationHours
+            case .squareFootage, .custom:
+                rawQuantity = incident.area
+            }
+
+            rawHours = calculatedRawHours
+            quantity = max(rawQuantity, incidentBilling.minimumBillableQuantity)
+            isMinimumApplied = quantity == incidentBilling.minimumBillableQuantity
+
+        } else if let clientDefaults = client.defaults {
+            // Fall back to client defaults
+            methodName = clientDefaults.billingMethod.displayName
+            unitLabel = clientDefaults.billingMethod.unitLabel
+            rate = clientDefaults.amountPerUnit
+            isFromIncident = false
+            timeRounding = clientDefaults.timeRounding
+
+            // Calculate quantity based on method
+            let rawQuantity: Double
+            var calculatedRawHours: Double? = nil
+
+            switch clientDefaults.billingMethod {
+            case .time:
+                calculatedRawHours = incident.durationHours
+
+                // Apply time rounding if available
+                rawQuantity = if let timeRounding = clientDefaults.timeRounding {
+                    timeRounding.applyRounding(to: incident.durationHours)
+                } else {
+                    incident.durationHours
+                }
+            case .squareFootage:
+                rawQuantity = incident.area
+            }
+
+            rawHours = calculatedRawHours
+            quantity = max(rawQuantity, clientDefaults.minimumBillableQuantity)
+            isMinimumApplied = quantity == clientDefaults.minimumBillableQuantity
+
+        } else {
+            // No billing configuration available
+            methodName = "None"
+            unitLabel = "units"
+            quantity = 0
+            rate = 0
+            isFromIncident = false
+            timeRounding = nil
+            rawHours = nil
+            isMinimumApplied = false
+        }
+
+        totalAmount = quantity * rate
+    }
+
+    var hasConfiguration: Bool {
+        methodName != "None"
+    }
+}
+
 // MARK: - DetailBillingSection
 
 /// Billing section for incident detail view
@@ -480,115 +584,13 @@ struct DetailBillingSection: View {
     let client: Client
     let incident: Incident
 
-    // Use incident billing if available, otherwise fall back to client defaults
-    private struct BillingConfig {
-        let method: String
-        let minQuantity: Double
-        let amountPerUnit: Double
-        let isFromIncident: Bool
-    }
-
-    private var billingConfig: BillingConfig {
-        if let incidentBilling = incident.billing {
-            BillingConfig(
-                method: incidentBilling.billingMethod.displayName,
-                minQuantity: incidentBilling.minimumBillableQuantity,
-                amountPerUnit: incidentBilling.amountPerUnit,
-                isFromIncident: true
-            )
-        } else if let clientDefaults = client.defaults {
-            BillingConfig(
-                method: clientDefaults.billingMethod.displayName,
-                minQuantity: clientDefaults.minimumBillableQuantity,
-                amountPerUnit: clientDefaults.amountPerUnit,
-                isFromIncident: false
-            )
-        } else {
-            BillingConfig(method: "None", minQuantity: 0, amountPerUnit: 0, isFromIncident: false)
-        }
-    }
-
-    private var billingMethod: String {
-        if let incidentBilling = incident.billing {
-            switch incidentBilling.billingMethod {
-            case .time: return "time"
-            case .squareFootage: return "squareFootage"
-            case .custom: return "custom"
-            }
-        } else if let clientDefaults = client.defaults {
-            switch clientDefaults.billingMethod {
-            case .time: return "time"
-            case .squareFootage: return "squareFootage"
-            }
-        }
-        return "none"
-    }
-
-    private var unitLabel: String {
-        if let incidentBilling = incident.billing {
-            if incidentBilling.billingMethod == .custom {
-                return incidentBilling.customUnitDescription ?? "units"
-            }
-            return incidentBilling.billingMethod.unitLabel
-        } else if let clientDefaults = client.defaults {
-            return clientDefaults.billingMethod.unitLabel
-        }
-        return "units"
-    }
-
-    private var timeRounding: ClientDTO.TimeRounding? {
-        // Only client defaults have time rounding config for now
-        client.defaults?.timeRounding
-    }
-
-    private var billingAmount: Double {
-        let config = billingConfig
-        guard config.minQuantity > 0, config.amountPerUnit > 0 else { return 0.0 }
-
-        let quantity: Double
-        switch billingMethod {
-        case "time":
-            let hours = incident.endTime.dateValue().timeIntervalSince(incident.startTime.dateValue()) / 3600
-            quantity = max(hours, config.minQuantity)
-        case "squareFootage":
-            quantity = max(incident.area, config.minQuantity)
-        case "custom":
-            // For custom billing, use area as the quantity (could be enhanced later)
-            quantity = max(incident.area, config.minQuantity)
-        default:
-            return 0.0
-        }
-
-        return quantity * config.amountPerUnit
-    }
-
-    private var billingQuantity: Double {
-        let config = billingConfig
-        guard config.minQuantity >= 0 else { return 0.0 }
-
-        switch billingMethod {
-        case "time":
-            let rawHours = incident.endTime.dateValue().timeIntervalSince(incident.startTime.dateValue()) / 3600
-            let roundedHours: Double = if let timeRounding {
-                timeRounding.applyRounding(to: rawHours)
-            } else {
-                rawHours
-            }
-            return max(roundedHours, config.minQuantity)
-        case "squareFootage":
-            return max(incident.area, config.minQuantity)
-        case "custom":
-            return max(incident.area, config.minQuantity)
-        default:
-            return 0.0
-        }
+    private var billing: BillingDisplayModel {
+        BillingDisplayModel(incident: incident, client: client)
     }
 
     var body: some View {
         Section("Billing") {
-            let config = billingConfig
-
-            if config.method != "None" {
+            if billing.hasConfiguration {
                 VStack(alignment: .leading, spacing: 12) {
                     // Billing Method Header
                     HStack {
@@ -598,19 +600,19 @@ struct DetailBillingSection: View {
                         VStack(alignment: .leading) {
                             Text("Billing Method")
                                 .font(.headline)
-                            Text(config.method)
+                            Text(billing.methodName)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
 
                             // Show time rounding configuration (only for client defaults)
-                            if billingMethod == "time", let timeRounding {
+                            if let timeRounding = billing.timeRounding {
                                 Text(timeRounding.displayName)
                                     .font(.caption2)
                                     .foregroundColor(.blue)
                             }
 
                             // Show billing source
-                            if config.isFromIncident {
+                            if billing.isFromIncident {
                                 Text("Manual Override")
                                     .font(.caption2)
                                     .foregroundColor(.red)
@@ -631,13 +633,12 @@ struct DetailBillingSection: View {
                             Text("Quantity")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            Text("\(billingQuantity, specifier: "%.1f") \(unitLabel)")
+                            Text("\(billing.quantity, specifier: "%.1f") \(billing.unitLabel)")
                                 .font(.headline)
 
                             // Show rounding info for time-based billing
-                            if billingMethod == "time", let timeRounding {
-                                let rawHours = incident.endTime.dateValue().timeIntervalSince(incident.startTime.dateValue()) / 3600
-                                if rawHours != billingQuantity {
+                            if let rawHours = billing.rawHours, billing.timeRounding != nil {
+                                if rawHours != billing.quantity {
                                     Text("(\(rawHours, specifier: "%.2f") raw → rounded)")
                                         .font(.caption2)
                                         .foregroundColor(.blue)
@@ -651,7 +652,7 @@ struct DetailBillingSection: View {
                             Text("Rate")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                            Text("$\(config.amountPerUnit, specifier: "%.2f")/\(unitLabel)")
+                            Text("$\(billing.rate, specifier: "%.2f")/\(billing.unitLabel)")
                                 .font(.headline)
                         }
                     }
@@ -664,7 +665,7 @@ struct DetailBillingSection: View {
                             .font(.headline)
                             .foregroundColor(.primary)
                         Spacer()
-                        Text("$\(billingAmount, specifier: "%.2f")")
+                        Text("$\(billing.totalAmount, specifier: "%.2f")")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.green)
@@ -672,7 +673,7 @@ struct DetailBillingSection: View {
                     .padding(.vertical, 4)
 
                     // Minimum billing note if applicable
-                    if billingQuantity == config.minQuantity {
+                    if billing.isMinimumApplied {
                         HStack {
                             Image(systemName: "info.circle.fill")
                                 .foregroundColor(.blue)
