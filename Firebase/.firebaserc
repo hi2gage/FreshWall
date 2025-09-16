@@ -1,5 +1,13 @@
 {
   "projects": {
     "default": "freshwall-30afe"
+  },
+  "targets": {},
+  "etags": {
+    "freshwall-30afe": {
+      "extensionInstances": {
+        "storage-resize-images": "9c99e12823a045224de8c52dfb8d0811a1a4f99df322b64d3bc8029a4538dd70"
+      }
+    }
   }
 }
