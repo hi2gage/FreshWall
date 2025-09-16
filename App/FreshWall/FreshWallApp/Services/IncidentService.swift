@@ -8,6 +8,8 @@ import Foundation
 protocol IncidentServiceProtocol: Sendable {
     /// Fetches incidents for the current team.
     func fetchIncidents() async throws -> [Incident]
+    /// Fetches a specific incident by ID.
+    func fetchIncident(id: String) async throws -> Incident?
     /// Adds a new incident via full Incident model.
     func addIncident(_ incident: Incident) async throws
     /// Adds a new incident using an input value object and optional images.
@@ -58,6 +60,26 @@ struct IncidentService: IncidentServiceProtocol {
 
         let dtos = try await modelService.fetchIncidents(teamId: teamId)
         return dtos.map { Incident(dto: $0) }
+    }
+
+    /// Fetches a specific incident by ID from Firestore.
+    func fetchIncident(id: String) async throws -> Incident? {
+        let teamId = session.teamId
+
+        let docRef = Firestore.firestore()
+            .collection("teams").document(teamId)
+            .collection("incidents").document(id)
+
+        let document = try await docRef.getDocument()
+
+        guard document.exists else {
+            print("ℹ️ Incident document \(id) doesn't exist")
+            return nil
+        }
+
+        let dto = try document.data(as: IncidentDTO.self)
+        print("✅ Fetched specific incident: \(dto.description)")
+        return Incident(dto: dto)
     }
 
     /// Adds a new incident document to Firestore under the current team.

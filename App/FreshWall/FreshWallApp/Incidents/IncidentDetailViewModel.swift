@@ -38,9 +38,12 @@ final class IncidentDetailViewModel {
     func reloadIncident() async {
         guard let id = incident.id else { return }
 
-        let updated = await (try? incidentService.fetchIncidents()) ?? []
-        if let match = updated.first(where: { $0.id == id }) {
-            incident = match
+        print("🔄 Reloading incident \(id) efficiently...")
+        if let freshIncident = try? await incidentService.fetchIncident(id: id) {
+            incident = freshIncident
+            print("✅ Successfully reloaded incident")
+        } else {
+            print("⚠️ Failed to reload incident - keeping existing data")
         }
         await loadClient()
     }
@@ -52,76 +55,17 @@ final class IncidentDetailViewModel {
         // Set the selected client ID from the incident first
         selectedClientId = incident.clientRef?.documentID
 
-        let client2 = try? await incident.clientRef?.getDocument().data(as: ClientDTO.self)
+        // Use the new service method that handles all the caching logic
+        let result = await clientService.fetchAllClientsWithPriority(priorityClientId: selectedClientId)
 
-        // Try cache first
-        let cache = ClientCache.shared
-        let cachedClients = cache.getAllClients()
-        let cachedClient = selectedClientId.flatMap { cache.getClient(id: $0) }
+        client = result.priorityClient
+        clients = result.allClients
 
-        if let cachedClients, let selectedClientId, let cachedClient {
-            // Cache hit - use cached data instantly
-            client = cachedClient
-            clients = [cachedClient] + cachedClients.filter { $0.id != selectedClientId }
-            print("⚡ Used cached client data: \(cachedClient.name)")
-            return
-        }
-
-        print("💾 Cache miss - fetching from Firestore...")
-
-        // Cache miss - fetch from Firestore
-        async let allClientsTask = clientService.fetchClients()
-        async let specificClientTask = loadSpecificClient()
-
-        // Await both results
-        let allClientsResult = await (try? allClientsTask) ?? []
-        let specificClient = await specificClientTask
-
-        // Update cache with fresh data
-        cache.updateCache(clients: allClientsResult)
-        if let specificClient {
-            cache.updateClient(specificClient)
-        }
-
-        // Set the specific client first (priority)
-        client = specificClient
-        print("✅ Specific client loaded: \(client?.name ?? "No client")")
-
-        // Then set all clients, but ensure the selected client appears first in the list
-        if let selectedClient = client {
-            // Put the selected client first, then all others
-            clients = [selectedClient] + allClientsResult.filter { $0.id != selectedClient.id }
-            print("✅ Loaded \(allClientsResult.count) clients with selected client first")
+        print("✅ Client loading complete - loaded \(clients.count) clients")
+        if let client {
+            print("✅ Priority client: \(client.name)")
         } else {
-            clients = allClientsResult
-            print("✅ Loaded \(allClientsResult.count) clients")
-        }
-
-        print("✅ Client loading complete")
-    }
-
-    /// Helper method to load the specific client using DocumentReference
-    private func loadSpecificClient() async -> Client? {
-        guard let clientRef = incident.clientRef else {
-            print("ℹ️ No client reference found")
-            return nil
-        }
-
-        print("📖 Fetching specific client directly from reference...")
-        do {
-            let clientDoc = try await clientRef.getDocument()
-            if clientDoc.exists {
-                let clientDTO = try clientDoc.data(as: ClientDTO.self)
-                let client = Client(dto: clientDTO)
-                print("✅ Fetched client directly: \(client.name)")
-                return client
-            } else {
-                print("⚠️ Client document doesn't exist")
-                return nil
-            }
-        } catch {
-            print("⚠️ Direct fetch failed: \(error)")
-            return nil
+            print("✅ No client associated with incident")
         }
     }
 
@@ -165,7 +109,18 @@ final class IncidentDetailViewModel {
                 beforePhotos: beforePhotos,
                 afterPhotos: afterPhotos
             )
-            await reloadIncident()
+
+            // Only reload if we updated photos or location
+            // For simple client changes, avoid the full reload cycle
+            let hasPhotos = !beforePhotos.isEmpty || !afterPhotos.isEmpty
+            let hasLocationChange = newLocation != nil
+
+            if hasPhotos || hasLocationChange {
+                print("🔄 Full reload needed due to photos or location change")
+                await reloadIncident()
+            } else {
+                print("✅ Update completed - no full reload needed")
+            }
         } catch {
             print("Failed to update incident: \(error)")
         }
@@ -180,7 +135,7 @@ final class IncidentDetailViewModel {
     /// Handles when a new client is created
     func handleNewClientCreated(_ clientId: String) async {
         // Invalidate cache since we have new client data
-        ClientCache.shared.invalidate()
+        await ClientCache.shared.invalidate()
 
         // Load the updated client list
         clients = await (try? clientService.fetchClients()) ?? []

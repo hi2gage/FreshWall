@@ -3,9 +3,15 @@
 final class IncidentServiceProtocolMock: IncidentServiceProtocol {
     var updateArgs: (String, UpdateIncidentInput)?
     var addIncidentWithInputResult: String = "mock-id"
+    var fetchIncidentResult: Incident?
 
     func fetchIncidents() async throws -> [Incident] {
         []
+    }
+
+    func fetchIncident(id: String) async throws -> Incident? {
+        print("🧪 IncidentServiceProtocolMock.fetchIncident called with id: \(id)")
+        return fetchIncidentResult
     }
 
     func addIncident(_: Incident) async throws {
