@@ -1,8 +1,7 @@
 import Foundation
 
 /// Simple in-memory cache for frequently accessed clients
-@MainActor
-final class ClientCache {
+actor ClientCache {
     static let shared = ClientCache()
 
     private var clientsById: [String: Client] = [:]

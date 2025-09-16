@@ -42,10 +42,10 @@ struct AddableClientCell: View {
                 Text("Select Client")
                     .tag(nil as String?)
                 Text("Add New Client...")
-                    .tag(addNewTag)
+                    .tag(addNewTag as String?)
                 ForEach(validClients, id: \.id) { client in
                     Text(client.name)
-                        .tag(client.id)
+                        .tag(client.id as String?)
                 }
             }
             .pickerStyle(.menu)

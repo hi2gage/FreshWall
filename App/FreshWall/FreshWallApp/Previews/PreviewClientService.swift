@@ -3,6 +3,14 @@ import Foundation
 
 @MainActor
 final class PreviewClientService: ClientServiceProtocol {
+    func fetchClientWithCache(id _: String) async -> Client? {
+        nil
+    }
+
+    func fetchAllClientsWithPriority(priorityClientId _: String?) async -> (priorityClient: Client?, allClients: [Client]) {
+        (priorityClient: nil, allClients: [])
+    }
+
     func fetchClients() async throws -> [Client] {
         [Client(
             id: "client1",

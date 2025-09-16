@@ -7,6 +7,10 @@ import Foundation
 protocol ClientServiceProtocol: Sendable {
     /// Fetches active clients for the current team.
     func fetchClients() async throws -> [Client]
+    /// Fetches a specific client by ID with caching support.
+    func fetchClientWithCache(id: String) async -> Client?
+    /// Fetches all clients with optional priority client first, using cache when available.
+    func fetchAllClientsWithPriority(priorityClientId: String?) async -> (priorityClient: Client?, allClients: [Client])
     /// Adds a new client using an input value object.
     /// - Returns: The ID of the newly created client.
     func addClient(_ input: AddClientInput) async throws -> String
@@ -44,6 +48,87 @@ struct ClientService: ClientServiceProtocol {
         let teamId = session.teamId
         let dtos = try await modelService.fetchClients(teamId: teamId)
         return dtos.map { Client(dto: $0) }
+    }
+
+    /// Fetches a specific client by ID with caching support.
+    func fetchClientWithCache(id: String) async -> Client? {
+        let cache = ClientCache.shared
+
+        // Try cache first
+        if let cachedClient = await cache.getClient(id: id) {
+            print("⚡ Found client in cache: \(cachedClient.name)")
+            return cachedClient
+        }
+
+        print("💾 Cache miss for client \(id), fetching from Firestore...")
+
+        // Cache miss - fetch from Firestore using document reference
+        let teamId = session.teamId
+        do {
+            let clientRef = Firestore.firestore()
+                .collection("teams").document(teamId)
+                .collection("clients").document(id)
+
+            let document = try await clientRef.getDocument()
+            if document.exists {
+                let dto = try document.data(as: ClientDTO.self)
+                let client = Client(dto: dto)
+                await cache.updateClient(client)
+                print("✅ Fetched client from Firestore: \(client.name)")
+                return client
+            } else {
+                print("⚠️ Client document doesn't exist: \(id)")
+                return nil
+            }
+        } catch {
+            print("⚠️ Failed to fetch client \(id): \(error)")
+            return nil
+        }
+    }
+
+    /// Fetches all clients with optional priority client first, using cache when available.
+    func fetchAllClientsWithPriority(
+        priorityClientId: String?
+    ) async -> (priorityClient: Client?, allClients: [Client]) {
+        let cache = ClientCache.shared
+        let cachedClients = await cache.getAllClients()
+        let cachedPriorityClient = await priorityClientId.asyncFlatMap {
+            await cache.getClient(id: $0)
+        }
+
+        // If we have both cached clients and priority client, use cache
+        if let cachedClients, let priorityClientId, let cachedPriorityClient {
+            print("⚡ Using cached client data for priority client: \(cachedPriorityClient.name)")
+            let orderedClients = [cachedPriorityClient] + cachedClients.filter { $0.id != priorityClientId }
+            return (cachedPriorityClient, orderedClients)
+        }
+
+        print("💾 Cache miss - fetching clients from Firestore...")
+
+        // Cache miss - fetch from Firestore
+        async let allClientsTask = try? fetchClients()
+        async let priorityClientTask = priorityClientId != nil ? fetchClientWithCache(id: priorityClientId!) : nil
+
+        // Await both results
+        let allClientsResult = await allClientsTask ?? []
+        let priorityClient = await priorityClientTask
+
+        // Update cache with fresh data
+        await cache.updateCache(clients: allClientsResult)
+        if let priorityClient {
+            await cache.updateClient(priorityClient)
+        }
+
+        print("✅ Fetched \(allClientsResult.count) clients from service")
+        if let priorityClient {
+            print("✅ Priority client: \(priorityClient.name)")
+            // Put priority client first, then all others
+            let orderedClients = [priorityClient] + allClientsResult.filter { $0.id != priorityClient.id }
+            return (priorityClient, orderedClients)
+        } else {
+            print("✅ No priority client specified")
+            return (nil, allClientsResult)
+        }
     }
 
     /// Adds a new client using an input value object.
@@ -98,5 +183,18 @@ struct ClientService: ClientServiceProtocol {
 extension ClientService {
     enum Errors: Error {
         case missingTeamId
+    }
+}
+
+extension Optional {
+    func asyncFlatMap<T>(
+        _ transform: (Wrapped) async throws -> T?
+    ) async rethrows -> T? {
+        switch self {
+        case let .some(value):
+            try await transform(value)
+        case .none:
+            nil
+        }
     }
 }
