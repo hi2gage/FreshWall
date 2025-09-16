@@ -133,4 +133,9 @@ extension Incident {
     var hasEnhancedMetadata: Bool {
         enhancedLocation != nil || surfaceType != nil || enhancedNotes != nil
     }
+
+    /// Duration of the incident in hours
+    var durationHours: Double {
+        endTime.dateValue().timeIntervalSince(startTime.dateValue()) / 3600
+    }
 }

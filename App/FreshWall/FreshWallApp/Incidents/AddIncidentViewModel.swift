@@ -28,7 +28,12 @@ final class AddIncidentViewModel {
     /// Container for all editable incident fields.
     struct Input {
         /// Selected client document ID or tag for add-new.
-        var clientId: String = ""
+        var clientId: String = "" {
+            didSet {
+                print("🔄 AddIncidentViewModel.Input.clientId changed from '\(oldValue)' to '\(clientId)'")
+            }
+        }
+
         /// Notes describing the incident.
         var description: String = ""
         /// Area affected as free-form text.
@@ -212,11 +217,17 @@ final class AddIncidentViewModel {
 
     /// Auto-populate billing from client defaults when client is selected
     func updateBillingFromClient() {
+        print("🔄 updateBillingFromClient called - input.clientId: '\(input.clientId)'")
+        print("🔄 selectedClient: \(selectedClient?.name ?? "nil")")
+
         guard let client = selectedClient,
               let defaults = client.defaults else {
+            print("🔄 No client or defaults found, disabling billing configuration")
             input.hasBillingConfiguration = false
             return
         }
+
+        print("🔄 Setting billing from client defaults: \(defaults.billingMethod)")
 
         // Convert client billing method to incident billing method
         input.billingMethod = IncidentBilling.BillingMethod(from: defaults.billingMethod)

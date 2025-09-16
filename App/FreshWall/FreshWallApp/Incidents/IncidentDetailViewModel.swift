@@ -13,7 +13,12 @@ final class IncidentDetailViewModel {
     /// All available clients for selection.
     var clients: [Client] = []
     /// Currently selected client ID for editing.
-    var selectedClientId: String?
+    var selectedClientId: String? {
+        didSet {
+            print("changed to: \(selectedClientId ?? "nil")")
+        }
+    }
+
     /// Photos selected for before state.
     var pickedBeforePhotos: [PickedPhoto] = []
     /// Photos selected for after state.
@@ -46,6 +51,8 @@ final class IncidentDetailViewModel {
 
         // Set the selected client ID from the incident first
         selectedClientId = incident.clientRef?.documentID
+
+        let client2 = try? await incident.clientRef?.getDocument().data(as: ClientDTO.self)
 
         // Try cache first
         let cache = ClientCache.shared
@@ -125,6 +132,7 @@ final class IncidentDetailViewModel {
         afterPhotos: [PickedPhoto] = [],
         newClientId: String? = nil
     ) async {
+        print("🔄 IncidentDetailViewModel.updateIncident called with newClientId: '\(newClientId ?? "nil")'")
         guard let id = incident.id else { return }
 
         // Apply any location changes to the incident model

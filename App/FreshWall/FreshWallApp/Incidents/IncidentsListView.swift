@@ -54,6 +54,12 @@ struct IncidentsListView: View {
             await viewModel.loadIncidents()
             await viewModel.loadClients()
         }
+        .onAppear {
+            Task {
+                await viewModel.loadIncidents()
+                await viewModel.loadClients()
+            }
+        }
         .alert("Custom Date Range", isPresented: $showCustomDateAlert) {
             Button("OK") {}
         } message: {
