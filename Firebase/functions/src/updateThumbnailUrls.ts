@@ -19,36 +19,50 @@ export const updateThumbnailUrls = onCustomEventPublished(
 
     try {
       // Extract information from the event data
-      const { bucket, name: thumbnailPath } = data;
+      const { input, outputs } = data;
 
-      if (!thumbnailPath || !thumbnailPath.includes('_100x100')) {
-        logger.info('Event not for a thumbnail, skipping', { thumbnailPath });
+      if (!outputs || !Array.isArray(outputs) || outputs.length === 0) {
+        logger.info('No thumbnail outputs in event, skipping', { data });
         return;
       }
 
-      // Parse the thumbnail path to get the original path and incident info
-      // Example: teams/teamId/incidents/incidentId/before/filename_100x100.jpg
-      const pathParts = thumbnailPath.split('/');
+      // Get the original file info
+      const originalFile = input;
+      const bucket = originalFile.bucket;
+
+      // Parse the original file path to get incident info
+      // Example: teams/teamId/incidents/incidentId/before/filename.jpg
+      const originalPath = originalFile.name;
+      const pathParts = originalPath.split('/');
 
       if (pathParts.length < 6 || pathParts[0] !== 'teams' || pathParts[2] !== 'incidents') {
-        logger.info('Path does not match expected incident photo structure', { thumbnailPath });
+        logger.info('Path does not match expected incident photo structure', { originalPath });
         return;
       }
 
       const teamId = pathParts[1];
       const incidentId = pathParts[3];
       const folder = pathParts[4]; // 'before' or 'after'
-      const thumbnailFilename = pathParts[5];
+      const originalFilename = pathParts[5];
 
-      // Get the original filename by removing _100x100
-      const originalFilename = thumbnailFilename.replace('_100x100', '');
+      // Find the JPEG thumbnail from outputs (prefer JPEG over PNG/WebP)
+      const jpegOutput = outputs.find(output =>
+        output.value?.outputFilePath?.endsWith('.jpeg')
+      );
+
+      if (!jpegOutput?.value?.outputFilePath) {
+        logger.info('No JPEG thumbnail found in outputs', { outputs });
+        return;
+      }
+
+      const thumbnailPath = jpegOutput.value.outputFilePath;
 
       logger.info('Processing thumbnail for incident photo', {
         teamId,
         incidentId,
         folder,
         originalFilename,
-        thumbnailFilename
+        thumbnailPath
       });
 
       // Get the thumbnail download URL
@@ -86,7 +100,8 @@ export const updateThumbnailUrls = onCustomEventPublished(
         if (photo.url && photo.url.includes(originalFilename)) {
           logger.info('Found matching photo, updating thumbnailUrl', {
             photoId: photo.id,
-            originalFilename
+            originalFilename,
+            thumbnailUrl
           });
           photoUpdated = true;
           return {
