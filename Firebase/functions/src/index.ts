@@ -15,6 +15,7 @@ admin.initializeApp();
 export { createTeamCreateUser } from "./signup/createTeamCreateUser";
 export { joinTeamCreateUser } from "./signup/joinTeamCreateUser";
 export { generateInviteCode } from "./signup/generateInviteCode";
+export { updateThumbnailUrls } from "./updateThumbnailUrls";
 
 // Trigger to update client document with latest incident timestamp when a new incident is written
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
