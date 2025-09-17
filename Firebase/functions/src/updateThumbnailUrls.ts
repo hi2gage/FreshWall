@@ -65,13 +65,9 @@ export const updateThumbnailUrls = onCustomEventPublished(
         thumbnailPath
       });
 
-      // Get the thumbnail download URL
-      const storage = getStorage();
-      const thumbnailRef = storage.bucket(bucket).file(thumbnailPath);
-      const [thumbnailUrl] = await thumbnailRef.getSignedUrl({
-        action: 'read',
-        expires: '03-01-2500', // Far future date
-      });
+      // Construct the public download URL (since MAKE_PUBLIC=true)
+      const encodedPath = encodeURIComponent(thumbnailPath);
+      const thumbnailUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodedPath}?alt=media`;
 
       logger.info('Generated thumbnail URL', { thumbnailUrl });
 
