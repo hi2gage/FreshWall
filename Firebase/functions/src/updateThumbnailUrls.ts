@@ -65,11 +65,12 @@ export const updateThumbnailUrls = onCustomEventPublished(
         thumbnailPath
       });
 
-      // Construct the public download URL (since MAKE_PUBLIC=true)
+      // Extract the token from the original file metadata and construct thumbnail URL
+      const token = originalFile.metadata?.firebaseStorageDownloadTokens;
       const encodedPath = encodeURIComponent(thumbnailPath);
-      const thumbnailUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodedPath}?alt=media`;
+      const thumbnailUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodedPath}?alt=media&token=${token}`;
 
-      logger.info('Generated thumbnail URL', { thumbnailUrl });
+      logger.info('Generated thumbnail URL', { thumbnailUrl, token });
 
       // Update the incident document in Firestore
       const firestore = getFirestore();
