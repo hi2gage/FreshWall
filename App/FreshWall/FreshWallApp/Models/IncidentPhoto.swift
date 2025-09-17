@@ -8,8 +8,10 @@ import Foundation
 struct IncidentPhoto: Identifiable, Sendable {
     /// Identifier used to match the DTO representation.
     var id: String
-    /// Download URL for the photo.
+    /// Download URL for the original photo.
     var url: String
+    /// Download URL for the thumbnail version.
+    var thumbnailUrl: String?
     /// Date when the photo was captured.
     var captureDate: Date?
     /// Location coordinate where the photo was captured.
@@ -34,6 +36,7 @@ extension IncidentPhoto {
     init(dto: IncidentPhotoDTO) {
         id = dto.id
         url = dto.url
+        thumbnailUrl = dto.thumbnailUrl
         captureDate = dto.captureDate?.dateValue()
         if let point = dto.location {
             location = CLLocationCoordinate2D(latitude: point.latitude, longitude: point.longitude)
@@ -47,6 +50,7 @@ extension IncidentPhoto {
         IncidentPhotoDTO(
             id: id,
             url: url,
+            thumbnailUrl: thumbnailUrl,
             captureDate: captureDate.map { Timestamp(date: $0) },
             location: location.map { GeoPoint(latitude: $0.latitude, longitude: $0.longitude) }
         )

@@ -14,7 +14,7 @@ struct PhotoCarousel: View {
                         let context = PhotoViewerContext(photos: photos, selectedPhoto: photo)
                         routerPath.push(.photoViewer(context: context))
                     } label: {
-                        AsyncImage(url: URL(string: photo.url)) { phase in
+                        AsyncImage(url: URL(string: photo.thumbnailUrl ?? photo.url)) { phase in
                             switch phase {
                             case .empty:
                                 ProgressView()
