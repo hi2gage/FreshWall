@@ -7,8 +7,10 @@ import Foundation
 struct IncidentPhotoDTO: Codable, Hashable, Sendable {
     /// Unique identifier for the photo entry.
     var id: String
-    /// Download URL for the photo.
+    /// Download URL for the original photo.
     var url: String
+    /// Download URL for the thumbnail version (optional, populated by Firebase extension).
+    var thumbnailUrl: String?
     /// When the photo was captured if available.
     var captureDate: Timestamp?
     /// Where the photo was captured if available.
@@ -19,6 +21,7 @@ extension IncidentPhotoDTO {
     /// Dictionary representation for use with Firestore update operations.
     var dictionary: [String: Any] {
         var dict: [String: Any] = ["id": id, "url": url]
+        if let thumbnailUrl { dict["thumbnailUrl"] = thumbnailUrl }
         if let captureDate { dict["captureDate"] = captureDate }
         if let location { dict["location"] = location }
         return dict

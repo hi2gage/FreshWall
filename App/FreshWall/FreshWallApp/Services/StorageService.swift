@@ -22,8 +22,12 @@ struct StorageService: StorageServiceProtocol {
     func uploadData(_ data: Data, to path: String) async throws -> String {
         let ref = storage.reference(withPath: path)
 
+        // Create metadata with proper Content-Type for images
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+
         // Upload data with progress reporting
-        let _ = try await ref.putDataAsync(data)
+        let _ = try await ref.putDataAsync(data, metadata: metadata)
 
         // Get download URL
         return try await withCheckedThrowingContinuation { continuation in

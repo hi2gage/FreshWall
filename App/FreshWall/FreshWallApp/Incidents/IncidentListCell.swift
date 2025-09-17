@@ -9,7 +9,7 @@ struct IncidentListCell: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: Constants.cellSpacing) {
-            if let urlString = incident.beforePhotos.first?.url,
+            if let urlString = incident.beforePhotos.first?.thumbnailUrl,
                let url = URL(string: urlString) {
                 LazyImage(url: url) { state in
                     if let image = state.image {
