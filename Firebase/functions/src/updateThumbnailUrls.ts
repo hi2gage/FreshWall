@@ -45,13 +45,13 @@ export const updateThumbnailUrls = onCustomEventPublished(
       const folder = pathParts[4]; // 'before' or 'after'
       const originalFilename = pathParts[5];
 
-      // Find the JPEG thumbnail from outputs (prefer JPEG over PNG/WebP)
+      // Find the JPEG thumbnail from outputs (200x200 size)
       const jpegOutput = outputs.find(output =>
-        output.value?.outputFilePath?.endsWith('.jpeg')
+        output.value?.outputFilePath?.endsWith('_200x200.jpeg')
       );
 
       if (!jpegOutput?.value?.outputFilePath) {
-        logger.info('No JPEG thumbnail found in outputs', { outputs });
+        logger.info('No 200x200 JPEG thumbnail found in outputs', { outputs });
         return;
       }
 
