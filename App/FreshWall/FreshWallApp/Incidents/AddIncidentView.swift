@@ -111,17 +111,7 @@ struct AddIncidentView: View {
 
             // MARK: - Location Section
 
-            LocationSection(
-                enhancedLocation: viewModel.input.enhancedLocation,
-                onLocationCapture: { currentLocation in
-                    routerPath.presentLocationCapture(
-                        currentLocation: currentLocation,
-                        onLocationSelected: { newLocation in
-                            viewModel.input.enhancedLocation = newLocation
-                        }
-                    )
-                }
-            )
+            LocationSection(enhancedLocation: $viewModel.input.enhancedLocation)
 
             // MARK: - Billing Configuration Section
 
