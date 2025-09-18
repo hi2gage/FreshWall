@@ -63,6 +63,10 @@ struct SignupWithNewTeamView: View {
 // MARK: - PreviewLoginManager
 
 struct PreviewLoginManager: LoginManaging {
+    func createTeamForGoogleUser(displayName _: String, teamName _: String) async throws {}
+
+    func joinTeamForGoogleUser(displayName _: String, teamCode _: String) async throws {}
+
     func signInWithGoogle() async throws {}
     func signIn(email _: String, password _: String) async throws {}
     func signUp(email _: String, password _: String, displayName _: String, teamName _: String) async throws {}
