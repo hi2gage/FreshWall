@@ -74,17 +74,7 @@ struct EditIncidentView: View {
 
             // MARK: - Location Section
 
-            LocationSection(
-                enhancedLocation: viewModel.enhancedLocation,
-                onLocationCapture: { currentLocation in
-                    routerPath.presentLocationCapture(
-                        currentLocation: currentLocation,
-                        onLocationSelected: { newLocation in
-                            viewModel.enhancedLocation = newLocation
-                        }
-                    )
-                }
-            )
+            LocationSection(enhancedLocation: $viewModel.enhancedLocation)
 
             // MARK: - Materials Section
 

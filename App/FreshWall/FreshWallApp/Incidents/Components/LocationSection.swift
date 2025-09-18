@@ -2,10 +2,10 @@ import SwiftUI
 
 // MARK: - LocationSection
 
-/// Location capture section for incident forms
+/// Location capture section for incident forms with integrated router navigation
 struct LocationSection: View {
-    let enhancedLocation: IncidentLocation?
-    let onLocationCapture: (IncidentLocation?) -> Void
+    @Binding var enhancedLocation: IncidentLocation?
+    @Environment(RouterPath.self) private var routerPath
 
     var body: some View {
         Section("Location") {
@@ -16,7 +16,7 @@ struct LocationSection: View {
                             .font(.headline)
                         Spacer()
                         Button("Edit") {
-                            onLocationCapture(enhancedLocation)
+                            handleLocationCapture(currentLocation: enhancedLocation)
                         }
                     }
 
@@ -26,10 +26,19 @@ struct LocationSection: View {
                 }
             } else {
                 Button("📍 Capture Location") {
-                    onLocationCapture(nil)
+                    handleLocationCapture(currentLocation: nil)
                 }
                 .foregroundColor(.blue)
             }
         }
+    }
+
+    private func handleLocationCapture(currentLocation: IncidentLocation?) {
+        routerPath.presentLocationCapture(
+            currentLocation: currentLocation,
+            onLocationSelected: { newLocation in
+                enhancedLocation = newLocation
+            }
+        )
     }
 }

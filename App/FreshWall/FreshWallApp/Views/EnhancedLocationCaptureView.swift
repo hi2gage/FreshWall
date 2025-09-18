@@ -130,6 +130,19 @@ final class EnhancedLocationCaptureViewModel {
 
 /// Comprehensive location capture view with GPS, manual entry, and address lookup
 struct EnhancedLocationCaptureView: View {
+    // MARK: - Constants
+
+    private enum Constants {
+        static let progressViewScale: Double = 0.8
+        static let smallProgressViewScale: Double = 0.6
+        static let resolvingAddressText = "Resolving address..."
+        static let noLocationText = "No location selected"
+        static let capturingGPSText = "Capturing GPS Location..."
+        static let captureGPSText = "Capture Current GPS Location"
+        static let selectOnMapText = "Select on Map"
+        static let accuracyFormat = "Accuracy: ±%dm"
+    }
+
     let onLocationSelected: ((IncidentLocation?) -> Void)?
     @Binding var location: IncidentLocation?
     @Environment(\.dismiss) private var dismiss
