@@ -377,13 +377,13 @@ export default function IncidentViewModal({ incident, isOpen, onClose }: Inciden
                           <h4 className="text-sm font-semibold text-gray-900 mb-3">
                             Before Photos ({incident.beforePhotos.length})
                           </h4>
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-4">
                             {incident.beforePhotos.map((photo) => (
                               <div key={photo.id} className="relative cursor-pointer" onClick={() => handlePhotoClick(photo)}>
                                 <img
                                   src={photo.thumbnailUrl || photo.url}
                                   alt="Before photo"
-                                  className="w-full h-24 object-cover rounded-lg border border-gray-200 hover:opacity-90 transition-opacity"
+                                  className="w-full max-w-md h-auto object-cover rounded-lg border border-gray-200 hover:opacity-90 transition-opacity"
                                   onError={(e) => {
                                     e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJlZm9yZSBQaG90bzwvdGV4dD48L3N2Zz4=';
                                   }}
@@ -400,13 +400,13 @@ export default function IncidentViewModal({ incident, isOpen, onClose }: Inciden
                           <h4 className="text-sm font-semibold text-gray-900 mb-3">
                             After Photos ({incident.afterPhotos.length})
                           </h4>
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-4">
                             {incident.afterPhotos.map((photo) => (
                               <div key={photo.id} className="relative cursor-pointer" onClick={() => handlePhotoClick(photo)}>
                                 <img
                                   src={photo.thumbnailUrl || photo.url}
                                   alt="After photo"
-                                  className="w-full h-24 object-cover rounded-lg border border-gray-200 hover:opacity-90 transition-opacity"
+                                  className="w-full max-w-md h-auto object-cover rounded-lg border border-gray-200 hover:opacity-90 transition-opacity"
                                   onError={(e) => {
                                     e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFmdGVyIFBob3RvPC90ZXh0Pjwvc3ZnPg==';
                                   }}
