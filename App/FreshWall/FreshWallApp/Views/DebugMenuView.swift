@@ -1,3 +1,5 @@
+@preconcurrency import FirebaseAuth
+@preconcurrency import FirebaseFirestore
 import SwiftUI
 
 // MARK: - DebugMenuViewModel
@@ -73,6 +75,54 @@ struct DebugMenuView: View {
                             Image(systemName: "chevron.right")
                                 .foregroundColor(.secondary)
                                 .font(.caption)
+                        }
+                    }
+                    .padding(.vertical, 2)
+
+                    Button(action: clearFirebaseCache) {
+                        HStack {
+                            Image(systemName: "trash.circle")
+                                .foregroundColor(.red)
+                            VStack(alignment: .leading) {
+                                Text("Clear Firebase Cache")
+                                    .font(.headline)
+                                Text("Clear auth and Firestore cache")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                        }
+                    }
+                    .padding(.vertical, 2)
+
+                    Button(action: enableFirebaseDebugLogging) {
+                        HStack {
+                            Image(systemName: "eye.circle")
+                                .foregroundColor(.blue)
+                            VStack(alignment: .leading) {
+                                Text("Enable Firebase Debug Logging")
+                                    .font(.headline)
+                                Text("Show detailed Firebase logs")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                        }
+                    }
+                    .padding(.vertical, 2)
+
+                    Button(action: showCurrentUserInfo) {
+                        HStack {
+                            Image(systemName: "person.circle")
+                                .foregroundColor(.green)
+                            VStack(alignment: .leading) {
+                                Text("Show Current User Info")
+                                    .font(.headline)
+                                Text("Display UID, email, and custom claims")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
                         }
                     }
                     .padding(.vertical, 2)
@@ -156,6 +206,52 @@ struct DebugMenuView: View {
             } message: {
                 Text("The environment has been changed. Would you like to restart the app now for changes to take effect?")
             }
+        }
+    }
+
+    // MARK: - Debug Actions
+
+    private func clearFirebaseCache() {
+        Task {
+            do {
+                // Clear auth state
+                try Auth.auth().signOut()
+                print("🧹 Signed out user")
+
+                // Clear Firestore cache
+                let db = Firestore.firestore()
+                try await db.clearPersistence()
+                print("🧹 Firestore cache cleared")
+
+                print("✅ All caches cleared - restart app recommended")
+            } catch {
+                print("❌ Error clearing cache: \(error)")
+            }
+        }
+    }
+
+    private func enableFirebaseDebugLogging() {
+//        FirebaseConfiguration.shared.setLoggerLevel(.debug)
+        print("🔍 Firebase debug logging enabled")
+    }
+
+    private func showCurrentUserInfo() {
+        if let user = Auth.auth().currentUser {
+            print("👤 Current UID: \(user.uid)")
+            print("👤 Email: \(user.email ?? "none")")
+            print("👤 Display Name: \(user.displayName ?? "none")")
+            print("👤 Provider: \(user.providerData.map(\.providerID).joined(separator: ", "))")
+
+            // Show custom claims
+            user.getIDTokenResult { result, error in
+                if let claims = result?.claims {
+                    print("👤 Custom Claims: \(claims)")
+                } else if let error {
+                    print("❌ Error getting claims: \(error)")
+                }
+            }
+        } else {
+            print("❌ No user signed in")
         }
     }
 
