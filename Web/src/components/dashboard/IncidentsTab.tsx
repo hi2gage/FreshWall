@@ -40,9 +40,6 @@ interface Incident {
       longitude: number;
     };
     address?: string;
-    accuracy?: number;
-    captureMethod?: string;
-    capturedAt?: any;
   };
   surfaceType?: string;
   enhancedNotes?: {
@@ -160,9 +157,9 @@ export default function IncidentsTab() {
               try {
                 const clientDoc = await getDoc(incidentData.clientRef);
                 if (clientDoc.exists()) {
-                  const clientData = clientDoc.data();
-                  clientName = clientData.name;
-                  clientDefaults = clientData.defaults;
+                  const clientData = clientDoc.data() as any;
+                  clientName = clientData?.name;
+                  clientDefaults = clientData?.defaults;
                 }
               } catch (error) {
                 console.error('Error fetching client:', error);
@@ -219,8 +216,8 @@ export default function IncidentsTab() {
         const diffMs = end.getTime() - start.getTime();
         let hours = diffMs / (1000 * 60 * 60);
 
-        // Apply time rounding if specified
-        if (billing.timeRounding?.roundingIncrement) {
+        // Apply time rounding if specified (only available in client defaults, not manual billing)
+        if ('timeRounding' in billing && billing.timeRounding?.roundingIncrement) {
           const roundingHours = billing.timeRounding.roundingIncrement;
           hours = Math.ceil(hours / roundingHours) * roundingHours;
         }

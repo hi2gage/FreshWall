@@ -33,8 +33,10 @@ interface Incident {
   materialsUsed?: string;
   status?: 'open' | 'in_progress' | 'completed' | 'cancelled';
   enhancedLocation?: {
-    latitude: number;
-    longitude: number;
+    coordinates: {
+      latitude: number;
+      longitude: number;
+    };
     address?: string;
   };
   surfaceType?: string;
