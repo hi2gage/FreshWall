@@ -110,10 +110,7 @@ struct AddIncidentView: View {
             // MARK: - Area Section (conditional based on billing method)
 
             if shouldShowSquareFootage {
-                Section("Area (sq ft)") {
-                    TextField("Area", text: $viewModel.input.areaText)
-                        .keyboardType(.decimalPad)
-                }
+                AreaInputSection(areaText: $viewModel.input.areaText)
             }
 
             // MARK: - Location Section
@@ -121,9 +118,12 @@ struct AddIncidentView: View {
             LocationSection(
                 enhancedLocation: viewModel.input.enhancedLocation,
                 onLocationCapture: { currentLocation in
-                    routerPath.presentLocationCapture(currentLocation: currentLocation, onLocationSelected: { newLocation in
-                        viewModel.input.enhancedLocation = newLocation
-                    })
+                    routerPath.presentLocationCapture(
+                        currentLocation: currentLocation,
+                        onLocationSelected: { newLocation in
+                            viewModel.input.enhancedLocation = newLocation
+                        }
+                    )
                 }
             )
 
@@ -156,6 +156,7 @@ struct AddIncidentView: View {
             }
         }
         .navigationTitle("Add Incident")
+        .keyboardDoneToolbar()
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 AsyncButton("Save") {
@@ -176,74 +177,6 @@ struct AddIncidentView: View {
         }
         .task {
             await viewModel.loadClients()
-        }
-    }
-}
-
-// MARK: - IncidentPhotosSection
-
-/// Photos section with before and after photo pickers
-struct IncidentPhotosSection: View {
-    @Binding var beforePhotos: [PickedPhoto]
-    @Binding var afterPhotos: [PickedPhoto]
-    let onPhotosChanged: () -> Void
-    let onCameraSelected: () -> Void
-
-    var body: some View {
-        if !beforePhotos.isEmpty {
-            Section("Before Photos") {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(beforePhotos.indices, id: \.self) { idx in
-                            Image(uiImage: beforePhotos[idx].image)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100, height: 100)
-                                .clipped()
-                        }
-                    }
-                }
-                .frame(height: 120)
-            }
-        }
-        PhotoSourcePicker(
-            selection: $beforePhotos,
-            matching: .images,
-            photoLibrary: .shared(),
-            onCameraSelected: onCameraSelected
-        ) {
-            Label("Add Before Photos", systemImage: "photo.on.rectangle")
-        }
-        .onChange(of: beforePhotos) { _, _ in
-            onPhotosChanged()
-        }
-
-        if !afterPhotos.isEmpty {
-            Section("After Photos") {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(afterPhotos.indices, id: \.self) { idx in
-                            Image(uiImage: afterPhotos[idx].image)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100, height: 100)
-                                .clipped()
-                        }
-                    }
-                }
-                .frame(height: 120)
-            }
-        }
-        PhotoSourcePicker(
-            selection: $afterPhotos,
-            matching: .images,
-            photoLibrary: .shared(),
-            onCameraSelected: onCameraSelected
-        ) {
-            Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
-        }
-        .onChange(of: afterPhotos) { _, _ in
-            onPhotosChanged()
         }
     }
 }
@@ -515,71 +448,6 @@ struct BillingConfigurationSection: View {
             }
         }
         .padding(.vertical, 8)
-    }
-}
-
-// MARK: - ClientSelectionSection
-
-/// Client selection section
-struct ClientSelectionSection: View {
-    @Binding var clientId: String?
-    let validClients: [(id: String, name: String)]
-    let addNewTag: String
-    let onClientChange: (String?) -> Void
-
-    var body: some View {
-        Section(header: Text("Client")) {
-            Picker("Select Client", selection: $clientId) {
-                Text("Select").tag(nil as String?)
-                Text("Add New Client...").tag(addNewTag)
-                ForEach(validClients, id: \.id) { item in
-                    Text(item.name).tag(item.id as String?)
-                }
-            }
-            .pickerStyle(.menu)
-            .onChange(of: clientId) { oldValue, newValue in
-                print("🔄 ClientSelectionSection Picker.onChange: '\(oldValue ?? "nil")' → '\(newValue ?? "nil")'")
-                print("🔄 Available tags: addNewTag='\(addNewTag)', clients=\(validClients.map { "'\($0.id)'" }.joined(separator: ", "))")
-                onClientChange(newValue)
-            }
-        }
-        .onAppear {
-            print("🔄 ClientSelectionSection.onAppear - clientId: '\(clientId ?? "nil")', validClients count: \(validClients.count)")
-        }
-    }
-}
-
-// MARK: - LocationSection
-
-/// Location capture section
-struct LocationSection: View {
-    let enhancedLocation: IncidentLocation?
-    let onLocationCapture: (IncidentLocation?) -> Void
-
-    var body: some View {
-        Section("Location") {
-            if let enhancedLocation {
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text("📍 \(enhancedLocation.address ?? enhancedLocation.shortDisplayString)")
-                            .font(.headline)
-                        Spacer()
-                        Button("Edit") {
-                            onLocationCapture(enhancedLocation)
-                        }
-                    }
-
-                    Text(enhancedLocation.captureMethod.displayName)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            } else {
-                Button("📍 Capture Location") {
-                    onLocationCapture(nil)
-                }
-                .foregroundColor(.blue)
-            }
-        }
     }
 }
 

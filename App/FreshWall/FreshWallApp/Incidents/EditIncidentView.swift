@@ -35,7 +35,7 @@ struct EditIncidentView: View {
         Form {
             // MARK: - Photos Section (Top Priority)
 
-            EditIncidentPhotosSection(
+            IncidentPhotosSection(
                 beforePhotos: $viewModel.beforePhotos,
                 afterPhotos: $viewModel.afterPhotos
             )
@@ -49,7 +49,7 @@ struct EditIncidentView: View {
 
             // MARK: - Client Selection
 
-            EditClientSelectionSection(
+            ClientSelectionSection(
                 clientId: $viewModel.clientId,
                 validClients: viewModel.validClients,
                 addNewTag: addNewTag,
@@ -73,15 +73,12 @@ struct EditIncidentView: View {
             // MARK: - Area Section (conditional based on billing method)
 
             if shouldShowSquareFootage {
-                Section("Area (sq ft)") {
-                    TextField("Area", text: $viewModel.areaText)
-                        .keyboardType(.decimalPad)
-                }
+                AreaInputSection(areaText: $viewModel.areaText)
             }
 
             // MARK: - Location Section
 
-            EditLocationSection(
+            LocationSection(
                 enhancedLocation: viewModel.enhancedLocation,
                 onLocationCapture: { currentLocation in
                     routerPath.presentLocationCapture(currentLocation: currentLocation, onLocationSelected: { newLocation in
@@ -138,13 +135,8 @@ struct EditIncidentView: View {
             }
         }
         .navigationTitle("Edit Incident")
+        .keyboardDoneToolbar()
         .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button("Done") {
-                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                }
-            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     Task {
@@ -184,56 +176,6 @@ struct EditIncidentView: View {
     }
 }
 
-// MARK: - EditIncidentPhotosSection
-
-/// Photos section for edit incident view
-struct EditIncidentPhotosSection: View {
-    @Binding var beforePhotos: [PickedPhoto]
-    @Binding var afterPhotos: [PickedPhoto]
-
-    var body: some View {
-        if !beforePhotos.isEmpty {
-            Section("Before Photos") {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(beforePhotos.indices, id: \.self) { idx in
-                            Image(uiImage: beforePhotos[idx].image)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100, height: 100)
-                                .clipped()
-                        }
-                    }
-                }
-                .frame(height: 120)
-            }
-        }
-        PhotoSourcePicker(selection: $beforePhotos, matching: .images, photoLibrary: .shared()) {
-            Label("Add Before Photos", systemImage: "photo.on.rectangle")
-        }
-
-        if !afterPhotos.isEmpty {
-            Section("After Photos") {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(afterPhotos.indices, id: \.self) { idx in
-                            Image(uiImage: afterPhotos[idx].image)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100, height: 100)
-                                .clipped()
-                        }
-                    }
-                }
-                .frame(height: 120)
-            }
-        }
-        PhotoSourcePicker(selection: $afterPhotos, matching: .images, photoLibrary: .shared()) {
-            Label("Add After Photos", systemImage: "photo.fill.on.rectangle.fill")
-        }
-    }
-}
-
 // MARK: - EditTimeStampsSection
 
 /// Timestamps section for edit incident view
@@ -263,66 +205,6 @@ struct EditTimeStampsSection: View {
                 Text(String(format: "%.1f hours", hours))
                     .font(.subheadline)
                     .foregroundColor(.green)
-            }
-        }
-    }
-}
-
-// MARK: - EditClientSelectionSection
-
-/// Client selection section for edit incident view
-struct EditClientSelectionSection: View {
-    @Binding var clientId: String?
-    let validClients: [(id: String, name: String)]
-    let addNewTag: String
-    let onClientChange: (String?) -> Void
-
-    var body: some View {
-        Section("Client") {
-            Picker("Select Client", selection: $clientId) {
-                Text("Select").tag(nil as String?)
-                Text("Add New Client...").tag(addNewTag)
-                ForEach(validClients, id: \.id) { item in
-                    Text(item.name).tag(item.id as String?)
-                }
-            }
-            .pickerStyle(.menu)
-            .onChange(of: clientId) { _, newValue in
-                onClientChange(newValue)
-            }
-        }
-    }
-}
-
-// MARK: - EditLocationSection
-
-/// Location section for edit incident view
-struct EditLocationSection: View {
-    let enhancedLocation: IncidentLocation?
-    let onLocationCapture: (IncidentLocation?) -> Void
-
-    var body: some View {
-        Section("Location") {
-            if let enhancedLocation {
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text("📍 \(enhancedLocation.address ?? enhancedLocation.shortDisplayString)")
-                            .font(.headline)
-                        Spacer()
-                        Button("Edit") {
-                            onLocationCapture(enhancedLocation)
-                        }
-                    }
-
-                    Text(enhancedLocation.captureMethod.displayName)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            } else {
-                Button("📍 Capture Location") {
-                    onLocationCapture(nil)
-                }
-                .foregroundColor(.blue)
             }
         }
     }
