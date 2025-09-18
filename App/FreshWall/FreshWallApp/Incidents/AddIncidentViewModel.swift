@@ -28,9 +28,9 @@ final class AddIncidentViewModel {
     /// Container for all editable incident fields.
     struct Input {
         /// Selected client document ID or tag for add-new.
-        var clientId: String = "" {
+        var clientId: String? {
             didSet {
-                print("🔄 AddIncidentViewModel.Input.clientId changed from '\(oldValue)' to '\(clientId)'")
+                print("🔄 AddIncidentViewModel.Input.clientId changed from '\(oldValue ?? "nil")' to '\(clientId ?? "nil")'")
             }
         }
 
@@ -111,7 +111,7 @@ final class AddIncidentViewModel {
 
         let areaValue = Double(input.areaText) ?? 0
         let rateValue = Double(input.rateText)
-        let trimmedId = input.clientId.trimmingCharacters(in: .whitespaces)
+        let trimmedId = input.clientId?.trimmingCharacters(in: .whitespaces)
 
         // Use enhanced location if available, otherwise extract from photos
         let finalEnhancedLocation = input.enhancedLocation ?? LocationService.extractEnhancedLocation(
@@ -134,7 +134,7 @@ final class AddIncidentViewModel {
         }
 
         let input = AddIncidentInput(
-            clientId: trimmedId.isEmpty ? nil : trimmedId,
+            clientId: trimmedId?.isEmpty == false ? trimmedId : nil,
             description: input.description,
             area: areaValue,
             startTime: input.startTime,
@@ -217,7 +217,7 @@ final class AddIncidentViewModel {
 
     /// Auto-populate billing from client defaults when client is selected
     func updateBillingFromClient() {
-        print("🔄 updateBillingFromClient called - input.clientId: '\(input.clientId)'")
+        print("🔄 updateBillingFromClient called - input.clientId: '\(input.clientId ?? "nil")'")
         print("🔄 selectedClient: \(selectedClient?.name ?? "nil")")
 
         guard let client = selectedClient,

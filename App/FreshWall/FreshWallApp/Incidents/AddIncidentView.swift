@@ -44,11 +44,11 @@ struct AddIncidentView: View {
             return viewModel.input.billingMethod == .squareFootage
         }
         // Show if client is selected and client's billing method is square footage
-        else if !viewModel.input.clientId.isEmpty, let selectedClient = viewModel.selectedClient {
+        else if let clientId = viewModel.input.clientId, !clientId.isEmpty, let selectedClient = viewModel.selectedClient {
             return selectedClient.defaults?.billingMethod == .squareFootage
         }
         // Show if no client is selected and no manual override
-        else if viewModel.input.clientId.isEmpty, !viewModel.input.hasBillingConfiguration {
+        else if viewModel.input.clientId == nil, !viewModel.input.hasBillingConfiguration {
             return true
         }
         return false
@@ -86,13 +86,13 @@ struct AddIncidentView: View {
                 validClients: viewModel.validClients,
                 addNewTag: addNewTag,
                 onClientChange: { newValue in
-                    print("🔄 ClientSelectionSection.onClientChange called with: '\(newValue)'")
+                    print("🔄 ClientSelectionSection.onClientChange called with: '\(newValue ?? "nil")'")
                     if newValue == addNewTag {
                         print("🔄 Add new client selected, navigating to add client")
                         routerPath.push(.addClient())
-                        viewModel.input.clientId = ""
+                        viewModel.input.clientId = nil
                     } else {
-                        print("🔄 Client selected: '\(newValue)', updating billing")
+                        print("🔄 Client selected: '\(newValue ?? "nil")', updating billing")
                         viewModel.updateBillingFromClient()
                     }
                 }
@@ -120,10 +120,9 @@ struct AddIncidentView: View {
 
             LocationSection(
                 enhancedLocation: viewModel.input.enhancedLocation,
-                onLocationCapture: { currentLocation, completion in
+                onLocationCapture: { currentLocation in
                     routerPath.presentLocationCapture(currentLocation: currentLocation, onLocationSelected: { newLocation in
                         viewModel.input.enhancedLocation = newLocation
-                        completion(newLocation)
                     })
                 }
             )
@@ -139,7 +138,7 @@ struct AddIncidentView: View {
                 billingSource: $viewModel.input.billingSource,
                 quantityUnitLabel: quantityUnitLabel,
                 amountUnitLabel: amountUnitLabel,
-                selectedClientId: viewModel.input.clientId,
+                selectedClientId: viewModel.input.clientId ?? "",
                 selectedClient: viewModel.selectedClient
             )
 
@@ -313,7 +312,7 @@ struct BillingConfigurationSection: View {
     @Binding var billingSource: BillingSource
     let quantityUnitLabel: String
     let amountUnitLabel: String
-    let selectedClientId: String
+    let selectedClientId: String?
     let selectedClient: Client?
 
     @FocusState private var focusedField: BillingConfigurationSection.FocusedField?
@@ -324,7 +323,7 @@ struct BillingConfigurationSection: View {
     }
 
     private var isClientSelected: Bool {
-        !selectedClientId.isEmpty
+        selectedClientId != nil
     }
 
     var body: some View {
@@ -523,29 +522,29 @@ struct BillingConfigurationSection: View {
 
 /// Client selection section
 struct ClientSelectionSection: View {
-    @Binding var clientId: String
+    @Binding var clientId: String?
     let validClients: [(id: String, name: String)]
     let addNewTag: String
-    let onClientChange: (String) -> Void
+    let onClientChange: (String?) -> Void
 
     var body: some View {
         Section(header: Text("Client")) {
             Picker("Select Client", selection: $clientId) {
-                Text("Select Client").tag("")
+                Text("Select").tag(nil as String?)
                 Text("Add New Client...").tag(addNewTag)
                 ForEach(validClients, id: \.id) { item in
-                    Text(item.name).tag(item.id)
+                    Text(item.name).tag(item.id as String?)
                 }
             }
             .pickerStyle(.menu)
             .onChange(of: clientId) { oldValue, newValue in
-                print("🔄 ClientSelectionSection Picker.onChange: '\(oldValue)' → '\(newValue)'")
+                print("🔄 ClientSelectionSection Picker.onChange: '\(oldValue ?? "nil")' → '\(newValue ?? "nil")'")
                 print("🔄 Available tags: addNewTag='\(addNewTag)', clients=\(validClients.map { "'\($0.id)'" }.joined(separator: ", "))")
                 onClientChange(newValue)
             }
         }
         .onAppear {
-            print("🔄 ClientSelectionSection.onAppear - clientId: '\(clientId)', validClients count: \(validClients.count)")
+            print("🔄 ClientSelectionSection.onAppear - clientId: '\(clientId ?? "nil")', validClients count: \(validClients.count)")
         }
     }
 }
@@ -555,7 +554,7 @@ struct ClientSelectionSection: View {
 /// Location capture section
 struct LocationSection: View {
     let enhancedLocation: IncidentLocation?
-    let onLocationCapture: (IncidentLocation?, @escaping (IncidentLocation?) -> Void) -> Void
+    let onLocationCapture: (IncidentLocation?) -> Void
 
     var body: some View {
         Section("Location") {
@@ -566,9 +565,7 @@ struct LocationSection: View {
                             .font(.headline)
                         Spacer()
                         Button("Edit") {
-                            onLocationCapture(enhancedLocation) { _ in
-                                // Update handled by parent through closure
-                            }
+                            onLocationCapture(enhancedLocation)
                         }
                     }
 
@@ -578,9 +575,7 @@ struct LocationSection: View {
                 }
             } else {
                 Button("📍 Capture Location") {
-                    onLocationCapture(nil) { _ in
-                        // Update handled by parent through closure
-                    }
+                    onLocationCapture(nil)
                 }
                 .foregroundColor(.blue)
             }

@@ -8,61 +8,22 @@ struct SurfaceTypeSelectionView: View {
     @Binding var customDescription: String?
     @State private var customText = ""
 
-    private var selectedDisplayText: String {
-        if let surfaceType {
-            surfaceType.displayName
-        } else {
-            "Select Surface Type"
-        }
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Text("Surface Type:")
-                    .foregroundColor(.primary)
-
-                Menu {
-                    Button("None") {
-                        surfaceType = nil
-                        customDescription = nil
-                        customText = ""
-                    }
-
-                    ForEach(SurfaceType.allCases, id: \.self) { type in
-                        Button {
-                            surfaceType = type
-                            if type != .other {
-                                customDescription = nil
-                                customText = ""
-                            } else {
-                                customText = customDescription ?? ""
-                            }
-                        } label: {
-                            HStack {
-                                Image(systemName: type.iconName)
-                                Text(type.displayName)
-                            }
-                        }
-                    }
-                } label: {
-                    HStack {
-                        if let surfaceType {
-                            Image(systemName: surfaceType.iconName)
-                                .foregroundColor(.accentColor)
-                                .frame(width: 16)
-                        }
-                        Text(selectedDisplayText)
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Image(systemName: "chevron.up.chevron.down")
-                            .foregroundColor(.secondary)
-                            .font(.caption)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
+            // Main picker to match Client selection styling
+            Picker("Surface Type", selection: $surfaceType) {
+                Text("Select").tag(nil as SurfaceType?)
+                ForEach(SurfaceType.allCases, id: \.self) { type in
+                    Text(type.displayName).tag(type as SurfaceType?)
+                }
+            }
+            .pickerStyle(.menu)
+            .onChange(of: surfaceType) { _, newValue in
+                if newValue != .other {
+                    customDescription = nil
+                    customText = ""
+                } else {
+                    customText = customDescription ?? ""
                 }
             }
 

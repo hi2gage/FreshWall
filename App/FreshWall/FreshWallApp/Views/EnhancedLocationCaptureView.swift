@@ -29,6 +29,9 @@ final class EnhancedLocationCaptureViewModel {
             capturedLocation = gpsLocation
             isCapturingGPS = false
 
+            // Auto-save immediately after capturing
+            await autoSave()
+
             // Background: Start address resolution
             if let coordinates = gpsLocation.coordinates {
                 Task {
@@ -84,6 +87,31 @@ final class EnhancedLocationCaptureViewModel {
 
     func updateLocation(_ newLocation: IncidentLocation?) {
         capturedLocation = newLocation
+        // Auto-save immediately after location update
+        Task {
+            await autoSave()
+        }
+    }
+
+    private var onLocationSelected: ((IncidentLocation?) -> Void)?
+    private var locationBinding: Binding<IncidentLocation?>?
+
+    func setCallbacks(onLocationSelected: ((IncidentLocation?) -> Void)?, locationBinding: Binding<IncidentLocation?>?) {
+        self.onLocationSelected = onLocationSelected
+        self.locationBinding = locationBinding
+    }
+
+    @MainActor
+    private func autoSave() async {
+        if let onLocationSelected {
+            // Router navigation - use completion callback
+            onLocationSelected(capturedLocation)
+        } else if let locationBinding {
+            // Sheet navigation - use binding
+            if let capturedLocation {
+                locationBinding.wrappedValue = capturedLocation
+            }
+        }
     }
 }
 
@@ -131,20 +159,27 @@ struct EnhancedLocationCaptureView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save") {
+                Button("Clear") {
+                    // Clear the current location
+                    viewModel.capturedLocation = nil
                     if let onLocationSelected {
                         // Router navigation - use completion callback
-                        onLocationSelected(viewModel.capturedLocation)
+                        onLocationSelected(nil)
                     } else {
                         // Sheet navigation - use binding
-                        if let capturedLocation = viewModel.capturedLocation {
-                            location = capturedLocation
-                        }
+                        location = nil
                     }
-                    dismiss()
                 }
+                .foregroundColor(viewModel.capturedLocation == nil ? .gray : .red)
                 .disabled(viewModel.capturedLocation == nil)
             }
+        }
+        .onAppear {
+            // Set up auto-save callbacks
+            viewModel.setCallbacks(
+                onLocationSelected: onLocationSelected,
+                locationBinding: onLocationSelected == nil ? $location : nil
+            )
         }
     }
 
