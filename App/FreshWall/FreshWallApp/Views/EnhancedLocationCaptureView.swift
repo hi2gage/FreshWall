@@ -30,7 +30,7 @@ final class EnhancedLocationCaptureViewModel {
             isCapturingGPS = false
 
             // Auto-save immediately after capturing
-            await autoSave()
+            autoSave()
 
             // Background: Start address resolution
             if let coordinates = gpsLocation.coordinates {
@@ -54,14 +54,8 @@ final class EnhancedLocationCaptureViewModel {
 
         // Check cache first
         if let cachedAddress = await ServiceContainer.shared.locationCache.getCachedAddress(for: coordinates) {
-            await MainActor.run {
-                if var current = capturedLocation,
-                   current.coordinates == location.coordinates,
-                   current.capturedAt == location.capturedAt {
-                    current.address = cachedAddress
-                    capturedLocation = current
-                }
-            }
+            updateLocationAddress(cachedAddress, for: location)
+            autoSave()
             return
         }
 
@@ -74,44 +68,61 @@ final class EnhancedLocationCaptureViewModel {
             await ServiceContainer.shared.locationCache.cacheAddress(address, for: coordinates)
 
             // Update UI if this location is still current
-            await MainActor.run {
-                if var current = capturedLocation,
-                   current.coordinates == location.coordinates,
-                   current.capturedAt == location.capturedAt {
-                    current.address = address
-                    capturedLocation = current
-                }
-            }
+            updateLocationAddress(address, for: location)
+            autoSave()
         }
+    }
+
+    /// Updates the address for the given location if it matches the current captured location
+    private func updateLocationAddress(_ address: String, for targetLocation: IncidentLocation) {
+        guard var current = capturedLocation,
+              current.coordinates == targetLocation.coordinates,
+              current.capturedAt == targetLocation.capturedAt else {
+            return
+        }
+
+        current.address = address
+        capturedLocation = current
     }
 
     func updateLocation(_ newLocation: IncidentLocation?) {
         capturedLocation = newLocation
-        // Auto-save immediately after location update
-        Task {
-            await autoSave()
-        }
+        autoSave()
     }
 
     private var onLocationSelected: ((IncidentLocation?) -> Void)?
     private var locationBinding: Binding<IncidentLocation?>?
 
-    func setCallbacks(onLocationSelected: ((IncidentLocation?) -> Void)?, locationBinding: Binding<IncidentLocation?>?) {
+    func setCallbacks(
+        onLocationSelected: ((IncidentLocation?) -> Void)?,
+        locationBinding: Binding<IncidentLocation?>?
+    ) {
         self.onLocationSelected = onLocationSelected
         self.locationBinding = locationBinding
     }
 
     @MainActor
-    private func autoSave() async {
-        if let onLocationSelected {
-            // Router navigation - use completion callback
-            onLocationSelected(capturedLocation)
-        } else if let locationBinding {
-            // Sheet navigation - use binding
-            if let capturedLocation {
-                locationBinding.wrappedValue = capturedLocation
-            }
+    private func autoSave() {
+        onLocationSelected?(capturedLocation)
+        locationBinding?.wrappedValue = capturedLocation
+    }
+
+    /// Smart location display text based on available data
+    var locationDisplayText: String {
+        guard let location = capturedLocation else { return "No location" }
+
+        if let address = location.address {
+            return address // Full address when available
+        } else if let coordinates = location.coordinates {
+            return "📍 \(coordinates.displayString)" // Coordinates while waiting
+        } else {
+            return "Location captured"
         }
+    }
+
+    func clearLocation() {
+        capturedLocation = nil
+        autoSave()
     }
 }
 
@@ -126,14 +137,19 @@ struct EnhancedLocationCaptureView: View {
     @State private var viewModel: EnhancedLocationCaptureViewModel
 
     // Binding-based initializer (existing)
-    init(location: Binding<IncidentLocation?>) {
+    init(
+        location: Binding<IncidentLocation?>
+    ) {
         self.onLocationSelected = nil
         self._location = location
         self._viewModel = State(initialValue: EnhancedLocationCaptureViewModel(initialLocation: location.wrappedValue))
     }
 
     // Completion-based initializer (new for router navigation)
-    init(initialLocation: IncidentLocation?, onLocationSelected: @escaping (IncidentLocation?) -> Void) {
+    init(
+        initialLocation: IncidentLocation?,
+        onLocationSelected: @escaping (IncidentLocation?) -> Void
+    ) {
         self.onLocationSelected = onLocationSelected
         self._location = .constant(nil) // Dummy binding since we use completion callback
         self._viewModel = State(initialValue: EnhancedLocationCaptureViewModel(initialLocation: initialLocation))
@@ -160,15 +176,7 @@ struct EnhancedLocationCaptureView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Clear") {
-                    // Clear the current location
-                    viewModel.capturedLocation = nil
-                    if let onLocationSelected {
-                        // Router navigation - use completion callback
-                        onLocationSelected(nil)
-                    } else {
-                        // Sheet navigation - use binding
-                        location = nil
-                    }
+                    viewModel.clearLocation()
                 }
                 .foregroundColor(viewModel.capturedLocation == nil ? .gray : .red)
                 .disabled(viewModel.capturedLocation == nil)
@@ -183,19 +191,6 @@ struct EnhancedLocationCaptureView: View {
         }
     }
 
-    /// Smart location display text based on available data
-    private var locationDisplayText: String {
-        guard let location = viewModel.capturedLocation else { return "No location" }
-
-        if let address = location.address {
-            return address // Full address when available
-        } else if let coordinates = location.coordinates {
-            return "📍 \(coordinates.displayString)" // Coordinates while waiting
-        } else {
-            return "Location captured"
-        }
-    }
-
     @ViewBuilder
     private var currentLocationSection: some View {
         Section("Current Location") {
@@ -205,13 +200,13 @@ struct EnhancedLocationCaptureView: View {
                         Image(systemName: "location.fill")
                             .foregroundColor(.blue)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(locationDisplayText)
+                            Text(viewModel.locationDisplayText)
                                 .font(.headline)
                             if viewModel.isResolvingAddress {
                                 HStack(spacing: 4) {
                                     ProgressView()
                                         .scaleEffect(0.6)
-                                    Text("Resolving address...")
+                                    Text(Constants.resolvingAddressText)
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
                                 }
@@ -230,7 +225,7 @@ struct EnhancedLocationCaptureView: View {
                     }
 
                     if let accuracy = location.accuracy {
-                        Text("Accuracy: ±\(Int(accuracy))m")
+                        Text(String(format: Constants.accuracyFormat, Int(accuracy)))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -245,11 +240,9 @@ struct EnhancedLocationCaptureView: View {
     @ViewBuilder
     private var gpsCaptureSection: some View {
         Section("GPS Location") {
-            Button(action: {
-                Task {
-                    await viewModel.captureGPSLocation()
-                }
-            }) {
+            AsyncButton {
+                await viewModel.captureGPSLocation()
+            } label: {
                 HStack {
                     if viewModel.isCapturingGPS {
                         ProgressView()
@@ -259,7 +252,7 @@ struct EnhancedLocationCaptureView: View {
                             .foregroundColor(.blue)
                     }
 
-                    Text(viewModel.isCapturingGPS ? "Capturing GPS Location..." : "Capture Current GPS Location")
+                    Text(viewModel.isCapturingGPS ? Constants.capturingGPSText : Constants.captureGPSText)
                 }
             }
             .disabled(viewModel.isCapturingGPS)
@@ -277,7 +270,7 @@ struct EnhancedLocationCaptureView: View {
                 HStack {
                     Image(systemName: "map")
                         .foregroundColor(.orange)
-                    Text("Select on Map")
+                    Text(Constants.selectOnMapText)
                 }
             }
         }
