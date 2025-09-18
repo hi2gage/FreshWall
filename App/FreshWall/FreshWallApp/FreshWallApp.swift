@@ -7,6 +7,7 @@
 
 import FirebaseCore
 @preconcurrency import FirebaseFirestore
+import GoogleSignIn
 import SwiftUI
 
 // MARK: - AppDelegate
@@ -18,6 +19,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     ) -> Bool {
         FirebaseConfiguration.configureFirebase()
         return true
+    }
+
+    func application(_: UIApplication, open url: URL, options _: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        GIDSignIn.sharedInstance.handle(url)
     }
 }
 

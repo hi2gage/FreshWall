@@ -2,22 +2,21 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSCameraUsageDescription</key>
-	<string>Taking photos of the graffiti</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>FreshWall saves photos to your Camera Roll for backup and easy access outside the app.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>FreshWall accesses your photo library to organize incident photos in a dedicated FreshWall album.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>GoogleAuth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.526475481183-3cm39e7edjspi1q7atmr35uqlchqnev8</string>
+			</array>
+		</dict>
+	</array>
 	<key>FIREBASE_GOOGLE_SERVICE_PLIST</key>
 	<string>$(FIREBASE_CONFIG_FILE)</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>FreshWall needs location access to capture GPS coordinates for incident reports. This helps accurately track where graffiti removal work is performed for client documentation.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>FreshWall needs location access to capture GPS coordinates for incident reports. This helps accurately track where graffiti removal work is performed for client documentation.</string>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>FreshWall connects to Firebase development servers on your local network for testing and development purposes. This includes authentication (port 9099), database (port 8080), and cloud functions (port 5001).</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

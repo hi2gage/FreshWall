@@ -126,4 +126,96 @@ struct UserService {
             throw error
         }
     }
+
+    /// Creates a team and user record for an already authenticated user (e.g., Google Sign-In).
+    ///
+    /// - Parameters:
+    ///   - displayName: Name to display for the user.
+    ///   - teamName: Name of the team to create.
+    @discardableResult
+    func createTeamForAuthenticatedUser(
+        displayName: String,
+        teamName: String
+    ) async throws -> UserDTO {
+        guard let user = auth.currentUser else {
+            throw NSError(
+                domain: "UserService",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "No authenticated user found"]
+            )
+        }
+
+        let result = try await functions
+            .httpsCallable("createTeamCreateUser")
+            .call([
+                "email": user.email ?? "",
+                "teamName": teamName,
+                "displayName": displayName,
+            ])
+
+        guard
+            let data = result.data as? [String: Any],
+            let teamId = data["teamId"] as? String,
+            let teamCode = data["teamCode"] as? String else {
+            throw NSError(
+                domain: "UserService",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Invalid response from createTeamCreateUser function"]
+            )
+        }
+
+        return UserDTO(
+            id: nil,
+            displayName: displayName,
+            email: user.email ?? "",
+            role: .admin,
+            isDeleted: false,
+            deletedAt: nil
+        )
+    }
+
+    /// Joins an existing team for an already authenticated user (e.g., Google Sign-In).
+    ///
+    /// - Parameters:
+    ///   - displayName: Name to display for the user.
+    ///   - teamCode: Code of the team to join.
+    @discardableResult
+    func joinTeamForAuthenticatedUser(
+        displayName: String,
+        teamCode: String
+    ) async throws -> UserDTO {
+        guard let user = auth.currentUser else {
+            throw NSError(
+                domain: "UserService",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "No authenticated user found"]
+            )
+        }
+
+        let result = try await functions
+            .httpsCallable("joinTeamCreateUser")
+            .call([
+                "email": user.email ?? "",
+                "teamCode": teamCode,
+                "displayName": displayName,
+            ])
+
+        guard
+            let data = result.data as? [String: Any] else {
+            throw NSError(
+                domain: "UserService",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Invalid response from joinTeamCreateUser function"]
+            )
+        }
+
+        return UserDTO(
+            id: nil,
+            displayName: displayName,
+            email: user.email ?? "",
+            role: .fieldWorker,
+            isDeleted: false,
+            deletedAt: nil
+        )
+    }
 }

@@ -56,6 +56,22 @@ struct AuthFlowView: View {
                     routerPath.push(.signupWithTeam)
                 }
 
+                Button("Continue with Google") {
+                    Task {
+                        do {
+                            try await loginManager.signInWithGoogle()
+                        } catch let googleError as GoogleSignInOnboardingError {
+                            switch googleError {
+                            case .userNotInTeam:
+                                routerPath.push(.googleOnboarding)
+                            }
+                        } catch {
+                            errorMessage = error.localizedDescription
+                        }
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+
                 Spacer()
             }
             .padding()
