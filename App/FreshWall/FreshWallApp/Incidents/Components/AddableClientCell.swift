@@ -20,9 +20,9 @@ struct AddableClientCell: View {
     var body: some View {
         if let client = selectedClient {
             // Show selected client with navigate button
-            Button(action: {
+            Button {
                 onNavigateToClient(client)
-            }) {
+            } label: {
                 HStack {
                     Text(client.name)
                         .foregroundStyle(.primary)

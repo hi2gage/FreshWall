@@ -56,7 +56,9 @@ struct EnhancedNotesView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
                 ForEach(IncidentNotes.Stage.allCases, id: \.self) { stage in
-                    Button(action: { selectedTab = stage }) {
+                    Button {
+                        selectedTab = stage
+                    } label: {
                         VStack(spacing: 4) {
                             Image(systemName: stage.iconName)
                                 .font(.title3)

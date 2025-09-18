@@ -78,6 +78,12 @@ struct MainAppView: View {
                     displayName: "Preview User",
                     teamId: "team123",
                     role: .admin
+                ),
+                loginManager: LoginManager(
+                    sessionStore: SessionStore(),
+                    authService: AuthService(),
+                    userService: UserService(),
+                    sessionService: SessionService()
                 )
             )
         )

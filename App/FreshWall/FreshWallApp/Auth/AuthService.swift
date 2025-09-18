@@ -26,10 +26,14 @@ struct AuthService {
         try await auth.signIn(withEmail: email, password: password).user
     }
 
-    /// Signs out the current user.
+    /// Signs out the current user from both Firebase and Google.
     ///
     /// - Returns: An optional error if sign-out fails.
     func signOut() throws {
+        // Sign out from Google first (this clears the Google session completely)
+        GIDSignIn.sharedInstance.signOut()
+
+        // Then sign out from Firebase
         try auth.signOut()
     }
 
@@ -37,20 +41,10 @@ struct AuthService {
         auth.currentUser
     }
 
-    /// Signs in with Google using GoogleSignIn SDK and Firebase Auth
+    /// Signs in with Google using GoogleSignInSwift and Firebase Auth
     @discardableResult
+    @MainActor
     func signInWithGoogle() async throws -> FirebaseAuth.User {
-        // Get the top view controller for presenting Google Sign-In
-        guard let presentingViewController = await MainActor.run(body: {
-            UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-                .first?.windows
-                .first(where: \.isKeyWindow)?
-                .rootViewController
-        }) else {
-            throw AuthError.noPresentingViewController
-        }
-
         // Configure Google Sign-In
         guard let clientID = auth.app?.options.clientID else {
             throw AuthError.noClientID
@@ -58,21 +52,58 @@ struct AuthService {
 
         GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
 
-        // Start Google Sign-In flow
-        let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController)
-        let user = result.user
-
-        guard let idToken = user.idToken?.tokenString else {
-            throw AuthError.noIDToken
+        // Get the top view controller for presenting Google Sign-In
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first(where: { $0.isKeyWindow }),
+              let presentingViewController = window.rootViewController else {
+            throw AuthError.noPresentingViewController
         }
 
-        let accessToken = user.accessToken.tokenString
+        // Use continuation to bridge completion handler to async/await
+        return try await withCheckedThrowingContinuation { continuation in
+            GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController) { result, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
 
-        // Create Firebase credential from Google tokens
-        let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+                guard let result else {
+                    continuation.resume(throwing: AuthError.noIDToken)
+                    return
+                }
 
-        // Sign in to Firebase with Google credential
-        return try await auth.signIn(with: credential).user
+                let user = result.user
+
+                guard let idToken = user.idToken?.tokenString else {
+                    continuation.resume(throwing: AuthError.noIDToken)
+                    return
+                }
+
+                let accessToken = user.accessToken.tokenString
+
+                // Create Firebase credential from Google tokens
+                let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+
+                // Sign in to Firebase with Google credential
+                Task {
+                    do {
+                        let firebaseUser = try await self.auth.signIn(with: credential).user
+
+                        // Check if this is a new user (just created by Firebase)
+                        if firebaseUser.metadata.creationDate?.timeIntervalSinceNow ?? 0 > -10 {
+                            // This is a new user - sign them out immediately and delete the account
+                            try await firebaseUser.delete()
+                            continuation.resume(throwing: AuthError.accountNotFound)
+                            return
+                        }
+
+                        continuation.resume(returning: firebaseUser)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -83,6 +114,7 @@ enum AuthError: LocalizedError {
     case noPresentingViewController
     case noClientID
     case noIDToken
+    case accountNotFound
 
     var errorDescription: String? {
         switch self {
@@ -92,6 +124,8 @@ enum AuthError: LocalizedError {
             "No client ID found in Firebase configuration"
         case .noIDToken:
             "No ID token received from Google"
+        case .accountNotFound:
+            "No existing account found"
         }
     }
 }
