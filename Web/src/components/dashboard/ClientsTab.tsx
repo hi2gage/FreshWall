@@ -156,7 +156,7 @@ export default function ClientsTab() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2 text-gray-600">Loading clients...</span>
+        <span className="ml-2 text-gray-600 dark:text-gray-400">Loading clients...</span>
       </div>
     );
   }
@@ -166,8 +166,8 @@ export default function ClientsTab() {
       {/* Header with filters */}
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Clients</h3>
-          <p className="text-sm text-gray-600">Manage your client accounts and billing settings</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Clients</h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Manage your client accounts and billing settings</p>
         </div>
 
         <div className="flex space-x-2">
@@ -178,7 +178,7 @@ export default function ClientsTab() {
               className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                 filter === status
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
             >
               {status === 'active' ? 'Active' :
@@ -191,12 +191,12 @@ export default function ClientsTab() {
 
       {/* Clients List */}
       {filteredClients.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
+        <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="text-4xl mb-4">👥</div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
             No clients yet
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             Start by adding your first client to track incidents and generate reports.
           </p>
           <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
@@ -204,56 +204,56 @@ export default function ClientsTab() {
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700/20 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Client Name
                   </th>
                   {canViewBilling && (
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Billing Method
                     </th>
                   )}
                   {canViewBilling && (
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Rate
                     </th>
                   )}
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Last Incident
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredClients.map((client) => (
                   <tr
                     key={client.id}
-                    className="hover:bg-gray-50 cursor-pointer"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                     onClick={() => handleViewClient(client)}
                   >
                     <td className="px-6 py-4">
                       <div className="max-w-xs">
-                        <div className="text-sm font-medium text-gray-900 truncate">
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                           {client.name}
                         </div>
                         {client.notes && (
-                          <div className="text-xs text-gray-500 mt-1 truncate">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
                             {client.notes}
                           </div>
                         )}
                       </div>
                     </td>
                     {canViewBilling && (
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                         {client.defaults?.billingMethod
                           ? getBillingMethodLabel(client.defaults.billingMethod)
                           : 'Not configured'
@@ -261,14 +261,14 @@ export default function ClientsTab() {
                       </td>
                     )}
                     {canViewBilling && (
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                         {client.defaults?.amountPerUnit
                           ? `$${client.defaults.amountPerUnit.toFixed(2)}`
                           : 'Not set'
                         }
                       </td>
                     )}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {client.lastIncidentAt ? formatDate(client.lastIncidentAt) : 'Never'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -286,13 +286,13 @@ export default function ClientsTab() {
                           e.stopPropagation();
                           handleViewClient(client);
                         }}
-                        className="text-blue-600 hover:text-blue-700 mr-3"
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mr-3"
                       >
                         View
                       </button>
                       <button
                         onClick={(e) => e.stopPropagation()}
-                        className="text-gray-600 hover:text-gray-700"
+                        className="text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                       >
                         Edit
                       </button>
@@ -308,23 +308,23 @@ export default function ClientsTab() {
       {/* Summary Stats */}
       {clients.length > 0 && (
         <div className={`grid grid-cols-1 ${canViewBilling ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-gray-900">{clients.filter(c => !c.isDeleted).length}</div>
-            <div className="text-sm text-gray-600">Active Clients</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{clients.filter(c => !c.isDeleted).length}</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Active Clients</div>
           </div>
           {canViewBilling && (
-            <div className="bg-white p-4 rounded-lg shadow">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
               <div className="text-2xl font-bold text-blue-600">
                 {clients.filter(c => c.defaults?.billingMethod).length}
               </div>
-              <div className="text-sm text-gray-600">With Billing Setup</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">With Billing Setup</div>
             </div>
           )}
-          <div className="bg-white p-4 rounded-lg shadow">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
             <div className="text-2xl font-bold text-green-600">
               {clients.filter(c => c.lastIncidentAt).length}
             </div>
-            <div className="text-sm text-gray-600">With Incidents</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">With Incidents</div>
           </div>
         </div>
       )}

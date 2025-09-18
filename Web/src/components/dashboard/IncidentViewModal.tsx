@@ -381,7 +381,7 @@ export default function IncidentViewModal({ incident, isOpen, onClose }: Inciden
                             {incident.beforePhotos.map((photo) => (
                               <div key={photo.id} className="relative cursor-pointer" onClick={() => handlePhotoClick(photo)}>
                                 <img
-                                  src={photo.thumbnailUrl || photo.url}
+                                  src={photo.url}
                                   alt="Before photo"
                                   className="w-full max-w-md h-auto object-cover rounded-lg border border-gray-200 hover:opacity-90 transition-opacity"
                                   onError={(e) => {
@@ -404,7 +404,7 @@ export default function IncidentViewModal({ incident, isOpen, onClose }: Inciden
                             {incident.afterPhotos.map((photo) => (
                               <div key={photo.id} className="relative cursor-pointer" onClick={() => handlePhotoClick(photo)}>
                                 <img
-                                  src={photo.thumbnailUrl || photo.url}
+                                  src={photo.url}
                                   alt="After photo"
                                   className="w-full max-w-md h-auto object-cover rounded-lg border border-gray-200 hover:opacity-90 transition-opacity"
                                   onError={(e) => {
