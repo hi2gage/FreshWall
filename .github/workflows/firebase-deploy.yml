@@ -60,8 +60,11 @@ jobs:
           cd Firebase/functions
           npm ci
 
-      - name: Make deploy script executable
-        run: chmod +x Firebase/scripts/deploy-prep.sh
+      - name: Remove predeploy script for CI
+        run: |
+          cd Firebase
+          # Temporarily remove predeploy script for GitHub Actions
+          sed -i 's/"predeploy": \[.*\],/"predeploy": [],/' firebase.json
 
       - name: Build functions
         if: needs.changes.outputs.functions == 'true'
