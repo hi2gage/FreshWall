@@ -9,6 +9,31 @@ struct ClientSelectionSection: View {
     let addNewTag: String
     let onClientChange: (String?) -> Void
 
+    /// Convenience initializer using the shared constant
+    init(
+        clientId: Binding<String?>,
+        validClients: [(id: String, name: String)],
+        onClientChange: @escaping (String?) -> Void
+    ) {
+        self._clientId = clientId
+        self.validClients = validClients
+        self.addNewTag = IncidentFormConstants.addNewClientTag
+        self.onClientChange = onClientChange
+    }
+
+    /// Full initializer for custom add new tag
+    init(
+        clientId: Binding<String?>,
+        validClients: [(id: String, name: String)],
+        addNewTag: String,
+        onClientChange: @escaping (String?) -> Void
+    ) {
+        self._clientId = clientId
+        self.validClients = validClients
+        self.addNewTag = addNewTag
+        self.onClientChange = onClientChange
+    }
+
     var body: some View {
         Section("Client") {
             Picker("Select Client", selection: $clientId) {
