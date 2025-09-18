@@ -59,7 +59,7 @@ export default function ClientViewModal({ client, isOpen, onClose }: ClientViewM
           }
         }
 
-        setUserRole(role);
+        setUserRole(role as string);
         // Allow billing access for admin and manager roles
         setCanViewBilling(role === 'admin' || role === 'manager');
       } catch (error) {
@@ -302,14 +302,14 @@ export default function ClientViewModal({ client, isOpen, onClose }: ClientViewM
                                       let roundedHours = rawHours;
 
                                       // Apply rounding if specified
-                                      if (client.defaults.timeRounding?.roundingIncrement) {
+                                      if (client.defaults?.timeRounding?.roundingIncrement) {
                                         const roundingIncrement = client.defaults.timeRounding.roundingIncrement;
                                         roundedHours = Math.ceil(rawHours / roundingIncrement) * roundingIncrement;
                                       }
 
                                       // Apply minimum billable quantity
-                                      const billableHours = Math.max(roundedHours, client.defaults.minimumBillableQuantity);
-                                      const totalCost = billableHours * client.defaults.amountPerUnit;
+                                      const billableHours = Math.max(roundedHours, client.defaults?.minimumBillableQuantity || 0);
+                                      const totalCost = billableHours * (client.defaults?.amountPerUnit || 0);
 
                                       return (
                                         <div key={rawHours} className="flex items-center text-xs space-x-2">
@@ -340,8 +340,8 @@ export default function ClientViewModal({ client, isOpen, onClose }: ClientViewM
 
                                   <div className="bg-white rounded-md p-3 space-y-2">
                                     {[25, 75, 120, 180, 250, 350, 500, 750, 1200].map((area) => {
-                                      const billableArea = Math.max(area, client.defaults.minimumBillableQuantity);
-                                      const totalCost = billableArea * client.defaults.amountPerUnit;
+                                      const billableArea = Math.max(area, client.defaults?.minimumBillableQuantity || 0);
+                                      const totalCost = billableArea * (client.defaults?.amountPerUnit || 0);
 
                                       return (
                                         <div key={area} className="flex items-center text-xs space-x-2">
