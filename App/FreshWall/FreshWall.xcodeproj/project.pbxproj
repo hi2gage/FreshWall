@@ -19,6 +19,8 @@
 		1C88DD9F2E0BB8FC000D7CD0 /* Dev.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DD9A2E0BB8FC000D7CD0 /* Dev.xcconfig */; };
 		1C88DDAF2E0BBCA2000D7CD0 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */; };
 		1C9B64CA2E51779800323C91 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C9B64C92E51779800323C91 /* Debug.xcconfig */; };
+		1CA0F2432E7BE04800AC3F88 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 1CA0F2422E7BE04800AC3F88 /* GoogleSignIn */; };
+		1CA0F2452E7BE04800AC3F88 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1CA0F2442E7BE04800AC3F88 /* GoogleSignInSwift */; };
 		1CA3B46A2E0281F200A04DB7 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */; };
 		1CE7DC352E76B4EF0088910A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC342E76B4EF0088910A /* Nuke */; };
 		1CE7DC372E76B4EF0088910A /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC362E76B4EF0088910A /* NukeExtensions */; };
@@ -97,6 +99,8 @@
 			files = (
 				1C4FC57D2E5FF37B004C158A /* TPPDF in Frameworks */,
 				1CE7DC372E76B4EF0088910A /* NukeExtensions in Frameworks */,
+				1CA0F2432E7BE04800AC3F88 /* GoogleSignIn in Frameworks */,
+				1CA0F2452E7BE04800AC3F88 /* GoogleSignInSwift in Frameworks */,
 				1C54365D2DE224C600153F4F /* FirebaseAuth in Frameworks */,
 				1CE7DC352E76B4EF0088910A /* Nuke in Frameworks */,
 				1C783F3E2E71E17E008AFA63 /* TinyStorage in Frameworks */,
@@ -210,6 +214,8 @@
 				1CE7DC362E76B4EF0088910A /* NukeExtensions */,
 				1CE7DC382E76B4EF0088910A /* NukeUI */,
 				1CE7DC412E772F3D0088910A /* Shimmer */,
+				1CA0F2422E7BE04800AC3F88 /* GoogleSignIn */,
+				1CA0F2442E7BE04800AC3F88 /* GoogleSignInSwift */,
 			);
 			productName = FreshWall;
 			productReference = 1C5435F62DE2223F00153F4F /* FreshWall.app */;
@@ -300,6 +306,7 @@
 				1C783F3C2E71E17E008AFA63 /* XCRemoteSwiftPackageReference "TinyStorage" */,
 				1CE7DC332E76B4EF0088910A /* XCRemoteSwiftPackageReference "Nuke" */,
 				1CE7DC402E772F3D0088910A /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
+				1CA0F2412E7BE04800AC3F88 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1C5435F72DE2223F00153F4F /* Products */;
@@ -521,9 +528,15 @@
 				FIREBASE_GOOGLE_SERVICE_PLIST = "$(FIREBASE_GOOGLE_SERVICE_PLIST)";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FreshWall-Dev-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				INFOPLIST_KEY_CFBundleDisplayName = "FreshWall Dev";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
-				INFOPLIST_KEY_NSCameraUsageDescription = "ability for user to take photos of the graffati";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Taking photos of the graffiti";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FreshWall connects to Firebase development servers on your local network for testing and development purposes. This includes authentication (port 9099), database (port 8080), and cloud functions (port 5001).";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "FreshWall needs location access to capture GPS coordinates for incident reports. This helps accurately track where graffiti removal work is performed for client documentation.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "FreshWall needs location access to capture GPS coordinates for incident reports. This helps accurately track where graffiti removal work is performed for client documentation.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FreshWall saves photos to your Camera Roll for backup and easy access outside the app.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "FreshWall accesses your photo library to organize incident photos in a dedicated FreshWall album.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -568,9 +581,15 @@
 				FIREBASE_GOOGLE_SERVICE_PLIST = "$(FIREBASE_GOOGLE_SERVICE_PLIST)";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FreshWall-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				INFOPLIST_KEY_CFBundleDisplayName = "FreshWall Dev";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
-				INFOPLIST_KEY_NSCameraUsageDescription = "ability for user to take photos of the graffati";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Taking photos of the graffiti";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FreshWall connects to Firebase development servers on your local network for testing and development purposes. This includes authentication (port 9099), database (port 8080), and cloud functions (port 5001).";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "FreshWall needs location access to capture GPS coordinates for incident reports. This helps accurately track where graffiti removal work is performed for client documentation.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "FreshWall needs location access to capture GPS coordinates for incident reports. This helps accurately track where graffiti removal work is performed for client documentation.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FreshWall saves photos to your Camera Roll for backup and easy access outside the app.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "FreshWall accesses your photo library to organize incident photos in a dedicated FreshWall album.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -772,9 +791,15 @@
 				FIREBASE_GOOGLE_SERVICE_PLIST = "$(FIREBASE_GOOGLE_SERVICE_PLIST)";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "FreshWall-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
+				INFOPLIST_KEY_CFBundleDisplayName = "FreshWall Dev";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
-				INFOPLIST_KEY_NSCameraUsageDescription = "ability for user to take photos of the graffati";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Taking photos of the graffiti";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "FreshWall connects to Firebase development servers on your local network for testing and development purposes. This includes authentication (port 9099), database (port 8080), and cloud functions (port 5001).";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "FreshWall needs location access to capture GPS coordinates for incident reports. This helps accurately track where graffiti removal work is performed for client documentation.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "FreshWall needs location access to capture GPS coordinates for incident reports. This helps accurately track where graffiti removal work is performed for client documentation.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "FreshWall saves photos to your Camera Roll for backup and easy access outside the app.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "FreshWall accesses your photo library to organize incident photos in a dedicated FreshWall album.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -927,6 +952,14 @@
 				minimumVersion = 1.0.17;
 			};
 		};
+		1CA0F2412E7BE04800AC3F88 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 		1CE7DC332E76B4EF0088910A /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke.git";
@@ -980,6 +1013,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1C783F3C2E71E17E008AFA63 /* XCRemoteSwiftPackageReference "TinyStorage" */;
 			productName = TinyStorage;
+		};
+		1CA0F2422E7BE04800AC3F88 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CA0F2412E7BE04800AC3F88 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		1CA0F2442E7BE04800AC3F88 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CA0F2412E7BE04800AC3F88 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
 		};
 		1CE7DC342E76B4EF0088910A /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

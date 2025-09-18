@@ -1,5 +1,18 @@
 import Foundation
 
+// MARK: - GoogleSignInOnboardingError
+
+enum GoogleSignInOnboardingError: LocalizedError {
+    case userNotInTeam
+
+    var errorDescription: String? {
+        switch self {
+        case .userNotInTeam:
+            "Please create a team or join an existing team to continue"
+        }
+    }
+}
+
 // MARK: - LoginManaging
 
 protocol LoginManaging: Sendable {
@@ -7,6 +20,8 @@ protocol LoginManaging: Sendable {
         email: String,
         password: String
     ) async throws
+
+    func signInWithGoogle() async throws
 
     func signUp(
         email: String,
@@ -18,6 +33,16 @@ protocol LoginManaging: Sendable {
     func signUp(
         email: String,
         password: String,
+        displayName: String,
+        teamCode: String
+    ) async throws
+
+    func createTeamForGoogleUser(
+        displayName: String,
+        teamName: String
+    ) async throws
+
+    func joinTeamForGoogleUser(
         displayName: String,
         teamCode: String
     ) async throws
@@ -68,6 +93,20 @@ struct LoginManager: LoginManaging {
         await sessionStore.startSession(session)
     }
 
+    func signInWithGoogle() async throws {
+        let firestoreUser = try await authService.signInWithGoogle()
+        do {
+            let session = try await sessionService.fetchUserRecord(for: firestoreUser)
+            await sessionStore.startSession(session)
+        } catch {
+            // User exists in Firebase Auth but not in any team - they need to be onboarded
+            if let nsError = error as NSError?, nsError.code == 404 {
+                throw GoogleSignInOnboardingError.userNotInTeam
+            }
+            throw error
+        }
+    }
+
     func signUp(
         email: String,
         password: String,
@@ -111,6 +150,48 @@ struct LoginManager: LoginManaging {
                 domain: "LoginManager",
                 code: -1,
                 userInfo: [NSLocalizedDescriptionKey: "User not logged in after sign up"]
+            )
+        }
+
+        let session = try await sessionService.fetchUserRecord(for: user)
+        await sessionStore.startSession(session)
+    }
+
+    func createTeamForGoogleUser(
+        displayName: String,
+        teamName: String
+    ) async throws {
+        _ = try await userService.createTeamForAuthenticatedUser(
+            displayName: displayName,
+            teamName: teamName
+        )
+
+        guard let user = authService.getCurrentUser() else {
+            throw NSError(
+                domain: "LoginManager",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "User not logged in after team creation"]
+            )
+        }
+
+        let session = try await sessionService.fetchUserRecord(for: user)
+        await sessionStore.startSession(session)
+    }
+
+    func joinTeamForGoogleUser(
+        displayName: String,
+        teamCode: String
+    ) async throws {
+        _ = try await userService.joinTeamForAuthenticatedUser(
+            displayName: displayName,
+            teamCode: teamCode
+        )
+
+        guard let user = authService.getCurrentUser() else {
+            throw NSError(
+                domain: "LoginManager",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "User not logged in after joining team"]
             )
         }
 
