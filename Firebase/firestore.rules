@@ -95,12 +95,8 @@ service cloud.firestore {
       // All team members can create incidents
       allow create: if isSignedIn() && isInTeam(teamId);
       
-      // Field workers can only update their own incidents
-      // Managers and admins can update any incident
-      allow update: if isSignedIn() && isInTeam(teamId) && 
-                   (canManageAllIncidents(teamId) || 
-                    resource.data.createdBy == request.auth.uid ||
-                    resource.data.assignedTo == request.auth.uid);
+      // All team members can update any incident
+      allow update: if isSignedIn() && isInTeam(teamId);
       
       // Only managers and admins can delete incidents
       allow delete: if isSignedIn() && canManageAllIncidents(teamId);
@@ -114,12 +110,8 @@ service cloud.firestore {
       // All team members can create incidents
       allow create: if isSignedIn() && isInTeam(teamId);
       
-      // Field workers can only update their own incidents
-      // Managers and admins can update any incident
-      allow update: if isSignedIn() && isInTeam(teamId) && 
-                   (canManageAllIncidents(teamId) || 
-                    resource.data.createdBy == request.auth.uid ||
-                    resource.data.assignedTo == request.auth.uid);
+      // All team members can update any incident
+      allow update: if isSignedIn() && isInTeam(teamId);
       
       // Only managers and admins can delete incidents
       allow delete: if isSignedIn() && canManageAllIncidents(teamId);
