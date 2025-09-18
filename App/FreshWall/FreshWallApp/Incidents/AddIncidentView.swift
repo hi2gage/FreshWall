@@ -37,6 +37,23 @@ struct AddIncidentView: View {
         }
     }
 
+    /// Whether to show the square footage field
+    private var shouldShowSquareFootage: Bool {
+        // Show if manual override is enabled and billing method is square footage
+        if viewModel.input.hasBillingConfiguration, viewModel.input.billingSource == .manual {
+            return viewModel.input.billingMethod == .squareFootage
+        }
+        // Show if client is selected and client's billing method is square footage
+        else if !viewModel.input.clientId.isEmpty, let selectedClient = viewModel.selectedClient {
+            return selectedClient.defaults?.billingMethod == .squareFootage
+        }
+        // Show if no client is selected and no manual override
+        else if viewModel.input.clientId.isEmpty, !viewModel.input.hasBillingConfiguration {
+            return true
+        }
+        return false
+    }
+
     var body: some View {
         Form {
             // MARK: - Photos Section (Top Priority)
@@ -88,6 +105,15 @@ struct AddIncidentView: View {
                     surfaceType: $viewModel.input.surfaceType,
                     customDescription: $viewModel.input.customSurfaceDescription
                 )
+            }
+
+            // MARK: - Area Section (conditional based on billing method)
+
+            if shouldShowSquareFootage {
+                Section("Area (sq ft)") {
+                    TextField("Area", text: $viewModel.input.areaText)
+                        .keyboardType(.decimalPad)
+                }
             }
 
             // MARK: - Location Section
