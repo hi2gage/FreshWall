@@ -21,11 +21,11 @@ struct EditIncidentView: View {
             return viewModel.billingMethod == .squareFootage
         }
         // Show if client is selected and client's billing method is square footage
-        else if !viewModel.clientId.isEmpty, let selectedClient = viewModel.selectedClient {
+        else if let clientId = viewModel.clientId, !clientId.isEmpty, let selectedClient = viewModel.selectedClient {
             return selectedClient.defaults?.billingMethod == .squareFootage
         }
         // Show if no client is selected and no manual override
-        else if viewModel.clientId.isEmpty, !viewModel.hasBillingConfiguration {
+        else if viewModel.clientId == nil, !viewModel.hasBillingConfiguration {
             return true
         }
         return false
@@ -56,7 +56,7 @@ struct EditIncidentView: View {
                 onClientChange: { newValue in
                     if newValue == addNewTag {
                         // For previews this does nothing. Real usage pushes via router.
-                        viewModel.clientId = ""
+                        viewModel.clientId = nil
                     }
                 }
             )
@@ -83,10 +83,9 @@ struct EditIncidentView: View {
 
             EditLocationSection(
                 enhancedLocation: viewModel.enhancedLocation,
-                onLocationCapture: { currentLocation, completion in
+                onLocationCapture: { currentLocation in
                     routerPath.presentLocationCapture(currentLocation: currentLocation, onLocationSelected: { newLocation in
                         viewModel.enhancedLocation = newLocation
-                        completion(newLocation)
                     })
                 }
             )
@@ -273,17 +272,18 @@ struct EditTimeStampsSection: View {
 
 /// Client selection section for edit incident view
 struct EditClientSelectionSection: View {
-    @Binding var clientId: String
+    @Binding var clientId: String?
     let validClients: [(id: String, name: String)]
     let addNewTag: String
-    let onClientChange: (String) -> Void
+    let onClientChange: (String?) -> Void
 
     var body: some View {
         Section("Client") {
             Picker("Select Client", selection: $clientId) {
+                Text("Select").tag(nil as String?)
                 Text("Add New Client...").tag(addNewTag)
                 ForEach(validClients, id: \.id) { item in
-                    Text(item.name).tag(item.id)
+                    Text(item.name).tag(item.id as String?)
                 }
             }
             .pickerStyle(.menu)
@@ -299,7 +299,7 @@ struct EditClientSelectionSection: View {
 /// Location section for edit incident view
 struct EditLocationSection: View {
     let enhancedLocation: IncidentLocation?
-    let onLocationCapture: (IncidentLocation?, @escaping (IncidentLocation?) -> Void) -> Void
+    let onLocationCapture: (IncidentLocation?) -> Void
 
     var body: some View {
         Section("Location") {
@@ -310,9 +310,7 @@ struct EditLocationSection: View {
                             .font(.headline)
                         Spacer()
                         Button("Edit") {
-                            onLocationCapture(enhancedLocation) { _ in
-                                // Update handled by parent through closure
-                            }
+                            onLocationCapture(enhancedLocation)
                         }
                     }
 
@@ -322,9 +320,7 @@ struct EditLocationSection: View {
                 }
             } else {
                 Button("📍 Capture Location") {
-                    onLocationCapture(nil) { _ in
-                        // Update handled by parent through closure
-                    }
+                    onLocationCapture(nil)
                 }
                 .foregroundColor(.blue)
             }

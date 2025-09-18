@@ -203,7 +203,7 @@ final class IncidentsListViewModel {
             return [(nil, sorted)]
         case .client:
             let groups = Dictionary(grouping: filteredIncidents) { incident in
-                incident.clientRef?.documentID ?? ""
+                incident.clientRef?.documentID
             }
             return groups
                 .map { key, value in

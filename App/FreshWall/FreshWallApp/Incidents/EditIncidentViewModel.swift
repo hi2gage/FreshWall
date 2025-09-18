@@ -8,7 +8,7 @@ import Observation
 @Observable
 final class EditIncidentViewModel {
     /// Selected client document ID.
-    var clientId: String
+    var clientId: String?
     /// Notes text.
     var description: String
     /// Area affected input as text.
@@ -66,7 +66,9 @@ final class EditIncidentViewModel {
 
     /// Validation: requires a client and description.
     var isValid: Bool {
-        !clientId.trimmingCharacters(in: .whitespaces).isEmpty &&
+        guard let clientId else { return false }
+
+        return !clientId.trimmingCharacters(in: .whitespaces).isEmpty &&
             !description.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
@@ -74,7 +76,7 @@ final class EditIncidentViewModel {
         incidentId = incident.id ?? ""
         service = incidentService
         self.clientService = clientService
-        clientId = incident.clientRef?.documentID ?? ""
+        clientId = incident.clientRef?.documentID
         description = incident.description
         areaText = String(incident.area)
         startTime = incident.startTime.dateValue()
@@ -126,7 +128,7 @@ final class EditIncidentViewModel {
         }
 
         let input = UpdateIncidentInput(
-            clientId: clientId.trimmingCharacters(in: .whitespaces),
+            clientId: clientId?.trimmingCharacters(in: .whitespaces),
             description: description,
             area: Double(areaText) ?? 0,
             startTime: startTime,
