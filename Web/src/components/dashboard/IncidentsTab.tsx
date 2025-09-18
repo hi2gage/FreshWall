@@ -260,7 +260,7 @@ export default function IncidentsTab() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2 text-gray-600">Loading incidents...</span>
+        <span className="ml-2 text-gray-600 dark:text-gray-400">Loading incidents...</span>
       </div>
     );
   }
@@ -270,8 +270,8 @@ export default function IncidentsTab() {
       {/* Header with filters */}
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Incidents</h3>
-          <p className="text-sm text-gray-600">Track and manage graffiti incidents</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Incidents</h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Track and manage graffiti incidents</p>
         </div>
 
         <div className="flex space-x-2">
@@ -282,7 +282,7 @@ export default function IncidentsTab() {
               className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                 filter === status
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
             >
               {status === 'all' ? 'All' :
@@ -295,12 +295,12 @@ export default function IncidentsTab() {
 
       {/* Incidents List */}
       {filteredIncidents.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
+        <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="text-4xl mb-4">📱</div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
             No incidents yet
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             Get started by downloading the FreshWall mobile app to track your first incident.
           </p>
           <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
@@ -308,49 +308,49 @@ export default function IncidentsTab() {
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700/20 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Photo
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Location
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Client
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Area
                   </th>
                   {canViewBilling && (
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Time Spent
                     </th>
                   )}
                   {canViewBilling && (
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Bill
                     </th>
                   )}
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Photos
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredIncidents.map((incident) => (
                   <tr
                     key={incident.id}
-                    className="hover:bg-gray-50 cursor-pointer"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                     onClick={() => handleViewIncident(incident)}
                   >
                     <td className="px-6 py-4">
@@ -365,34 +365,34 @@ export default function IncidentsTab() {
                             }}
                           />
                         ) : (
-                          <div className="h-12 w-12 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
-                            <span className="text-gray-400 text-xs">No photo</span>
+                          <div className="h-12 w-12 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center">
+                            <span className="text-gray-400 dark:text-gray-500 text-xs">No photo</span>
                           </div>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="max-w-xs">
-                        <div className="text-sm font-medium text-gray-900 truncate">
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                           {incident.enhancedLocation?.address || 'Location not available'}
                         </div>
                         {incident.description && (
-                          <div className="text-xs text-gray-500 mt-1 truncate">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
                             {incident.description}
                           </div>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 font-medium truncate max-w-32">
+                      <div className="text-sm text-gray-900 dark:text-gray-100 font-medium truncate max-w-32">
                         {incident.clientName}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                       {incident.area} sq ft
                     </td>
                     {canViewBilling && (
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                         {(() => {
                           if (!incident.startTime || !incident.endTime) return 'Unknown';
                           try {
@@ -414,7 +414,7 @@ export default function IncidentsTab() {
                       </td>
                     )}
                     {canViewBilling && (
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                         {(() => {
                           const bill = calculateBilling(incident);
                           if (bill === null) return 'Not configured';
@@ -465,23 +465,23 @@ export default function IncidentsTab() {
       {/* Summary Stats */}
       {incidents.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-gray-900">{incidents.length}</div>
-            <div className="text-sm text-gray-600">Total Incidents</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{incidents.length}</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Total Incidents</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
             <div className="text-2xl font-bold text-red-600">
               {incidents.filter(i => i.status === 'open').length}
             </div>
-            <div className="text-sm text-gray-600">Open</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Open</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
             <div className="text-2xl font-bold text-yellow-600">
               {incidents.filter(i => i.status === 'in_progress').length}
             </div>
-            <div className="text-sm text-gray-600">In Progress</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">In Progress</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
             <div className="text-2xl font-bold text-green-600">
               {incidents.filter(i => i.status === 'completed').length}
             </div>

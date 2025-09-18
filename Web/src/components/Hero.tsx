@@ -11,7 +11,7 @@ export function Hero() {
         <div className="space-x-4">
           <a
             href="/demo"
-            className="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors inline-block"
+            className="bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors inline-block"
           >
             Request a Demo
           </a>

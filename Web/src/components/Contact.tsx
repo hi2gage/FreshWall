@@ -8,11 +8,10 @@ export function Contact() {
           <div className="space-y-4">
             <a
               href="/demo"
-              className="bg-white bg-green-700 hover:bg-green-800 text-white font-bold py-4 px-8 rounded-lg text-xl transition-colors inline-block"
+              className="bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition-colors inline-block"
             >
               Request a Demo
             </a>
-            <p className="text-gray-300 text-lg">or email: info@freshwall.app</p>
           </div>
         </div>
       </section>
