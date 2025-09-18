@@ -15,7 +15,7 @@ export const updateThumbnailUrls = onCustomEventPublished(
   async (event) => {
     const { data } = event;
 
-    logger.info('updateThumbnailUrls v0.5 - Looking for 200x200 JPEG thumbnails', {
+    logger.info('updateThumbnailUrls v0.6 - Looking for 200x200 JPEG thumbnails', {
       functionVersion: '2.0',
       targetSize: '200x200',
       targetFormat: 'jpeg'

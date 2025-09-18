@@ -54,6 +54,8 @@ jobs:
         with:
           path: ~/.cache/firebase
           key: ${{ runner.os }}-firebase-cli
+          restore-keys: |
+            ${{ runner.os }}-firebase-
 
       - name: Install dependencies
         run: |
