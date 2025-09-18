@@ -299,6 +299,42 @@ final class AddIncidentViewModel {
         input.hasBillingConfiguration && input.billingMethod == .squareFootage
     }
 
+    /// Whether to show the square footage field
+    var shouldShowSquareFootage: Bool {
+        // Show if manual override is enabled and billing method is square footage
+        if input.hasBillingConfiguration, input.billingSource == .manual {
+            return input.billingMethod == .squareFootage
+        }
+        // Show if client is selected and client's billing method is square footage
+        else if let clientId = input.clientId, !clientId.isEmpty, let selectedClient {
+            return selectedClient.defaults?.billingMethod == .squareFootage
+        }
+        // Show if no client is selected and no manual override
+        else if input.clientId == nil, !input.hasBillingConfiguration {
+            return true
+        }
+        return false
+    }
+
+    /// Unit label for minimum quantity display
+    var quantityUnitLabel: String {
+        if input.billingMethod == .custom {
+            input.customUnitDescription.isEmpty ? "units" : input.customUnitDescription
+        } else {
+            input.billingMethod.unitLabel
+        }
+    }
+
+    /// Unit label for amount per unit display
+    var amountUnitLabel: String {
+        if input.billingMethod == .custom {
+            let customUnit = input.customUnitDescription.isEmpty ? "unit" : input.customUnitDescription
+            return "per \(customUnit)"
+        } else {
+            return "per \(input.billingMethod.unitLabel)"
+        }
+    }
+
     // MARK: - Photo Auto-Population
 
     /// Auto-populates incident data from photo metadata
