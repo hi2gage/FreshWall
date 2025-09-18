@@ -21,6 +21,8 @@ generate_plist() {
     local project_id_var="${env_name_upper}_FIREBASE_PROJECT_ID"
     local storage_bucket_var="${env_name_upper}_FIREBASE_STORAGE_BUCKET"
     local google_app_id_var="${env_name_upper}_FIREBASE_GOOGLE_APP_ID"
+    local client_id_var="${env_name_upper}_FIREBASE_CLIENT_ID"
+    local reversed_client_id_var="${env_name_upper}_FIREBASE_REVERSED_CLIENT_ID"
     
     # Use the env_name as-is to match Xcode build settings (Dev, Beta, Prod)
     local output_file="$PLIST_DIR/GoogleService-Info-${env_name}.plist"
@@ -49,10 +51,12 @@ generate_plist() {
     local project_id="${!project_id_var}"
     local storage_bucket="${!storage_bucket_var}"
     local google_app_id="${!google_app_id_var}"
-    
-    if [[ -z "$api_key" || -z "$gcm_sender_id" || -z "$project_id" || -z "$storage_bucket" || -z "$google_app_id" ]]; then
+    local client_id="${!client_id_var}"
+    local reversed_client_id="${!reversed_client_id_var}"
+
+    if [[ -z "$api_key" || -z "$gcm_sender_id" || -z "$project_id" || -z "$storage_bucket" || -z "$google_app_id" || -z "$client_id" || -z "$reversed_client_id" ]]; then
         echo "❌ Missing required environment variables for $env_name environment"
-        echo "Required variables: ${api_key_var}, ${gcm_sender_id_var}, ${project_id_var}, ${storage_bucket_var}, ${google_app_id_var}"
+        echo "Required variables: ${api_key_var}, ${gcm_sender_id_var}, ${project_id_var}, ${storage_bucket_var}, ${google_app_id_var}, ${client_id_var}, ${reversed_client_id_var}"
         return 1
     fi
     
@@ -63,6 +67,10 @@ generate_plist() {
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>$client_id</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>$reversed_client_id</string>
 	<key>API_KEY</key>
 	<string>$api_key</string>
 	<key>GCM_SENDER_ID</key>
@@ -76,15 +84,15 @@ generate_plist() {
 	<key>STORAGE_BUCKET</key>
 	<string>$storage_bucket</string>
 	<key>IS_ADS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_GCM_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>$google_app_id</string>
 </dict>
