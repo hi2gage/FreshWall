@@ -100,3 +100,4 @@ App/FreshWall/FreshWallApp/GoogleService-Info.plist
 
 # Git worktrees
 worktrees/
+.vercel
