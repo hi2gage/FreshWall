@@ -189,4 +189,21 @@ final class EditIncidentViewModel {
             minimumBillableQuantity != originalQuantity ||
             amountPerUnit != originalAmount
     }
+
+    /// Whether to show the square footage field
+    var shouldShowSquareFootage: Bool {
+        // Show if manual override is enabled and billing method is square footage
+        if hasBillingConfiguration, billingSource == .manual {
+            return billingMethod == .squareFootage
+        }
+        // Show if client is selected and client's billing method is square footage
+        else if let clientId, !clientId.isEmpty, let selectedClient {
+            return selectedClient.defaults?.billingMethod == .squareFootage
+        }
+        // Show if no client is selected and no manual override
+        else if clientId == nil, !hasBillingConfiguration {
+            return true
+        }
+        return false
+    }
 }

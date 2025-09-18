@@ -17,42 +17,6 @@ struct AddIncidentView: View {
         _viewModel = State(wrappedValue: viewModel)
     }
 
-    /// Unit label for minimum quantity display
-    private var quantityUnitLabel: String {
-        if viewModel.input.billingMethod == .custom {
-            viewModel.input.customUnitDescription.isEmpty ? "units" : viewModel.input.customUnitDescription
-        } else {
-            viewModel.input.billingMethod.unitLabel
-        }
-    }
-
-    /// Unit label for amount per unit display
-    private var amountUnitLabel: String {
-        if viewModel.input.billingMethod == .custom {
-            let customUnit = viewModel.input.customUnitDescription.isEmpty ? "unit" : viewModel.input.customUnitDescription
-            return "per \(customUnit)"
-        } else {
-            return "per \(viewModel.input.billingMethod.unitLabel)"
-        }
-    }
-
-    /// Whether to show the square footage field
-    private var shouldShowSquareFootage: Bool {
-        // Show if manual override is enabled and billing method is square footage
-        if viewModel.input.hasBillingConfiguration, viewModel.input.billingSource == .manual {
-            return viewModel.input.billingMethod == .squareFootage
-        }
-        // Show if client is selected and client's billing method is square footage
-        else if let clientId = viewModel.input.clientId, !clientId.isEmpty, let selectedClient = viewModel.selectedClient {
-            return selectedClient.defaults?.billingMethod == .squareFootage
-        }
-        // Show if no client is selected and no manual override
-        else if viewModel.input.clientId == nil, !viewModel.input.hasBillingConfiguration {
-            return true
-        }
-        return false
-    }
-
     var body: some View {
         Form {
             // MARK: - Photos Section (Top Priority)
@@ -105,7 +69,7 @@ struct AddIncidentView: View {
 
             // MARK: - Area Section (conditional based on billing method)
 
-            if shouldShowSquareFootage {
+            if viewModel.shouldShowSquareFootage {
                 AreaInputSection(areaText: $viewModel.input.areaText)
             }
 
@@ -122,8 +86,8 @@ struct AddIncidentView: View {
                 amountPerUnit: $viewModel.input.amountPerUnit,
                 customUnitDescription: $viewModel.input.customUnitDescription,
                 billingSource: $viewModel.input.billingSource,
-                quantityUnitLabel: quantityUnitLabel,
-                amountUnitLabel: amountUnitLabel,
+                quantityUnitLabel: viewModel.quantityUnitLabel,
+                amountUnitLabel: viewModel.amountUnitLabel,
                 selectedClientId: viewModel.input.clientId ?? "",
                 selectedClient: viewModel.selectedClient
             )
