@@ -5,35 +5,35 @@ const steps = [
     description: "Crews log jobs with photos and details in the mobile app."
   },
   {
-    step: "2", 
+    step: "2",
     title: "Track automatically",
     description: "Job data, timestamps, and materials are organized for you."
   },
   {
     step: "3",
-    title: "Bill faster", 
+    title: "Bill faster",
     description: "Generate invoices and PDF reports in minutes, not days."
   }
 ]
 
-export function Services() {
+export function ServicesDesktop() {
   return (
     <div className="w-full bg-white py-8">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
+      <div className="container mx-auto px-6">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
         </div>
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {steps.map((step, index) => (
             <div key={index} className="text-center">
               <div className="w-16 h-16 bg-blue-600 text-white text-2xl font-bold rounded-full flex items-center justify-center mx-auto mb-6">
                 {step.step}
               </div>
-              <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-3 md:mb-4">{step.title}</h3>
-              <p className="text-base md:text-lg text-gray-600 mb-4 md:mb-6">{step.description}</p>
+              <h3 className="text-2xl font-semibold text-gray-900 mb-4">{step.title}</h3>
+              <p className="text-lg text-gray-600 mb-6">{step.description}</p>
               <div className="flex justify-center">
                 {step.step === "1" && (
-                  <div className="w-40 md:w-48 bg-black rounded-[2.5rem] p-1.5 shadow-2xl">
+                  <div className="w-48 bg-black rounded-[2.5rem] p-1.5 shadow-2xl">
                     <div className="relative bg-black rounded-[2rem] overflow-hidden">
                       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-16 h-4 bg-black rounded-full z-10"></div>
                       <img
@@ -45,7 +45,7 @@ export function Services() {
                   </div>
                 )}
                 {step.step === "2" && (
-                  <div className="w-40 md:w-48 bg-black rounded-[2.5rem] p-1.5 shadow-2xl">
+                  <div className="w-48 bg-black rounded-[2.5rem] p-1.5 shadow-2xl">
                     <div className="relative bg-black rounded-[2rem] overflow-hidden">
                       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-16 h-4 bg-black rounded-full z-10"></div>
                       <img
@@ -57,7 +57,7 @@ export function Services() {
                   </div>
                 )}
                 {step.step === "3" && (
-                  <div className="w-40 md:w-48 bg-black rounded-[2.5rem] p-1.5 shadow-2xl">
+                  <div className="w-48 bg-black rounded-[2.5rem] p-1.5 shadow-2xl">
                     <div className="relative bg-black rounded-[2rem] overflow-hidden">
                       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-16 h-4 bg-black rounded-full z-10"></div>
                       <img

@@ -6,24 +6,17 @@ const benefits = [
   "No IT setup, no training required. Just download and go."
 ]
 
-const features = [
-  "Mobile job logging with photos.",
-  "Auto-generated invoices with line items.",
-  "PDF reports for customers or city programs.",
-  "Team roles with access control."
-]
-
-export function About() {
+export function AboutDesktop() {
   return (
     <div className="w-full bg-gray-50 py-8">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 md:mb-8">Benefits</h2>
+      <div className="container mx-auto px-6">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 mb-8">Benefits</h2>
         </div>
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <ul className="space-y-3 md:space-y-4 text-base md:text-lg text-gray-700">
+              <ul className="space-y-4 text-lg text-gray-700">
                 {benefits.slice(0, 3).map((benefit, index) => (
                   <li key={index} className="flex items-start">
                     <span className="text-blue-600 mr-4 text-xl">•</span>
@@ -33,7 +26,7 @@ export function About() {
               </ul>
             </div>
             <div>
-              <ul className="space-y-3 md:space-y-4 text-base md:text-lg text-gray-700">
+              <ul className="space-y-4 text-lg text-gray-700">
                 {benefits.slice(3).map((benefit, index) => (
                   <li key={index + 3} className="flex items-start">
                     <span className="text-blue-600 mr-4 text-xl">•</span>
