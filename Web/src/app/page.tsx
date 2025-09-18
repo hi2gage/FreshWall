@@ -25,7 +25,7 @@ export default function Home() {
 
   if (isMobile) {
     return (
-      <div className="light-mode-only">
+      <>
         <ViewportHeightFix />
         <main className="h-screen-safe overflow-y-auto snap-y snap-mandatory">
           <section className="min-h-screen-safe snap-start flex items-center">
@@ -50,12 +50,12 @@ export default function Home() {
             <ContactMobile />
           </section>
         </main>
-      </div>
+      </>
     )
   }
 
   return (
-    <div className="light-mode-only">
+    <>
       <ViewportHeightFix />
       <main className="h-screen-safe overflow-y-auto snap-y snap-mandatory">
         <section className="min-h-screen-safe snap-start flex items-center">
@@ -74,6 +74,6 @@ export default function Home() {
           <ContactDesktop />
         </section>
       </main>
-    </div>
+    </>
   )
 }

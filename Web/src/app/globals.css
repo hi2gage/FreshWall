@@ -43,22 +43,6 @@
     min-height: -webkit-fill-available;
   }
 
-  /* Force light mode on landing page */
-  .light-mode-only {
-    color: #171717 !important;
-    background: #ffffff !important;
-  }
-
-  .light-mode-only * {
-    color: inherit;
-  }
-
-  /* Override any dark mode attempts on landing page */
-  .light-mode-only .dark,
-  .light-mode-only[class*="dark"] {
-    color: #171717 !important;
-    background: #ffffff !important;
-  }
 }
 
 @layer utilities {

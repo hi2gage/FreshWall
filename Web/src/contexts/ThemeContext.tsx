@@ -13,42 +13,25 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('auto')
+  const [theme, setTheme] = useState<Theme>('light')
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
 
   useEffect(() => {
-    // Get saved theme from localStorage
-    const savedTheme = localStorage.getItem('theme') as Theme
-    if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
-      setTheme(savedTheme)
-    }
+    // Force light mode - ignore localStorage and system preferences
+    setTheme('light')
+    setResolvedTheme('light')
   }, [])
 
   useEffect(() => {
-    // Save theme to localStorage
-    localStorage.setItem('theme', theme)
-
-    // Update resolved theme
-    if (theme === 'auto') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-      setResolvedTheme(mediaQuery.matches ? 'dark' : 'light')
-
-      const handleChange = (e: MediaQueryListEvent) => {
-        setResolvedTheme(e.matches ? 'dark' : 'light')
-      }
-
-      mediaQuery.addEventListener('change', handleChange)
-      return () => mediaQuery.removeEventListener('change', handleChange)
-    } else {
-      setResolvedTheme(theme as 'light' | 'dark')
-    }
+    // Always force light mode
+    setResolvedTheme('light')
   }, [theme])
 
   useEffect(() => {
-    // Apply theme to document
+    // Apply light theme to document
     const root = document.documentElement
     root.classList.remove('light', 'dark')
-    root.classList.add(resolvedTheme)
+    root.classList.add('light')
   }, [resolvedTheme])
 
   return (
