@@ -1,13 +1,13 @@
-export function Hero() {
+export function HeroDesktop() {
   return (
     <div className="bg-white w-full py-8">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          <div className="text-center lg:text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+      <div className="container mx-auto px-6">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="text-left">
+            <h1 className="text-6xl font-bold text-gray-900 mb-6">
               Take the Graffiti Out of Your Paperwork
             </h1>
-            <p className="text-lg md:text-xl text-gray-700 mb-8">
+            <p className="text-xl text-gray-700 mb-8">
               FreshWall helps graffiti removal companies log jobs, capture photos, and generate invoices in minutes so your crew spends more time in the field, not buried in admin.
             </p>
             <div className="mb-8">
@@ -19,9 +19,9 @@ export function Hero() {
               <p>info@freshwall.app</p>
             </div>
           </div>
-          <div className="flex justify-center lg:justify-end">
+          <div className="flex justify-end">
             <div className="relative">
-              <div className="w-64 md:w-72 bg-black rounded-[3rem] p-2 shadow-2xl">
+              <div className="w-72 bg-black rounded-[3rem] p-2 shadow-2xl">
                 <div className="relative bg-black rounded-[2.5rem] overflow-hidden">
                   <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-20 h-6 bg-black rounded-full z-10"></div>
                   <img

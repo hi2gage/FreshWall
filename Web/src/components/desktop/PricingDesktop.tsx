@@ -1,35 +1,8 @@
-const faqItems = [
-  {
-    question: "Will this work for a small team?",
-    answer: "Yes. FreshWall is built for crews from 1 to 20 people."
-  },
-  {
-    question: "Do my crews need training?",
-    answer: "No. If they can take a photo and fill in a few fields, they're ready."
-  },
-  {
-    question: "Can we attach photos to invoices?",
-    answer: "Absolutely. Every invoice can include photo evidence of the work."
-  },
-  {
-    question: "How quickly can we get started?",
-    answer: "Right away. Sign up takes 2 minutes, then download the app and start logging jobs immediately."
-  },
-  {
-    question: "Can we customize invoices with our company logo?",
-    answer: "Yes. Add your logo, company colors, and contact information to create professional branded invoices."
-  },
-  {
-    question: "Can we set different rates for different types of jobs?",
-    answer: "Absolutely. Set custom rates for removal, cleaning, coating, or any service you offer."
-  },
-]
-
-export function Pricing() {
+export function PricingDesktop() {
   return (
     <div className="w-full bg-white py-8">
-      <div className="container mx-auto px-4 md:px-6 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 md:mb-12">Pricing</h2>
+      <div className="container mx-auto px-6 text-center">
+        <h2 className="text-4xl font-bold text-gray-900 mb-12">Pricing</h2>
 
         <div className="max-w-md mx-auto bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-6 border-2 border-blue-200">
           <div className="mb-4">
