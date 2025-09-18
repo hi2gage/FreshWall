@@ -41,9 +41,6 @@
         "firebase-debug.*.log",
         "*.local"
       ],
-      "predeploy": [
-        "./scripts/deploy-prep.sh"
-      ]
     }
   ],
   "extensions": {
