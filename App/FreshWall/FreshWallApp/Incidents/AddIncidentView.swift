@@ -9,7 +9,6 @@ struct AddIncidentView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(RouterPath.self) private var routerPath
     @State var viewModel: AddIncidentViewModel
-    private let addNewTag = "__ADD_NEW__"
     @State private var beforePhotos: [PickedPhoto] = []
     @State private var afterPhotos: [PickedPhoto] = []
 
@@ -84,10 +83,9 @@ struct AddIncidentView: View {
             ClientSelectionSection(
                 clientId: $viewModel.input.clientId,
                 validClients: viewModel.validClients,
-                addNewTag: addNewTag,
                 onClientChange: { newValue in
                     print("🔄 ClientSelectionSection.onClientChange called with: '\(newValue ?? "nil")'")
-                    if newValue == addNewTag {
+                    if newValue == IncidentFormConstants.addNewClientTag {
                         print("🔄 Add new client selected, navigating to add client")
                         routerPath.push(.addClient())
                         viewModel.input.clientId = nil
@@ -100,12 +98,10 @@ struct AddIncidentView: View {
 
             // MARK: - Surface Type Section
 
-            Section("Surface Type") {
-                SurfaceTypeSelectionView(
-                    surfaceType: $viewModel.input.surfaceType,
-                    customDescription: $viewModel.input.customSurfaceDescription
-                )
-            }
+            SurfaceTypeSection(
+                surfaceType: $viewModel.input.surfaceType,
+                customDescription: $viewModel.input.customSurfaceDescription
+            )
 
             // MARK: - Area Section (conditional based on billing method)
 
@@ -144,10 +140,7 @@ struct AddIncidentView: View {
 
             // MARK: - Materials Section
 
-            Section(header: Text("Materials Used")) {
-                TextEditor(text: $viewModel.input.materialsUsed)
-                    .frame(minHeight: 80)
-            }
+            MaterialsSection(materialsUsed: $viewModel.input.materialsUsed)
 
             // MARK: - Notes Section
 

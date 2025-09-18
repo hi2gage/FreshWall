@@ -9,7 +9,6 @@ struct EditIncidentView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: EditIncidentViewModel
-    private let addNewTag = "__ADD_NEW__"
 
     init(viewModel: EditIncidentViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -52,9 +51,8 @@ struct EditIncidentView: View {
             ClientSelectionSection(
                 clientId: $viewModel.clientId,
                 validClients: viewModel.validClients,
-                addNewTag: addNewTag,
                 onClientChange: { newValue in
-                    if newValue == addNewTag {
+                    if newValue == IncidentFormConstants.addNewClientTag {
                         // For previews this does nothing. Real usage pushes via router.
                         viewModel.clientId = nil
                     }
@@ -63,12 +61,10 @@ struct EditIncidentView: View {
 
             // MARK: - Surface Type Section
 
-            Section("Surface Type") {
-                SurfaceTypeSelectionView(
-                    surfaceType: $viewModel.surfaceType,
-                    customDescription: $viewModel.customSurfaceDescription
-                )
-            }
+            SurfaceTypeSection(
+                surfaceType: $viewModel.surfaceType,
+                customDescription: $viewModel.customSurfaceDescription
+            )
 
             // MARK: - Area Section (conditional based on billing method)
 
@@ -81,18 +77,18 @@ struct EditIncidentView: View {
             LocationSection(
                 enhancedLocation: viewModel.enhancedLocation,
                 onLocationCapture: { currentLocation in
-                    routerPath.presentLocationCapture(currentLocation: currentLocation, onLocationSelected: { newLocation in
-                        viewModel.enhancedLocation = newLocation
-                    })
+                    routerPath.presentLocationCapture(
+                        currentLocation: currentLocation,
+                        onLocationSelected: { newLocation in
+                            viewModel.enhancedLocation = newLocation
+                        }
+                    )
                 }
             )
 
             // MARK: - Materials Section
 
-            Section("Materials Used") {
-                TextEditor(text: $viewModel.materialsUsed)
-                    .frame(minHeight: 80)
-            }
+            MaterialsSection(materialsUsed: $viewModel.materialsUsed)
 
             // MARK: - Enhanced Notes Section
 
