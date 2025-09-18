@@ -28,7 +28,8 @@ struct RootView: View {
                 MainAppView(
                     sessionStore: AuthenticatedSessionStore(
                         sessionStore: sessionStore,
-                        session: session
+                        session: session,
+                        loginManager: loginManager
                     )
                 )
             } else {

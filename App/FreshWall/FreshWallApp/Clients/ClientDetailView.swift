@@ -179,9 +179,9 @@ struct ClientDetailView: View {
                         .foregroundColor(.secondary)
                 } else {
                     ForEach(incidents.sorted(by: { $0.startTime.dateValue() > $1.startTime.dateValue() })) { incident in
-                        Button(action: {
+                        Button {
                             routerPath.push(.incidentDetail(incident: incident))
-                        }) {
+                        } label: {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(incident.enhancedLocation?.address ?? "Unknown Address")

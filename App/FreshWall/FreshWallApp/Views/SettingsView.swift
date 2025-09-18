@@ -59,9 +59,11 @@ struct SettingsView: View {
                 }
                 .padding(.vertical, 4)
 
-                Button(action: {
-                    sessionStore.logout()
-                }) {
+                Button {
+                    Task {
+                        try await sessionStore.logout()
+                    }
+                } label: {
                     HStack {
                         Image(systemName: "rectangle.portrait.and.arrow.right")
                             .foregroundColor(.red)
@@ -175,6 +177,12 @@ struct SettingsView: View {
                         displayName: "John Doe",
                         teamId: "team123",
                         role: .admin
+                    ),
+                    loginManager: LoginManager(
+                        sessionStore: SessionStore(),
+                        authService: AuthService(),
+                        userService: UserService(),
+                        sessionService: SessionService()
                     )
                 )
             )

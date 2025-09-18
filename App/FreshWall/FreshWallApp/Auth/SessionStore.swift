@@ -28,8 +28,9 @@ class SessionStore {
 struct AuthenticatedSessionStore {
     let sessionStore: SessionStore
     let session: UserSession
+    let loginManager: LoginManager
 
-    func logout() {
-        sessionStore.logout()
+    func logout() async throws {
+        try await loginManager.signOut()
     }
 }

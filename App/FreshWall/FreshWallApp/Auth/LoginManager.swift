@@ -1,3 +1,4 @@
+@preconcurrency import FirebaseAuth
 import Foundation
 
 // MARK: - GoogleSignInOnboardingError
@@ -22,6 +23,8 @@ protocol LoginManaging: Sendable {
     ) async throws
 
     func signInWithGoogle() async throws
+
+    func signOut() async throws
 
     func signUp(
         email: String,
@@ -82,6 +85,14 @@ struct LoginManager: LoginManaging {
             // Optionally, sign out if invalid
             try? authService.signOut()
         }
+    }
+
+    func signOut() async throws {
+        // Clear the current session
+        await sessionStore.logout()
+
+        // Sign out from auth service (Firebase + Google)
+        try authService.signOut()
     }
 
     func signIn(

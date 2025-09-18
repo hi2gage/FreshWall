@@ -82,15 +82,15 @@ struct MainListView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        Button(action: {
+                        Button {
                             routerPath.push(.addIncident)
-                        }) {
-                            Image(systemName: "camera")
+                        } label: {
+                            Image(systemName: "plus")
                                 .font(.title)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.white)
                                 .frame(width: 68, height: 68)
-                                .background(Color.blue)
+                                .background(Color.brandGreen)
                                 .clipShape(Circle())
                                 .shadow(radius: 4, x: 0, y: 2)
                         }
@@ -103,9 +103,9 @@ struct MainListView: View {
         .navigationTitle("Dashboard")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
+                Button {
                     routerPath.push(.settings)
-                }) {
+                } label: {
                     Image(systemName: "gearshape.fill")
                         .foregroundColor(.blue)
                 }
@@ -120,7 +120,13 @@ struct MainListView: View {
             MainListView(
                 sessionStore: AuthenticatedSessionStore(
                     sessionStore: SessionStore(),
-                    session: .init(userId: "preview", displayName: "Preview User", teamId: "preview-team", role: .admin)
+                    session: .init(userId: "preview", displayName: "Preview User", teamId: "preview-team", role: .admin),
+                    loginManager: LoginManager(
+                        sessionStore: SessionStore(),
+                        authService: AuthService(),
+                        userService: UserService(),
+                        sessionService: SessionService()
+                    )
                 )
             )
         }
