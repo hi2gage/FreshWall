@@ -19,6 +19,8 @@ export const generateInviteCode = onCall(async (request) => {
       now.toMillis() + 7 * 24 * 60 * 60 * 1000 // 7 days from now
     );
 
+    console.log("🔍 Looking for user:", uid);
+
     // ✅ OPTIMIZED: Use collection group query to find user with admin/manager role
     const userQuery = await admin
       .firestore()
@@ -26,18 +28,29 @@ export const generateInviteCode = onCall(async (request) => {
       .where("role", "in", ["admin", "manager"])
       .get();
 
+    console.log("🔍 Found", userQuery.docs.length, "admin/manager users");
+    userQuery.docs.forEach(doc => {
+      console.log("🔍 User:", doc.id, "Role:", doc.data().role);
+    });
+
     // Find the user document that matches the authenticated user ID
     const userDoc = userQuery.docs.find(doc => doc.id === uid);
 
     if (!userDoc) {
+      console.log("❌ User not found in admin/manager list");
       throw new Error("User must be a team admin or manager to generate invite codes.");
     }
+
+    console.log("✅ Found user:", userDoc.id, "with role:", userDoc.data().role);
 
     const teamRef = userDoc.ref.parent.parent;
 
     if (!teamRef) {
+      console.log("❌ Invalid team reference");
       throw new Error("Invalid team reference.");
     }
+
+    console.log("✅ Team reference:", teamRef.id);
 
     // ✅ OPTIMIZED: Generate unique code with retry logic to prevent collisions
     let code: string;
@@ -62,13 +75,20 @@ export const generateInviteCode = onCall(async (request) => {
       attempts++;
     } while (true);
 
+    console.log("🔍 Starting transaction to create invite code:", code);
+
     // ✅ OPTIMIZED: Use transaction to ensure atomic code creation
     await admin.firestore().runTransaction(async (transaction) => {
+      console.log("🔍 Inside transaction, checking code existence");
+
       // Double-check the code doesn't exist in the transaction
       const codeCheck = await transaction.get(codeDoc);
       if (codeCheck.exists) {
+        console.log("❌ Code collision detected in transaction");
         throw new Error("Invite code collision detected.");
       }
+
+      console.log("🔍 Creating invite code document");
 
       transaction.set(codeDoc, {
         createdAt: FieldValue.serverTimestamp(),
@@ -78,7 +98,11 @@ export const generateInviteCode = onCall(async (request) => {
         usedCount: 0,
         role,
       });
+
+      console.log("✅ Transaction set completed");
     });
+
+    console.log("✅ Transaction completed successfully");
 
     // Generate join URL
     const baseUrl = process.env.WEB_BASE_URL || 'https://freshwall.app';
