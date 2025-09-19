@@ -8,7 +8,7 @@ const benefits = [
 
 export function AboutMobile() {
   return (
-    <div className="w-full bg-gray-50 py-8">
+    <div className="w-full min-h-screen-safe bg-gray-50 flex items-center justify-center">
       <div className="container mx-auto px-4">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Benefits</h2>

@@ -8,7 +8,7 @@ const benefits = [
 
 export function AboutDesktop() {
   return (
-    <div className="w-full bg-gray-50 py-8">
+    <div className="w-full min-h-screen-safe bg-gray-50 flex items-center justify-center">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-8">Benefits</h2>
