@@ -33,4 +33,14 @@ struct AuthenticatedSessionStore {
     func logout() async throws {
         try await loginManager.signOut()
     }
+
+    func updateDisplayName(_ newDisplayName: String) {
+        let updatedSession = UserSession(
+            userId: session.userId,
+            displayName: newDisplayName,
+            teamId: session.teamId,
+            role: session.role
+        )
+        sessionStore.startSession(updatedSession)
+    }
 }
