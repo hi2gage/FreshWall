@@ -234,6 +234,7 @@ final class AddIncidentViewModel {
         input.minimumBillableQuantity = String(defaults.minimumBillableQuantity)
         input.amountPerUnit = String(defaults.amountPerUnit)
         input.hasBillingConfiguration = true
+        input.billingSource = .client // Set source to client defaults, not manual
     }
 
     /// Check if billing values were overridden from client defaults
