@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import SignupForm from '@/components/auth/SignupForm';
+import JoinTeamForm from '@/components/auth/JoinTeamForm';
 import Link from 'next/link';
 
 export default function JoinTeamPage() {
@@ -65,7 +65,7 @@ export default function JoinTeamPage() {
               </div>
             </div>
 
-            <SignupForm onSuccess={handleSignupSuccess} />
+            <JoinTeamForm onSuccess={handleSignupSuccess} />
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
