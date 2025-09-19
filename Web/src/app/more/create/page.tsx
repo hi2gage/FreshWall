@@ -29,100 +29,81 @@ export default function CreateTeamPage() {
               <h1 className="text-4xl font-bold text-blue-600">FreshWall</h1>
             </Link>
 
-            {/* Back button */}
-            <div className="mb-8">
-              <Link
-                href="/more"
-                className="inline-flex items-center text-blue-600 hover:text-blue-700"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to choice
-              </Link>
-            </div>
-
             <h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl mb-6">
               Create Your Team
             </h2>
 
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              You'll be the team admin and manage billing for your FreshWall account.
+              You'll be the team admin and manage billing for your FreshWall Team.
             </p>
 
-            {/* Mobile app callout */}
-            <div className="bg-blue-100 border border-blue-200 rounded-lg p-3 max-w-sm mx-auto mb-8">
-              <div className="flex items-center justify-center space-x-2">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-                <span className="text-blue-800 font-medium text-sm">
-                  Return to iOS app after signup
-                </span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Pricing Section - Only for team creators */}
+      {/* Pricing and Signup Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-16">
           <h3 className="text-3xl font-bold text-gray-900 mb-8">Simple, Transparent Pricing</h3>
-
-          <div className="max-w-md mx-auto bg-white rounded-2xl p-8 border-2 border-blue-200 shadow-lg">
-            <div className="mb-6">
-              <h4 className="text-2xl font-bold text-gray-900 mb-2">Founding Customer Plan</h4>
-              <div className="text-4xl font-bold text-blue-600 mb-2">
-                $99<span className="text-lg text-gray-600">/month</span>
-              </div>
-              <div className="text-gray-600 line-through">regularly $149</div>
-              <div className="text-sm text-blue-600 font-medium mt-2">
-                🔒 Locked rate for first 10 companies
-              </div>
-            </div>
-
-            <ul className="space-y-3 text-left mb-8">
-              <li className="flex items-center text-gray-700">
-                <span className="text-blue-600 mr-3">✓</span>
-                Unlimited incidents with photos
-              </li>
-              <li className="flex items-center text-gray-700">
-                <span className="text-blue-600 mr-3">✓</span>
-                Team collaboration tools
-              </li>
-              <li className="flex items-center text-gray-700">
-                <span className="text-blue-600 mr-3">✓</span>
-                Professional client reports
-              </li>
-              <li className="flex items-center text-gray-700">
-                <span className="text-blue-600 mr-3">✓</span>
-                iOS & Web access
-              </li>
-              <li className="flex items-center text-gray-700">
-                <span className="text-blue-600 mr-3">✓</span>
-                Cancel anytime
-              </li>
-            </ul>
-          </div>
         </div>
 
-        {/* Signup Form */}
-        <div className="max-w-md mx-auto">
-          <div className="bg-white rounded-xl shadow-xl border-2 border-blue-100 p-8">
-            <h3 className="text-2xl font-bold text-gray-900 text-center mb-6">
-              Create Your Team
-            </h3>
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+          {/* Pricing Section - Only for team creators */}
+          <div className="order-1 lg:order-1">
+            <div className="max-w-md mx-auto bg-white rounded-2xl p-8 border-2 border-blue-200 shadow-lg">
+              <div className="mb-6">
+                <h4 className="text-2xl font-bold text-gray-900 mb-2">Founding Customer Plan</h4>
+                <div className="text-4xl font-bold text-blue-600 mb-2">
+                  $99<span className="text-lg text-gray-600">/month</span>
+                </div>
+                <div className="text-gray-600 line-through">regularly $149</div>
+                <div className="text-sm text-blue-600 font-medium mt-2">
+                  🔒 Locked rate for first 10 companies
+                </div>
+              </div>
 
-            <SignupForm onSuccess={handleSignupSuccess} />
+              <ul className="space-y-3 text-left mb-8">
+                <li className="flex items-center text-gray-700">
+                  <span className="text-blue-600 mr-3">✓</span>
+                  Unlimited incidents with photos
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <span className="text-blue-600 mr-3">✓</span>
+                  Team collaboration tools
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <span className="text-blue-600 mr-3">✓</span>
+                  Professional client reports
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <span className="text-blue-600 mr-3">✓</span>
+                  iOS & Web access
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <span className="text-blue-600 mr-3">✓</span>
+                  Cancel anytime
+                </li>
+              </ul>
+            </div>
+          </div>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Already have an account?{' '}
-                <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                  Sign in here
-                </Link>
-              </p>
+          {/* Signup Form */}
+          <div className="order-2 lg:order-2">
+            <div className="max-w-md mx-auto bg-white rounded-xl shadow-xl border-2 border-blue-100 p-8">
+              <h3 className="text-2xl font-bold text-gray-900 text-center mb-6">
+                Create Your Team
+              </h3>
+
+              <SignupForm onSuccess={handleSignupSuccess} />
+
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-600">
+                  Already have an account?{' '}
+                  <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+                    Sign in here
+                  </Link>
+                </p>
+              </div>
             </div>
           </div>
         </div>
