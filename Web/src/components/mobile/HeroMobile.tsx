@@ -28,7 +28,7 @@ export function HeroMobile() {
             <a href="/demo" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-5 rounded-lg text-sm transition-colors inline-block">
               Request a Demo
             </a>
-            <p className="text-gray-600 text-xs mt-3">info@freshwall.app</p>
+            <a href="mailto:info@freshwall.app" className="text-gray-600 text-xs mt-3 block hover:text-blue-600 transition-colors">info@freshwall.app</a>
           </div>
         </div>
       </div>

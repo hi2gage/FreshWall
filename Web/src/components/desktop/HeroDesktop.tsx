@@ -16,7 +16,7 @@ export function HeroDesktop() {
               </a>
             </div>
             <div className="text-gray-600 text-sm">
-              <p>info@freshwall.app</p>
+              <a href="mailto:info@freshwall.app" className="hover:text-blue-600 transition-colors">info@freshwall.app</a>
             </div>
           </div>
           <div className="flex justify-end">
