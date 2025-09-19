@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '@/lib/firebase';
@@ -9,14 +10,16 @@ interface JoinTeamFormProps {
   onSuccess?: () => void;
 }
 
-export default function JoinTeamForm({ onSuccess }: JoinTeamFormProps) {
+function JoinTeamFormInner({ onSuccess }: JoinTeamFormProps) {
   const { signUpWithEmail, signInWithGoogle } = useAuth();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [teamCode, setTeamCode] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isPreFilled, setIsPreFilled] = useState(false);
 
   const joinTeamCreateUser = httpsCallable(functions, 'joinTeamCreateUser');
 
@@ -25,6 +28,20 @@ export default function JoinTeamForm({ onSuccess }: JoinTeamFormProps) {
     const cleanCode = code.trim().toUpperCase();
     return /^[0-9A-F]{6}$/.test(cleanCode);
   };
+
+  // Auto-populate team code from URL parameters
+  useEffect(() => {
+    const teamCodeFromUrl = searchParams.get('teamCode');
+    if (teamCodeFromUrl) {
+      const cleanCode = teamCodeFromUrl.trim().toUpperCase();
+      if (isValidTeamCode(cleanCode)) {
+        setTeamCode(cleanCode);
+        setIsPreFilled(true);
+      } else {
+        setError('Invalid team code in URL. Please enter a valid 6-character code.');
+      }
+    }
+  }, [searchParams]);
 
   const handleTeamCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toUpperCase().trim();
@@ -114,6 +131,17 @@ export default function JoinTeamForm({ onSuccess }: JoinTeamFormProps) {
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
+        </div>
+      )}
+
+      {isPreFilled && !error && (
+        <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4">
+          <div className="flex items-center">
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Team code <strong>{teamCode}</strong> has been auto-filled from your invite link!</span>
+          </div>
         </div>
       )}
 
@@ -230,5 +258,16 @@ export default function JoinTeamForm({ onSuccess }: JoinTeamFormProps) {
         )}
       </div>
     </div>
+  );
+}
+
+export default function JoinTeamForm({ onSuccess }: JoinTeamFormProps) {
+  return (
+    <Suspense fallback={<div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+      <h2 className="text-2xl font-bold text-center mb-6 text-gray-900">Join Your Team</h2>
+      <div className="text-center py-4">Loading...</div>
+    </div>}>
+      <JoinTeamFormInner onSuccess={onSuccess} />
+    </Suspense>
   );
 }
