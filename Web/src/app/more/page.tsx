@@ -24,27 +24,6 @@ export default function MorePage() {
               <h1 className="text-4xl font-bold text-blue-600">FreshWall</h1>
             </Link>
 
-            <h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl mb-6">
-              Welcome iOS Users!
-            </h2>
-
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              Create your FreshWall account to start tracking graffiti incidents,
-              collaborating with your team, and generating professional client reports.
-            </p>
-
-            {/* Mobile app callout */}
-            <div className="bg-blue-100 border border-blue-200 rounded-lg p-3 max-w-sm mx-auto mb-8">
-              <div className="flex items-center justify-center space-x-2">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-                <span className="text-blue-800 font-medium text-sm">
-                  Return to iOS app after signup
-                </span>
-              </div>
-            </div>
-
             {/* User Choice - Step 1 */}
             <div className="max-w-2xl mx-auto">
               <h3 className="text-2xl font-bold text-gray-900 mb-8">
