@@ -65,7 +65,7 @@ export default function JoinTeamPage() {
               </div>
             </div>
 
-            <SignupForm onSuccess={handleSignupSuccess} isJoiningTeam={true} />
+            <SignupForm onSuccess={handleSignupSuccess} />
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
