@@ -11,92 +11,46 @@ export const generateInviteCode = onCall(async (request) => {
     }
 
     const uid = request.auth.uid;
+    const teamId: string = request.data.teamId;
     const role: string = request.data.role ?? "member";
     const maxUses: number = request.data.maxUses ?? 10;
+
+    if (!teamId) {
+      throw new Error("teamId is required.");
+    }
 
     const now = Timestamp.now();
     const expiresAt = Timestamp.fromMillis(
       now.toMillis() + 7 * 24 * 60 * 60 * 1000 // 7 days from now
     );
 
-    console.log("🔍 Looking for user:", uid);
+    console.log("🔍 Looking for user:", uid, "in team:", teamId);
 
-    // ✅ OPTIMIZED: Use collection group query to find user with admin/manager role
-    console.log("🔍 Starting collection group query...");
+    // ✅ DIRECT QUERY: Check user's role in the specific team
+    const userRef = admin.firestore()
+      .collection("teams")
+      .doc(teamId)
+      .collection("users")
+      .doc(uid);
 
-    let userQuery;
-    try {
-      userQuery = await admin
-        .firestore()
-        .collectionGroup("users")
-        .where("role", "in", ["admin", "manager"])
-        .get();
-      console.log("✅ Collection group query completed");
-    } catch (error) {
-      console.log("❌ Collection group query failed:", error);
-      // Fallback: try separate queries
-      console.log("🔄 Trying fallback queries...");
+    const userDoc = await userRef.get();
 
-      const adminQuery = await admin
-        .firestore()
-        .collectionGroup("users")
-        .where("role", "==", "admin")
-        .get();
-
-      const managerQuery = await admin
-        .firestore()
-        .collectionGroup("users")
-        .where("role", "==", "manager")
-        .get();
-
-      userQuery = {
-        docs: [...adminQuery.docs, ...managerQuery.docs]
-      };
-      console.log("✅ Fallback queries completed");
+    if (!userDoc.exists) {
+      console.log("❌ User not found in team:", teamId);
+      throw new Error("User not found in the specified team.");
     }
 
-    console.log("🔍 Found", userQuery.docs.length, "admin/manager users");
-    userQuery.docs.forEach(doc => {
-      console.log("🔍 User:", doc.id, "Role:", doc.data().role, "Path:", doc.ref.path);
-    });
+    const userData = userDoc.data();
+    const userRole = userData?.role;
 
-    // Find the user document that matches the authenticated user ID
-    const userDoc = userQuery.docs.find(doc => doc.id === uid);
+    console.log("✅ Found user:", uid, "with role:", userRole);
 
-    if (!userDoc) {
-      console.log("❌ User not found in admin/manager list");
-      console.log("🔍 Looking for UID:", uid);
-
-      // Fallback: try to find user without role restriction
-      const allUsersQuery = await admin
-        .firestore()
-        .collectionGroup("users")
-        .where(admin.firestore.FieldPath.documentId(), "==", uid)
-        .get();
-
-      console.log("🔍 Found", allUsersQuery.docs.length, "users with this UID");
-      allUsersQuery.docs.forEach(doc => {
-        console.log("🔍 User found:", doc.id, "Role:", doc.data().role, "Path:", doc.ref.path);
-      });
-
+    if (!userRole || !["admin", "manager"].includes(userRole)) {
+      console.log("❌ User role insufficient:", userRole);
       throw new Error("User must be a team admin or manager to generate invite codes.");
     }
 
-    console.log("✅ Found user:", userDoc.id, "with role:", userDoc.data().role);
-
-    const teamRef = userDoc.ref.parent.parent;
-
-    if (!teamRef) {
-      console.log("❌ Invalid team reference");
-      throw new Error("Invalid team reference.");
-    }
-
-    if (!teamRef.id) {
-      console.log("❌ Team reference has no ID");
-      console.log("🔍 teamRef:", teamRef);
-      console.log("🔍 userDoc.ref.path:", userDoc.ref.path);
-      throw new Error("Team reference has no ID.");
-    }
+    const teamRef = admin.firestore().collection("teams").doc(teamId);
 
     console.log("✅ Team reference:", teamRef.id);
 
