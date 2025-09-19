@@ -111,7 +111,11 @@ final class IncidentsListViewModel {
 
     /// Loads incidents from the service.
     func loadIncidents() async {
-        incidents = await (try? service.fetchIncidents()) ?? []
+        do {
+            incidents = try await service.fetchIncidents()
+        } catch {
+            incidents = []
+        }
     }
 
     /// Computed property for filtered incidents based on dropdown filters
@@ -160,14 +164,6 @@ final class IncidentsListViewModel {
                     let incidentDate = incident.startTime.dateValue()
                     return incidentDate >= dateRange.start && incidentDate < dateRange.end
                 }
-            }
-        }
-
-        // Apply role-based filtering for field workers
-        if userSession.role == .fieldWorker {
-            filtered = filtered.filter { incident in
-                incident.createdBy.documentID == userSession.userId
-                // TODO: Also check assigned workers when that field is added
             }
         }
 
