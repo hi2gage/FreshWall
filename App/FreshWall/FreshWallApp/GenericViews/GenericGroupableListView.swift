@@ -115,6 +115,8 @@ struct GenericGroupableListView<
     }
 }
 
+// MARK: - RouterDestination Extension
+
 extension GenericGroupableListView where Destination == RouterDestination {
     init(
         groups: [(title: String?, items: [Item])],

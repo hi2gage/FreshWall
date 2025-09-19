@@ -4,6 +4,7 @@ import SwiftUI
 /// The main dashboard view presenting navigation to various resource lists.
 struct MainListView: View {
     @Environment(RouterPath.self) private var routerPath
+    @State private var showingComingSoonAlert = false
 
     /// Called when the user taps "Log Out".
     let sessionStore: AuthenticatedSessionStore
@@ -58,18 +59,10 @@ struct MainListView: View {
                 }
 
                 // Admin/Manager specific features
-                if permissions.canViewAnalytics {
+                if permissions.canGenerateReports {
                     Section(header: Text("Management")) {
-                        if permissions.canGenerateReports {
-                            Button("Generate Reports") {
-                                // TODO: Navigate to reports view
-                            }
-                        }
-
-                        if permissions.canViewAnalytics {
-                            Button("Team Analytics") {
-                                // TODO: Navigate to analytics view
-                            }
+                        Button("Generate Reports") {
+                            showingComingSoonAlert = true
                         }
                     }
                 }
@@ -110,6 +103,11 @@ struct MainListView: View {
                         .foregroundColor(.blue)
                 }
             }
+        }
+        .alert("Coming Soon", isPresented: $showingComingSoonAlert) {
+            Button("OK") {}
+        } message: {
+            Text("Report generation feature is coming soon! Stay tuned for updates.")
         }
     }
 }

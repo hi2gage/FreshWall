@@ -120,11 +120,6 @@ struct ClientDetailView: View {
                     Spacer()
                     Text(client.createdAt.dateValue(), style: .date)
                 }
-                HStack {
-                    Text("Deleted?")
-                    Spacer()
-                    Text(client.isDeleted ? "Yes" : "No")
-                }
 
                 HStack {
                     Text("Last Incident")
@@ -141,71 +136,21 @@ struct ClientDetailView: View {
                 }
             }
 
-            Section("Billing Defaults") {
-                if let defaults = client.defaults {
-                    HStack {
-                        Text("Billing Method")
-                        Spacer()
-                        Text(defaults.billingMethod.displayName)
-                            .foregroundColor(.secondary)
-                    }
+            BillingDisplayView(
+                billing: BillingDisplayModel(client: client),
+                context: .clientDefaults
+            )
 
-                    HStack {
-                        Text("Minimum Billable Quantity")
-                        Spacer()
-                        Text("\(defaults.minimumBillableQuantity, specifier: "%.1f") \(defaults.billingMethod.unitLabel)")
-                            .foregroundColor(.secondary)
-                    }
-
-                    HStack {
-                        Text("Amount Per Unit")
-                        Spacer()
-                        Text("$\(defaults.amountPerUnit, specifier: "%.2f") per \(defaults.billingMethod.unitLabel)")
-                            .foregroundColor(.secondary)
-                    }
-                } else {
-                    Text("No billing defaults configured")
-                        .italic()
-                        .foregroundColor(.secondary)
+            GenericInlineListView(
+                items: incidents.sorted(by: { $0.startTime.dateValue() > $1.startTime.dateValue() }),
+                title: "Incidents",
+                isLoading: isLoadingIncidents,
+                emptyMessage: "No incidents for this client.",
+                routerDestination: { incident in .incidentDetail(incident: incident) },
+                content: { incident in
+                    IncidentListCell(incident: incident)
                 }
-            }
-
-            Section(header: Text("Incidents (\(isLoadingIncidents ? "..." : "\(incidents.count)"))")) {
-                if isLoadingIncidents {
-                    IncidentSkeletonRows()
-                } else if incidents.isEmpty {
-                    Text("No incidents for this client.")
-                        .italic()
-                        .foregroundColor(.secondary)
-                } else {
-                    ForEach(incidents.sorted(by: { $0.startTime.dateValue() > $1.startTime.dateValue() })) { incident in
-                        Button {
-                            routerPath.push(.incidentDetail(incident: incident))
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(incident.enhancedLocation?.address ?? "Unknown Address")
-                                        .font(.headline)
-                                        .foregroundColor(.primary)
-                                        .multilineTextAlignment(.leading)
-
-                                    Text(incident.startTime.dateValue().formatted(date: .abbreviated, time: .shortened))
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-
-                                Spacer()
-
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.secondary)
-                                    .font(.caption)
-                            }
-                            .padding(.vertical, 2)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-            }
+            )
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Client Details")
@@ -270,52 +215,29 @@ struct ClientDetailView: View {
     }
 }
 
-// MARK: - IncidentSkeletonRows
-
-/// Skeleton placeholder for incident rows while loading
-struct IncidentSkeletonRows: View {
-    var body: some View {
-        ForEach(0 ..< 3, id: \.self) { _ in
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Rectangle()
-                        .fill(Color(.systemGray4))
-                        .frame(height: 20)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .shimmering()
-
-                    Rectangle()
-                        .fill(Color(.systemGray5))
-                        .frame(height: 14)
-                        .frame(maxWidth: 120, alignment: .leading)
-                        .shimmering()
-                }
-
-                Spacer()
-
-                Rectangle()
-                    .fill(Color(.systemGray5))
-                    .frame(width: 8, height: 12)
-                    .shimmering()
-            }
-            .padding(.vertical, 2)
+#Preview {
+    let sampleClient = Client(
+        id: "client123",
+        name: "Bozeman",
+        notes: "Sample notes",
+        defaults: .init(
+            billingMethod: .time,
+            minimumBillableQuantity: 0.5,
+            amountPerUnit: 80,
+            timeRounding: .some(.default)
+        ),
+        isDeleted: false,
+        deletedAt: nil,
+        createdAt: Timestamp(date: Date()),
+        lastIncidentAt: Timestamp(date: Date())
+    )
+    FreshWallPreview {
+        NavigationStack {
+            ClientDetailView(
+                client: sampleClient,
+                incidentService: PreviewIncidentService(),
+                clientService: PreviewClientService()
+            )
         }
     }
 }
-
-//
-// #Preview {
-//    let sampleClient = Client(
-//        id: "client123",
-//        name: "Test Client",
-//        notes: "Sample notes",
-//        isDeleted: false,
-//        deletedAt: nil,
-//        createdAt: Timestamp(date: Date())
-//    )
-//    FreshWallPreview {
-//        NavigationStack {
-//            ClientDetailView(client: sampleClient)
-//        }
-//    }
-// }
