@@ -30,7 +30,7 @@ export const generateInviteCode = onCall(async (request) => {
 
     console.log("🔍 Found", userQuery.docs.length, "admin/manager users");
     userQuery.docs.forEach(doc => {
-      console.log("🔍 User:", doc.id, "Role:", doc.data().role);
+      console.log("🔍 User:", doc.id, "Role:", doc.data().role, "Path:", doc.ref.path);
     });
 
     // Find the user document that matches the authenticated user ID
@@ -38,6 +38,20 @@ export const generateInviteCode = onCall(async (request) => {
 
     if (!userDoc) {
       console.log("❌ User not found in admin/manager list");
+      console.log("🔍 Looking for UID:", uid);
+
+      // Fallback: try to find user without role restriction
+      const allUsersQuery = await admin
+        .firestore()
+        .collectionGroup("users")
+        .where(admin.firestore.FieldPath.documentId(), "==", uid)
+        .get();
+
+      console.log("🔍 Found", allUsersQuery.docs.length, "users with this UID");
+      allUsersQuery.docs.forEach(doc => {
+        console.log("🔍 User found:", doc.id, "Role:", doc.data().role, "Path:", doc.ref.path);
+      });
+
       throw new Error("User must be a team admin or manager to generate invite codes.");
     }
 
@@ -48,6 +62,13 @@ export const generateInviteCode = onCall(async (request) => {
     if (!teamRef) {
       console.log("❌ Invalid team reference");
       throw new Error("Invalid team reference.");
+    }
+
+    if (!teamRef.id) {
+      console.log("❌ Team reference has no ID");
+      console.log("🔍 teamRef:", teamRef);
+      console.log("🔍 userDoc.ref.path:", userDoc.ref.path);
+      throw new Error("Team reference has no ID.");
     }
 
     console.log("✅ Team reference:", teamRef.id);
