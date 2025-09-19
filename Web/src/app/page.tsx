@@ -1,7 +1,6 @@
 'use client'
 
 import { ViewportHeightFix } from '@/components/ViewportHeightFix'
-import { useIsMobile } from '@/hooks/useIsMobile'
 
 // Mobile Components
 import { HeroMobile } from '@/components/mobile/HeroMobile'
@@ -20,44 +19,37 @@ import { PricingDesktop } from '@/components/desktop/PricingDesktop'
 import { ContactDesktop } from '@/components/desktop/ContactDesktop'
 
 export default function Home() {
-  const isMobile = useIsMobile()
-
-
-  if (isMobile) {
-    return (
-      <>
-        <ViewportHeightFix />
-        <main className="h-screen-safe overflow-y-auto snap-y snap-mandatory">
-          <section className="min-h-screen-safe snap-start flex items-center">
-            <HeroMobile />
-          </section>
-          <section className="min-h-screen-safe snap-start flex items-center">
-            <Step1Mobile />
-          </section>
-          <section className="min-h-screen-safe snap-start flex items-center">
-            <Step2Mobile />
-          </section>
-          <section className="min-h-screen-safe snap-start flex items-center">
-            <Step3Mobile />
-          </section>
-          <section className="min-h-screen-safe snap-start">
-            <AboutMobile />
-          </section>
-          <section className="min-h-screen-safe snap-start flex items-center">
-            <PricingMobile />
-          </section>
-          <section className="min-h-screen-safe snap-start">
-            <ContactMobile />
-          </section>
-        </main>
-      </>
-    )
-  }
-
   return (
     <>
-      <ViewportHeightFix />
-      <main className="h-screen-safe overflow-y-auto snap-y snap-mandatory">
+      {/* <ViewportHeightFix /> */}
+
+      {/* Mobile Layout */}
+      <main className="block lg:hidden h-screen-safe overflow-y-auto snap-y snap-mandatory">
+        <section className="h-screen-safe snap-start flex items-center" style={{scrollSnapStop: 'always'}}>
+          <HeroMobile />
+        </section>
+        <section className="h-screen-safe snap-start flex items-center" style={{scrollSnapStop: 'always'}}>
+          <Step1Mobile />
+        </section>
+        <section className="h-screen-safe snap-start flex items-center" style={{scrollSnapStop: 'always'}}>
+          <Step2Mobile />
+        </section>
+        <section className="h-screen-safe snap-start flex items-center" style={{scrollSnapStop: 'always'}}>
+          <Step3Mobile />
+        </section>
+        <section className="min-h-screen-safe snap-start">
+          <AboutMobile />
+        </section>
+        <section className="min-h-screen-safe snap-start flex items-center">
+          <PricingMobile />
+        </section>
+        <section className="min-h-screen-safe snap-start">
+          <ContactMobile />
+        </section>
+      </main>
+
+      {/* Desktop Layout */}
+      <main className="hidden lg:block h-screen-safe overflow-y-auto snap-y snap-mandatory">
         <section className="min-h-screen-safe snap-start flex items-center">
           <HeroDesktop />
         </section>
