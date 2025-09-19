@@ -23,6 +23,7 @@ enum EnvironmentType: String, CaseIterable {
 struct SettingsView: View {
     let sessionStore: AuthenticatedSessionStore
     @State private var showingRestartAlert = false
+    @Environment(RouterPath.self) private var router
 
     // Environment type selection
     @State private var environmentType: EnvironmentType = switch FirebaseConfiguration.currentMode {
@@ -44,18 +45,20 @@ struct SettingsView: View {
         List {
             // User Section
             Section(header: Text("Account")) {
-                HStack {
-                    Image(systemName: "person.circle.fill")
-                        .foregroundColor(.blue)
-                        .font(.title2)
-                    VStack(alignment: .leading) {
-                        Text(sessionStore.session.displayName)
-                            .font(.headline)
-                        Text("Team Member")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                NavigationLink(value: RouterDestination.editProfile) {
+                    HStack {
+                        Image(systemName: "person.circle.fill")
+                            .foregroundColor(.blue)
+                            .font(.title2)
+                        VStack(alignment: .leading) {
+                            Text(sessionStore.session.displayName)
+                                .font(.headline)
+                            Text("Tap to edit name")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
                     }
-                    Spacer()
                 }
                 .padding(.vertical, 4)
 
@@ -187,5 +190,6 @@ struct SettingsView: View {
                 )
             )
         }
+        .environment(RouterPath())
     }
 }

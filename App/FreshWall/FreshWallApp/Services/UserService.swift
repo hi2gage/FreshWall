@@ -218,4 +218,48 @@ struct UserService {
             deletedAt: nil
         )
     }
+
+    /// Updates the current user's profile information.
+    ///
+    /// - Parameters:
+    ///   - displayName: New display name for the user.
+    ///   - teamId: The team ID where the user's document exists.
+    func updateProfile(displayName: String, teamId: String) async throws {
+        guard let currentUser = auth.currentUser else {
+            throw NSError(
+                domain: "UserService",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "No authenticated user found"]
+            )
+        }
+
+        let trimmedDisplayName = displayName.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !trimmedDisplayName.isEmpty else {
+            throw NSError(
+                domain: "UserService",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Display name cannot be empty"]
+            )
+        }
+        guard trimmedDisplayName.count <= 100 else {
+            throw NSError(
+                domain: "UserService",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Display name cannot exceed 100 characters"]
+            )
+        }
+
+        let userDocRef = Firestore.firestore()
+            .collection("teams")
+            .document(teamId)
+            .collection("users")
+            .document(currentUser.uid)
+
+        try await userDocRef.updateData([
+            "displayName": trimmedDisplayName,
+            "lastModified": FieldValue.serverTimestamp(),
+            "lastModifiedBy": currentUser.uid,
+        ])
+    }
 }

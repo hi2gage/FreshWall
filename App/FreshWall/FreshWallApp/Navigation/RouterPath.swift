@@ -68,6 +68,8 @@ enum RouterDestination: Hashable {
     case photoViewer(context: PhotoViewerContext)
     /// Settings screen.
     case settings
+    /// Edit profile screen.
+    case editProfile
     /// Debug settings screen.
     case debugSettings
     /// Persistence debug screen.
@@ -106,6 +108,8 @@ enum RouterDestination: Hashable {
         case let (.photoViewer(lhsContext), .photoViewer(rhsContext)):
             lhsContext.selectedPhoto == rhsContext.selectedPhoto
         case (.settings, .settings):
+            true
+        case (.editProfile, .editProfile):
             true
         case (.debugSettings, .debugSettings):
             true
@@ -154,6 +158,8 @@ enum RouterDestination: Hashable {
             hasher.combine(context.selectedPhoto)
         case .settings:
             hasher.combine("settings")
+        case .editProfile:
+            hasher.combine("editProfile")
         case .debugSettings:
             hasher.combine("debugSettings")
         case .persistenceDebug:
@@ -246,6 +252,10 @@ extension View {
                 PhotoViewer(photos: context.photos, selectedPhoto: context.selectedPhoto)
             case .settings:
                 SettingsView(
+                    sessionStore: sessionStore
+                )
+            case .editProfile:
+                EditProfileView(
                     sessionStore: sessionStore
                 )
             case .debugSettings:
