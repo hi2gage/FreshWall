@@ -51,7 +51,7 @@ AI agents should understand and respect the separation between frontend (Swift c
 
 - Language: Swift 5.9+ with Swift Concurrency
 - UI: SwiftUI (MVVM architecture)
-- Naming: 
+- Naming:
   - Files and types use `PascalCase`
   - Variables and functions use `camelCase`
 - Model Types must conform to `Codable` and reflect Firestore schema
@@ -60,9 +60,20 @@ AI agents should understand and respect the separation between frontend (Swift c
 - Whenever you reference Firestore types such as `Firestore.firestore` you must add `@preconcurrency import FirebaseFirestore`
 - Whenever you reference `FirebaseAuth` you must add `@preconcurrency import FirebaseAuth`
 - Whenever you reference `Functions` you must add `@preconcurrency import FirebaseFunctions`
-- Do not use `PreviewProvider` for SwiftUi previews. Use `#Preview`. 
+- Do not use `PreviewProvider` for SwiftUi previews. Use `#Preview`.
   - Also add the `FreshWallPreview {}` view builder around all SwiftUI previews
 - All ViewModels @Observable and @MainActor
+
+#### Navigation Requirements
+**CRITICAL: Navigation must use RouterPath - NEVER use sheets or showingX = true for navigation**
+- All navigation MUST use `NavigationLink(value: RouterDestination.xxx)` pattern
+- There are two router types:
+  - `LoginRouterPath` - For unauthenticated screens (login, signup, etc.)
+  - `RouterPath` - For authenticated app screens
+- DO NOT use `.sheet()` or `@State private var showingX = false` for navigation to new screens
+- All new screens must be added to the appropriate RouterDestination enum
+- Navigation should be consistent and follow the established router pattern
+- Alerts are fine for confirmations, errors, and simple user interactions
 
 > AI agents must prefer functional, composable code. Avoid global state and `DispatchQueue` unless interacting with legacy APIs.
 
