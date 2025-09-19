@@ -4,7 +4,22 @@ import Foundation
 // MARK: - InviteCodeGenerating
 
 protocol InviteCodeGenerating: Sendable {
-    func generateInviteCode(role: UserRole, maxUses: Int) async throws -> String
+    func generateInviteCode(teamId: String, role: UserRole, maxUses: Int) async throws -> InviteCode
+}
+
+// MARK: - MockInviteCodeGenerator
+
+struct MockInviteCodeGenerator: InviteCodeGenerating {
+    func generateInviteCode(teamId _: String, role _: UserRole, maxUses _: Int) async throws -> InviteCode {
+        InviteCode(
+            code: "A5883E",
+            expiresAt: .distantFuture,
+            joinUrl: "https://freshwall.app/more/join?teamCode=A5883E",
+            teamId: "A5883E",
+            role: .manager,
+            maxUses: 10
+        )
+    }
 }
 
 // MARK: - InviteCodeService
@@ -15,21 +30,45 @@ struct InviteCodeService: InviteCodeGenerating {
     init() {}
 
     func generateInviteCode(
+        teamId: String,
         role: UserRole = .fieldWorker,
         maxUses: Int = 10
-    ) async throws -> String {
+    ) async throws -> InviteCode {
         let result = try await functions.httpsCallable("generateInviteCode").call([
+            "teamId": teamId,
             "role": role.rawValue,
             "maxUses": maxUses,
         ])
-        guard let data = result.data as? [String: Any], let code = data["code"] as? String else {
-            throw NSError(
-                domain: "InviteCodeService",
-                code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid response from generateInviteCode"]
-            )
+
+        guard let data = result.data as? [String: Any] else {
+            throw InviteCodeError.invalidResponse("No data received from generateInviteCode")
         }
 
-        return code
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: data)
+            let dto = try JSONDecoder().decode(InviteCodeResponseDTO.self, from: jsonData)
+            return InviteCode(from: dto)
+        } catch {
+            throw InviteCodeError.parsingError("Failed to parse invite code response: \(error.localizedDescription)")
+        }
+    }
+}
+
+// MARK: - InviteCodeError
+
+enum InviteCodeError: LocalizedError {
+    case invalidResponse(String)
+    case parsingError(String)
+    case networkError(String)
+
+    var errorDescription: String? {
+        switch self {
+        case let .invalidResponse(message):
+            "Invalid response: \(message)"
+        case let .parsingError(message):
+            "Parsing error: \(message)"
+        case let .networkError(message):
+            "Network error: \(message)"
+        }
     }
 }

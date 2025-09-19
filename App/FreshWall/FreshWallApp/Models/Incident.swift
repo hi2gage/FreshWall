@@ -34,6 +34,52 @@ struct Incident: Identifiable, Hashable, Sendable {
     var customSurfaceDescription: String?
     /// Billing configuration for this incident
     var billing: IncidentBilling?
+
+    init(
+        id: String? = nil,
+        clientRef: DocumentReference? = nil,
+        description: String,
+        area: Double,
+        location: GeoPoint? = nil,
+        createdAt: Timestamp,
+        startTime: Timestamp,
+        endTime: Timestamp,
+        beforePhotos: [IncidentPhoto],
+        afterPhotos: [IncidentPhoto],
+        createdBy: DocumentReference,
+        lastModifiedBy: DocumentReference? = nil,
+        lastModifiedAt: Timestamp? = nil,
+        rate: Double? = nil,
+        materialsUsed: String? = nil,
+        status: IncidentStatus? = nil,
+        enhancedLocation: IncidentLocation? = nil,
+        surfaceType: SurfaceType? = nil,
+        enhancedNotes: IncidentNotes? = nil,
+        customSurfaceDescription: String? = nil,
+        billing: IncidentBilling? = nil
+    ) {
+        self.id = id
+        self.clientRef = clientRef
+        self.description = description
+        self.area = area
+        self.location = location
+        self.createdAt = createdAt
+        self.startTime = startTime
+        self.endTime = endTime
+        self.beforePhotos = beforePhotos
+        self.afterPhotos = afterPhotos
+        self.createdBy = createdBy
+        self.lastModifiedBy = lastModifiedBy
+        self.lastModifiedAt = lastModifiedAt
+        self.rate = rate
+        self.materialsUsed = materialsUsed
+        self.status = status
+        self.enhancedLocation = enhancedLocation
+        self.surfaceType = surfaceType
+        self.enhancedNotes = enhancedNotes
+        self.customSurfaceDescription = customSurfaceDescription
+        self.billing = billing
+    }
 }
 
 extension Incident {

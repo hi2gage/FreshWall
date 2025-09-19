@@ -242,7 +242,10 @@ extension View {
                     currentUserId: currentUserId
                 )
             case .inviteMember:
-                InviteMemberView(service: InviteCodeService())
+                InviteMemberView(
+                    userSession: userSession,
+                    service: InviteCodeService()
+                )
             case let .memberDetail(member):
                 MemberDetailView(
                     member: member,

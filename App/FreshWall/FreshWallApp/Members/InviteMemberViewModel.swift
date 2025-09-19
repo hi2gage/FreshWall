@@ -1,33 +1,55 @@
 import Foundation
 import Observation
 
+// MARK: - LoadingState
+
+enum LoadingState<Value> {
+    case idle
+    case loading
+    case success(Value)
+    case failure(Error)
+}
+
+// MARK: - InviteMemberViewModel
+
 @MainActor
 @Observable
 final class InviteMemberViewModel {
-    var code: String?
+    // MARK: - Published State
+
+    var state: LoadingState<InviteCode> = .idle
+
+    // MARK: - Dependencies
+
     private let service: InviteCodeGenerating
+
+    // MARK: - Initialization
 
     init(service: InviteCodeGenerating) {
         self.service = service
     }
 
-    func generate() async {
+    // MARK: - Actions
+
+    func generateInviteCode(teamId: String, for role: UserRole = .fieldWorker, maxUses: Int = 10) async {
+        state = .loading
+
         do {
-            code = try await service.generateInviteCode(
-                role: .fieldWorker,
-                maxUses: 10
-            )
+            let inviteCode = try await service.generateInviteCode(teamId: teamId, role: role, maxUses: maxUses)
+            state = .success(inviteCode)
         } catch {
-            code = nil
+            state = .failure(error)
         }
     }
 
-    var shareMessage: String {
-        """
-        Join our graffiti removal team on FreshWall!
+    func retryGeneration(teamId: String) async {
+        await generateInviteCode(teamId: teamId)
+    }
 
-        1. Download the app: https://apps.apple.com/us/app/freshwall/id123456789
-        2. Use this code when signing up: \(code ?? "")
-        """
+    // MARK: - Computed Properties
+
+    var isLoading: Bool {
+        if case .loading = state { return true }
+        return false
     }
 }
