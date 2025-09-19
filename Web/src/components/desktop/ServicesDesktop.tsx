@@ -35,7 +35,6 @@ export function ServicesDesktop() {
                 {step.step === "1" && (
                   <div className="w-48 bg-black rounded-[2.5rem] p-1.5 shadow-2xl">
                     <div className="relative bg-black rounded-[2rem] overflow-hidden">
-                      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-16 h-4 bg-black rounded-full z-10"></div>
                       <img
                         src="/add-incident.png"
                         alt="Add Incident Screen"
@@ -47,7 +46,6 @@ export function ServicesDesktop() {
                 {step.step === "2" && (
                   <div className="w-48 bg-black rounded-[2.5rem] p-1.5 shadow-2xl">
                     <div className="relative bg-black rounded-[2rem] overflow-hidden">
-                      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-16 h-4 bg-black rounded-full z-10"></div>
                       <img
                         src="/incidents-list.png"
                         alt="Incidents List Screen"
@@ -59,7 +57,6 @@ export function ServicesDesktop() {
                 {step.step === "3" && (
                   <div className="w-48 bg-black rounded-[2.5rem] p-1.5 shadow-2xl">
                     <div className="relative bg-black rounded-[2rem] overflow-hidden">
-                      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-16 h-4 bg-black rounded-full z-10"></div>
                       <img
                         src="/incident-details.png"
                         alt="Incident Details Screen"

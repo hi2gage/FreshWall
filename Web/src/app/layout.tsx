@@ -8,6 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'FreshWall',
   description: 'Professional graffiti removal services',
+  viewport: 'viewport-fit=cover, width=device-width, initial-scale=1.0',
 }
 
 export default function RootLayout({

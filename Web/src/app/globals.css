@@ -6,6 +6,7 @@
   --background: #ffffff;
   --foreground: #171717;
   --vh: 1vh;
+  color-scheme: light only;
 }
 
 /* Light theme (default) */
@@ -20,11 +21,12 @@
   --foreground: #ededed;
 }
 
-/* Auto theme - fallback to system preference when no class is set */
+/* Force light mode - disable dark mode completely */
 @media (prefers-color-scheme: dark) {
-  :root:not(.light):not(.dark) {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root {
+    --background: #ffffff !important;
+    --foreground: #171717 !important;
+    color-scheme: light only !important;
   }
 }
 
@@ -41,6 +43,8 @@
     transition: background-color 0.2s ease, color 0.2s ease;
     min-height: 100vh;
     min-height: -webkit-fill-available;
+    /* Safe area support for iPhone notch */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
 
 }

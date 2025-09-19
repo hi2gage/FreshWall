@@ -22,12 +22,11 @@ export function HeroDesktop() {
           <div className="flex justify-end">
             <div className="relative">
               <div className="w-72 bg-black rounded-[3rem] p-2 shadow-2xl">
-                <div className="relative bg-black rounded-[2.5rem] overflow-hidden">
-                  <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-20 h-6 bg-black rounded-full z-10"></div>
+                <div className="relative bg-black rounded-[2rem] overflow-hidden">
                   <img
                     src="/dashboard-screenshot.png"
                     alt="FreshWall iPhone App Dashboard"
-                    className="w-full h-auto rounded-[2.5rem]"
+                    className="w-full h-auto rounded-[2rem]"
                   />
                 </div>
               </div>
