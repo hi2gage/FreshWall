@@ -22,11 +22,38 @@ export const generateInviteCode = onCall(async (request) => {
     console.log("🔍 Looking for user:", uid);
 
     // ✅ OPTIMIZED: Use collection group query to find user with admin/manager role
-    const userQuery = await admin
-      .firestore()
-      .collectionGroup("users")
-      .where("role", "in", ["admin", "manager"])
-      .get();
+    console.log("🔍 Starting collection group query...");
+
+    let userQuery;
+    try {
+      userQuery = await admin
+        .firestore()
+        .collectionGroup("users")
+        .where("role", "in", ["admin", "manager"])
+        .get();
+      console.log("✅ Collection group query completed");
+    } catch (error) {
+      console.log("❌ Collection group query failed:", error);
+      // Fallback: try separate queries
+      console.log("🔄 Trying fallback queries...");
+
+      const adminQuery = await admin
+        .firestore()
+        .collectionGroup("users")
+        .where("role", "==", "admin")
+        .get();
+
+      const managerQuery = await admin
+        .firestore()
+        .collectionGroup("users")
+        .where("role", "==", "manager")
+        .get();
+
+      userQuery = {
+        docs: [...adminQuery.docs, ...managerQuery.docs]
+      };
+      console.log("✅ Fallback queries completed");
+    }
 
     console.log("🔍 Found", userQuery.docs.length, "admin/manager users");
     userQuery.docs.forEach(doc => {
