@@ -3,11 +3,17 @@
 import { useState, useEffect } from 'react'
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState(true)
 
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768) // md breakpoint
+      const mobile = window.innerWidth < 768
+      console.log('🔍 Mobile detection:', {
+        windowWidth: window.innerWidth,
+        isMobile: mobile,
+        userAgent: navigator.userAgent
+      })
+      setIsMobile(mobile)
     }
 
     // Check on mount

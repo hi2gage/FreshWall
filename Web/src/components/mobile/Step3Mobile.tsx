@@ -1,8 +1,8 @@
 export function Step3Mobile() {
   return (
-    <div className="w-full bg-white py-4">
-      <div className="container mx-auto px-4">
-        <div className="text-center space-y-4">
+    <div className="w-full h-full bg-white flex items-center">
+      <div className="container mx-auto px-4 max-h-full overflow-y-auto">
+        <div className="text-center space-y-6">
           <div>
             <div className="w-12 h-12 bg-blue-600 text-white text-xl font-bold rounded-full flex items-center justify-center mx-auto mb-3">
               3
