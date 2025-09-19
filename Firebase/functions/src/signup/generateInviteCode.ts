@@ -19,20 +19,20 @@ export const generateInviteCode = onCall(async (request) => {
       now.toMillis() + 7 * 24 * 60 * 60 * 1000 // 7 days from now
     );
 
-    // ✅ OPTIMIZED: Use collection group query with 'in' operator for multiple roles in 1 read
+    // ✅ OPTIMIZED: Use collection group query to find user with admin/manager role
     const userQuery = await admin
       .firestore()
       .collectionGroup("users")
-      .where("__name__", "==", uid)
       .where("role", "in", ["admin", "manager"])
-      .limit(1)
       .get();
 
-    if (userQuery.empty) {
+    // Find the user document that matches the authenticated user ID
+    const userDoc = userQuery.docs.find(doc => doc.id === uid);
+
+    if (!userDoc) {
       throw new Error("User must be a team admin or manager to generate invite codes.");
     }
 
-    const userDoc = userQuery.docs[0];
     const teamRef = userDoc.ref.parent.parent;
 
     if (!teamRef) {
