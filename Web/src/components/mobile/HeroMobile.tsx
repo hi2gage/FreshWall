@@ -15,7 +15,6 @@ export function HeroMobile() {
           <div className="flex justify-center">
             <div className="w-48 bg-black rounded-[2.5rem] p-1.5 shadow-xl">
               <div className="relative bg-black rounded-[2rem] overflow-hidden">
-                <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-14 h-3 bg-black rounded-full z-10"></div>
                 <img
                   src="/dashboard-screenshot.png"
                   alt="FreshWall iPhone App Dashboard"

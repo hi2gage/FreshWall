@@ -40,13 +40,13 @@ export default function Home() {
           <section className="min-h-screen-safe snap-start flex items-center">
             <Step3Mobile />
           </section>
-          <section className="min-h-screen-safe snap-start flex items-center">
+          <section className="min-h-screen-safe snap-start">
             <AboutMobile />
           </section>
           <section className="min-h-screen-safe snap-start flex items-center">
             <PricingMobile />
           </section>
-          <section className="min-h-screen-safe snap-start flex items-center">
+          <section className="min-h-screen-safe snap-start">
             <ContactMobile />
           </section>
         </main>
@@ -64,13 +64,13 @@ export default function Home() {
         <section className="min-h-screen-safe snap-start flex items-center">
           <ServicesDesktop />
         </section>
-        <section className="min-h-screen-safe snap-start flex items-center">
+        <section className="min-h-screen-safe snap-start">
           <AboutDesktop />
         </section>
         <section className="min-h-screen-safe snap-start flex items-center">
           <PricingDesktop />
         </section>
-        <section className="min-h-screen-safe snap-start flex items-center">
+        <section className="min-h-screen-safe snap-start">
           <ContactDesktop />
         </section>
       </main>
