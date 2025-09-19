@@ -16,8 +16,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light')
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
 
+  // Force light mode immediately on mount
   useEffect(() => {
-    // Force light mode - ignore localStorage and system preferences
+    const root = document.documentElement
+    root.classList.remove('dark')
+    root.classList.add('light')
     setTheme('light')
     setResolvedTheme('light')
   }, [])

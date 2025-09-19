@@ -1,6 +1,6 @@
 export function ContactDesktop() {
   return (
-    <div className="w-full bg-blue-600 py-8">
+    <div className="w-full min-h-screen-safe bg-blue-600 flex items-center justify-center">
       <div className="container mx-auto px-6 text-center">
         <h2 className="text-4xl font-bold text-white mb-6">Ready to save hours and get paid faster?</h2>
         <div className="space-y-4">
