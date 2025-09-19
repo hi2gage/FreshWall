@@ -19,35 +19,65 @@ export const generateInviteCode = onCall(async (request) => {
       now.toMillis() + 7 * 24 * 60 * 60 * 1000 // 7 days from now
     );
 
-    const teamsSnapshot = await admin.firestore().collection("teams").get();
-    let teamDoc: admin.firestore.QueryDocumentSnapshot | null = null;
+    // ✅ OPTIMIZED: Use collection group query to find user across all teams in 1 read
+    const userQuery = await admin
+      .firestore()
+      .collectionGroup("users")
+      .where("__name__", "==", uid)
+      .where("role", "==", "lead")
+      .limit(1)
+      .get();
 
-    for (const doc of teamsSnapshot.docs) {
-      const userDoc = await doc.ref.collection("users").doc(uid).get();
-      if (userDoc.exists) {
-        const data = userDoc.data();
-        if (data?.role === "lead") {
-          teamDoc = doc;
-          break;
-        } else {
-          throw new Error("Only team leads can generate invite codes.");
-        }
+    if (userQuery.empty) {
+      throw new Error("User must be a team lead to generate invite codes.");
+    }
+
+    const userDoc = userQuery.docs[0];
+    const teamRef = userDoc.ref.parent.parent;
+
+    if (!teamRef) {
+      throw new Error("Invalid team reference.");
+    }
+
+    // ✅ OPTIMIZED: Generate unique code with retry logic to prevent collisions
+    let code: string;
+    let codeDoc: admin.firestore.DocumentReference;
+    let attempts = 0;
+    const maxAttempts = 5;
+
+    do {
+      if (attempts >= maxAttempts) {
+        throw new Error("Failed to generate unique invite code after multiple attempts.");
       }
-    }
 
-    if (!teamDoc) {
-      throw new Error("User must belong to a team.");
-    }
+      code = randomBytes(3).toString("hex").toUpperCase();
+      codeDoc = teamRef.collection("inviteCodes").doc(code);
 
-    const code = randomBytes(3).toString("hex").toUpperCase();
+      // Check if code already exists
+      const existingCode = await codeDoc.get();
+      if (!existingCode.exists) {
+        break;
+      }
 
-    await teamDoc.ref.collection("inviteCodes").doc(code).set({
-      createdAt: FieldValue.serverTimestamp(),
-      createdBy: uid,
-      expiresAt,
-      maxUses,
-      usedCount: 0,
-      role,
+      attempts++;
+    } while (true);
+
+    // ✅ OPTIMIZED: Use transaction to ensure atomic code creation
+    await admin.firestore().runTransaction(async (transaction) => {
+      // Double-check the code doesn't exist in the transaction
+      const codeCheck = await transaction.get(codeDoc);
+      if (codeCheck.exists) {
+        throw new Error("Invite code collision detected.");
+      }
+
+      transaction.set(codeDoc, {
+        createdAt: FieldValue.serverTimestamp(),
+        createdBy: uid,
+        expiresAt,
+        maxUses,
+        usedCount: 0,
+        role,
+      });
     });
 
     // Generate join URL
@@ -55,7 +85,7 @@ export const generateInviteCode = onCall(async (request) => {
     const joinUrl = `${baseUrl}/more/join?teamCode=${code}`;
 
     logger.info(
-      `✅ Invite code ${code} created for team ${teamDoc.id} by user ${uid}`
+      `✅ Invite code ${code} created for team ${teamRef.id} by user ${uid}`
     );
     logger.info(`🔗 Join URL: ${joinUrl}`);
 
@@ -63,7 +93,7 @@ export const generateInviteCode = onCall(async (request) => {
       code,
       expiresAt,
       joinUrl,
-      teamId: teamDoc.id,
+      teamId: teamRef.id,
       role,
       maxUses
     };
