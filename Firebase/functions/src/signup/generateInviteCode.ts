@@ -50,11 +50,23 @@ export const generateInviteCode = onCall(async (request) => {
       role,
     });
 
+    // Generate join URL
+    const baseUrl = process.env.WEB_BASE_URL || 'https://freshwall.app';
+    const joinUrl = `${baseUrl}/more/join?teamCode=${code}`;
+
     logger.info(
       `✅ Invite code ${code} created for team ${teamDoc.id} by user ${uid}`
     );
+    logger.info(`🔗 Join URL: ${joinUrl}`);
 
-    return { code, expiresAt };
+    return {
+      code,
+      expiresAt,
+      joinUrl,
+      teamId: teamDoc.id,
+      role,
+      maxUses
+    };
   } catch (err: unknown) {
     const message =
       err instanceof Error ? err.message : "unknown error";
