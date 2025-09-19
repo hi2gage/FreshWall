@@ -141,12 +141,14 @@ struct ClientDetailView: View {
                 context: .clientDefaults
             )
 
-            GenericInlineListView(
+            GenericInlineButtonListView(
                 items: incidents.sorted(by: { $0.startTime.dateValue() > $1.startTime.dateValue() }),
                 title: "Incidents",
                 isLoading: isLoadingIncidents,
                 emptyMessage: "No incidents for this client.",
-                routerDestination: { incident in .incidentDetail(incident: incident) },
+                onItemTap: { incident in
+                    routerPath.push(.incidentDetail(incident: incident))
+                },
                 content: { incident in
                     IncidentListCell(incident: incident)
                 }
@@ -157,7 +159,9 @@ struct ClientDetailView: View {
         .task {
             let all = await (try? incidentService.fetchIncidents()) ?? []
             withAnimation(.easeInOut(duration: 0.3)) {
-                incidents = all.filter { $0.clientRef?.documentID == client.id }
+                incidents = all.filter {
+                    $0.clientRef?.documentID == client.id
+                }
                 isLoadingIncidents = false
             }
         }
@@ -217,7 +221,7 @@ struct ClientDetailView: View {
 
 #Preview {
     let sampleClient = Client(
-        id: "client123",
+        id: "users/sample-user-1",
         name: "Bozeman",
         notes: "Sample notes",
         defaults: .init(

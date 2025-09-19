@@ -1,41 +1,33 @@
+import Shimmer
 import SwiftUI
 
-// MARK: - GenericInlineListView
+// MARK: - GenericInlineButtonListView
 
-/// A simplified inline list view for displaying items within a Section, based on GenericGroupableListView
-struct GenericInlineListView<
+/// Button-based navigation version that avoids NavigationLink chevrons
+struct GenericInlineButtonListView<
     Item: Identifiable,
-    Destination: Hashable,
     Content: View
 >: View {
-    /// Items to display
     let items: [Item]
-    /// Section title
     let title: String
-    /// Loading state
     let isLoading: Bool
-    /// Empty state message
     let emptyMessage: String
-    /// Produces a navigation destination for a given item
-    let destination: (Item) -> Destination
-    /// Creates the content view for a given item
+    let onItemTap: (Item) -> Void
     let content: (Item) -> Content
-    /// Router path for navigation
-    @Environment(RouterPath.self) private var routerPath
 
     init(
         items: [Item],
         title: String,
         isLoading: Bool = false,
         emptyMessage: String = "No items found.",
-        destination: @escaping (Item) -> Destination,
+        onItemTap: @escaping (Item) -> Void,
         @ViewBuilder content: @escaping (Item) -> Content
     ) {
         self.items = items
         self.title = title
         self.isLoading = isLoading
         self.emptyMessage = emptyMessage
-        self.destination = destination
+        self.onItemTap = onItemTap
         self.content = content
     }
 
@@ -43,20 +35,24 @@ struct GenericInlineListView<
         Section(header: Text(headerText)) {
             if isLoading {
                 GenericSkeletonRows()
+                    .shimmering()
             } else if items.isEmpty {
                 Text(emptyMessage)
                     .italic()
                     .foregroundColor(.secondary)
             } else {
-                VStack(spacing: 16) {
+                LazyVStack {
                     ForEach(items) { item in
-                        NavigationLink(value: destination(item)) {
+                        Button {
+                            onItemTap(item)
+                        } label: {
                             content(item)
                         }
                         .buttonStyle(.plain)
-                        .padding(.horizontal)
                     }
                 }
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
             }
         }
     }
@@ -94,36 +90,8 @@ struct GenericSkeletonRows: View {
                         .frame(height: 14)
                         .frame(maxWidth: 120, alignment: .leading)
                 }
-
-                Spacer()
-
-                Rectangle()
-                    .fill(Color(.systemGray5))
-                    .frame(width: 8, height: 12)
             }
             .padding(.vertical, 2)
         }
-    }
-}
-
-// MARK: - RouterDestination Extension
-
-extension GenericInlineListView where Destination == RouterDestination {
-    init(
-        items: [Item],
-        title: String,
-        isLoading: Bool = false,
-        emptyMessage: String = "No items found.",
-        routerDestination: @escaping (Item) -> RouterDestination,
-        @ViewBuilder content: @escaping (Item) -> Content
-    ) {
-        self.init(
-            items: items,
-            title: title,
-            isLoading: isLoading,
-            emptyMessage: emptyMessage,
-            destination: routerDestination,
-            content: content
-        )
     }
 }
