@@ -2,9 +2,9 @@
 
 ## 1. Executive Summary
 
-**FreshWall** is a mobile-first SaaS platform for graffiti removal companies and urban beautification crews. Purpose-built for field use, it enables teams to log graffiti removal jobs with before/after photos, track cleanup progress, and compile monthly reports for clients, municipalities, or grant funders. 
+**FreshWall** is a mobile-first visual field service documentation platform starting with graffiti removal companies and expanding to broader field service teams. Purpose-built for field use, it enables teams to log incidents with before/after photos, track cleanup progress, and compile professional reports for clients.
 
-The app is optimized for speed, accountability, and reporting — empowering small businesses to prove their impact and get paid. The initial release targets iOS, with a future web dashboard planned for generating reports and managing data.
+The app is optimized for speed, accountability, and professional client communication — empowering small businesses to prove their impact and get paid. Currently in beta testing with initial customer, with iOS app ready for field deployment.
 
 ---
 
@@ -41,11 +41,12 @@ FreshWall provides:
 
 ## 5. Revenue Model
 
-**SaaS Subscription Tiers:**
+**SaaS Subscription Model:**
 
-- **Starter** – $29/mo: 1 team, up to 3 users.
-- **Growth** – $79/mo: 3 teams, up to 10 users.
-- **Enterprise** – Custom pricing for cities or large orgs with >10 teams.
+- **Target Price Range**: $50-100/month per team based on initial customer feedback
+- **Pricing Strategy**: Conversation-focused approach to understand value before setting final pricing
+- **Beta Phase**: Free usage in exchange for product feedback and testimonials
+- **Future Tiers**: Will be refined based on customer validation and feature usage patterns
 
 **Add-ons:**
 
@@ -66,22 +67,24 @@ FreshWall provides:
 
 ## 7. Go-to-Market Strategy
 
-1. Beta launch with friendly tester (already lined up).
-2. Generate demo materials using real before/after data.
-3. Cold outreach to similar contractors in other cities.
-4. Attend small government/public works conferences.
-5. Publish SEO content around graffiti tracking and cleanup best practices.
+1. **Beta validation with Scott's graffiti removal company (actively testing)**
+2. **Business foundation setup**: LLC, business bank account, Google Business Profile
+3. **SEO foundation**: Optimize website for "visual field service documentation" keywords
+4. **Content marketing**: Blog posts targeting field service efficiency topics
+5. **Cold outreach**: 4.5k graffiti removal company database for expansion after validation
+6. **Partnership development**: Integration opportunities with billing/scheduling software
 
 ---
 
 ## 8. Development Plan
 
-### Phase 1 (MVP)
+### Phase 1 (MVP - COMPLETED)
 
-- Incident logging with photos and notes.
-- Team account setup.
-- Map view and status tracking.
-- Exportable monthly reports.
+- ✅ Incident logging with photos and notes
+- ✅ Team account setup and authentication
+- ✅ Status tracking and job completion workflow
+- ✅ Basic photo capture and storage
+- 🔄 **Current Focus**: Photo performance optimization, CSV data export for client reporting
 
 ### Phase 2
 
@@ -95,18 +98,19 @@ FreshWall provides:
 ## 9. Team
 
 - **Founder / Engineer**: Gage Halverson – iOS and backend developer.
-- **Advisor**: Friend in graffiti removal company (first beta customer).
+- **Beta Customer**: Scott (graffiti removal company owner) - actively testing and providing product feedback.
 - **Future Hires**: Contract designer and part-time support as needed.
 
 ---
 
 ## 10. Financial Plan
 
-- **Initial Build**: Sweat equity + Firebase costs (< $100/mo).
-- **Year 1 Goal**: 5 paying customers = ~$5k ARR.
-- **Year 2 Goal**: Break-even at $2k/mo MRR.
+- **Current Phase**: Beta testing with initial customer (Scott) - no revenue, focus on validation
+- **Immediate Goal**: Prove product-market fit with Scott's daily usage and measurable time savings
+- **Next 6 Months**: Convert Scott to paying customer, acquire 3-5 additional customers
+- **Year 1 Goal**: $5-10k ARR with 5-10 customers at $50-100/month
 
-**Break-even** at ~25 customers on Growth plan ($79/mo).
+**Break-even**: Estimated at 15-20 customers based on validated pricing feedback.
 
 ---
 

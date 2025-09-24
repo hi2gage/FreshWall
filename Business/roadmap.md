@@ -1,70 +1,89 @@
-# FreshWall Beta Roadmap & Checklist for Scott
+# FreshWall Beta Roadmap & Current Status
+
+**Current Status**: Scott has beta version, beginning field testing this week
 
 ## ✅ 1. Core App Functionality (MVP)
 
 These are required for Scott and his crew to use FreshWall in the field.
 
-- [ ] **Authentication & Onboarding**
+- [x] **Authentication & Onboarding**
   - [x] Sign-up / login
   - [x] Create a team
-  - [ ] Invite users via email or link
-  - [ ] Assign user roles: Admin, Manager, Field Worker
+  - [⏳] Invite users via email or link
+  - [⏳] Assign user roles: Admin, Manager, Field Worker
 
-- [ ] **Incident Logging**
+  *Note: Role system deferred - Scott will test as single user first*
+
+- [x] **Incident Logging**
   - [x] Field worker can log a graffiti job
     - [x] Take/upload *before* photo
-    - [ ] Add metadata (location, surface type, notes)
+    - [x] Add metadata (location, surface type, notes)
     - [x] Auto-timestamp
   - [x] Field worker can mark job as complete
     - [x] Take/upload *after* photo
     - [x] Add cleanup notes or outcome status
 
-- [ ] **Incident Browsing**
-  - [ ] View incidents by list and map
-  - [ ] Filter by status (open, complete)
-  - [ ] Sort by date or location
-  - [ ] Role-based access:
-    - [ ] Field Workers: can view their jobs
-    - [ ] Managers/Admins: can view all jobs
+  *Ready for Scott's field testing*
 
-- [ ] **Reporting**
-  - [ ] Generate exportable report (PDF/CSV)
-    - [ ] Includes before/after images, timestamps, notes
-  - [ ] Filter by date range and status
+- [x] **Incident Browsing**
+  - [x] View incidents by list and map
+  - [x] Filter by status (open, complete)
+  - [x] Sort by date or location
+  - [⏳] Role-based access:
+    - [⏳] Field Workers: can view their jobs
+    - [⏳] Managers/Admins: can view all jobs
 
-- **Design**
-  - [ ] App Icon Logo
-  - [ ] Color Schemea
-  - [ ] Graphics for Linkedin
-  - [ ] 
+  *Basic browsing complete, role-based access pending user feedback*
 
-- **App Store**
-  - [ ] App Store Connect
-  - [ ] Testflight build
+- [🔄] **Reporting**
+  - [🔄] Generate exportable report (CSV for now)
+    - [🔄] Database export to CSV for Scott's existing workflow
+    - [⏳] Image encoding into reports (future enhancement)
+  - [x] Filter by date range and status
+
+  *Interim solution: Manual CSV export while testing with Scott*
+
+- **Critical Technical Issues** (Must fix before heavy usage):
+  - [🚨] Photo caching/performance optimization
+  - [🚨] Billing option selection reset bug
+
+**Business Foundation** (Parallel to beta testing):
+  - [🔄] LLC setup with EIN and business bank account
+  - [🔄] Google Business Profile setup
+  - [🔄] Domain email migration
+  - [⏳] App Store Connect setup (post-validation)
 ---
 
-## 📲 2. Beta Presentation Readiness
+## 📲 2. Beta Status with Scott
 
-To clearly present FreshWall to Scott for testing and feedback.
+**COMPLETED**: Scott has received beta version and is ready to begin field testing
 
-- [ ] Demo-ready iPhone build
-- [ ] Preloaded test data (2–3 jobs with photos)
-- [ ] Sample report export (PDF)
-- [ ] 5-minute demo script or screen recording
-- [ ] Summary of intended monthly workflow:
-  - Field logs → Manager reviews → Admin exports → Invoice sent
+- [x] Demo-ready iPhone build **delivered to Scott**
+- [x] Sample workflow demonstrated
+- [🔄] **Active**: Scott beginning real job testing this week
+- [🔄] **Feedback Collection**: Screen recordings with audio narration requested
+- [x] Simplified workflow for single-user testing:
+  - Scott logs incidents → Reviews completed work → Exports data to existing invoicing system
 
 ---
 
-## 💬 3. Feedback Goals
+## 💬 3. Key Validation Questions for Scott
 
-You want Scott to help answer:
+**Primary Success Metrics**:
+- [🔄] **Time Savings**: Does this save significant time vs. current process?
+- [🔄] **Stickiness**: Would removing this tool be frustrating?
+- [🔄] **Payment Willingness**: Confirmed $50-100/month range is acceptable
 
-- [ ] Does this match how jobs are tracked today?
-- [ ] What parts are confusing or missing?
-- [ ] Is the role separation useful?
-- [ ] Would this improve monthly invoicing/reporting?
-- [ ] How much would they expect to pay?
+**Workflow Validation**:
+- [🔄] Does this match how jobs are tracked today?
+- [🔄] What parts are confusing or missing?
+- [⏳] Is the role separation useful? (deferred for now)
+- [🔄] Would this improve monthly invoicing/reporting?
+
+**Technical Performance**:
+- [🔄] Photo upload/download speed and reliability
+- [🔄] App responsiveness and crash rate
+- [🔄] Offline functionality in the field
 
 ---
 
@@ -76,17 +95,29 @@ Even during beta, secure and structured data handling is key.
 - [x] Firebase rules to enforce team-based access
 - [ ] Role-based permissions in Firestore
 - [x] Firebase Storage for photo uploads
-- [ ] Export or backup system (manual CSV is fine to start)
+- [🔄] Export or backup system (manual CSV being implemented)
 
 ---
 
-## 💡 5. Future Potential (Optional to show)
+## 💡 5. Post-Beta Expansion Strategy
 
-Not required now, but shows long-term thinking.
+**Phase 2 - After Scott Validation**:
+- [ ] Additional beta customers from 4.5k graffiti company database
+- [ ] Advanced reporting with professional PDF generation
+- [ ] Multi-user role system based on feedback
+- [ ] Web dashboard for admin/manager users
 
-- [ ] Push notifications (e.g., job assigned to user)
-- [ ] White-label reporting (logos/colors)
-- [ ] Web dashboard for admins (Phase 2)
-- [ ] Integration with city systems (e.g., 311)
+**Phase 3 - Market Expansion**:
+- [ ] SEO content marketing for "visual field service documentation"
+- [ ] Integration with QuickBooks/billing systems
+- [ ] White-label reporting capabilities
+- [ ] Expansion beyond graffiti to general field service
+
+## 🎯 Current Focus Areas
+
+1. **Scott's Success** (70% effort): Ensure smooth field testing experience
+2. **Business Foundation** (30% effort): Setup for future customer acquisition
+3. **Performance Issues**: Photo caching and billing selection bugs
+4. **Feedback Loop**: Systematic collection of Scott's usage data and pain points
 
 ---
