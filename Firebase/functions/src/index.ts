@@ -17,6 +17,13 @@ export { joinTeamCreateUser } from "./signup/joinTeamCreateUser";
 export { generateInviteCode } from "./signup/generateInviteCode";
 export { updateThumbnailUrls } from "./updateThumbnailUrls";
 
+// Telegram notifications
+export {
+  notifyNewIncident,
+  notifyNewClient,
+  notifyNewUser,
+} from "./notifications/telegramNotifications";
+
 // Trigger to update client document with latest incident timestamp when a new incident is written
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
 
