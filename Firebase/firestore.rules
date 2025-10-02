@@ -54,8 +54,8 @@ service cloud.firestore {
 
     // 👤 User documents with enhanced role-based access
     match /teams/{teamId}/users/{userId} {
-      // All team members can read user info (for collaboration)
-      allow read: if isSignedIn() && isInTeam(teamId);
+      // Users can read their own document, or any user if they're in the team
+      allow read: if isSignedIn() && (isOwner(userId) || isInTeam(teamId));
       
       // Users can update their own profile info (but not role)
       allow update: if isSignedIn() && isOwner(userId) 
