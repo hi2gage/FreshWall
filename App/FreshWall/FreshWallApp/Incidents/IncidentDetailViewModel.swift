@@ -101,8 +101,9 @@ final class IncidentDetailViewModel {
             try await incidentService.updateIncident(
                 id,
                 with: input,
-                beforePhotos: beforePhotos,
-                afterPhotos: afterPhotos
+                newBeforePhotos: beforePhotos,
+                newAfterPhotos: afterPhotos,
+                photosToDelete: []
             )
 
             // Only reload if we updated photos or location

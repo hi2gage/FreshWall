@@ -7,6 +7,36 @@ import Observation
 @MainActor
 @Observable
 final class EditIncidentViewModel {
+    // MARK: - State
+
+    /// Represents the complete state of an incident being edited
+    struct State: Equatable {
+        var clientId: String?
+        var description: String
+        var areaText: String
+        var startTime: Date
+        var endTime: Date
+        var rateText: String
+        var materialsUsed: String
+        var existingBeforePhotosCount: Int
+        var existingAfterPhotosCount: Int
+        var newBeforePhotosCount: Int
+        var newAfterPhotosCount: Int
+        var photosToDeleteCount: Int
+        var enhancedLocation: IncidentLocation?
+        var surfaceType: SurfaceType?
+        var enhancedNotes: IncidentNotes?
+        var customSurfaceDescription: String?
+        var hasBillingConfiguration: Bool
+        var billingMethod: IncidentBilling.BillingMethod
+        var minimumBillableQuantity: String
+        var amountPerUnit: String
+        var customUnitDescription: String
+        var billingSource: BillingSource
+    }
+
+    // MARK: - Properties
+
     /// Selected client document ID.
     var clientId: String?
     /// Notes text.
@@ -21,18 +51,37 @@ final class EditIncidentViewModel {
     var rateText: String
     /// Materials used description.
     var materialsUsed: String
-    /// Photos selected to represent the "before" state.
-    var beforePhotos: [PickedPhoto] = []
-    /// Photos selected to represent the "after" state.
-    var afterPhotos: [PickedPhoto] = []
+    /// Existing before photos from the incident
+    private var existingBeforePhotos: [IncidentPhoto] = []
+    /// Existing after photos from the incident
+    private var existingAfterPhotos: [IncidentPhoto] = []
+    /// Newly picked before photos (not yet uploaded)
+    var newBeforePhotos: [PickedPhoto] = []
+    /// Newly picked after photos (not yet uploaded)
+    var newAfterPhotos: [PickedPhoto] = []
+    /// Photos marked for deletion (URLs to delete from storage)
+    var photosToDelete: [String] = []
     /// Loaded clients for selection.
     var clients: [Client] = []
+
+    /// Combined editable before photos (existing + new)
+    var beforePhotos: [EditablePhoto] {
+        existingBeforePhotos.map { .existing($0) } + newBeforePhotos.map { .picked($0) }
+    }
+
+    /// Combined editable after photos (existing + new)
+    var afterPhotos: [EditablePhoto] {
+        existingAfterPhotos.map { .existing($0) } + newAfterPhotos.map { .picked($0) }
+    }
+
     /// Whether to show the delete confirmation alert.
     var showingDeleteAlert = false
     /// Whether to show the enhanced location capture view.
     var showingEnhancedLocationCapture = false
     /// Whether to show enhanced notes editing.
     var showingEnhancedNotes = false
+    /// Whether to show the unsaved changes alert.
+    var showingUnsavedChangesAlert = false
 
     // MARK: - Enhanced Metadata
 
@@ -64,6 +113,44 @@ final class EditIncidentViewModel {
     private let service: IncidentServiceProtocol
     private let clientService: ClientServiceProtocol
 
+    // MARK: - State Tracking
+
+    /// Original state when the view was loaded
+    private let originalState: State
+
+    /// Current state based on current property values
+    var currentState: State {
+        State(
+            clientId: clientId,
+            description: description,
+            areaText: areaText,
+            startTime: startTime,
+            endTime: endTime,
+            rateText: rateText,
+            materialsUsed: materialsUsed,
+            existingBeforePhotosCount: existingBeforePhotos.count,
+            existingAfterPhotosCount: existingAfterPhotos.count,
+            newBeforePhotosCount: newBeforePhotos.count,
+            newAfterPhotosCount: newAfterPhotos.count,
+            photosToDeleteCount: photosToDelete.count,
+            enhancedLocation: enhancedLocation,
+            surfaceType: surfaceType,
+            enhancedNotes: enhancedNotes,
+            customSurfaceDescription: customSurfaceDescription,
+            hasBillingConfiguration: hasBillingConfiguration,
+            billingMethod: billingMethod,
+            minimumBillableQuantity: minimumBillableQuantity,
+            amountPerUnit: amountPerUnit,
+            customUnitDescription: customUnitDescription,
+            billingSource: billingSource
+        )
+    }
+
+    /// Check if there are unsaved changes
+    var hasUnsavedChanges: Bool {
+        currentState != originalState
+    }
+
     /// Validation: requires a client and description.
     var isValid: Bool {
         guard let clientId else { return false }
@@ -72,10 +159,17 @@ final class EditIncidentViewModel {
             !description.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
-    init(incident: Incident, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
+    init(
+        incident: Incident,
+        incidentService: IncidentServiceProtocol,
+        clientService: ClientServiceProtocol
+    ) {
+        // Initialize services first
         incidentId = incident.id ?? ""
         service = incidentService
         self.clientService = clientService
+
+        // Set current values
         clientId = incident.clientRef?.documentID
         description = incident.description
         areaText = String(incident.area)
@@ -83,6 +177,10 @@ final class EditIncidentViewModel {
         endTime = incident.endTime.dateValue()
         rateText = incident.rate.map { String($0) } ?? ""
         materialsUsed = incident.materialsUsed ?? ""
+
+        // Initialize existing photos
+        existingBeforePhotos = incident.beforePhotos
+        existingAfterPhotos = incident.afterPhotos
 
         // Initialize enhanced metadata
         enhancedLocation = incident.enhancedLocation
@@ -96,18 +194,98 @@ final class EditIncidentViewModel {
             billingMethod = billing.billingMethod
             minimumBillableQuantity = String(billing.minimumBillableQuantity)
             amountPerUnit = String(billing.amountPerUnit)
-            billingSource = billing.billingSource
             customUnitDescription = billing.customUnitDescription ?? ""
+            billingSource = billing.billingSource
         } else {
             hasBillingConfiguration = false
+            billingMethod = .squareFootage
+            minimumBillableQuantity = ""
+            amountPerUnit = ""
+            customUnitDescription = ""
+            billingSource = .manual
+        }
+
+        // Store original state for change tracking
+        // Read directly from incident to avoid referencing self before initialization
+        if let billing = incident.billing {
+            originalState = State(
+                clientId: incident.clientRef?.documentID,
+                description: incident.description,
+                areaText: String(incident.area),
+                startTime: incident.startTime.dateValue(),
+                endTime: incident.endTime.dateValue(),
+                rateText: incident.rate.map { String($0) } ?? "",
+                materialsUsed: incident.materialsUsed ?? "",
+                existingBeforePhotosCount: incident.beforePhotos.count,
+                existingAfterPhotosCount: incident.afterPhotos.count,
+                newBeforePhotosCount: 0,
+                newAfterPhotosCount: 0,
+                photosToDeleteCount: 0,
+                enhancedLocation: incident.enhancedLocation,
+                surfaceType: incident.surfaceType,
+                enhancedNotes: incident.enhancedNotes,
+                customSurfaceDescription: incident.customSurfaceDescription,
+                hasBillingConfiguration: true,
+                billingMethod: billing.billingMethod,
+                minimumBillableQuantity: String(billing.minimumBillableQuantity),
+                amountPerUnit: String(billing.amountPerUnit),
+                customUnitDescription: billing.customUnitDescription ?? "",
+                billingSource: billing.billingSource
+            )
+        } else {
+            originalState = State(
+                clientId: incident.clientRef?.documentID,
+                description: incident.description,
+                areaText: String(incident.area),
+                startTime: incident.startTime.dateValue(),
+                endTime: incident.endTime.dateValue(),
+                rateText: incident.rate.map { String($0) } ?? "",
+                materialsUsed: incident.materialsUsed ?? "",
+                existingBeforePhotosCount: incident.beforePhotos.count,
+                existingAfterPhotosCount: incident.afterPhotos.count,
+                newBeforePhotosCount: 0,
+                newAfterPhotosCount: 0,
+                photosToDeleteCount: 0,
+                enhancedLocation: incident.enhancedLocation,
+                surfaceType: incident.surfaceType,
+                enhancedNotes: incident.enhancedNotes,
+                customSurfaceDescription: incident.customSurfaceDescription,
+                hasBillingConfiguration: false,
+                billingMethod: .squareFootage,
+                minimumBillableQuantity: "",
+                amountPerUnit: "",
+                customUnitDescription: "",
+                billingSource: .manual
+            )
         }
     }
 
-    /// Saves the updated incident using the service along with new photos.
-    func save(beforePhotos: [PickedPhoto], afterPhotos: [PickedPhoto]) async throws {
+    /// Handles deletion of a photo
+    func deletePhoto(_ photo: EditablePhoto, isBeforePhoto: Bool) {
+        switch photo {
+        case let .existing(incidentPhoto):
+            // Remove from existing photos and mark for deletion
+            if isBeforePhoto {
+                existingBeforePhotos.removeAll { $0.id == incidentPhoto.id }
+            } else {
+                existingAfterPhotos.removeAll { $0.id == incidentPhoto.id }
+            }
+            photosToDelete.append(incidentPhoto.url)
+        case let .picked(pickedPhoto):
+            // Remove from new photos
+            if isBeforePhoto {
+                newBeforePhotos.removeAll { $0.id == pickedPhoto.id }
+            } else {
+                newAfterPhotos.removeAll { $0.id == pickedPhoto.id }
+            }
+        }
+    }
+
+    /// Saves the updated incident using the service along with new photos and handles deletions.
+    func save() async throws {
         // Use enhanced location if available, otherwise extract from photos
         let finalEnhancedLocation = enhancedLocation ?? {
-            if let photoLocation = LocationService.extractLocation(from: beforePhotos + afterPhotos) {
+            if let photoLocation = LocationService.extractLocation(from: newBeforePhotos + newAfterPhotos) {
                 return IncidentLocation(photoMetadataCoordinates: photoLocation)
             }
             return nil
@@ -145,8 +323,9 @@ final class EditIncidentViewModel {
         try await service.updateIncident(
             incidentId,
             with: input,
-            beforePhotos: beforePhotos,
-            afterPhotos: afterPhotos
+            newBeforePhotos: newBeforePhotos,
+            newAfterPhotos: newAfterPhotos,
+            photosToDelete: photosToDelete
         )
     }
 

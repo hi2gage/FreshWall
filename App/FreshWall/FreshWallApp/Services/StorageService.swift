@@ -3,10 +3,12 @@ import Foundation
 
 // MARK: - StorageServiceProtocol
 
-/// Protocol defining operations for uploading binary data to Firebase Storage.
+/// Protocol defining operations for uploading and deleting binary data to/from Firebase Storage.
 protocol StorageServiceProtocol: Sendable {
     /// Uploads data to the given storage path and returns a download URL string.
     func uploadData(_ data: Data, to path: String) async throws -> String
+    /// Deletes a file at the given URL from Firebase Storage.
+    func deleteFile(at url: String) async throws
 }
 
 // MARK: - StorageService
@@ -43,5 +45,10 @@ struct StorageService: StorageServiceProtocol {
                 }
             }
         }
+    }
+
+    func deleteFile(at url: String) async throws {
+        let ref = storage.reference(forURL: url)
+        try await ref.delete()
     }
 }
