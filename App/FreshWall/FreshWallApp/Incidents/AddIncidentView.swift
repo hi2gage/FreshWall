@@ -30,6 +30,15 @@ struct AddIncidentView: View {
                 },
                 onCameraSelected: {
                     viewModel.handleCameraSelected()
+                },
+                onDeletePhoto: { photo, isBeforePhoto in
+                    if isBeforePhoto {
+                        beforePhotos.removeAll { $0.id == photo.id }
+                    } else {
+                        afterPhotos.removeAll { $0.id == photo.id }
+                    }
+                    // Re-trigger auto-populate after deletion
+                    viewModel.autoPopulateFromPhotos(beforePhotos: beforePhotos, afterPhotos: afterPhotos)
                 }
             )
 

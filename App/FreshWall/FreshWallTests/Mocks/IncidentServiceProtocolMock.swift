@@ -29,8 +29,9 @@ final class IncidentServiceProtocolMock: IncidentServiceProtocol {
     func updateIncident(
         _ id: String,
         with input: UpdateIncidentInput,
-        beforePhotos _: [PickedPhoto],
-        afterPhotos _: [PickedPhoto]
+        newBeforePhotos _: [PickedPhoto],
+        newAfterPhotos _: [PickedPhoto],
+        photosToDelete _: [String]
     ) async throws {
         updateArgs = (id, input)
     }

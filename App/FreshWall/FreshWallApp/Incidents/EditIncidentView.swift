@@ -18,9 +18,14 @@ struct EditIncidentView: View {
         Form {
             // MARK: - Photos Section (Top Priority)
 
-            IncidentPhotosSection(
-                beforePhotos: $viewModel.beforePhotos,
-                afterPhotos: $viewModel.afterPhotos
+            EditablePhotosSection(
+                beforePhotos: viewModel.beforePhotos,
+                afterPhotos: viewModel.afterPhotos,
+                newBeforePhotos: $viewModel.newBeforePhotos,
+                newAfterPhotos: $viewModel.newAfterPhotos,
+                onDeletePhoto: { photo, isBeforePhoto in
+                    viewModel.deletePhoto(photo, isBeforePhoto: isBeforePhoto)
+                }
             )
 
             // MARK: - Time & Duration Section
@@ -106,21 +111,30 @@ struct EditIncidentView: View {
         }
         .navigationTitle("Edit Incident")
         .keyboardDoneToolbar()
+        .navigationBarBackButtonHidden(viewModel.hasUnsavedChanges)
         .toolbar {
+            if viewModel.hasUnsavedChanges {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        viewModel.showingUnsavedChangesAlert = true
+                    }
+                }
+            }
+
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     Task {
                         do {
-                            try await viewModel.save(
-                                beforePhotos: viewModel.beforePhotos,
-                                afterPhotos: viewModel.afterPhotos
-                            )
+                            try await viewModel.save()
                             dismiss()
-                        } catch {}
+                        } catch {
+                            print("❌ Error saving incident: \(error)")
+                        }
                     }
                 }
             }
         }
+        .interactiveDismissDisabled(viewModel.hasUnsavedChanges)
         .sheet(isPresented: $viewModel.showingEnhancedNotes) {
             EnhancedNotesView(notes: $viewModel.enhancedNotes)
         }
@@ -139,6 +153,14 @@ struct EditIncidentView: View {
             }
         } message: {
             Text("Are you sure you want to delete this incident? This action cannot be undone.")
+        }
+        .alert("Unsaved Changes", isPresented: $viewModel.showingUnsavedChangesAlert) {
+            Button("Discard Changes", role: .destructive) {
+                dismiss()
+            }
+            Button("Keep Editing", role: .cancel) {}
+        } message: {
+            Text("You have unsaved changes. Are you sure you want to discard them?")
         }
         .task {
             await viewModel.loadClients()
