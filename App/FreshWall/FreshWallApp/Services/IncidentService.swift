@@ -22,8 +22,9 @@ protocol IncidentServiceProtocol: Sendable {
     func updateIncident(
         _ incidentId: String,
         with input: UpdateIncidentInput,
-        beforePhotos: [PickedPhoto],
-        afterPhotos: [PickedPhoto]
+        newBeforePhotos: [PickedPhoto],
+        newAfterPhotos: [PickedPhoto],
+        photosToDelete: [String]
     ) async throws
     /// Deletes an existing incident.
     func deleteIncident(_ incidentId: String) async throws
@@ -151,8 +152,9 @@ struct IncidentService: IncidentServiceProtocol {
     func updateIncident(
         _ incidentId: String,
         with input: UpdateIncidentInput,
-        beforePhotos: [PickedPhoto],
-        afterPhotos: [PickedPhoto]
+        newBeforePhotos: [PickedPhoto],
+        newAfterPhotos: [PickedPhoto],
+        photosToDelete: [String]
     ) async throws {
         let teamId = session.teamId
 
@@ -170,12 +172,6 @@ struct IncidentService: IncidentServiceProtocol {
             "lastModifiedBy": modifiedByRef,
             "lastModifiedAt": FieldValue.serverTimestamp(),
         ]
-
-//        if let location = input.location {
-//            data["location"] = location
-//        } else {
-//            data["location"] = FieldValue.delete()
-//        }
 
         if let rate = input.rate {
             data["rate"] = rate
@@ -214,29 +210,58 @@ struct IncidentService: IncidentServiceProtocol {
             data["customSurfaceDescription"] = FieldValue.delete()
         }
 
-        let beforeData = beforePhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
-        let newBeforeUrls = try await photoService.uploadBeforePhotos(
-            teamId: teamId,
-            incidentId: incidentId,
-            images: beforeData
-        )
-        let beforePhotoDicts = beforePhotos
-            .toIncidentPhotoDTOs(urls: newBeforeUrls)
-            .map(\.dictionary)
-        if !beforePhotoDicts.isEmpty {
+        // Handle photo deletions
+        if !photosToDelete.isEmpty {
+            // First, fetch the current incident to get all photo data
+            guard let currentIncident = try await fetchIncident(id: incidentId) else {
+                throw Errors.missingTeamId
+            }
+
+            // Delete photos from storage
+            let storage = StorageService()
+            for url in photosToDelete {
+                try? await storage.deleteFile(at: url)
+            }
+
+            // Remove photos from Firestore arrays
+            let photosToRemove = (currentIncident.beforePhotos + currentIncident.afterPhotos)
+                .filter { photosToDelete.contains($0.url) }
+                .map(\.dto.dictionary)
+
+            if !photosToRemove.isEmpty {
+                data["beforePhotos"] = FieldValue.arrayRemove(photosToRemove.filter { dict in
+                    currentIncident.beforePhotos.contains { $0.dto.dictionary["url"] as? String == dict["url"] as? String }
+                })
+                data["afterPhotos"] = FieldValue.arrayRemove(photosToRemove.filter { dict in
+                    currentIncident.afterPhotos.contains { $0.dto.dictionary["url"] as? String == dict["url"] as? String }
+                })
+            }
+        }
+
+        // Upload and add new photos
+        let beforeData = newBeforePhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
+        if !beforeData.isEmpty {
+            let newBeforeUrls = try await photoService.uploadBeforePhotos(
+                teamId: teamId,
+                incidentId: incidentId,
+                images: beforeData
+            )
+            let beforePhotoDicts = newBeforePhotos
+                .toIncidentPhotoDTOs(urls: newBeforeUrls)
+                .map(\.dictionary)
             data["beforePhotos"] = FieldValue.arrayUnion(beforePhotoDicts)
         }
 
-        let afterData = afterPhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
-        let newAfterUrls = try await photoService.uploadAfterPhotos(
-            teamId: teamId,
-            incidentId: incidentId,
-            images: afterData
-        )
-        let afterPhotoDicts = afterPhotos
-            .toIncidentPhotoDTOs(urls: newAfterUrls)
-            .map(\.dictionary)
-        if !afterPhotoDicts.isEmpty {
+        let afterData = newAfterPhotos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
+        if !afterData.isEmpty {
+            let newAfterUrls = try await photoService.uploadAfterPhotos(
+                teamId: teamId,
+                incidentId: incidentId,
+                images: afterData
+            )
+            let afterPhotoDicts = newAfterPhotos
+                .toIncidentPhotoDTOs(urls: newAfterUrls)
+                .map(\.dictionary)
             data["afterPhotos"] = FieldValue.arrayUnion(afterPhotoDicts)
         }
 

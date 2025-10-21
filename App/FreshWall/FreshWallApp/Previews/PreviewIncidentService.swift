@@ -31,8 +31,9 @@ final class PreviewIncidentService: IncidentServiceProtocol {
     func updateIncident(
         _: String,
         with _: UpdateIncidentInput,
-        beforePhotos _: [PickedPhoto],
-        afterPhotos _: [PickedPhoto]
+        newBeforePhotos _: [PickedPhoto],
+        newAfterPhotos _: [PickedPhoto],
+        photosToDelete _: [String]
     ) async throws {
         // No-op implementation for previews
     }
