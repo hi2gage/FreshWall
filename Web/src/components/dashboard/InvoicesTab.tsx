@@ -66,7 +66,7 @@ export default function InvoicesTab() {
 
         // Get teamId from custom claims or search teams (same approach as ClientsTab)
         let idTokenResult = await user.getIdTokenResult();
-        let teamId = idTokenResult.claims?.teamId;
+        let teamId = idTokenResult.claims?.teamId as string | undefined;
 
         // If no teamId in claims, try refreshing the token
         if (!teamId) {
@@ -98,6 +98,14 @@ export default function InvoicesTab() {
         }
 
         console.log('Fetching clients for team:', teamId);
+
+        // TypeScript type guard - teamId is guaranteed to be a string here
+        if (!teamId) {
+          console.error('No teamId available');
+          setClients([]);
+          setLoading(false);
+          return;
+        }
 
         // Fetch clients
         const clientsRef = collection(firestore, 'teams', teamId, 'clients');
@@ -133,11 +141,11 @@ export default function InvoicesTab() {
       try {
         // Get teamId using same approach
         let idTokenResult = await user.getIdTokenResult();
-        let teamId = idTokenResult.claims?.teamId;
+        let teamId = idTokenResult.claims?.teamId as string | undefined;
 
         if (!teamId) {
           idTokenResult = await user.getIdTokenResult(true);
-          teamId = idTokenResult.claims?.teamId;
+          teamId = idTokenResult.claims?.teamId as string | undefined;
         }
 
         if (!teamId) {
@@ -183,11 +191,11 @@ export default function InvoicesTab() {
 
       // Get teamId using the same approach
       let idTokenResult = await user.getIdTokenResult();
-      let teamId = idTokenResult.claims?.teamId;
+      let teamId = idTokenResult.claims?.teamId as string | undefined;
 
       if (!teamId) {
         idTokenResult = await user.getIdTokenResult(true);
-        teamId = idTokenResult.claims?.teamId;
+        teamId = idTokenResult.claims?.teamId as string | undefined;
       }
 
       if (!teamId) {
@@ -205,6 +213,13 @@ export default function InvoicesTab() {
           setGenerating(false);
           return;
         }
+      }
+
+      // TypeScript type guard - teamId is guaranteed to be a string here
+      if (!teamId) {
+        alert('No team found for user');
+        setGenerating(false);
+        return;
       }
 
       // Get client

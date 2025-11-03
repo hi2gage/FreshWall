@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { firestore } from '@/lib/firebase';
 import { doc, getDoc, setDoc, getDocs, collection } from 'firebase/firestore';
 import { InvoiceTemplate, DEFAULT_INVOICE_TEMPLATE, INVOICE_NUMBER_FORMAT_OPTIONS } from '@/types/invoice';
+import InvoicePreview from './InvoicePreview';
 
 interface InvoiceTemplateEditorProps {
   onClose: () => void;
@@ -132,18 +133,21 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full mx-4 my-8">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-[95vw] h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Customize Invoice Template</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+        <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Customize Invoice Template</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl leading-none">
             ✕
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+        {/* Split View Content */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Editor Panel - Left Side */}
+          <div className="w-1/2 overflow-y-auto border-r border-gray-200 dark:border-gray-700">
+            <div className="p-6 space-y-6">
           {/* Company Information */}
           <section>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Company Information</h3>
@@ -428,10 +432,23 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
               </div>
             </div>
           </section>
+            </div>
+          </div>
+
+          {/* Preview Panel - Right Side */}
+          <div className="w-1/2 overflow-y-auto bg-gray-100 dark:bg-gray-900 p-6">
+            <div className="sticky top-0 mb-4 bg-gray-100 dark:bg-gray-900 pb-2">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Live Preview</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Changes update in real-time</p>
+            </div>
+            <div className="transform scale-75 origin-top">
+              <InvoicePreview template={template} />
+            </div>
+          </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex justify-end space-x-4 p-6 border-t border-gray-200 dark:border-gray-700">
+        {/* Actions - Footer */}
+        <div className="flex justify-end space-x-4 p-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
           <button
             onClick={onClose}
             className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
