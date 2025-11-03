@@ -105,3 +105,20 @@ worktrees/
 # Environment variable files with secrets (keep local only)
 vercel-*-env.txt
 Scripts/upload-staging-env.sh
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# Firebase Functions
+Firebase/functions/lib/
+Firebase/functions/node_modules/
+
+# Service account keys (secrets)
+Firebase/prod-service-account.json
+Firebase/staging-service-account.json
+*-service-account.json
