@@ -222,7 +222,7 @@ export default function InvoicePreview({ template, client, incidents }: InvoiceP
 
   // Use real data if provided, otherwise show empty invoice
   const displayClient = client || { name: '' };
-  const rawIncidents = incidents !== undefined ? convertRealIncidents(incidents, client) : [];
+  const rawIncidents = incidents !== undefined ? convertRealIncidents(incidents, client || null) : [];
 
   // Sort incidents based on template settings
   const sortedIncidents = sortSampleIncidents(rawIncidents, template.sortBy, template.sortOrder);
