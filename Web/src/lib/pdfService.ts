@@ -43,64 +43,71 @@ export function generateInvoicePDF(
   template: InvoiceTemplate
 ) {
   const doc = new jsPDF();
-  let yPosition = 20;
+  let yPosition = 15;
 
   // Company Header
-  doc.setFontSize(16);
+  doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
-  doc.text(template.companyName, 20, yPosition);
-  yPosition += 8;
+  doc.text(template.companyName, 15, yPosition);
+  yPosition += 5;
 
   // Company Details
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
 
   if (template.showCompanyAddress) {
     template.companyAddress.forEach((line) => {
-      doc.text(line, 20, yPosition);
-      yPosition += 5;
+      doc.text(line, 15, yPosition);
+      yPosition += 4;
     });
   }
 
-  if (template.showCompanyPhone && template.companyPhone) {
-    doc.text(template.companyPhone, 20, yPosition);
-    yPosition += 5;
-  }
-
-  if (template.showCompanyEmail && template.companyEmail) {
-    doc.text(template.companyEmail, 20, yPosition);
-    yPosition += 5;
-  }
-
   if (template.showCompanyWebsite && template.companyWebsite) {
-    doc.text(template.companyWebsite, 20, yPosition);
-    yPosition += 5;
+    doc.text(template.companyWebsite, 15, yPosition);
+    yPosition += 4;
+  }
+
+  if (template.showCompanyPhone && template.companyPhone) {
+    doc.text(template.companyPhone, 15, yPosition);
+    yPosition += 4;
   }
 
   // Invoice Title (right side)
-  doc.setFontSize(20);
+  doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
-  doc.text('INVOICE', 200, 20, { align: 'right' });
+  doc.text('Invoice', 195, 25, { align: 'right' });
 
-  // Invoice Details (right side)
-  doc.setFontSize(10);
+  // Invoice Details Box (right side)
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   const invoiceNumber = generateInvoiceNumber(template.invoiceNumberFormat, 1);
-  doc.text(`Date: ${new Date().toLocaleDateString()}`, 200, 35, { align: 'right' });
-  doc.text(`Invoice #: ${template.invoicePrefix}-${invoiceNumber}`, 200, 40, { align: 'right' });
-  doc.text(`Terms: ${template.paymentTerms}`, 200, 45, { align: 'right' });
+
+  let rightY = 35;
+  doc.text(`Date`, 140, rightY);
+  doc.text(new Date().toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' }), 195, rightY, { align: 'right' });
+  rightY += 5;
+
+  doc.text(`Invoice #`, 140, rightY);
+  doc.text(`${template.invoicePrefix}-${invoiceNumber}`, 195, rightY, { align: 'right' });
+  rightY += 5;
+
+  doc.text(`PO #`, 140, rightY);
+  rightY += 5;
+
+  doc.text(`Terms`, 140, rightY);
+  doc.text(template.paymentTerms, 195, rightY, { align: 'right' });
 
   // Bill To Section
-  yPosition = Math.max(yPosition + 10, 60);
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Bill To:', 20, yPosition);
-  yPosition += 7;
-
+  yPosition = Math.max(yPosition + 5, 55);
   doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Bill To', 15, yPosition);
+  yPosition += 5;
+
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text(client.name, 20, yPosition);
-  yPosition += 15;
+  doc.text(client.name, 15, yPosition);
+  yPosition += 10;
 
   // Prepare table data
   const tableData = incidents.map((incident) => {
@@ -177,24 +184,31 @@ export function generateInvoicePDF(
     startY: yPosition,
     head: [tableHeaders],
     body: tableData,
-    theme: 'striped',
+    theme: 'grid',
     headStyles: {
-      fillColor: [59, 130, 246], // Blue color
-      textColor: 255,
+      fillColor: [211, 211, 211], // Light gray
+      textColor: 0,
       fontStyle: 'bold',
-      fontSize: 10,
+      fontSize: 9,
+      halign: 'center',
     },
     styles: {
-      fontSize: 9,
-      cellPadding: 3,
+      fontSize: 8,
+      cellPadding: 2,
+      lineColor: [0, 0, 0],
+      lineWidth: 0.1,
     },
-    alternateRowStyles: {
-      fillColor: [249, 250, 251],
+    columnStyles: {
+      0: { halign: 'center' }, // Date
+      1: { halign: 'left' },   // Description
+      2: { halign: 'center' }, // Quantity
+      3: { halign: 'right' },  // Rate
+      4: { halign: 'right' },  // Amount
     },
   });
 
   // Get final Y position after table
-  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  const finalY = (doc as any).lastAutoTable.finalY + 5;
 
   // Calculate totals
   const subtotal = incidents.reduce((sum, incident) => sum + calculateIncidentTotal(incident, client), 0);
@@ -203,52 +217,55 @@ export function generateInvoicePDF(
 
   // Totals section (right-aligned)
   let totalsY = finalY;
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
 
   if (template.showTax) {
-    doc.text(`Subtotal: ${formatCurrency(subtotal)}`, 200, totalsY, { align: 'right' });
-    totalsY += 7;
-    doc.text(
-      `${template.taxLabel || 'Tax'} (${((template.taxRate || 0) * 100).toFixed(1)}%): ${formatCurrency(taxAmount)}`,
-      200,
-      totalsY,
-      { align: 'right' }
-    );
-    totalsY += 7;
+    doc.text(`Subtotal`, 140, totalsY);
+    doc.text(`${formatCurrency(subtotal)}`, 195, totalsY, { align: 'right' });
+    totalsY += 5;
+    doc.text(`${template.taxLabel || 'Tax'} (${((template.taxRate || 0) * 100).toFixed(1)}%)`, 140, totalsY);
+    doc.text(`${formatCurrency(taxAmount)}`, 195, totalsY, { align: 'right' });
+    totalsY += 5;
   }
 
-  doc.setFontSize(12);
+  doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
-  doc.text(`Total: ${formatCurrency(total)}`, 200, totalsY, { align: 'right' });
+  doc.text(`Total`, 140, totalsY);
+  doc.text(`${formatCurrency(total)}`, 195, totalsY, { align: 'right' });
 
   // Footer
-  totalsY += 20;
+  totalsY += 15;
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
 
   if (template.footerMessage) {
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'italic');
-    doc.text(template.footerMessage, 105, totalsY, { align: 'center' });
-    totalsY += 10;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text(template.footerMessage, 15, totalsY);
+    totalsY += 8;
   }
 
   if (template.footerShowRemittanceInfo) {
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.text('Please remit payment to:', 20, totalsY);
-    totalsY += 5;
+    doc.text('Please remit payment to:', 15, totalsY);
+    totalsY += 4;
 
     doc.setFont('helvetica', 'normal');
-    doc.text(template.companyName, 20, totalsY);
-    totalsY += 5;
+    doc.text(template.companyName, 15, totalsY);
+    totalsY += 4;
 
     template.companyAddress.forEach((line) => {
-      doc.text(line, 20, totalsY);
-      totalsY += 5;
+      doc.text(line, 15, totalsY);
+      totalsY += 4;
     });
 
     // Add "Thank you for your business!" at the bottom
-    totalsY += 5;
-    doc.setFont('helvetica', 'italic');
-    doc.text('Thank you for your business!', 20, totalsY);
+    totalsY += 4;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Thank you for your business!', 15, totalsY);
   }
 
   // Save the PDF
