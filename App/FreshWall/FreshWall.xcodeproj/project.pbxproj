@@ -197,7 +197,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				1C54371E2DE2AB9500153F4F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				1C5435F82DE2223F00153F4F /* FreshWallApp */,
@@ -384,10 +383,6 @@
 			isa = PBXTargetDependency;
 			target = 1C5435F52DE2223F00153F4F /* FreshWall */;
 			targetProxy = 1C54360F2DE2224000153F4F /* PBXContainerItemProxy */;
-		};
-		1C54371E2DE2AB9500153F4F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 1C54371D2DE2AB9500153F4F /* SwiftLintBuildToolPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1003,11 +998,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFunctions;
-		};
-		1C54371D2DE2AB9500153F4F /* SwiftLintBuildToolPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1C54371C2DE2AB7100153F4F /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
-			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 		1C783F3D2E71E17E008AFA63 /* TinyStorage */ = {
 			isa = XCSwiftPackageProductDependency;
