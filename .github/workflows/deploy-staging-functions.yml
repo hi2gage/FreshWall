@@ -1,0 +1,62 @@
+name: Deploy Functions to Staging
+
+on:
+  push:
+    branches:
+      - staging
+    paths:
+      - 'Firebase/functions/**'
+      - 'Firebase/firestore.rules'
+      - 'Firebase/firestore.indexes.json'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'Firebase/functions/package-lock.json'
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Install Functions dependencies
+        working-directory: Firebase/functions
+        run: npm ci
+
+      - name: Build Functions
+        working-directory: Firebase/functions
+        run: npm run build
+
+      - name: Deploy to Staging
+        working-directory: Firebase
+        run: |
+          firebase deploy \
+            --only functions,firestore:rules,firestore:indexes \
+            --project freshwall-staging \
+            --token ${{ secrets.FIREBASE_TOKEN }} \
+            --force
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Comment on PR (if applicable)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Firebase Functions deployed to staging successfully!'
+            })
