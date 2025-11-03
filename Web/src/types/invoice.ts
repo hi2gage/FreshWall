@@ -39,6 +39,7 @@ export interface InvoiceTemplate {
 
   // Description Customization
   descriptionPrefix?: string; // e.g., "Graffiti Removal at" - prefix for incident descriptions
+  descriptionFields: DescriptionField[]; // Fields to include in description and their order
 
   // Sorting
   sortBy?: ColumnType; // Which column to sort by
@@ -82,6 +83,22 @@ export type ColumnWidth =
   | { type: 'flexible' }
   | { type: 'fixed'; value: number };
 
+export interface DescriptionField {
+  id: string;
+  type: DescriptionFieldType;
+  label: string;
+  isVisible: boolean;
+  order: number;
+  separator?: string; // Separator to use after this field (e.g., ", ", " - ", " at ")
+}
+
+export type DescriptionFieldType =
+  | 'location'
+  | 'surfaceType'
+  | 'area'
+  | 'status'
+  | 'notes';
+
 // Default Invoice Template
 export const DEFAULT_INVOICE_TEMPLATE: InvoiceTemplate = {
   companyName: 'Clean Slate Group',
@@ -115,6 +132,10 @@ export const DEFAULT_INVOICE_TEMPLATE: InvoiceTemplate = {
   footerShowRemittanceInfo: true,
   footerClosingMessage: 'Thank you for your business!',
   descriptionPrefix: 'Graffiti Removal at',
+  descriptionFields: [
+    { id: '1', type: 'location', label: 'Location', isVisible: true, order: 0, separator: ', ' },
+    { id: '2', type: 'surfaceType', label: 'Surface Type', isVisible: true, order: 1, separator: '' },
+  ],
   sortBy: 'date',
   sortOrder: 'asc',
   createdAt: new Date(),

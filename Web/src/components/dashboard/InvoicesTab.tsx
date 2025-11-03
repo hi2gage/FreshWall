@@ -7,6 +7,7 @@ import { collection, query, orderBy, getDocs, doc, getDoc } from 'firebase/fires
 import { generateInvoicePDF } from '@/lib/pdfService';
 import { DEFAULT_INVOICE_TEMPLATE, InvoiceTemplate } from '@/types/invoice';
 import InvoiceTemplateEditor from './InvoiceTemplateEditor';
+import InvoicePreview from './InvoicePreview';
 
 interface Client {
   id: string;
@@ -338,107 +339,94 @@ export default function InvoicesTab() {
         </p>
       </div>
 
-      {/* Invoice Generator */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700/20 p-6">
-        <div className="space-y-6">
-          {/* Client Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Select Client
-            </label>
-            <select
-              value={selectedClient}
-              onChange={(e) => setSelectedClient(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">-- Select a client --</option>
-              {clients.map((client) => (
-                <option key={client.id} value={client.id}>
-                  {client.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Date Range */}
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Start Date
-              </label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                End Date
-              </label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-
-          {/* Generate Button */}
-          <div className="flex justify-end">
+      {/* Two Column Layout: Form + Preview */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left: Generate Invoice Form */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700/20 p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Generate Invoice</h4>
             <button
-              onClick={handleGenerateInvoice}
-              disabled={!selectedClient || !startDate || !endDate || generating}
-              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+              onClick={() => setShowTemplateEditor(true)}
             >
-              {generating ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>Generating...</span>
-                </>
-              ) : (
-                <>
-                  <span>📄</span>
-                  <span>Generate Invoice PDF</span>
-                </>
-              )}
+              Customize
             </button>
           </div>
-        </div>
-      </div>
 
-      {/* Template Settings Preview */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700/20 p-6">
-        <h4 className="text-md font-semibold text-gray-900 dark:text-gray-100 mb-4">Current Template Settings</h4>
-        <div className="grid md:grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="text-gray-600 dark:text-gray-400">Company Name:</span>
-            <span className="ml-2 text-gray-900 dark:text-gray-100">{template.companyName}</span>
-          </div>
-          <div>
-            <span className="text-gray-600 dark:text-gray-400">Invoice Prefix:</span>
-            <span className="ml-2 text-gray-900 dark:text-gray-100">{template.invoicePrefix}</span>
-          </div>
-          <div>
-            <span className="text-gray-600 dark:text-gray-400">Payment Terms:</span>
-            <span className="ml-2 text-gray-900 dark:text-gray-100">{template.paymentTerms}</span>
-          </div>
-          <div>
-            <span className="text-gray-600 dark:text-gray-400">Tax:</span>
-            <span className="ml-2 text-gray-900 dark:text-gray-100">
-              {template.showTax ? `${(template.taxRate || 0) * 100}%` : 'None'}
-            </span>
+          <div className="space-y-6">
+            {/* Client Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Select Client
+              </label>
+              <select
+                value={selectedClient}
+                onChange={(e) => setSelectedClient(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">-- Select a client --</option>
+                {clients.map((client) => (
+                  <option key={client.id} value={client.id}>
+                    {client.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Date Range */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            {/* Generate Button */}
+            <div>
+              <button
+                onClick={handleGenerateInvoice}
+                disabled={!selectedClient || !startDate || !endDate || generating}
+                className="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              >
+                {generating ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Generating...</span>
+                  </>
+                ) : (
+                  <span>Generate Invoice PDF</span>
+                )}
+              </button>
+            </div>
           </div>
         </div>
-        <div className="mt-4">
-          <button
-            className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
-            onClick={() => setShowTemplateEditor(true)}
-          >
-            Customize Template →
-          </button>
+
+        {/* Right: Invoice Preview */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700/20 p-6">
+          <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">Invoice Preview</h4>
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <div className="transform scale-50 origin-top-left" style={{ width: '200%', height: 'auto' }}>
+              <InvoicePreview template={template} />
+            </div>
+          </div>
         </div>
       </div>
 

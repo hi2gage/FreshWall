@@ -148,11 +148,11 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
         {/* Split View Content */}
         <div className="flex-1 flex overflow-hidden">
           {/* Editor Panel - Left Side */}
-          <div className="w-1/2 overflow-y-auto border-r border-gray-200 dark:border-gray-700">
+          <div className="w-1/2 overflow-y-auto border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
             <div className="p-6 space-y-6">
           {/* Company Information */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Company Information</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Company Information</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -225,8 +225,8 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
           </section>
 
           {/* Invoice Settings */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Invoice Settings</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Invoice Settings</h3>
             <div className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
@@ -276,8 +276,8 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
           </section>
 
           {/* Tax Settings */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tax Settings</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Tax Settings</h3>
             <div className="space-y-4">
               <div className="flex items-center">
                 <input
@@ -324,8 +324,8 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
           </section>
 
           {/* Column Configuration */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Column Configuration</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Column Configuration</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Drag to reorder columns (order will be reflected in the invoice)
             </p>
@@ -433,8 +433,8 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
           </section>
 
           {/* Line Item Sorting */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Line Item Sorting</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Line Item Sorting</h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -473,8 +473,8 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
           </section>
 
           {/* Description Customization */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Description Format</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Description Format</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -495,8 +495,8 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
           </section>
 
           {/* Footer */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Footer Messages</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Footer Messages</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
