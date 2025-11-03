@@ -106,3 +106,7 @@ There's a design inconsistency here that should be addressed:
 
 1. Try joining the staging team using code `028EB1` (or any of the other copied invite codes)
 2. This should work! ✅
+
+---
+
+**Last Updated:** November 3, 2025
