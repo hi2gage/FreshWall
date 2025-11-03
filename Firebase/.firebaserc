@@ -1,6 +1,8 @@
 {
   "projects": {
-    "default": "freshwall-30afe"
+    "default": "freshwall-30afe",
+    "staging": "freshwall-staging",
+    "production": "freshwall-30afe"
   },
   "targets": {},
   "etags": {
