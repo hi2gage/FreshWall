@@ -101,3 +101,7 @@ App/FreshWall/FreshWallApp/GoogleService-Info.plist
 # Git worktrees
 worktrees/
 .vercel
+
+# Environment variable files with secrets (keep local only)
+vercel-*-env.txt
+Scripts/upload-staging-env.sh
