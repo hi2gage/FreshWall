@@ -1,15 +1,12 @@
 name: Auto-create PR to Main
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - staging
 
 jobs:
   create-promotion-pr:
-    # Only run if the PR was actually merged (not just closed)
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -53,11 +50,12 @@ jobs:
             --title "🚀 Promote staging to production" \
             --body "## Automatic Promotion PR
 
-          This PR was automatically created after merging changes to \`staging\`.
+          This PR was automatically created after pushing changes to \`staging\`.
 
-          ### Merged PR
-          **${{ github.event.pull_request.title }}** (#${{ github.event.pull_request.number }})
-          by @${{ github.event.pull_request.user.login }}
+          ### Latest commit
+          **${{ github.event.head_commit.message }}**
+          by @${{ github.event.head_commit.author.username }}
+          Commit: \`${{ github.sha }}\`
 
           ### Changes to be promoted
           ${{ steps.get-commits.outputs.commits }}
