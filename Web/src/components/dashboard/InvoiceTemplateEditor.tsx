@@ -107,7 +107,7 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
         console.log('Saving template to Firestore:', updatedTemplate);
         await setDoc(doc(firestore, `teams/${teamId}/invoiceTemplate/default`), updatedTemplate);
 
-        onSave({ ...updatedTemplate, createdAt: new Date(createdAt), updatedAt: new Date() });
+        onSave({ ...updatedTemplate, createdAt: new Date(createdAt), updatedAt: new Date() } as InvoiceTemplate);
         alert('Template saved successfully!');
         onClose();
       } else {

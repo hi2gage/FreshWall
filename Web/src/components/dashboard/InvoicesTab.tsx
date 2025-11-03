@@ -72,7 +72,7 @@ export default function InvoicesTab() {
         if (!teamId) {
           console.log('No teamId in claims, refreshing token...');
           idTokenResult = await user.getIdTokenResult(true);
-          teamId = idTokenResult.claims?.teamId;
+          teamId = idTokenResult.claims?.teamId as string | undefined;
         }
 
         // If still no team in claims, search teams collection directly
