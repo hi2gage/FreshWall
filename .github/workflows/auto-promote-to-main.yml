@@ -11,6 +11,9 @@ jobs:
     # Only run if the PR was actually merged (not just closed)
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -43,7 +46,7 @@ jobs:
             exit 0
           fi
 
-          # Create the PR
+          # Create the PR (without labels to avoid errors if they don't exist)
           gh pr create \
             --base main \
             --head staging \
