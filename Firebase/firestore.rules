@@ -135,18 +135,30 @@ service cloud.firestore {
     match /teams/{teamId}/reports/{reportId} {
       // Managers and admins can read all reports
       // Field workers can only read basic reports they created
-      allow read: if isSignedIn() && isInTeam(teamId) && 
+      allow read: if isSignedIn() && isInTeam(teamId) &&
                  (isManager(teamId) || resource.data.createdBy == request.auth.uid);
-      
+
       // Only managers and admins can create advanced reports
       allow create: if isSignedIn() && isManager(teamId);
-      
+
       // Users can update their own reports, managers can update any
-      allow update: if isSignedIn() && isInTeam(teamId) && 
+      allow update: if isSignedIn() && isInTeam(teamId) &&
                    (isManager(teamId) || resource.data.createdBy == request.auth.uid);
-      
+
       // Only managers and admins can delete reports
       allow delete: if isSignedIn() && isManager(teamId);
+    }
+
+    // 🧾 Invoice Templates - Managers and admins can customize
+    match /teams/{teamId}/invoiceTemplate/{templateId} {
+      // All team members can read invoice templates
+      allow read: if isSignedIn() && isInTeam(teamId);
+
+      // Only managers and admins can create/update invoice templates
+      allow create, update: if isSignedIn() && isManager(teamId);
+
+      // Only admins can delete invoice templates
+      allow delete: if isSignedIn() && isAdmin(teamId);
     }
   }
 }

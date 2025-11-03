@@ -6,11 +6,12 @@ import { useEffect, useState } from 'react';
 import SubscriptionCard from '@/components/dashboard/SubscriptionCard';
 import IncidentsTab from '@/components/dashboard/IncidentsTab';
 import ClientsTab from '@/components/dashboard/ClientsTab';
+import InvoicesTab from '@/components/dashboard/InvoicesTab';
 
 export default function Dashboard() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'overview' | 'incidents' | 'clients' | 'team' | 'billing'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'incidents' | 'clients' | 'invoices' | 'team' | 'billing'>('overview');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -70,6 +71,7 @@ export default function Dashboard() {
                 { id: 'overview', name: 'Overview', icon: '🏠' },
                 { id: 'incidents', name: 'Incidents', icon: '📋' },
                 { id: 'clients', name: 'Clients', icon: '👤' },
+                { id: 'invoices', name: 'Invoices', icon: '📄' },
                 { id: 'team', name: 'Team', icon: '👥' },
                 { id: 'billing', name: 'Billing', icon: '💳' }
               ].map((tab) => (
@@ -153,6 +155,8 @@ export default function Dashboard() {
             {activeTab === 'incidents' && <IncidentsTab />}
 
             {activeTab === 'clients' && <ClientsTab />}
+
+            {activeTab === 'invoices' && <InvoicesTab />}
 
             {activeTab === 'team' && (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700/20 p-6">

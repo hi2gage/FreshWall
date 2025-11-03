@@ -24,6 +24,33 @@ interface Client {
     };
     customUnitDescription?: string;
   };
+  invoiceTemplate?: {
+    // Company info overrides
+    companyName?: string;
+    companyAddress?: string[];
+    companyPhone?: string;
+    companyWebsite?: string;
+
+    // Invoice settings overrides
+    invoicePrefix?: string;
+    invoiceNumberFormat?: string;
+    paymentTerms?: string;
+    taxRate?: number;
+    taxLabel?: string;
+    showTax?: boolean;
+
+    // Footer overrides
+    footerThankYouMessage?: string;
+    footerShowRemittanceInfo?: boolean;
+    footerClosingMessage?: string;
+
+    // Description override
+    descriptionPrefix?: string;
+
+    // Sorting overrides
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  };
 }
 
 export default function ClientsTab() {
