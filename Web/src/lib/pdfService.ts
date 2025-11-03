@@ -109,8 +109,11 @@ export function generateInvoicePDF(
   doc.text(client.name, 15, yPosition);
   yPosition += 10;
 
+  // Sort incidents based on template configuration
+  const sortedIncidents = sortIncidents(incidents, client, template);
+
   // Prepare table data
-  const tableData = incidents.map((incident) => {
+  const tableData = sortedIncidents.map((incident) => {
     console.log('Processing incident for PDF:', incident); // Debug log
     const row: any[] = [];
 
@@ -127,10 +130,11 @@ export function generateInvoicePDF(
             value = formatDate(date);
             break;
           case 'description':
-            // Format like: "Graffiti Removal at [Location], [Surface Type]"
+            // Format like: "[Prefix] [Location], [Surface Type]"
+            const prefix = template.descriptionPrefix || 'Graffiti Removal at';
             const location = incident.enhancedLocation?.address || 'Unknown Location';
             const surface = incident.surfaceType ? `, ${incident.surfaceType}` : '';
-            value = `Graffiti Removal at ${location}${surface}`;
+            value = `${prefix} ${location}${surface}`;
             break;
           case 'location':
             value = incident.enhancedLocation?.address || 'Location not recorded';
@@ -239,13 +243,15 @@ export function generateInvoicePDF(
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
 
-  if (template.footerMessage) {
+  // Thank you message
+  if (template.footerThankYouMessage) {
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text(template.footerMessage, 15, totalsY);
+    doc.text(template.footerThankYouMessage, 15, totalsY);
     totalsY += 8;
   }
 
+  // Remittance info section
   if (template.footerShowRemittanceInfo) {
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
@@ -260,12 +266,14 @@ export function generateInvoicePDF(
       doc.text(line, 15, totalsY);
       totalsY += 4;
     });
+  }
 
-    // Add "Thank you for your business!" at the bottom
+  // Closing message
+  if (template.footerClosingMessage) {
     totalsY += 4;
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.text('Thank you for your business!', 15, totalsY);
+    doc.text(template.footerClosingMessage, 15, totalsY);
   }
 
   // Save the PDF
@@ -366,4 +374,69 @@ function formatDuration(hours: number): string {
   } else {
     return `${m}m`;
   }
+}
+
+function sortIncidents(incidents: Incident[], client: Client, template: InvoiceTemplate): Incident[] {
+  const sortBy = template.sortBy || 'date';
+  const sortOrder = template.sortOrder || 'asc';
+
+  const sorted = [...incidents].sort((a, b) => {
+    let aValue: any;
+    let bValue: any;
+
+    switch (sortBy) {
+      case 'date':
+        aValue = a.createdAt?.toDate ? a.createdAt.toDate().getTime() :
+                 (a.createdAt instanceof Date ? a.createdAt.getTime() : new Date(a.createdAt).getTime());
+        bValue = b.createdAt?.toDate ? b.createdAt.toDate().getTime() :
+                 (b.createdAt instanceof Date ? b.createdAt.getTime() : new Date(b.createdAt).getTime());
+        break;
+      case 'description':
+        const prefixA = template.descriptionPrefix || 'Graffiti Removal at';
+        const prefixB = template.descriptionPrefix || 'Graffiti Removal at';
+        const locationA = a.enhancedLocation?.address || 'Unknown Location';
+        const locationB = b.enhancedLocation?.address || 'Unknown Location';
+        aValue = `${prefixA} ${locationA}`;
+        bValue = `${prefixB} ${locationB}`;
+        break;
+      case 'location':
+        aValue = a.enhancedLocation?.address || '';
+        bValue = b.enhancedLocation?.address || '';
+        break;
+      case 'surfaceType':
+        aValue = a.surfaceType || '';
+        bValue = b.surfaceType || '';
+        break;
+      case 'area':
+        aValue = a.area || 0;
+        bValue = b.area || 0;
+        break;
+      case 'quantity':
+        aValue = calculateQuantity(a, client);
+        bValue = calculateQuantity(b, client);
+        break;
+      case 'rate':
+        aValue = a.billing?.amountPerUnit || a.rate || client.defaults?.amountPerUnit || 80;
+        bValue = b.billing?.amountPerUnit || b.rate || client.defaults?.amountPerUnit || 80;
+        break;
+      case 'amount':
+        aValue = calculateIncidentTotal(a, client);
+        bValue = calculateIncidentTotal(b, client);
+        break;
+      default:
+        return 0;
+    }
+
+    // Handle string comparisons
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      const comparison = aValue.localeCompare(bValue);
+      return sortOrder === 'asc' ? comparison : -comparison;
+    }
+
+    // Handle numeric comparisons
+    const comparison = aValue - bValue;
+    return sortOrder === 'asc' ? comparison : -comparison;
+  });
+
+  return sorted;
 }

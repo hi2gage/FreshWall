@@ -6,6 +6,7 @@ import { firestore } from '@/lib/firebase';
 import { collection, query, orderBy, getDocs, doc, getDoc } from 'firebase/firestore';
 import { generateInvoicePDF } from '@/lib/pdfService';
 import { DEFAULT_INVOICE_TEMPLATE, InvoiceTemplate } from '@/types/invoice';
+import InvoiceTemplateEditor from './InvoiceTemplateEditor';
 
 interface Client {
   id: string;
@@ -44,6 +45,7 @@ export default function InvoicesTab() {
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [template, setTemplate] = useState<InvoiceTemplate>(DEFAULT_INVOICE_TEMPLATE);
+  const [showTemplateEditor, setShowTemplateEditor] = useState(false);
 
   useEffect(() => {
     // Set default date range to current month
@@ -124,6 +126,52 @@ export default function InvoicesTab() {
     fetchClients();
   }, [user]);
 
+  useEffect(() => {
+    if (!user) return;
+
+    const loadTemplate = async () => {
+      try {
+        // Get teamId using same approach
+        let idTokenResult = await user.getIdTokenResult();
+        let teamId = idTokenResult.claims?.teamId;
+
+        if (!teamId) {
+          idTokenResult = await user.getIdTokenResult(true);
+          teamId = idTokenResult.claims?.teamId;
+        }
+
+        if (!teamId) {
+          const teamsSnapshot = await getDocs(collection(firestore, 'teams'));
+          for (const teamDoc of teamsSnapshot.docs) {
+            const userDoc = await getDoc(doc(firestore, `teams/${teamDoc.id}/users/${user.uid}`));
+            if (userDoc.exists()) {
+              teamId = teamDoc.id;
+              break;
+            }
+          }
+        }
+
+        if (teamId) {
+          // Load template from Firestore
+          const templateDoc = await getDoc(doc(firestore, `teams/${teamId}/invoiceTemplate/default`));
+          if (templateDoc.exists()) {
+            const data = templateDoc.data();
+            setTemplate({
+              ...DEFAULT_INVOICE_TEMPLATE,
+              ...data,
+              createdAt: data.createdAt?.toDate() || new Date(),
+              updatedAt: data.updatedAt?.toDate() || new Date(),
+            } as InvoiceTemplate);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading template:', error);
+      }
+    };
+
+    loadTemplate();
+  }, [user]);
+
   const handleGenerateInvoice = async () => {
     if (!selectedClient || !startDate || !endDate || !user) {
       alert('Please select a client and date range');
@@ -165,6 +213,31 @@ export default function InvoicesTab() {
 
       console.log('Client data for invoice:', client);
       console.log('Client defaults:', client.defaults);
+
+      // Merge client-specific template overrides with team template
+      const effectiveTemplate: InvoiceTemplate = {
+        ...template,
+        ...(client.invoiceTemplate && {
+          companyName: client.invoiceTemplate.companyName || template.companyName,
+          companyAddress: client.invoiceTemplate.companyAddress || template.companyAddress,
+          companyPhone: client.invoiceTemplate.companyPhone || template.companyPhone,
+          companyWebsite: client.invoiceTemplate.companyWebsite || template.companyWebsite,
+          invoicePrefix: client.invoiceTemplate.invoicePrefix || template.invoicePrefix,
+          invoiceNumberFormat: (client.invoiceTemplate.invoiceNumberFormat as any) || template.invoiceNumberFormat,
+          paymentTerms: client.invoiceTemplate.paymentTerms || template.paymentTerms,
+          taxRate: client.invoiceTemplate.taxRate !== undefined ? client.invoiceTemplate.taxRate : template.taxRate,
+          taxLabel: client.invoiceTemplate.taxLabel || template.taxLabel,
+          showTax: client.invoiceTemplate.showTax !== undefined ? client.invoiceTemplate.showTax : template.showTax,
+          footerThankYouMessage: client.invoiceTemplate.footerThankYouMessage || template.footerThankYouMessage,
+          footerShowRemittanceInfo: client.invoiceTemplate.footerShowRemittanceInfo !== undefined ? client.invoiceTemplate.footerShowRemittanceInfo : template.footerShowRemittanceInfo,
+          footerClosingMessage: client.invoiceTemplate.footerClosingMessage || template.footerClosingMessage,
+          descriptionPrefix: client.invoiceTemplate.descriptionPrefix || template.descriptionPrefix,
+          sortBy: (client.invoiceTemplate.sortBy as any) || template.sortBy,
+          sortOrder: client.invoiceTemplate.sortOrder || template.sortOrder,
+        })
+      };
+
+      console.log('Effective template for invoice:', effectiveTemplate);
 
       // Get incidents for this client in date range
       const incidentsRef = collection(firestore, 'teams', teamId, 'incidents');
@@ -217,9 +290,9 @@ export default function InvoicesTab() {
         return;
       }
 
-      // Generate PDF
+      // Generate PDF with effective template (merged team + client overrides)
       const reportPeriod = `${new Date(startDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
-      generateInvoicePDF(client, incidents, reportPeriod, template);
+      generateInvoicePDF(client, incidents, reportPeriod, effectiveTemplate);
 
     } catch (error) {
       console.error('Error generating invoice:', error);
@@ -347,12 +420,23 @@ export default function InvoicesTab() {
         <div className="mt-4">
           <button
             className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
-            onClick={() => alert('Template customization coming soon!')}
+            onClick={() => setShowTemplateEditor(true)}
           >
             Customize Template →
           </button>
         </div>
       </div>
+
+      {/* Template Editor Modal */}
+      {showTemplateEditor && (
+        <InvoiceTemplateEditor
+          onClose={() => setShowTemplateEditor(false)}
+          onSave={(updatedTemplate) => {
+            setTemplate(updatedTemplate);
+            setShowTemplateEditor(false);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -33,8 +33,16 @@ export interface InvoiceTemplate {
   photosPerIncident: number; // Max number of photos to include per incident
 
   // Footer Content
-  footerMessage?: string;
+  footerThankYouMessage?: string; // e.g., "It has been our pleasure working with you!"
   footerShowRemittanceInfo: boolean;
+  footerClosingMessage?: string; // e.g., "Thank you for your business!"
+
+  // Description Customization
+  descriptionPrefix?: string; // e.g., "Graffiti Removal at" - prefix for incident descriptions
+
+  // Sorting
+  sortBy?: ColumnType; // Which column to sort by
+  sortOrder?: 'asc' | 'desc'; // Sort direction
 
   // Timestamps
   createdAt: Date;
@@ -103,8 +111,12 @@ export const DEFAULT_INVOICE_TEMPLATE: InvoiceTemplate = {
   showDetailedNotes: false,
   showPhotos: false,
   photosPerIncident: 2,
-  footerMessage: 'It has been our pleasure working with you!',
+  footerThankYouMessage: 'It has been our pleasure working with you!',
   footerShowRemittanceInfo: true,
+  footerClosingMessage: 'Thank you for your business!',
+  descriptionPrefix: 'Graffiti Removal at',
+  sortBy: 'date',
+  sortOrder: 'asc',
   createdAt: new Date(),
   updatedAt: new Date(),
 };
