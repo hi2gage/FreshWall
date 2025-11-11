@@ -22,6 +22,7 @@
 		1CA0F2432E7BE04800AC3F88 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 1CA0F2422E7BE04800AC3F88 /* GoogleSignIn */; };
 		1CA0F2452E7BE04800AC3F88 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1CA0F2442E7BE04800AC3F88 /* GoogleSignInSwift */; };
 		1CA3B46A2E0281F200A04DB7 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */; };
+		1CDFBCFA2EC2BE3F0095836A /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 1CDFBCF92EC2BE3F0095836A /* AppIcon.icon */; };
 		1CE7DC352E76B4EF0088910A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC342E76B4EF0088910A /* Nuke */; };
 		1CE7DC372E76B4EF0088910A /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC362E76B4EF0088910A /* NukeExtensions */; };
 		1CE7DC392E76B4EF0088910A /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC382E76B4EF0088910A /* NukeUI */; };
@@ -70,6 +71,7 @@
 		1C88DDAE2E0BBCA2000D7CD0 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1C9B64C92E51779800323C91 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
+		1CDFBCF92EC2BE3F0095836A /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		1CE8C9662E5D5D52004ABAF4 /* FreshWall-Dev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "FreshWall-Dev-Info.plist"; sourceTree = "<group>"; };
 		1CE8CEAD2E5D60C7004ABAF4 /* FreshWallNetworking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FreshWallNetworking; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -142,6 +144,7 @@
 				1C5435F72DE2223F00153F4F /* Products */,
 				1C88DD9C2E0BB8FC000D7CD0 /* Configurations */,
 				1CE8CEAE2E5D60C7004ABAF4 /* Packages */,
+				1CDFBCF92EC2BE3F0095836A /* AppIcon.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -329,6 +332,7 @@
 				1C9B64CA2E51779800323C91 /* Debug.xcconfig in Resources */,
 				1C88DD9E2E0BB8FC000D7CD0 /* Beta.xcconfig in Resources */,
 				1C88DD9F2E0BB8FC000D7CD0 /* Dev.xcconfig in Resources */,
+				1CDFBCFA2EC2BE3F0095836A /* AppIcon.icon in Resources */,
 				1C88DDAF2E0BBCA2000D7CD0 /* Base.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
