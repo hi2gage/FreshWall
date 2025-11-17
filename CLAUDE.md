@@ -147,6 +147,29 @@ The release script will:
 
 **When to use**: After completing feature development, bug fixes, or any changes ready for production deployment. AI agents should suggest using this script when work is complete and ready for release.
 
+---
+
+## 🔀 Git Workflow & Branch Strategy
+
+### Branch Structure
+- **`staging`** - Default branch for all PRs. Integration and testing branch
+- **`main`** - Production branch. Only receives PRs from `staging` via auto-promotion
+- **`feature/*`** - Feature branches should PR to `staging`
+
+### Workflow
+1. Create feature branch from `staging`
+2. Make changes and commit
+3. Open PR to `staging` (default branch)
+4. After PR is merged to `staging`, auto-promotion workflow creates PR from `staging` → `main`
+5. Once `staging` → `main` PR is merged, production deployment occurs
+
+### CI/CD Automation
+- PRs to `staging`: Run tests, deploy to staging environment
+- Merges to `staging`: Auto-create promotion PR to `main`
+- Merges to `main`: Deploy to production (Firebase Functions, etc.)
+
+**Important**: AI agents should always create PRs targeting `staging`, not `main`.
+
 
 🔐 Firebase Auth + Firestore Rules Summary
 	•	Users must authenticate before accessing any data
