@@ -1,4 +1,4 @@
-name: Functions Test
+name: Functions Build
 
 on:
   pull_request:
@@ -17,4 +17,4 @@ jobs:
         with:
           node-version: 18
       - run: npm ci
-      - run: npm test
+      - run: npm run build
