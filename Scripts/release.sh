@@ -23,7 +23,7 @@ if ! git rev-parse --git-dir > /dev/null 2>&1; then
     exit 1
 fi
 
-# Check current branch
+# Check current branch - must be on staging to create release branch
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 if [ "$CURRENT_BRANCH" != "staging" ]; then
     echo -e "${RED}❌ Release script must be run from 'staging' branch${NC}"
@@ -37,6 +37,10 @@ if ! git diff-index --quiet HEAD --; then
     echo -e "${RED}❌ Working directory is not clean. Please commit or stash changes first.${NC}"
     exit 1
 fi
+
+# Ensure we're up to date with remote
+echo -e "${BLUE}📥 Syncing with remote staging...${NC}"
+git pull origin staging
 
 # Get the current version from git tags
 CURRENT_VERSION=$(git tag --list --sort=-version:refname | head -1 | sed 's/^v//')
@@ -89,6 +93,13 @@ if [[ ! $CONFIRM =~ ^[Yy]$ ]]; then
 fi
 
 echo ""
+echo -e "${BLUE}🌿 Creating release branch...${NC}"
+
+# Create release branch from staging
+RELEASE_BRANCH="release/v${NEW_VERSION}"
+git checkout -b "$RELEASE_BRANCH"
+
+echo ""
 echo -e "${BLUE}🔧 Updating version in Base.xcconfig...${NC}"
 
 # Update version in Base.xcconfig
@@ -116,24 +127,52 @@ git commit -m "Bump version to v${NEW_VERSION}
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
 
-echo -e "${BLUE}🏷️  Creating and pushing tag...${NC}"
+echo -e "${BLUE}🚀 Pushing release branch and creating tag...${NC}"
+
+# Push the release branch
+git push -u origin "$RELEASE_BRANCH"
 
 # Create and push tag
 git tag "v${NEW_VERSION}"
-git push origin staging
 git push origin "v${NEW_VERSION}"
 
 echo ""
-echo -e "${GREEN}✅ Pushed version bump to staging${NC}"
+echo -e "${GREEN}✅ Pushed release branch and tag${NC}"
 
-# Ask if user wants to create a PR to main
+# Create PR to staging
 echo ""
-read -p "Create a PR from staging → main? (y/N): " CREATE_PR
-if [[ $CREATE_PR =~ ^[Yy]$ ]]; then
-    echo -e "${BLUE}🔀 Creating pull request to main...${NC}"
+echo -e "${BLUE}🔀 Creating pull request to staging...${NC}"
 
-    # Create PR using gh CLI
-    if command -v gh &> /dev/null; then
+if command -v gh &> /dev/null; then
+    gh pr create \
+        --base staging \
+        --head "$RELEASE_BRANCH" \
+        --title "Release v${NEW_VERSION}" \
+        --body "$(cat <<EOF
+## Release v${NEW_VERSION}
+
+Version bump and release preparation.
+
+### Summary
+- Version: ${NEW_VERSION}
+- Build: ${BUILD_NUMBER}
+- Tag: v${NEW_VERSION}
+
+### Pre-merge Checklist
+- [ ] Version numbers updated correctly
+- [ ] Tests passing
+- [ ] Ready for staging deployment
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+EOF
+)"
+    echo -e "${GREEN}✅ Pull request to staging created successfully!${NC}"
+
+    # Ask if user wants to create PR to main as well
+    echo ""
+    read -p "Also create a PR from staging → main? (y/N): " CREATE_MAIN_PR
+    if [[ $CREATE_MAIN_PR =~ ^[Yy]$ ]]; then
+        echo -e "${BLUE}🔀 Creating pull request to main...${NC}"
         gh pr create \
             --base main \
             --head staging \
@@ -157,22 +196,26 @@ This PR promotes staging to production.
 🤖 Generated with [Claude Code](https://claude.ai/code)
 EOF
 )"
-        echo -e "${GREEN}✅ Pull request created successfully!${NC}"
-    else
-        echo -e "${YELLOW}⚠️  GitHub CLI (gh) not found. Please create PR manually:${NC}"
-        echo -e "${BLUE}   https://github.com/hi2gage/FreshWall/compare/main...staging${NC}"
+        echo -e "${GREEN}✅ Pull request to main created successfully!${NC}"
     fi
+else
+    echo -e "${YELLOW}⚠️  GitHub CLI (gh) not found. Please create PRs manually:${NC}"
+    echo -e "${BLUE}   Staging: https://github.com/hi2gage/FreshWall/compare/staging...${RELEASE_BRANCH}${NC}"
+    echo -e "${BLUE}   Main: https://github.com/hi2gage/FreshWall/compare/main...staging${NC}"
 fi
 
+# Return to staging branch
+git checkout staging
+
 echo ""
-echo -e "${GREEN}🎉 Release v${NEW_VERSION} completed successfully!${NC}"
+echo -e "${GREEN}🎉 Release v${NEW_VERSION} prepared successfully!${NC}"
 echo -e "${BLUE}📋 Summary:${NC}"
 echo -e "   • Version: ${NEW_VERSION}"
 echo -e "   • Build: ${BUILD_NUMBER}"
 echo -e "   • Tag: v${NEW_VERSION}"
-echo -e "   • Pushed to: origin/staging"
+echo -e "   • Branch: ${RELEASE_BRANCH}"
 echo ""
 echo -e "${BLUE}🔗 Next steps:${NC}"
-echo -e "   • Merge the staging → main PR when ready"
-echo -e "   • Check Xcode Cloud build status"
-echo -e "   • Update release notes in GitHub"
+echo -e "   • Review and merge ${RELEASE_BRANCH} → staging PR"
+echo -e "   • After merging to staging, merge staging → main PR"
+echo -e "   • Monitor deployment and test release"
