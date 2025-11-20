@@ -8,6 +8,7 @@ import SwiftUI
 
 struct RootView: View {
     @State private var isLoading = true
+    @State private var showingWhatsNew = false
 
     @State private var sessionStore: SessionStore
     let loginManager: LoginManager
@@ -35,6 +36,12 @@ struct RootView: View {
                     )
                 )
                 .transition(.opacity)
+                .sheet(isPresented: $showingWhatsNew) {
+                    WhatsNewView(
+                        version: WhatsNewView.currentVersion,
+                        updates: WhatsNewView.version130Updates
+                    )
+                }
             } else {
                 AuthFlowView(
                     loginManager: loginManager
@@ -50,6 +57,14 @@ struct RootView: View {
 
             _ = try? await (sessionRestore, minimumDelay)
             isLoading = false
+
+            // Show What's New after loading completes and user is authenticated
+            if sessionStore.session != nil, WhatsNewView.shouldShowWhatsNew {
+                // Delay slightly to let the main view settle
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                showingWhatsNew = true
+                WhatsNewView.markWhatsNewAsSeen()
+            }
         }
     }
 }
