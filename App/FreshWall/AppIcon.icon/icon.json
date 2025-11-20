@@ -14,23 +14,6 @@
   ],
   "groups" : [
     {
-      "blur-material" : 1,
-      "layers" : [
-
-      ],
-      "lighting" : "individual",
-      "name" : "F Square",
-      "shadow" : {
-        "kind" : "neutral",
-        "opacity" : 0.5
-      },
-      "specular" : false,
-      "translucency" : {
-        "enabled" : false,
-        "value" : 1
-      }
-    },
-    {
       "blur-material-specializations" : [
         {
           "value" : 0.5
@@ -87,6 +70,13 @@
         }
       ],
       "name" : "F",
+      "position" : {
+        "scale" : 0.75,
+        "translation-in-points" : [
+          0,
+          0
+        ]
+      },
       "shadow-specializations" : [
         {
           "value" : {
@@ -153,6 +143,13 @@
         }
       ],
       "name" : "Box",
+      "position" : {
+        "scale" : 0.75,
+        "translation-in-points" : [
+          0,
+          0
+        ]
+      },
       "shadow" : {
         "kind" : "layer-color",
         "opacity" : 0.5
