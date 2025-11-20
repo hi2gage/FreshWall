@@ -21,9 +21,11 @@ struct RootView: View {
     }
 
     var body: some View {
-        Group {
+        ZStack {
             if isLoading {
                 LoadingScreen()
+                    .transition(.opacity)
+                    .zIndex(1)
             } else if let session = sessionStore.session {
                 MainAppView(
                     sessionStore: AuthenticatedSessionStore(
@@ -32,12 +34,15 @@ struct RootView: View {
                         loginManager: loginManager
                     )
                 )
+                .transition(.opacity)
             } else {
                 AuthFlowView(
                     loginManager: loginManager
                 )
+                .transition(.opacity)
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: isLoading)
         .task {
             // Ensure loading screen shows for minimum 1 second
             async let sessionRestore: Void = loginManager.restoreSessionIfAvailable()
