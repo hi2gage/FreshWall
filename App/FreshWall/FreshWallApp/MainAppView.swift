@@ -64,6 +64,10 @@ struct MainAppView: View {
         .onShake {
             routerPath.push(.debugSettings)
         }
+        .taskOnce {
+            _ = try? await incidentService.fetchIncidents()
+            print("✅ Incidents prefetched on first appear")
+        }
 //        .environment(BackgroundUploadService.shared)
     }
 }
