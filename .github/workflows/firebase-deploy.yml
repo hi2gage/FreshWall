@@ -102,9 +102,58 @@ jobs:
     if: always() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Deployment Summary
         run: |
           echo "## Firebase Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "- Functions: ${{ needs.changes.outputs.functions == 'true' && '✅ Deployed' || '⏭️ Skipped' }}" >> $GITHUB_STEP_SUMMARY
           echo "- Firestore: ${{ needs.changes.outputs.firestore == 'true' && '✅ Deployed' || '⏭️ Skipped' }}" >> $GITHUB_STEP_SUMMARY
           echo "- Extensions: ${{ needs.changes.outputs.extensions == 'true' && '✅ Deployed' || '⏭️ Skipped' }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Send Telegram notification
+        if: needs.deploy.result == 'success'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_PRODUCTION }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID_PRODUCTION }}
+        run: |
+          # Get commit info
+          COMMIT_SHA="${{ github.sha }}"
+          COMMIT_SHORT="${COMMIT_SHA:0:7}"
+          COMMIT_MSG=$(git log -1 --pretty=format:'%s' "$COMMIT_SHA")
+          AUTHOR="${{ github.actor }}"
+
+          # Build components list
+          COMPONENTS=""
+          if [[ "${{ needs.changes.outputs.functions }}" == "true" ]]; then
+            COMPONENTS="Functions"
+          fi
+          if [[ "${{ needs.changes.outputs.firestore }}" == "true" ]]; then
+            if [[ -n "$COMPONENTS" ]]; then
+              COMPONENTS+=", "
+            fi
+            COMPONENTS+="Firestore Rules"
+          fi
+          if [[ "${{ needs.changes.outputs.extensions }}" == "true" ]]; then
+            if [[ -n "$COMPONENTS" ]]; then
+              COMPONENTS+=", "
+            fi
+            COMPONENTS+="Extensions"
+          fi
+
+          # Build message
+          MESSAGE="🚀 <b>Production Deployment Complete</b>%0A%0A"
+          MESSAGE+="<b>Environment:</b> Production%0A"
+          MESSAGE+="<b>Branch:</b> main%0A"
+          MESSAGE+="<b>Deployed by:</b> @${AUTHOR}%0A"
+          MESSAGE+="<b>Components:</b> ${COMPONENTS}%0A%0A"
+          MESSAGE+="<b>Commit:</b> ${COMMIT_SHORT}%0A"
+          MESSAGE+="<b>Message:</b> ${COMMIT_MSG}%0A%0A"
+          MESSAGE+="🔗 <a href=\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\">View deployment</a>"
+
+          # Send to Telegram
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d parse_mode="HTML" \
+            -d disable_web_page_preview="true" \
+            -d text="${MESSAGE}"
