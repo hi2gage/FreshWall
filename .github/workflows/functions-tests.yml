@@ -2,6 +2,7 @@ name: Functions Build
 
 on:
   pull_request:
+    [staging, main]
   push:
     branches: [staging, main]
 
