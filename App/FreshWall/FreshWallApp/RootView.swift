@@ -42,7 +42,7 @@ struct RootView: View {
                 .transition(.opacity)
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: isLoading)
+        .animation(.easeInOut(duration: 0.5), value: isLoading)
         .task {
             // Ensure loading screen shows for minimum 1 second
             async let sessionRestore: Void = loginManager.restoreSessionIfAvailable()
