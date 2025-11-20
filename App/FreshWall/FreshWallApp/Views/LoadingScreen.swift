@@ -22,7 +22,7 @@ struct LoadingScreen: View {
             VStack(spacing: 24) {
                 Spacer()
 
-                VStack(spacing: 10) {
+                VStack(spacing: 16) {
                     // Orange F logo with pulse animation
                     Image("logo")
                         .resizable()
@@ -43,9 +43,11 @@ struct LoadingScreen: View {
                     // White FreshWall text
                     Image("logo_text")
                         .resizable()
+                        .renderingMode(.template)
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: 280)
                         .opacity(opacity)
+                        .foregroundStyle(colorScheme == .dark ? Color.brightHighlight : Color.freshWallBlue)
                 }
 
                 Spacer()

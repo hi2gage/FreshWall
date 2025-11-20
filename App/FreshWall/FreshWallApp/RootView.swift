@@ -39,7 +39,11 @@ struct RootView: View {
             }
         }
         .task {
-            await loginManager.restoreSessionIfAvailable()
+            // Ensure loading screen shows for minimum 2 seconds
+            async let sessionRestore: Void = loginManager.restoreSessionIfAvailable()
+            async let minimumDelay: Void = Task.sleep(nanoseconds: 2_000_000_000)
+
+            _ = await (sessionRestore, minimumDelay)
             isLoading = false
         }
     }
