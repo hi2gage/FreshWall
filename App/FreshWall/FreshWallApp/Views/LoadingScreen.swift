@@ -23,11 +23,11 @@ struct LoadingScreen: View {
                 Spacer()
 
                 VStack(spacing: 10) {
-                    // FreshWall logo with pulse animation
+                    // Orange F logo with pulse animation
                     Image("logo")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 100, height: 100)
+                        .frame(width: 120, height: 120)
                         .shadow(
                             color: .freshWallOrange.opacity(isAnimating ? 0.6 : 0.2),
                             radius: isAnimating ? 30 : 15
@@ -40,10 +40,11 @@ struct LoadingScreen: View {
                             value: isAnimating
                         )
 
-                    // FreshWall text
-                    Text("FreshWall")
-                        .font(.system(size: 42, weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .white : .freshWallBlue)
+                    // White FreshWall text
+                    Image("logo_text")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: 280)
                         .opacity(opacity)
                 }
 
