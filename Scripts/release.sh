@@ -107,11 +107,17 @@ echo ""
 echo -e "${BLUE}📺 Watching workflow progress...${NC}"
 echo ""
 
-# Wait a moment for the workflow to start
-sleep 3
+# Wait for the workflow to start and get its run ID
+sleep 5
 
-# Watch the workflow run
-gh run watch
+# Get the most recent prepare-release workflow run
+RUN_ID=$(gh run list --workflow=prepare-release.yml --limit 1 --json databaseId --jq '.[0].databaseId')
+
+if [ -n "$RUN_ID" ]; then
+    gh run watch "$RUN_ID"
+else
+    echo -e "${YELLOW}⚠️  Could not find workflow run. Check manually with: gh run list${NC}"
+fi
 
 echo ""
 echo -e "${GREEN}🎉 Release v${NEW_VERSION} prepared!${NC}"
