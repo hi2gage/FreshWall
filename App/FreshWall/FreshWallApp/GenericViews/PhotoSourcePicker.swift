@@ -17,6 +17,7 @@ struct PhotoSourcePicker<Label: View>: View {
     @State private var showCamera = false
     @State private var libraryItems: [PhotosPickerItem] = []
     @State private var showLibrary = false
+    @State private var isProcessingPhotos = false
 
     init(
         selection: Binding<[PickedPhoto]>,
@@ -71,14 +72,29 @@ struct PhotoSourcePicker<Label: View>: View {
                             resolvedAddress: nil
                         )
 
+                        // Camera photos always get unique IDs, so no deduplication needed
+                        print("✅ PhotoSourcePicker: Adding camera photo")
                         selection.append(photo)
                     }
                     showCamera = false
                 }
                 .ignoresSafeArea()
             }
-            .onChange(of: libraryItems) { _, newItems in
+            .onChange(of: libraryItems) { oldItems, newItems in
+                // Only process if we have new items and they're different from old items
+                guard !newItems.isEmpty, newItems != oldItems else { return }
+
+                // Prevent concurrent processing
+                guard !isProcessingPhotos else {
+                    print("⚠️ PhotoSourcePicker: Already processing photos, ignoring duplicate onChange")
+                    return
+                }
+
+                isProcessingPhotos = true
+
                 Task {
+                    defer { isProcessingPhotos = false }
+
                     var newPhotos: [PickedPhoto] = []
                     for item in newItems {
                         if let data = try? await item.loadTransferable(type: Data.self),
@@ -87,10 +103,20 @@ struct PhotoSourcePicker<Label: View>: View {
                                from: data,
                                using: metadataService
                            ) {
-                            newPhotos.append(photo)
+                            // Deduplicate: only add if this ID doesn't already exist in selection
+                            if !selection.contains(where: { $0.id == photo.id }) {
+                                newPhotos.append(photo)
+                            } else {
+                                print("⚠️ PhotoSourcePicker: Skipping duplicate photo with ID: \(photo.id)")
+                            }
                         }
                     }
-                    selection.append(contentsOf: newPhotos)
+
+                    if !newPhotos.isEmpty {
+                        print("✅ PhotoSourcePicker: Adding \(newPhotos.count) new photo(s)")
+                        selection.append(contentsOf: newPhotos)
+                    }
+
                     libraryItems.removeAll()
                 }
             }
