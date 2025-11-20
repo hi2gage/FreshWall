@@ -30,12 +30,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct FreshWallApp: App {
+    @Environment(\.colorScheme) var colorScheme
+
     // register app delegate for Firebase setup
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .tint(colorScheme == .dark ? .freshWallOrange : .freshWallBlue)
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
                     // Process pending address resolution tasks when app becomes active
                     Task {

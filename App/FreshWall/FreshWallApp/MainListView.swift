@@ -81,9 +81,9 @@ struct MainListView: View {
                             Image(systemName: "plus")
                                 .font(.title)
                                 .fontWeight(.semibold)
-                                .foregroundColor(.white)
+                                .foregroundColor(.brightHighlight)
                                 .frame(width: 68, height: 68)
-                                .background(Color.brandGreen)
+                                .background(Color.freshWallOrange)
                                 .clipShape(Circle())
                                 .shadow(radius: 4, x: 0, y: 2)
                         }
