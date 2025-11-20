@@ -62,6 +62,11 @@ export const notifyNewIncident = onDocumentCreated(
     const teamId = event.params.teamId;
     const incidentId = event.params.incidentId;
 
+    // Count photos
+    const beforePhotosCount = incident.beforePhotos?.length || 0;
+    const afterPhotosCount = incident.afterPhotos?.length || 0;
+    const totalPhotos = beforePhotosCount + afterPhotosCount;
+
     const message = `
 🆕 <b>New Incident Created</b>
 
@@ -69,6 +74,7 @@ export const notifyNewIncident = onDocumentCreated(
 <b>Title:</b> ${incident.title || "Untitled"}
 <b>Status:</b> ${incident.status || "unknown"}
 <b>Client:</b> ${incident.clientRef?.id || "N/A"}
+<b>Photos:</b> ${totalPhotos} (${beforePhotosCount} before, ${afterPhotosCount} after)
 <b>ID:</b> ${incidentId}
     `.trim();
 

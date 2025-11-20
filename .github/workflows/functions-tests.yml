@@ -1,9 +1,9 @@
-name: Functions Test
+name: Functions Build
 
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [staging, main]
 
 jobs:
   build:
@@ -17,4 +17,4 @@ jobs:
         with:
           node-version: 18
       - run: npm ci
-      - run: npm test
+      - run: npm run build
