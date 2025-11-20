@@ -23,7 +23,7 @@ struct RootView: View {
     var body: some View {
         Group {
             if isLoading {
-                ProgressView("Loading...")
+                LoadingScreen()
             } else if let session = sessionStore.session {
                 MainAppView(
                     sessionStore: AuthenticatedSessionStore(
