@@ -79,26 +79,28 @@ echo ""
 echo -e "${BLUE}🚀 Triggering GitHub workflow...${NC}"
 
 # Determine the workflow inputs based on release type
-case $RELEASE_TYPE in
-    1|2|3)
-        # patch, minor, or major
-        VERSION_BUMP_TYPE=$(case $RELEASE_TYPE in
-            1) echo "patch" ;;
-            2) echo "minor" ;;
-            3) echo "major" ;;
-        esac)
-        gh workflow run prepare-release.yml \
-            --ref staging \
-            -f version_bump=$VERSION_BUMP_TYPE
-        ;;
-    4)
-        # custom version
-        gh workflow run prepare-release.yml \
-            --ref staging \
-            -f version_bump=custom \
-            -f custom_version=$NEW_VERSION
-        ;;
-esac
+if [ "$RELEASE_TYPE" = "1" ]; then
+    # Patch version
+    gh workflow run prepare-release.yml \
+        --ref staging \
+        -f version_bump=patch
+elif [ "$RELEASE_TYPE" = "2" ]; then
+    # Minor version
+    gh workflow run prepare-release.yml \
+        --ref staging \
+        -f version_bump=minor
+elif [ "$RELEASE_TYPE" = "3" ]; then
+    # Major version
+    gh workflow run prepare-release.yml \
+        --ref staging \
+        -f version_bump=major
+elif [ "$RELEASE_TYPE" = "4" ]; then
+    # Custom version
+    gh workflow run prepare-release.yml \
+        --ref staging \
+        -f version_bump=custom \
+        -f custom_version="$NEW_VERSION"
+fi
 
 echo -e "${GREEN}✅ Workflow triggered successfully!${NC}"
 echo ""
