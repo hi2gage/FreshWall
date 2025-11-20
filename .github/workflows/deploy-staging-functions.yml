@@ -85,3 +85,40 @@ jobs:
               repo: context.repo.repo,
               body: '✅ Firebase Functions deployed to staging successfully!'
             })
+
+      - name: Send Telegram notification
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_STAGING }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID_STAGING }}
+        run: |
+          # Get commit info
+          COMMIT_SHA="${{ github.sha }}"
+          COMMIT_SHORT="${COMMIT_SHA:0:7}"
+          COMMIT_MSG=$(git log -1 --pretty=format:'%s' "$COMMIT_SHA")
+          AUTHOR="${{ github.actor }}"
+
+          # Determine what was deployed
+          COMPONENTS=""
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            COMPONENTS="Functions, Firestore Rules (Manual)"
+          else
+            COMPONENTS="Functions, Firestore Rules"
+          fi
+
+          # Build message
+          MESSAGE="🚀 <b>Staging Deployment Complete</b>%0A%0A"
+          MESSAGE+="<b>Environment:</b> Staging%0A"
+          MESSAGE+="<b>Branch:</b> staging%0A"
+          MESSAGE+="<b>Deployed by:</b> @${AUTHOR}%0A"
+          MESSAGE+="<b>Components:</b> ${COMPONENTS}%0A%0A"
+          MESSAGE+="<b>Commit:</b> ${COMMIT_SHORT}%0A"
+          MESSAGE+="<b>Message:</b> ${COMMIT_MSG}%0A%0A"
+          MESSAGE+="🔗 <a href=\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\">View deployment</a>"
+
+          # Send to Telegram
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d parse_mode="HTML" \
+            -d disable_web_page_preview="true" \
+            -d text="${MESSAGE}"
