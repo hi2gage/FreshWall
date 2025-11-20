@@ -1,4 +1,7 @@
+import NukeUI
 import SwiftUI
+
+// MARK: - PhotoCarousel
 
 /// A horizontally scrollable carousel of photos that can launch a full-screen photo viewer.
 struct PhotoCarousel: View {
@@ -14,25 +17,51 @@ struct PhotoCarousel: View {
                         let context = PhotoViewerContext(photos: photos, selectedPhoto: photo)
                         routerPath.push(.photoViewer(context: context))
                     } label: {
-                        AsyncImage(url: URL(string: photo.thumbnailUrl ?? photo.url)) { phase in
-                            switch phase {
-                            case .empty:
-                                ProgressView()
+                        if let url = URL(string: photo.thumbnailUrl ?? photo.url) {
+                            LazyImage(url: url) { state in
+                                if let image = state.image {
+                                    let _ = print("🎠 Carousel thumbnail loaded: \(url.lastPathComponent)")
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 100, height: 100)
+                                        .clipped()
+                                        .cornerRadius(4)
+                                } else if state.error != nil {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(Color.gray.opacity(0.1))
+                                        Image(systemName: "photo")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 30, height: 30)
+                                            .foregroundColor(.secondary)
+                                    }
                                     .frame(width: 100, height: 100)
-                            case let .success(image):
-                                image
-                                    .resizable()
-                                    .scaledToFill()
+                                } else {
+                                    // Loading state
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(Color.gray.opacity(0.2))
+                                        ProgressView()
+                                            .scaleEffect(0.7)
+                                    }
                                     .frame(width: 100, height: 100)
-                                    .clipped()
-                            case .failure:
+                                }
+                            }
+                            .processors([.resize(size: CGSize(width: Constants.imageSize * 2, height: Constants.imageSize * 2))])
+                            .priority(.high)
+                        } else {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.gray.opacity(0.1))
                                 Image(systemName: "photo")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 100, height: 100)
-                            @unknown default:
-                                EmptyView()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.secondary)
                             }
+                            .frame(width: 100, height: 100)
                         }
                     }
                     .buttonStyle(.plain)
@@ -41,4 +70,10 @@ struct PhotoCarousel: View {
         }
         .frame(height: 120)
     }
+}
+
+// MARK: - Constants
+
+private enum Constants {
+    static let imageSize: CGFloat = 84 // Increased from 80 to compensate for padding
 }

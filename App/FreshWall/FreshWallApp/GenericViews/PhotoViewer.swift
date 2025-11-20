@@ -1,3 +1,5 @@
+import Nuke
+import NukeUI
 import SwiftUI
 
 // MARK: - PhotoViewer
@@ -24,28 +26,48 @@ struct PhotoViewer: View {
         TabView(selection: $index) {
             ForEach(Array(photos.enumerated()), id: \.element.id) { idx, photo in
                 ZStack {
-                    AsyncImage(url: URL(string: photo.url)) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .background(Color.black)
-                        case let .success(image):
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .zoomable(
-                                    minZoomScale: 1,
-                                    doubleTapZoomScale: 3
-                                )
-                        case .failure:
+                    if let url = URL(string: photo.url) {
+                        LazyImage(url: url) { state in
+                            if let image = state.image {
+                                let _ = print("🖼️ [INSTANT] Photo \(idx + 1) at \(Date().timeIntervalSince1970) loaded from cache: \(url.lastPathComponent)")
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .zoomable(
+                                        minZoomScale: 1,
+                                        doubleTapZoomScale: 3
+                                    )
+                            } else if state.error != nil {
+                                let _ = print("❌ [ERROR] Photo \(idx + 1) failed to load: \(url.lastPathComponent)")
+                                ZStack {
+                                    Color.black
+                                    Image(systemName: "photo")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 100, height: 100)
+                                        .foregroundColor(.white.opacity(0.5))
+                                }
+                            } else {
+                                let _ = print("⏳ [LOADING] Photo \(idx + 1) at \(Date().timeIntervalSince1970): \(url.lastPathComponent)")
+                                ZStack {
+                                    Color.black
+                                    ProgressView()
+                                        .tint(.white)
+                                }
+                            }
+                        }
+                        .processors([
+                            ImageProcessors.Resize(width: 1000), // Decode at smaller size
+                        ])
+                        .priority(.veryHigh)
+                    } else {
+                        ZStack {
+                            Color.black
                             Image(systemName: "photo")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .background(Color.black)
-                        @unknown default:
-                            EmptyView()
+                                .frame(width: 100, height: 100)
+                                .foregroundColor(.white.opacity(0.5))
                         }
                     }
                 }

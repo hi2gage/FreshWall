@@ -43,8 +43,8 @@ struct IncidentListCell: View {
                 }
                 .processors([.resize(size: CGSize(width: Constants.imageSize * 2, height: Constants.imageSize * 2))])
                 .priority(.high)
-//                .failureImage(Image(systemName: "photo"))
-//                .transition(.opacity)
+                //                .failureImage(Image(systemName: "photo"))
+                //                .transition(.opacity)
             } else {
                 ZStack {
                     RoundedRectangle(cornerRadius: Constants.smallCornerRadius)

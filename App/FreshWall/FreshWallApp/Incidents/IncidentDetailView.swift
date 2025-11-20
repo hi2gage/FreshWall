@@ -1,4 +1,5 @@
 @preconcurrency import FirebaseFirestore
+import Nuke
 import SwiftUI
 
 // MARK: - IncidentDetailView
@@ -7,6 +8,7 @@ import SwiftUI
 struct IncidentDetailView: View {
     @State private var viewModel: IncidentDetailViewModel
     @State private var showingDeleteConfirmation = false
+    @State private var prefetcher = ImagePrefetcher()
     @Environment(RouterPath.self) private var routerPath
 
     init(
@@ -146,10 +148,47 @@ struct IncidentDetailView: View {
             Text("Are you sure you want to delete this incident? This action cannot be undone.")
         }
         .task {
+            print("🔄 Task starting - about to reload incident")
             await viewModel.reloadIncident()
+            print("✅ Task completed - incident reloaded, now prefetching images")
+
+            // Prefetch full-size images AFTER incident is reloaded
+            var urls: [URL] = []
+            let beforePhotos = viewModel.incident.beforePhotos
+            urls += beforePhotos.compactMap { URL(string: $0.url) }
+
+            let afterPhotos = viewModel.incident.afterPhotos
+            urls += afterPhotos.compactMap { URL(string: $0.url) }
+
+            if !urls.isEmpty {
+                let startTime = Date()
+                print("🚀 Starting prefetch for incident: \(viewModel.incident.id ?? "unknown")")
+                print("📸 Prefetching \(urls.count) full-size images:")
+                for (index, url) in urls.enumerated() {
+                    print("   [\(index + 1)] \(url.lastPathComponent)")
+                }
+                prefetcher.didComplete = {
+                    let elapsed = Date().timeIntervalSince(startTime)
+                    print("✅ Prefetching completed for incident: \(viewModel.incident.id ?? "unknown") in \(String(format: "%.2f", elapsed))s")
+                }
+                prefetcher.startPrefetching(with: urls)
+            }
         }
         .refreshable {
             await viewModel.reloadIncident()
+        }
+        .onDisappear {
+            // Stop prefetching when leaving detail view
+            var urls: [URL] = []
+            let beforePhotos = viewModel.incident.beforePhotos
+            urls += beforePhotos.compactMap { URL(string: $0.url) }
+
+            let afterPhotos = viewModel.incident.afterPhotos
+            urls += afterPhotos.compactMap { URL(string: $0.url) }
+
+            if !urls.isEmpty {
+                prefetcher.stopPrefetching(with: urls)
+            }
         }
         .onChange(of: viewModel.pickedBeforePhotos) { _, newPhotos in
             if !newPhotos.isEmpty {
