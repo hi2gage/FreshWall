@@ -53,6 +53,15 @@ actor BackgroundUploadService {
         print("🚀 BackgroundUploadService: Starting upload for incident \(incidentId)")
         print("📸 Before photos: \(beforePhotos.count), After photos: \(afterPhotos.count)")
 
+        // Cache UIImages for immediate display in the list
+        Task { @MainActor in
+            LocalPhotoCache.shared.storePhotos(
+                for: incidentId,
+                beforePhotos: beforePhotos.map(\.image),
+                afterPhotos: afterPhotos.map(\.image)
+            )
+        }
+
         if !beforePhotos.isEmpty {
             let beforeTask = UploadTask(
                 incidentId: incidentId,
@@ -154,6 +163,13 @@ actor BackgroundUploadService {
     private func completeUpload(taskId: UUID) {
         uploadTasks[taskId]?.isCompleted = true
         uploadTasks[taskId]?.progress = 1.0
+
+        // Clear local photo cache for this incident when upload completes
+        if let task = uploadTasks[taskId] {
+            Task { @MainActor in
+                LocalPhotoCache.shared.clearPhotos(for: task.incidentId)
+            }
+        }
 
         Task {
             try? await Task.sleep(for: .seconds(2))

@@ -1,16 +1,57 @@
 import NukeUI
 import SwiftUI
 
+// MARK: - ThumbnailSource
+
+/// Source for thumbnail display
+private enum ThumbnailSource {
+    case local(UIImage) // Cached local image during upload
+    case remote(URL) // Remote URL after upload
+    case none // No photo available
+}
+
 // MARK: - IncidentListCell
 
 /// A cell view displaying summary information for an incident with optimized image loading.
 struct IncidentListCell: View {
     let incident: Incident
 
+    /// Check for locally cached photo (during upload) or use remote URL
+    private var thumbnailSource: ThumbnailSource {
+        // First check if we have a cached local image
+        if let incidentId = incident.id,
+           let cachedImage = LocalPhotoCache.shared.getThumbnail(for: incidentId) {
+            return .local(cachedImage)
+        }
+
+        // Otherwise use remote URL
+        if let urlString = incident.beforePhotos.first?.thumbnailUrl,
+           let url = URL(string: urlString) {
+            return .remote(url)
+        }
+
+        return .none
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: Constants.cellSpacing) {
-            if let urlString = incident.beforePhotos.first?.thumbnailUrl,
-               let url = URL(string: urlString) {
+            switch thumbnailSource {
+            case let .local(image):
+                // Display cached local image during upload
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: Constants.imageSize, height: Constants.imageSize)
+                    .clipped()
+                    .cornerRadius(Constants.smallCornerRadius)
+                    .overlay(
+                        // Subtle indicator that this is a temporary cached image
+                        RoundedRectangle(cornerRadius: Constants.smallCornerRadius)
+                            .strokeBorder(Color.blue.opacity(0.3), lineWidth: 2)
+                    )
+
+            case let .remote(url):
+                // Load from remote URL (already uploaded)
                 LazyImage(url: url) { state in
                     if let image = state.image {
                         image
@@ -43,9 +84,9 @@ struct IncidentListCell: View {
                 }
                 .processors([.resize(size: CGSize(width: Constants.imageSize * 2, height: Constants.imageSize * 2))])
                 .priority(.high)
-                //                .failureImage(Image(systemName: "photo"))
-                //                .transition(.opacity)
-            } else {
+
+            case .none:
+                // No photo available
                 ZStack {
                     RoundedRectangle(cornerRadius: Constants.smallCornerRadius)
                         .fill(Color.gray.opacity(0.1))
