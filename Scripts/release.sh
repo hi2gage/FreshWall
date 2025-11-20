@@ -82,22 +82,22 @@ echo -e "${BLUE}🚀 Triggering GitHub workflow...${NC}"
 if [ "$RELEASE_TYPE" = "1" ]; then
     # Patch version
     gh workflow run prepare-release.yml \
-        --ref main \
+        --ref staging \
         -f version_bump=patch
 elif [ "$RELEASE_TYPE" = "2" ]; then
     # Minor version
     gh workflow run prepare-release.yml \
-        --ref main \
+        --ref staging \
         -f version_bump=minor
 elif [ "$RELEASE_TYPE" = "3" ]; then
     # Major version
     gh workflow run prepare-release.yml \
-        --ref main \
+        --ref staging \
         -f version_bump=major
 elif [ "$RELEASE_TYPE" = "4" ]; then
     # Custom version
     gh workflow run prepare-release.yml \
-        --ref main \
+        --ref staging \
         -f version_bump=custom \
         -f custom_version="$NEW_VERSION"
 fi
@@ -117,6 +117,7 @@ echo ""
 echo -e "${GREEN}🎉 Release v${NEW_VERSION} prepared!${NC}"
 echo ""
 echo -e "${BLUE}🔗 Next steps:${NC}"
-echo -e "   • Review and merge the auto-created PR to main"
-echo -e "   • Tag v${NEW_VERSION} will be auto-created when merged"
-echo -e "   • GitHub Release will be auto-generated from tag"
+echo -e "   • Version pushed to staging"
+echo -e "   • Auto-promote will create staging → main PR"
+echo -e "   • Review and merge the PR to deploy to production"
+echo -e "   • Tag v${NEW_VERSION} will be auto-created when merged to main"
