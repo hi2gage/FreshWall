@@ -1,4 +1,4 @@
-
+name: Functions Build
 
 on:
   pull_request:
