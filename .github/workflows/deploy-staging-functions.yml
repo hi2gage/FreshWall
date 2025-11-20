@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - staging
-    paths:
-      - 'Firebase/functions/**'
-      - 'Firebase/firestore.rules'
-      - 'Firebase/firestore.indexes.json'
 
   # Allow manual trigger
   workflow_dispatch:
