@@ -28,7 +28,6 @@ struct LocationSection: View {
                 Button("📍 Capture Location") {
                     handleLocationCapture(currentLocation: nil)
                 }
-                .foregroundColor(.blue)
             }
         }
     }

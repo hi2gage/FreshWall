@@ -33,12 +33,17 @@ protocol IncidentServiceProtocol: Sendable {
 // MARK: - IncidentService
 
 /// Service to fetch and manage Incident entities from Firestore.
-struct IncidentService: IncidentServiceProtocol {
+@MainActor
+final class IncidentService: IncidentServiceProtocol {
     private let modelService: IncidentModelServiceProtocol
     private let photoService: IncidentPhotoServiceProtocol
     private let clientModelService: ClientModelServiceProtocol
     private let userModelService: UserModelServiceProtocol
     private let session: UserSession
+
+    // Cache
+    private var cachedIncidents: [Incident] = []
+    private var listenerRegistration: ListenerRegistration?
 
     /// Initializes the service with a `Firestore` instance and `UserSession` for team context.
     init(
@@ -55,12 +60,56 @@ struct IncidentService: IncidentServiceProtocol {
         self.session = session
     }
 
+    deinit {
+        listenerRegistration?.remove()
+    }
+
     /// Fetches active incidents for the current team from Firestore.
+    /// Returns cached incidents immediately if available, otherwise fetches from Firestore.
+    /// Sets up a real-time listener for automatic updates.
     func fetchIncidents() async throws -> [Incident] {
         let teamId = session.teamId
 
+        // If we have cached data and a listener is active, return cache immediately
+        if !cachedIncidents.isEmpty, listenerRegistration != nil {
+            return cachedIncidents
+        }
+
+        // Set up real-time listener if not already listening
+        if listenerRegistration == nil {
+            setupIncidentsListener(teamId: teamId)
+        }
+
+        // Fetch initial data
         let dtos = try await modelService.fetchIncidents(teamId: teamId)
-        return dtos.map { Incident(dto: $0) }
+        cachedIncidents = dtos.map { Incident(dto: $0) }
+        return cachedIncidents
+    }
+
+    /// Sets up a Firestore listener for real-time incident updates
+    private func setupIncidentsListener(teamId: String) {
+        let query = Firestore.firestore()
+            .collection("teams").document(teamId)
+            .collection("incidents")
+            .order(by: "createdAt", descending: true)
+
+        listenerRegistration = query.addSnapshotListener { [weak self] snapshot, error in
+            guard let self else { return }
+
+            if let error {
+                print("❌ Incidents listener error: \(error)")
+                return
+            }
+
+            guard let documents = snapshot?.documents else { return }
+
+            Task { @MainActor in
+                self.cachedIncidents = documents.compactMap { doc in
+                    try? Incident(dto: doc.data(as: IncidentDTO.self))
+                }
+                print("🔄 Incidents cache updated: \(self.cachedIncidents.count) incidents")
+            }
+        }
     }
 
     /// Fetches a specific incident by ID from Firestore.
