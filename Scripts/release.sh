@@ -9,23 +9,19 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# Get the current directory
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-XCCONFIG_FILE="$PROJECT_DIR/App/FreshWall/Configurations/Base.xcconfig"
-
 echo -e "${BLUE}🚀 FreshWall Release Script${NC}"
 echo "=============================="
+
+# Check if gh CLI is installed
+if ! command -v gh &> /dev/null; then
+    echo -e "${RED}❌ GitHub CLI (gh) is not installed${NC}"
+    echo -e "${YELLOW}Install it with: brew install gh${NC}"
+    exit 1
+fi
 
 # Check if we're in a git repository
 if ! git rev-parse --git-dir > /dev/null 2>&1; then
     echo -e "${RED}❌ Not in a git repository${NC}"
-    exit 1
-fi
-
-# Check if working directory is clean
-if ! git diff-index --quiet HEAD --; then
-    echo -e "${RED}❌ Working directory is not clean. Please commit or stash changes first.${NC}"
     exit 1
 fi
 
@@ -80,49 +76,45 @@ if [[ ! $CONFIRM =~ ^[Yy]$ ]]; then
 fi
 
 echo ""
-echo -e "${BLUE}🔧 Updating version in Base.xcconfig...${NC}"
+echo -e "${BLUE}🚀 Triggering GitHub workflow...${NC}"
 
-# Update version in Base.xcconfig
-if [ -f "$XCCONFIG_FILE" ]; then
-    # Update IDENTITY_VERSION
-    sed -i '' "s/IDENTITY_VERSION = .*/IDENTITY_VERSION = $NEW_VERSION/" "$XCCONFIG_FILE"
-    
-    # Increment build number - use current timestamp for uniqueness
-    BUILD_NUMBER=$(date +%Y%m%d%H%M)
-    sed -i '' "s/IDENTITY_BUILD = .*/IDENTITY_BUILD = $BUILD_NUMBER/" "$XCCONFIG_FILE"
-    
-    echo -e "${GREEN}✅ Updated version to ${NEW_VERSION} and build to ${BUILD_NUMBER} in Base.xcconfig${NC}"
-else
-    echo -e "${RED}❌ Base.xcconfig not found at expected location: $XCCONFIG_FILE${NC}"
-    exit 1
-fi
+# Determine the workflow inputs based on release type
+case $RELEASE_TYPE in
+    1|2|3)
+        # patch, minor, or major
+        VERSION_BUMP_TYPE=$(case $RELEASE_TYPE in
+            1) echo "patch" ;;
+            2) echo "minor" ;;
+            3) echo "major" ;;
+        esac)
+        gh workflow run prepare-release.yml \
+            --ref staging \
+            -f version_bump=$VERSION_BUMP_TYPE
+        ;;
+    4)
+        # custom version
+        gh workflow run prepare-release.yml \
+            --ref staging \
+            -f version_bump=custom \
+            -f custom_version=$NEW_VERSION
+        ;;
+esac
 
-echo -e "${BLUE}📝 Committing version bump...${NC}"
+echo -e "${GREEN}✅ Workflow triggered successfully!${NC}"
+echo ""
+echo -e "${BLUE}📺 Watching workflow progress...${NC}"
+echo ""
 
-# Add and commit the version changes
-git add .
-git commit -m "Bump version to v${NEW_VERSION}
+# Wait a moment for the workflow to start
+sleep 3
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
-
-echo -e "${BLUE}🏷️  Creating and pushing tag...${NC}"
-
-# Create and push tag
-git tag "v${NEW_VERSION}"
-git push origin main
-git push origin "v${NEW_VERSION}"
+# Watch the workflow run
+gh run watch
 
 echo ""
-echo -e "${GREEN}🎉 Release v${NEW_VERSION} completed successfully!${NC}"
-echo -e "${BLUE}📋 Summary:${NC}"
-echo -e "   • Version: ${NEW_VERSION}"
-echo -e "   • Build: ${BUILD_NUMBER}"
-echo -e "   • Tag: v${NEW_VERSION}"
-echo -e "   • Pushed to: origin/main"
+echo -e "${GREEN}🎉 Release v${NEW_VERSION} prepared!${NC}"
 echo ""
 echo -e "${BLUE}🔗 Next steps:${NC}"
-echo -e "   • Check Xcode Cloud build status"
-echo -e "   • Test the build before releasing"
-echo -e "   • Update release notes in GitHub"
+echo -e "   • Review and merge the auto-created PR to staging"
+echo -e "   • After merging to staging, auto-promote will create PR to main"
+echo -e "   • Monitor deployment and test release"
