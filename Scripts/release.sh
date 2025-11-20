@@ -23,6 +23,15 @@ if ! git rev-parse --git-dir > /dev/null 2>&1; then
     exit 1
 fi
 
+# Check current branch
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$CURRENT_BRANCH" != "staging" ]; then
+    echo -e "${RED}❌ Release script must be run from 'staging' branch${NC}"
+    echo -e "${YELLOW}Current branch: ${CURRENT_BRANCH}${NC}"
+    echo -e "${BLUE}Please checkout staging first: git checkout staging${NC}"
+    exit 1
+fi
+
 # Check if working directory is clean
 if ! git diff-index --quiet HEAD --; then
     echo -e "${RED}❌ Working directory is not clean. Please commit or stash changes first.${NC}"
@@ -111,8 +120,49 @@ echo -e "${BLUE}🏷️  Creating and pushing tag...${NC}"
 
 # Create and push tag
 git tag "v${NEW_VERSION}"
-git push origin main
+git push origin staging
 git push origin "v${NEW_VERSION}"
+
+echo ""
+echo -e "${GREEN}✅ Pushed version bump to staging${NC}"
+
+# Ask if user wants to create a PR to main
+echo ""
+read -p "Create a PR from staging → main? (y/N): " CREATE_PR
+if [[ $CREATE_PR =~ ^[Yy]$ ]]; then
+    echo -e "${BLUE}🔀 Creating pull request to main...${NC}"
+
+    # Create PR using gh CLI
+    if command -v gh &> /dev/null; then
+        gh pr create \
+            --base main \
+            --head staging \
+            --title "🚀 Promote staging to production (v${NEW_VERSION})" \
+            --body "$(cat <<EOF
+## Release v${NEW_VERSION}
+
+This PR promotes staging to production.
+
+### Summary
+- Version: ${NEW_VERSION}
+- Build: ${BUILD_NUMBER}
+- Tag: v${NEW_VERSION}
+
+### Deployment Checklist
+- [ ] Staging tests passed
+- [ ] Manual testing completed
+- [ ] Release notes updated
+- [ ] Ready for production deployment
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+EOF
+)"
+        echo -e "${GREEN}✅ Pull request created successfully!${NC}"
+    else
+        echo -e "${YELLOW}⚠️  GitHub CLI (gh) not found. Please create PR manually:${NC}"
+        echo -e "${BLUE}   https://github.com/hi2gage/FreshWall/compare/main...staging${NC}"
+    fi
+fi
 
 echo ""
 echo -e "${GREEN}🎉 Release v${NEW_VERSION} completed successfully!${NC}"
@@ -120,9 +170,9 @@ echo -e "${BLUE}📋 Summary:${NC}"
 echo -e "   • Version: ${NEW_VERSION}"
 echo -e "   • Build: ${BUILD_NUMBER}"
 echo -e "   • Tag: v${NEW_VERSION}"
-echo -e "   • Pushed to: origin/main"
+echo -e "   • Pushed to: origin/staging"
 echo ""
 echo -e "${BLUE}🔗 Next steps:${NC}"
+echo -e "   • Merge the staging → main PR when ready"
 echo -e "   • Check Xcode Cloud build status"
-echo -e "   • Test the build before releasing"
 echo -e "   • Update release notes in GitHub"
