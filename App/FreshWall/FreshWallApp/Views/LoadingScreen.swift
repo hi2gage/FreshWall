@@ -22,28 +22,30 @@ struct LoadingScreen: View {
             VStack(spacing: 24) {
                 Spacer()
 
-                // FreshWall logo with pulse animation
-                Image("BootLogo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 200)
-                    .shadow(
-                        color: .freshWallOrange.opacity(isAnimating ? 0.6 : 0.2),
-                        radius: isAnimating ? 30 : 15
-                    )
-                    .scaleEffect(isAnimating ? 1.03 : 1.0)
-                    .opacity(opacity)
-                    .animation(
-                        .easeInOut(duration: 1.8)
-                            .repeatForever(autoreverses: true),
-                        value: isAnimating
-                    )
+                VStack(spacing: 10) {
+                    // FreshWall logo with pulse animation
+                    Image("logo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 100, height: 100)
+                        .shadow(
+                            color: .freshWallOrange.opacity(isAnimating ? 0.6 : 0.2),
+                            radius: isAnimating ? 30 : 15
+                        )
+                        .scaleEffect(isAnimating ? 1.03 : 1.0)
+                        .opacity(opacity)
+                        .animation(
+                            .easeInOut(duration: 1.8)
+                                .repeatForever(autoreverses: true),
+                            value: isAnimating
+                        )
 
-                // FreshWall text
-                Text("FreshWall")
-                    .font(.system(size: 48, weight: .bold, design: .default))
-                    .foregroundColor(colorScheme == .dark ? .white : .freshWallBlue)
-                    .opacity(opacity)
+                    // FreshWall text
+                    Text("FreshWall")
+                        .font(.system(size: 42, weight: .bold))
+                        .foregroundColor(colorScheme == .dark ? .white : .freshWallBlue)
+                        .opacity(opacity)
+                }
 
                 Spacer()
             }
