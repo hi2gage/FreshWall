@@ -13,10 +13,9 @@ The deployment workflows now send Telegram notifications when:
 You have two Telegram bots configured:
 
 1. **Staging Bot**: `@freshwall_state_bot`
-   - Token: `8092591585:AAGMr0AIhB_dZRYJsWzgZgAxMcXbEZ0Llbo`
-
 2. **Production Bot**: `@freshwall_alert_tracker_bot`
-   - Token: `8006330551:AAE_7pSa4wVlud7ynK_BQdd1xXR07SXNvTg`
+
+> **Security Note**: Bot tokens should be kept secure and never committed to the repository. Get tokens from @BotFather in Telegram.
 
 ## Setup Instructions
 
@@ -36,10 +35,10 @@ You need to get the chat ID where the bot will send messages. This can be a priv
 
 ```bash
 # For staging bot
-curl "https://api.telegram.org/bot8092591585:AAGMr0AIhB_dZRYJsWzgZgAxMcXbEZ0Llbo/getUpdates"
+curl "https://api.telegram.org/bot<YOUR_STAGING_BOT_TOKEN>/getUpdates"
 
 # For production bot
-curl "https://api.telegram.org/bot8006330551:AAE_7pSa4wVlud7ynK_BQdd1xXR07SXNvTg/getUpdates"
+curl "https://api.telegram.org/bot<YOUR_PRODUCTION_BOT_TOKEN>/getUpdates"
 ```
 
 4. Look for the `"chat":{"id":XXXXXXX}` in the response. That number is your chat ID.
@@ -61,13 +60,13 @@ Go to your GitHub repository settings and add the following secrets:
 Add these four secrets:
 
 1. **TELEGRAM_BOT_TOKEN_STAGING**
-   - Value: `8092591585:AAGMr0AIhB_dZRYJsWzgZgAxMcXbEZ0Llbo`
+   - Value: Get from @BotFather for `@freshwall_state_bot`
 
 2. **TELEGRAM_CHAT_ID_STAGING**
    - Value: `[YOUR_CHAT_ID_FROM_STEP_1]`
 
 3. **TELEGRAM_BOT_TOKEN_PRODUCTION**
-   - Value: `8006330551:AAE_7pSa4wVlud7ynK_BQdd1xXR07SXNvTg`
+   - Value: Get from @BotFather for `@freshwall_alert_tracker_bot`
 
 4. **TELEGRAM_CHAT_ID_PRODUCTION**
    - Value: `[YOUR_CHAT_ID_FROM_STEP_1]`
