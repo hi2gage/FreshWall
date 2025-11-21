@@ -61,8 +61,10 @@ struct ShakeDetectionModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(
-                ShakeDetectionViewRepresentable(onShake: onShake)
-                    .allowsHitTesting(false)
+                #if DEBUG
+                    ShakeDetectionViewRepresentable(onShake: onShake)
+                        .allowsHitTesting(false)
+                #endif
             )
     }
 }
