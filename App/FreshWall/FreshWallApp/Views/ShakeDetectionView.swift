@@ -45,9 +45,11 @@ class ShakeDetectionUIView: UIView {
     }
 
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        if motion == .motionShake {
-            onShake?()
-        }
+        #if DEBUG
+            if motion == .motionShake {
+                onShake?()
+            }
+        #endif
         super.motionEnded(motion, with: event)
     }
 }
