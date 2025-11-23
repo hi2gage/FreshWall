@@ -25,7 +25,7 @@ export default function LoginPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href="/" className="flex justify-center group">
           <Image
-            src="/freshwall-logo.svg"
+            src="/freshwall-logo-dark.svg"
             alt="FreshWall"
             width={200}
             height={90}
