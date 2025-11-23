@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 
 export default function DemoPage() {
   useEffect(() => {
@@ -20,17 +22,54 @@ export default function DemoPage() {
   }, [])
 
   return (
-    <div className="h-screen overflow-hidden">
-      <iframe
-        data-tally-src="https://tally.so/r/n98ZrQ?transparentBackground=1"
-        width="100%"
-        height="100%"
-        frameBorder="0"
-        marginHeight={0}
-        marginWidth={0}
-        title="Demo Request"
-        className="absolute top-0 right-0 bottom-0 left-0 border-0"
-      />
+    <div className="min-h-screen bg-neutral-tone">
+      {/* Header with Logo and Back Link */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/freshwall-logo-dark.svg"
+              alt="FreshWall"
+              width={150}
+              height={68}
+              className="hover:opacity-80 transition-opacity"
+              priority
+            />
+          </Link>
+          <Link
+            href="/"
+            className="text-body-sm text-charcoal-navy hover:text-freshwall-orange transition-colors font-medium"
+          >
+            ← Back to Home
+          </Link>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <div className="text-center mb-8">
+          <h1 className="text-h1 font-montserrat font-bold text-copy-black mb-4">
+            Book Your Demo
+          </h1>
+          <p className="text-body-lg text-gray-600 max-w-2xl mx-auto">
+            See how FreshWall can simplify your graffiti removal business in just 15 minutes.
+          </p>
+        </div>
+
+        {/* Tally Form Container */}
+        <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
+          <iframe
+            data-tally-src="https://tally.so/r/n98ZrQ?transparentBackground=1"
+            width="100%"
+            height="800"
+            frameBorder="0"
+            marginHeight={0}
+            marginWidth={0}
+            title="Demo Request"
+            className="border-0"
+          />
+        </div>
+      </div>
     </div>
   )
 }
