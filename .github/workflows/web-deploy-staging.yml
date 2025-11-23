@@ -15,9 +15,6 @@ on:
 jobs:
   deploy-staging:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: Web
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,18 +30,19 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: cd Web && vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        run: cd Web && vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy Project Artifacts to Vercel
         run: |
+          cd Web
           URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "deployment_url=$URL" >> $GITHUB_ENV
 
       - name: Alias to staging domain
-        run: vercel alias set ${{ env.deployment_url }} staging.freshwall.app --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }}
+        run: cd Web && vercel alias set ${{ env.deployment_url }} staging.freshwall.app --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }}
 
       - name: Send Telegram notification
         if: success()
