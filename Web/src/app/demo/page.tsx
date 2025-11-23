@@ -46,7 +46,7 @@ export default function DemoPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-16">
         <div className="text-center mb-8">
           <h1 className="text-h1 font-montserrat font-bold text-copy-black mb-4">
             Book Your Demo
@@ -59,14 +59,15 @@ export default function DemoPage() {
         {/* Tally Form Container */}
         <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
           <iframe
-            data-tally-src="https://tally.so/r/n98ZrQ?transparentBackground=1"
+            data-tally-src="https://tally.so/r/n98ZrQ?transparentBackground=1&hideTitle=1"
             width="100%"
-            height="800"
+            height="1200"
             frameBorder="0"
             marginHeight={0}
             marginWidth={0}
             title="Demo Request"
             className="border-0"
+            style={{ overflow: 'hidden' }}
           />
         </div>
       </div>
