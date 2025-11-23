@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '@/lib/firebase';
+import type { AuthErrorDetails } from '@/lib/authErrors';
 
 interface SignupFormProps {
   onSuccess?: () => void;
@@ -17,6 +18,7 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [errorDetails, setErrorDetails] = useState<AuthErrorDetails | null>(null);
 
   const createTeamCreateUser = httpsCallable(functions, 'createTeamCreateUser');
 
@@ -24,13 +26,15 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setErrorDetails(null);
 
     try {
       // First create Firebase auth account
-      const { user, error: authError } = await signUpWithEmail(email, password);
+      const { user, error: authError, errorDetails: details } = await signUpWithEmail(email, password);
 
       if (authError || !user) {
         setError(authError || 'Failed to create account');
+        setErrorDetails(details || null);
         setLoading(false);
         return;
       }
@@ -47,6 +51,7 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
 
     } catch (error: any) {
       setError(error.message || 'Failed to create team account');
+      setErrorDetails(null);
     } finally {
       setLoading(false);
     }
@@ -55,12 +60,14 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
   const handleGoogleSignup = async () => {
     setLoading(true);
     setError('');
+    setErrorDetails(null);
 
     try {
-      const { user, error: authError } = await signInWithGoogle();
+      const { user, error: authError, errorDetails: details } = await signInWithGoogle();
 
       if (authError || !user) {
         setError(authError || 'Failed to sign in with Google');
+        setErrorDetails(details || null);
         setLoading(false);
         return;
       }
@@ -77,6 +84,7 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
 
     } catch (error: any) {
       setError(error.message || 'Failed to create team account');
+      setErrorDetails(null);
     } finally {
       setLoading(false);
     }
@@ -87,8 +95,22 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-900">Create Your Team</h2>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+        <div className="bg-red-50 border border-red-200 rounded-lg mb-6 overflow-hidden">
+          <div className="px-4 py-3">
+            {errorDetails?.title && (
+              <h3 className="font-semibold text-red-800 mb-1 text-body">
+                {errorDetails.title}
+              </h3>
+            )}
+            <p className="text-red-700 text-body-sm">
+              {error}
+            </p>
+            {errorDetails?.suggestion && (
+              <p className="text-red-600 text-body-sm mt-2">
+                {errorDetails.suggestion}
+              </p>
+            )}
+          </div>
         </div>
       )}
 
