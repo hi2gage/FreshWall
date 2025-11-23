@@ -17,6 +17,8 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
   const [template, setTemplate] = useState<InvoiceTemplate>(DEFAULT_INVOICE_TEMPLATE);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   useEffect(() => {
     loadTemplate();
@@ -146,11 +148,11 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
         {/* Split View Content */}
         <div className="flex-1 flex overflow-hidden">
           {/* Editor Panel - Left Side */}
-          <div className="w-1/2 overflow-y-auto border-r border-gray-200 dark:border-gray-700">
+          <div className="w-1/2 overflow-y-auto border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
             <div className="p-6 space-y-6">
           {/* Company Information */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Company Information</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Company Information</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -223,8 +225,8 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
           </section>
 
           {/* Invoice Settings */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Invoice Settings</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Invoice Settings</h3>
             <div className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
@@ -274,8 +276,8 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
           </section>
 
           {/* Tax Settings */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tax Settings</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Tax Settings</h3>
             <div className="space-y-4">
               <div className="flex items-center">
                 <input
@@ -321,9 +323,118 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
             </div>
           </section>
 
+          {/* Column Configuration */}
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Column Configuration</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Drag to reorder columns (order will be reflected in the invoice)
+            </p>
+            <div className="space-y-2">
+              {template.lineItemColumns
+                .sort((a, b) => a.order - b.order)
+                .map((column, originalIndex) => {
+
+                return (
+                  <div
+                    key={column.id}
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.effectAllowed = 'move';
+                      e.dataTransfer.setData('text/plain', originalIndex.toString());
+                      setDraggedIndex(originalIndex);
+                      console.log('Drag started:', originalIndex);
+                    }}
+                    onDragEnd={() => {
+                      console.log('Drag ended');
+                      setDraggedIndex(null);
+                      setDragOverIndex(null);
+                    }}
+                    onDragEnter={(e) => {
+                      e.preventDefault();
+                      console.log('Drag enter:', originalIndex);
+                      if (dragOverIndex !== originalIndex) {
+                        setDragOverIndex(originalIndex);
+                      }
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = 'move';
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+
+                      const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                      const toIndex = originalIndex;
+
+                      console.log('Drop event - from:', fromIndex, 'to:', toIndex);
+
+                      if (fromIndex === toIndex) {
+                        console.log('Same index, skipping');
+                        return;
+                      }
+
+                      const sortedColumns = [...template.lineItemColumns].sort((a, b) => a.order - b.order);
+                      const [movedColumn] = sortedColumns.splice(fromIndex, 1);
+                      sortedColumns.splice(toIndex, 0, movedColumn);
+
+                      // Reassign order values
+                      const reorderedColumns = sortedColumns.map((col, idx) => ({
+                        ...col,
+                        order: idx,
+                      }));
+
+                      console.log('Updated columns:', reorderedColumns.map(c => `${c.label}(${c.order})`));
+
+                      setTemplate(prev => ({ ...prev, lineItemColumns: reorderedColumns }));
+                      setDraggedIndex(null);
+                      setDragOverIndex(null);
+                    }}
+                  >
+                    {/* Drop indicator - show gap before this item if hovering */}
+                    {dragOverIndex === originalIndex && draggedIndex !== null && draggedIndex !== originalIndex && (
+                      <div className="h-16 mb-2 border-2 border-dashed border-blue-400 dark:border-blue-500 rounded-md bg-blue-50 dark:bg-blue-900/20"></div>
+                    )}
+                  <div
+                    className={`flex items-center gap-3 p-3 border rounded-md cursor-move ${
+                      draggedIndex === originalIndex
+                        ? 'opacity-50 border-blue-400 dark:border-blue-500'
+                        : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-blue-400 dark:hover:border-blue-500'
+                    }`}
+                  >
+                    <div className="text-gray-400 dark:text-gray-500 text-lg">
+                      ⋮⋮
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={column.isVisible}
+                      onChange={(e) => {
+                        const isChecked = e.target.checked;
+                        setTemplate(prev => ({
+                          ...prev,
+                          lineItemColumns: prev.lineItemColumns.map((col) =>
+                            col.id === column.id ? { ...col, isVisible: isChecked } : col
+                          )
+                        }));
+                      }}
+                      className="w-4 h-4"
+                    />
+                    <label className="flex-1 text-sm text-gray-700 dark:text-gray-300 cursor-move select-none">
+                      {column.label}
+                    </label>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {column.type}
+                    </span>
+                  </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
           {/* Line Item Sorting */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Line Item Sorting</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Line Item Sorting</h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -362,8 +473,8 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
           </section>
 
           {/* Description Customization */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Description Format</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Description Format</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -384,8 +495,8 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
           </section>
 
           {/* Footer */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Footer Messages</h3>
+          <section className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-md border border-gray-300 dark:border-gray-600">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Footer Messages</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -442,7 +553,7 @@ export default function InvoiceTemplateEditor({ onClose, onSave }: InvoiceTempla
               <p className="text-xs text-gray-500 dark:text-gray-400">Changes update in real-time</p>
             </div>
             <div className="transform scale-75 origin-top">
-              <InvoicePreview template={template} />
+              <InvoicePreview key={JSON.stringify(template.lineItemColumns)} template={template} />
             </div>
           </div>
         </div>

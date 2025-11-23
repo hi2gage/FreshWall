@@ -1,17 +1,25 @@
-import { Hero } from '@/components/Hero'
-import { Services } from '@/components/Services'
-import { About } from '@/components/About'
-import { Pricing } from '@/components/Pricing'
-import { Contact } from '@/components/Contact'
+'use client'
+
+import { Header } from '@/components/ui'
+import {
+  HeroSection,
+  ProblemSection,
+  FeaturesSection,
+  WhyFreshWallSection,
+  CTASection,
+} from '@/components/landing'
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
-      <Hero />
-      <Services />
-      <About />
-      <Pricing />
-      <Contact />
-    </main>
+    <>
+      <Header background="navy" />
+      <main className="min-h-screen bg-white">
+        <HeroSection />
+        <ProblemSection />
+        <FeaturesSection />
+        <WhyFreshWallSection />
+        <CTASection />
+      </main>
+    </>
   )
 }

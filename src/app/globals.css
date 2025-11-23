@@ -5,23 +5,62 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --vh: 1vh;
+  color-scheme: light only;
 }
 
+/* Light theme (default) */
+.light {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* Dark theme */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+/* Force light mode - disable dark mode completely */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff !important;
+    --foreground: #171717 !important;
+    color-scheme: light only !important;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    /* Fix for mobile viewport height issues */
+    height: -webkit-fill-available;
+  }
+
+  body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: Arial, Helvetica, sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    /* Safe area support for iPhone notch */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .h-screen-safe {
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+  }
+
+  .min-h-screen-safe {
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
   }
 }

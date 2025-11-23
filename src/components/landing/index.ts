@@ -1,0 +1,5 @@
+export { HeroSection } from './HeroSection'
+export { ProblemSection } from './ProblemSection'
+export { FeaturesSection } from './FeaturesSection'
+export { WhyFreshWallSection } from './WhyFreshWallSection'
+export { CTASection } from './CTASection'
