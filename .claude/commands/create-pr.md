@@ -12,7 +12,7 @@ Use this command when:
 ## Safety Features
 
 This command includes automatic safety checks:
-- **Main branch protection**: If you're on `main` or `staging`, automatically creates a new feature branch
+- **Main branch protection**: If you're on `main`, automatically creates a new feature branch
 - **Uncommitted changes check**: Ensures all changes are committed before creating PR
 - **Automatic push**: Pushes your branch to remote before creating PR
 
@@ -23,7 +23,7 @@ This command includes automatic safety checks:
    git branch --show-current
    ```
 
-2. **Main branch safety check** - If on `main` or `staging`:
+2. **Main branch safety check** - If on `main`:
    - Prompt user for a new branch name (e.g., "feature/fix-login" or just "fix-login")
    - If user provides just a name without prefix, prepend "feature/"
    - Create and checkout new branch: `git checkout -b <branch-name>`
@@ -115,8 +115,8 @@ The PR will follow the FreshWall standard format:
 ## Important Notes
 
 - **Never commit directly to main**: This command enforces the branch protection policy
-- **All PRs target main**: The default base branch is `main` (or `staging` if specified)
-- **Auto-deployment**: PRs merged to `main` automatically deploy to staging
+- **All PRs target main**: The default base branch is `main`
+- **Auto-deployment**: PRs merged to `main` may trigger automatic deployments
 - **Production releases**: Use platform-specific tags (`firebase/*`, `web/*`, `ios/*`) for production
 - **DO NOT push to remote** unless explicitly in this command flow
 - **DO NOT use TodoWrite** - This is a focused PR creation command
