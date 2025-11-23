@@ -47,7 +47,7 @@ export default function LoginPage() {
         <div className="mt-6 text-center">
           <p className="text-body-sm text-gray-600">
             Don't have an account?{' '}
-            <Link href="/#demo" className="font-medium text-freshwall-orange hover:text-freshwall-orange/80 transition-colors">
+            <Link href="/demo" className="font-medium text-freshwall-orange hover:text-freshwall-orange/80 transition-colors">
               Book a demo
             </Link>
           </p>
