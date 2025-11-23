@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import LoginForm from '@/components/auth/LoginForm';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,11 +23,15 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-neutral-tone flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Link href="/" className="flex justify-center items-center gap-2 group">
-          <div className="w-10 h-10 bg-freshwall-orange rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-            <span className="text-white text-xl font-bold">F</span>
-          </div>
-          <h1 className="text-h2 font-montserrat font-bold text-charcoal-navy">FreshWall</h1>
+        <Link href="/" className="flex justify-center group">
+          <Image
+            src="/freshwall-logo.svg"
+            alt="FreshWall"
+            width={200}
+            height={90}
+            className="group-hover:scale-105 transition-transform"
+            priority
+          />
         </Link>
         <h2 className="mt-8 text-center text-h2 font-montserrat font-semibold text-copy-black">
           Sign in to your account
