@@ -1,5 +1,7 @@
 name: Web Deploy Production
-
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 on:
   push:
     tags:
@@ -11,6 +13,9 @@ on:
 jobs:
   deploy-production:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Web
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,27 +28,15 @@ jobs:
           cache-dependency-path: 'Web/package-lock.json'
 
       - name: Install Vercel CLI
-        run: npm install -g vercel@latest
+        run: npm install --global vercel@latest
 
-      - name: Pull Vercel Environment Information (Production)
-        working-directory: Web
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
-        working-directory: Web
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Deploy to Vercel Production
-        working-directory: Web
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Deploy Project Artifacts to Vercel
         run: |
           URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
           echo "deployment_url=$URL" >> $GITHUB_ENV
