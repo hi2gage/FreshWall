@@ -3,7 +3,7 @@ name: Firebase Auto Deploy Staging
 on:
   push:
     branches:
-      - staging
+      - main
     paths:
       - 'Firebase/functions/**'
       - 'Firebase/firestore.rules'
@@ -109,7 +109,7 @@ jobs:
           # Build message
           MESSAGE="🚀 <b>Staging Deployment Complete</b>%0A%0A"
           MESSAGE+="<b>Environment:</b> Staging%0A"
-          MESSAGE+="<b>Branch:</b> staging%0A"
+          MESSAGE+="<b>Branch:</b> main%0A"
           MESSAGE+="<b>Deployed by:</b> @${AUTHOR}%0A"
           MESSAGE+="<b>Components:</b> ${COMPONENTS}%0A%0A"
           MESSAGE+="<b>Commit:</b> ${COMMIT_SHORT}%0A"
