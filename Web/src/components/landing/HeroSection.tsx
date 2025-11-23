@@ -7,7 +7,7 @@ import Image from 'next/image'
 
 export const HeroSection = () => {
   return (
-    <Section background="navy" className="py-16 md:py-24">
+    <Section background="navy" className="pt-24 md:pt-32 pb-16 md:pb-24">
       <div className="text-center">
         {/* Logo - Icon and Text */}
         <div className="flex flex-col items-center mb-16">
