@@ -29,31 +29,19 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Debug - Show directory structure
-        run: |
-          echo "=== Current directory ==="
-          pwd
-          echo "=== Root contents ==="
-          ls -la
-          echo "=== Web directory exists? ==="
-          ls -la Web/ || echo "Web directory not found!"
-          echo "=== package.json location ==="
-          find . -name "package.json" -type f | head -10
-
       - name: Pull Vercel Environment Information
-        run: cd Web && vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
-        run: cd Web && vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy Project Artifacts to Vercel
         run: |
-          cd Web
           URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "deployment_url=$URL" >> $GITHUB_ENV
 
       - name: Alias to staging domain
-        run: cd Web && vercel alias set ${{ env.deployment_url }} staging.freshwall.app --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }}
+        run: vercel alias set ${{ env.deployment_url }} staging.freshwall.app --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }}
 
       - name: Send Telegram notification
         if: success()
