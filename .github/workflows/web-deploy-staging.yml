@@ -1,0 +1,80 @@
+name: Web Deploy Staging
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Web/**'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'Web/package-lock.json'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel Environment Information (Preview)
+        working-directory: Web
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        working-directory: Web
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel Preview
+        working-directory: Web
+        run: |
+          URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "deployment_url=$URL" >> $GITHUB_ENV
+
+      - name: Alias to staging domain
+        working-directory: Web
+        run: vercel alias set ${{ env.deployment_url }} staging.freshwall.app --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }}
+
+      - name: Send Telegram notification
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_STAGING }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID_STAGING }}
+        run: |
+          COMMIT_SHA="${{ github.sha }}"
+          COMMIT_SHORT="${COMMIT_SHA:0:7}"
+          COMMIT_MSG=$(git log -1 --pretty=format:'%s' "$COMMIT_SHA")
+          AUTHOR="${{ github.actor }}"
+
+          MESSAGE="🌐 <b>Web Staging Deployment Complete</b>%0A%0A"
+          MESSAGE+="<b>Environment:</b> Staging%0A"
+          MESSAGE+="<b>Branch:</b> main%0A"
+          MESSAGE+="<b>Deployed by:</b> @${AUTHOR}%0A"
+          MESSAGE+="<b>URL:</b> https://staging.freshwall.app%0A%0A"
+          MESSAGE+="<b>Commit:</b> ${COMMIT_SHORT}%0A"
+          MESSAGE+="<b>Message:</b> ${COMMIT_MSG}%0A%0A"
+          MESSAGE+="🔗 <a href=\"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\">View deployment</a>"
+
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d parse_mode="HTML" \
+            -d disable_web_page_preview="true" \
+            -d text="${MESSAGE}" || true
+
+      - name: Create deployment summary
+        run: |
+          echo "## 🌐 Web Staging Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** Staging" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL:** https://staging.freshwall.app" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployment URL:** ${{ env.deployment_url }}" >> $GITHUB_STEP_SUMMARY
