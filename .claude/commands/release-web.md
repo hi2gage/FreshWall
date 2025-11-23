@@ -2,20 +2,27 @@
 
 Create a new Web app release with proper versioning and tagging.
 
-## Steps
+## Quick Start
+
+For most releases, just use the release script:
+```bash
+./Scripts/release-platform.sh
+# Select "Web" → choose version type → done!
+```
+
+## Manual Steps (if needed)
 
 1. **Verify we're on main branch** - Start from main
 2. **Get current Web version** - Find latest `web/v*` tag
 3. **Calculate next version** - Ask user for patch/minor/major/custom
-4. **Create release branch** - `release/web-v{VERSION}` from main
-5. **Update version file** - Update `Web/package.json`:
+4. **Update version file** - Update `Web/package.json`:
    - `"version"` = new version (e.g., "0.6.0")
-6. **Commit changes** - `Bump Web version to v{VERSION}`
-7. **Push branch and create PR** - PR to main
-8. **After PR merged to main** - Changes auto-deploy to staging environment
-9. **When ready for production** - Create git tag: `web/v{VERSION}` with release notes on main
-10. **Push tag** - `git push origin web/v{VERSION}` (triggers production deploy)
-11. **Create GitHub release** - Using `gh release create`
+5. **Commit and push to main** - `Bump Web version to v{VERSION}`
+6. **Wait for staging deploy** - Changes auto-deploy to staging environment
+7. **Test on staging** - Verify at staging.freshwall.app
+8. **Create git tag** - Format: `web/v{VERSION}` with release notes
+9. **Push tag** - `git push origin web/v{VERSION}` (triggers production deploy)
+10. **Create GitHub release** - Using `gh release create`
 
 ## Version Calculation
 
@@ -53,11 +60,21 @@ Creating a `web/v*` tag will trigger:
 ## Workflow Summary
 
 ```
-1. main → create release/web-v0.6.0 branch
-2. Update package.json → commit → push
-3. Create PR: release/web-v0.6.0 → main
-4. Merge PR to main → auto-deploys to staging
-5. Test on staging environment
-6. Create tag web/v0.6.0 on main
-7. Push tag → triggers production deployment
+1. Update Web/package.json version
+2. Commit and push to main
+3. Wait for staging deploy (automatic)
+4. Test on staging.freshwall.app
+5. Create tag: git tag web/v0.6.0
+6. Push tag: git push origin web/v0.6.0
+7. Production deployment triggers automatically
 ```
+
+## Using the Release Script
+
+The `./Scripts/release-platform.sh` script handles everything for you:
+- Gets current version from git tags
+- Calculates next version
+- Creates and pushes the tag
+- Creates GitHub release
+
+This is the recommended approach!
