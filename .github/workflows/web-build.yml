@@ -2,8 +2,6 @@ name: Web Build
 
 on:
   pull_request:
-  push:
-    branches: [staging, main]
 
 jobs:
   build:
