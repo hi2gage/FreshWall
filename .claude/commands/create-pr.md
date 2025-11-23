@@ -16,6 +16,8 @@ This command includes automatic safety checks:
 - **Uncommitted changes check**: Ensures all changes are committed before creating PR
 - **Automatic push**: Pushes your branch to remote before creating PR
 
+**IMPORTANT**: This project ONLY uses `main` branch. DO NOT reference, check for, or use `staging` branch in any way.
+
 ## Steps
 
 1. **Check current branch** - Verify which branch you're on:
@@ -23,7 +25,7 @@ This command includes automatic safety checks:
    git branch --show-current
    ```
 
-2. **Main branch safety check** - If on `main`:
+2. **Main branch safety check** - If on `main` (ONLY check for `main`, NOT staging or any other branch):
    - Prompt user for a new branch name (e.g., "feature/fix-login" or just "fix-login")
    - If user provides just a name without prefix, prepend "feature/"
    - Create and checkout new branch: `git checkout -b <branch-name>`
@@ -115,12 +117,14 @@ The PR will follow the FreshWall standard format:
 ## Important Notes
 
 - **Never commit directly to main**: This command enforces the branch protection policy
-- **All PRs target main**: The default base branch is `main`
+- **All PRs target main**: The default and ONLY base branch is `main`
+- **NEVER use staging**: This project does not use a staging branch. All comparisons, diffs, and PR bases use `main` only
 - **Auto-deployment**: PRs merged to `main` may trigger automatic deployments
 - **Production releases**: Use platform-specific tags (`firebase/*`, `web/*`, `ios/*`) for production
 - **DO NOT push to remote** unless explicitly in this command flow
 - **DO NOT use TodoWrite** - This is a focused PR creation command
 - **Comprehensive analysis**: Review ALL commits and changes, not just the latest
+- **Base branch is always main**: When running `git diff` or `git log`, always use `main` as the base, never staging
 
 ## Example Usage Flow
 
