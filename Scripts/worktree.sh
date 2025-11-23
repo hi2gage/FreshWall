@@ -123,6 +123,15 @@ function create_worktree() {
     echo -e "${GREEN}✓ Worktree created at: $worktree_path${NC}"
     echo ""
 
+    # Copy .env.local files if they exist
+    echo -e "${BLUE}Copying environment files...${NC}"
+    if [ -f "$PROJECT_ROOT/Web/.env.local" ]; then
+        cp "$PROJECT_ROOT/Web/.env.local" "$worktree_path/Web/.env.local"
+        echo -e "${GREEN}✓ Copied Web/.env.local${NC}"
+    else
+        echo -e "${YELLOW}⚠ Web/.env.local not found in main repo (this is normal if not configured yet)${NC}"
+    fi
+
     # Launch iTerm2 with the worktree
     echo -e "${BLUE}Launching iTerm2 with worktree...${NC}"
     launch_iterm_with_claude "$worktree_path" "$claude_prompt"

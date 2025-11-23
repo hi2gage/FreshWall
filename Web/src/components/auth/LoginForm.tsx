@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import type { AuthErrorDetails } from '@/lib/authErrors';
+import Link from 'next/link';
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -13,18 +15,21 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [errorDetails, setErrorDetails] = useState<AuthErrorDetails | null>(null);
   const [resetEmailSent, setResetEmailSent] = useState(false);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setErrorDetails(null);
 
     try {
-      const { user, error: authError } = await signInWithEmail(email, password);
+      const { user, error: authError, errorDetails: details } = await signInWithEmail(email, password);
 
       if (authError || !user) {
         setError(authError || 'Failed to sign in');
+        setErrorDetails(details || null);
         setLoading(false);
         return;
       }
@@ -33,6 +38,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
 
     } catch (error: any) {
       setError(error.message || 'Failed to sign in');
+      setErrorDetails(null);
     } finally {
       setLoading(false);
     }
@@ -41,12 +47,14 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   const handleGoogleLogin = async () => {
     setLoading(true);
     setError('');
+    setErrorDetails(null);
 
     try {
-      const { user, error: authError } = await signInWithGoogle();
+      const { user, error: authError, errorDetails: details } = await signInWithGoogle();
 
       if (authError || !user) {
         setError(authError || 'Failed to sign in with Google');
+        setErrorDetails(details || null);
         setLoading(false);
         return;
       }
@@ -55,6 +63,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
 
     } catch (error: any) {
       setError(error.message || 'Failed to sign in with Google');
+      setErrorDetails(null);
     } finally {
       setLoading(false);
     }
@@ -107,8 +116,36 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       <h2 className="text-h3 font-montserrat font-semibold text-center mb-8 text-copy-black">Welcome Back</h2>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-body-sm">
-          {error}
+        <div className="bg-red-50 border border-red-200 rounded-lg mb-6 overflow-hidden">
+          <div className="px-4 py-3">
+            {errorDetails?.title && (
+              <h3 className="font-semibold text-red-800 mb-1 text-body">
+                {errorDetails.title}
+              </h3>
+            )}
+            <p className="text-red-700 text-body-sm">
+              {error}
+            </p>
+            {errorDetails?.suggestion && (
+              <p className="text-red-600 text-body-sm mt-2">
+                {errorDetails.suggestion}
+              </p>
+            )}
+          </div>
+          {errorDetails?.showDemoLink && (
+            <div className="bg-blue-50 border-t border-blue-200 px-4 py-3">
+              <p className="text-charcoal-navy text-body-sm">
+                Not a customer yet?{' '}
+                <Link
+                  href="/demo"
+                  className="text-freshwall-orange hover:text-freshwall-orange/80 font-medium underline transition-colors"
+                >
+                  Sign up for a demo
+                </Link>{' '}
+                today!
+              </p>
+            </div>
+          )}
         </div>
       )}
 
