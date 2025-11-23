@@ -152,20 +152,23 @@ The release script will:
 ## 🔀 Git Workflow & Branch Strategy
 
 ### Branch Structure
-- **`main`** - Primary development branch. All PRs target this branch.
+- **`main`** - Primary and ONLY permanent branch. All PRs target this branch.
 - **`feature/*`** - Feature branches should PR to `main`
 
-**IMPORTANT: Never commit directly to `main`. Always create a feature branch (e.g., `feature/add-xyz`) before making changes, even for small fixes. All changes must go through the PR process.**
+**CRITICAL NOTES:**
+- **Never commit directly to `main`**: Always create a feature branch (e.g., `feature/add-xyz`) before making changes, even for small fixes. All changes must go through the PR process.
+- **This project does NOT use a `staging` branch**: There is no staging branch. All git operations (diff, log, PR base) use `main` only.
+- **Staging environment ≠ staging branch**: References to "staging environment" refer to deployment targets, NOT a git branch.
 
 ### Workflow
 1. Create feature branch from `main`
 2. Make changes and commit
-3. Open PR to `main` (default branch)
-4. After PR is merged to `main`, changes automatically deploy to **staging environment**
+3. Open PR to `main` (the only permanent branch)
+4. After PR is merged to `main`, changes may automatically deploy to development/testing environments
 5. When ready for production, create and push a platform-specific tag
 
 ### CI/CD Automation
-- **Merges to `main`**: Auto-deploy to staging environment (Firebase Functions, Web app, etc.)
+- **Merges to `main`**: May trigger automatic deployments to development/testing environments
 - **Tag pushes**: Deploy to production based on tag prefix:
   - `firebase/*` tags → Deploy Firebase Functions/Firestore to production
   - `web/*` tags → Deploy Web app to production
