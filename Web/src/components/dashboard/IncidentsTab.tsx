@@ -259,7 +259,7 @@ export default function IncidentsTab() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-seafoam-teal"></div>
         <span className="ml-2 text-gray-600 dark:text-gray-400">Loading incidents...</span>
       </div>
     );
@@ -281,7 +281,7 @@ export default function IncidentsTab() {
               onClick={() => setFilter(status)}
               className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                 filter === status
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-seafoam-teal text-white'
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
             >
@@ -303,7 +303,7 @@ export default function IncidentsTab() {
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             Get started by downloading the FreshWall mobile app to track your first incident.
           </p>
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+          <button className="bg-seafoam-teal text-white px-6 py-2 rounded-md hover:bg-seafoam-teal/90 font-medium">
             Download Mobile App
           </button>
         </div>
@@ -424,11 +424,11 @@ export default function IncidentsTab() {
                     )}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex space-x-1">
-                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                        <span className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded text-xs">
                           Before: {incident.beforePhotos?.length || 0}
                         </span>
                         {incident.afterPhotos?.length > 0 && (
-                          <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+                          <span className="bg-seafoam-teal/10 text-seafoam-teal dark:bg-seafoam-teal/20 px-2 py-1 rounded text-xs">
                             After: {incident.afterPhotos.length}
                           </span>
                         )}
@@ -443,7 +443,7 @@ export default function IncidentsTab() {
                           e.stopPropagation();
                           handleViewIncident(incident);
                         }}
-                        className="text-blue-600 hover:text-blue-700 mr-3"
+                        className="text-charcoal-navy dark:text-seafoam-teal hover:text-seafoam-teal dark:hover:text-seafoam-teal/80 mr-3"
                       >
                         View
                       </button>
@@ -470,22 +470,22 @@ export default function IncidentsTab() {
             <div className="text-sm text-gray-600 dark:text-gray-400">Total Incidents</div>
           </div>
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-freshwall-orange">
               {incidents.filter(i => i.status === 'open').length}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Open</div>
           </div>
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-2xl font-bold text-charcoal-navy dark:text-gray-300">
               {incidents.filter(i => i.status === 'in_progress').length}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">In Progress</div>
           </div>
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-seafoam-teal">
               {incidents.filter(i => i.status === 'completed').length}
             </div>
-            <div className="text-sm text-gray-600">Completed</div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">Completed</div>
           </div>
         </div>
       )}

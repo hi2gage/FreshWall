@@ -3,7 +3,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import SubscriptionCard from '@/components/dashboard/SubscriptionCard';
+import FeedbackCard from '@/components/dashboard/FeedbackCard';
 import IncidentsTab from '@/components/dashboard/IncidentsTab';
 import ClientsTab from '@/components/dashboard/ClientsTab';
 import InvoicesTab from '@/components/dashboard/InvoicesTab';
@@ -26,9 +26,9 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-tone dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-seafoam-teal mx-auto"></div>
           <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
         </div>
       </div>
@@ -40,19 +40,19 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-neutral-tone dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow dark:shadow-gray-700/20">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">FreshWall</h1>
+              <h1 className="text-2xl font-bold text-charcoal-navy dark:text-white">FreshWall</h1>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-gray-700 dark:text-gray-300">Welcome, {user.displayName || user.email}</span>
               <button
                 onClick={handleLogout}
-                className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-md text-sm"
+                className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-copy-black dark:text-gray-200 px-4 py-2 rounded-md text-sm font-medium"
               >
                 Sign Out
               </button>
@@ -80,8 +80,8 @@ export default function Dashboard() {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                      ? 'border-seafoam-teal text-charcoal-navy dark:text-seafoam-teal'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-charcoal-navy dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                   }`}
                 >
                   <span className="mr-2">{tab.icon}</span>
@@ -96,41 +96,35 @@ export default function Dashboard() {
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 <div className="grid lg:grid-cols-3 gap-6">
-                  {/* Subscription Card */}
+                  {/* Feedback Card */}
                   <div className="lg:col-span-1">
-                    <SubscriptionCard
-                      currentPlan="free"
-                      usageStats={{
-                        incidents: { used: 0, limit: 5 },
-                        teamMembers: { used: 1, limit: 1 }
-                      }}
-                    />
+                    <FeedbackCard />
                   </div>
 
                   {/* Quick Actions */}
                   <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700/20 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Quick Actions</h3>
+                    <h3 className="text-lg font-semibold text-copy-black dark:text-gray-100 mb-4">Quick Actions</h3>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <button className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:border-blue-300 dark:hover:border-blue-500 text-left">
+                      <button className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:border-seafoam-teal dark:hover:border-seafoam-teal text-left transition-colors">
                         <div className="text-2xl mb-2">📱</div>
-                        <h4 className="font-medium text-gray-900 dark:text-gray-100">Download Mobile App</h4>
+                        <h4 className="font-medium text-copy-black dark:text-gray-100">Download Mobile App</h4>
                         <p className="text-sm text-gray-600 dark:text-gray-400">Start tracking incidents on the go</p>
                       </button>
 
                       <button
                         onClick={() => setActiveTab('team')}
-                        className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:border-blue-300 dark:hover:border-blue-500 text-left"
+                        className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:border-seafoam-teal dark:hover:border-seafoam-teal text-left transition-colors"
                       >
                         <div className="text-2xl mb-2">👥</div>
-                        <h4 className="font-medium text-gray-900 dark:text-gray-100">Invite Team Members</h4>
+                        <h4 className="font-medium text-copy-black dark:text-gray-100">Invite Team Members</h4>
                         <p className="text-sm text-gray-600 dark:text-gray-400">Collaborate with your team</p>
                       </button>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-8 text-center">
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center border border-gray-200 dark:border-gray-700">
+                  <h2 className="text-2xl font-bold text-copy-black dark:text-gray-100 mb-4">
                     🎉 Welcome to FreshWall!
                   </h2>
                   <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -138,13 +132,13 @@ export default function Dashboard() {
                   </p>
                   <button
                     onClick={() => setActiveTab('incidents')}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 mr-4"
+                    className="bg-seafoam-teal text-white px-6 py-2 rounded-md hover:bg-seafoam-teal/90 mr-4 font-medium"
                   >
                     View Incidents
                   </button>
                   <button
                     onClick={() => setActiveTab('billing')}
-                    className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700"
+                    className="bg-freshwall-orange text-white px-6 py-2 rounded-md hover:bg-freshwall-orange/90 font-medium"
                   >
                     Upgrade Plan
                   </button>
@@ -172,36 +166,34 @@ export default function Dashboard() {
 
             {activeTab === 'billing' && (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700/20 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Billing & Subscription</h3>
-                <div className="grid lg:grid-cols-2 gap-6">
-                  <SubscriptionCard
-                    currentPlan="free"
-                    usageStats={{
-                      incidents: { used: 0, limit: 5 },
-                      teamMembers: { used: 1, limit: 1 }
-                    }}
-                  />
-                  <div className="space-y-4">
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">Upgrade Benefits</h4>
-                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <h3 className="text-lg font-semibold text-copy-black dark:text-gray-100 mb-4">Billing & Subscription</h3>
+                <div className="text-center py-12">
+                  <div className="text-4xl mb-4">💳</div>
+                  <h4 className="text-lg font-semibold text-copy-black dark:text-gray-100 mb-2">Billing Coming Soon</h4>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6">
+                    We're working on our subscription plans. Stay tuned for updates!
+                  </p>
+                  <div className="max-w-md mx-auto space-y-4">
+                    <h4 className="font-semibold text-copy-black dark:text-gray-100">Planned Features</h4>
+                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400 text-left">
                       <li className="flex items-center">
-                        <span className="text-green-500 mr-2">✓</span>
+                        <span className="text-seafoam-teal mr-2">✓</span>
                         Unlimited incident tracking
                       </li>
                       <li className="flex items-center">
-                        <span className="text-green-500 mr-2">✓</span>
-                        Up to 10 team members
+                        <span className="text-seafoam-teal mr-2">✓</span>
+                        Team collaboration features
                       </li>
                       <li className="flex items-center">
-                        <span className="text-green-500 mr-2">✓</span>
+                        <span className="text-seafoam-teal mr-2">✓</span>
                         Advanced reporting and analytics
                       </li>
                       <li className="flex items-center">
-                        <span className="text-green-500 mr-2">✓</span>
+                        <span className="text-seafoam-teal mr-2">✓</span>
                         Photo thumbnails for faster loading
                       </li>
                       <li className="flex items-center">
-                        <span className="text-green-500 mr-2">✓</span>
+                        <span className="text-seafoam-teal mr-2">✓</span>
                         Data export capabilities
                       </li>
                     </ul>
