@@ -3,7 +3,7 @@ name: Functions Build
 on:
   pull_request:
   push:
-    branches: [staging, main]
+    branches: [main]
 
 jobs:
   build:
