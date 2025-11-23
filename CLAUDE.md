@@ -152,23 +152,41 @@ The release script will:
 ## 🔀 Git Workflow & Branch Strategy
 
 ### Branch Structure
-- **`staging`** - Default branch for all PRs. Integration and testing branch
-- **`main`** - Production branch. Only receives PRs from `staging` via auto-promotion
-- **`feature/*`** - Feature branches should PR to `staging`
+- **`main`** - Primary development branch. All PRs target this branch.
+- **`feature/*`** - Feature branches should PR to `main`
 
 ### Workflow
-1. Create feature branch from `staging`
+1. Create feature branch from `main`
 2. Make changes and commit
-3. Open PR to `staging` (default branch)
-4. After PR is merged to `staging`, auto-promotion workflow creates PR from `staging` → `main`
-5. Once `staging` → `main` PR is merged, production deployment occurs
+3. Open PR to `main` (default branch)
+4. After PR is merged to `main`, changes automatically deploy to **staging environment**
+5. When ready for production, create and push a platform-specific tag
 
 ### CI/CD Automation
-- PRs to `staging`: Run tests, deploy to staging environment
-- Merges to `staging`: Auto-create promotion PR to `main`
-- Merges to `main`: Deploy to production (Firebase Functions, etc.)
+- **Merges to `main`**: Auto-deploy to staging environment (Firebase Functions, Web app, etc.)
+- **Tag pushes**: Deploy to production based on tag prefix:
+  - `firebase/*` tags → Deploy Firebase Functions/Firestore to production
+  - `web/*` tags → Deploy Web app to production
+  - `ios/*` tags → Trigger iOS production release
 
-**Important**: AI agents should always create PRs targeting `staging`, not `main`.
+### Production Releases
+To release to production, create and push a tag:
+
+```bash
+# Firebase production release
+git tag firebase/v1.0.0
+git push origin firebase/v1.0.0
+
+# Web production release
+git tag web/v1.0.0
+git push origin web/v1.0.0
+
+# iOS production release
+git tag ios/v1.0.0
+git push origin ios/v1.0.0
+```
+
+**Important**: AI agents should always create PRs targeting `main`. Production releases are controlled via tags.
 
 
 🔐 Firebase Auth + Firestore Rules Summary

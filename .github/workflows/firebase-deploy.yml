@@ -1,10 +1,12 @@
-name: Firebase Auto Deploy
+name: Firebase Production Deploy
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    tags:
+      - 'firebase/**'
+
+  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   changes:
@@ -29,7 +31,7 @@ jobs:
 
   deploy:
     needs: changes
-    if: github.ref == 'refs/heads/main' && (needs.changes.outputs.functions == 'true' || needs.changes.outputs.firestore == 'true' || needs.changes.outputs.extensions == 'true')
+    if: startsWith(github.ref, 'refs/tags/firebase/') && (needs.changes.outputs.functions == 'true' || needs.changes.outputs.firestore == 'true' || needs.changes.outputs.extensions == 'true')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -99,7 +101,7 @@ jobs:
 
   notify:
     needs: [changes, deploy]
-    if: always() && github.ref == 'refs/heads/main'
+    if: always() && startsWith(github.ref, 'refs/tags/firebase/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -141,10 +143,13 @@ jobs:
             COMPONENTS+="Extensions"
           fi
 
+          # Get tag name
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+
           # Build message
           MESSAGE="🚀 <b>Production Deployment Complete</b>%0A%0A"
           MESSAGE+="<b>Environment:</b> Production%0A"
-          MESSAGE+="<b>Branch:</b> main%0A"
+          MESSAGE+="<b>Tag:</b> ${TAG_NAME}%0A"
           MESSAGE+="<b>Deployed by:</b> @${AUTHOR}%0A"
           MESSAGE+="<b>Components:</b> ${COMPONENTS}%0A%0A"
           MESSAGE+="<b>Commit:</b> ${COMMIT_SHORT}%0A"
