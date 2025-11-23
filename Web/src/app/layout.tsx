@@ -19,7 +19,6 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: 'FreshWall',
   description: 'Professional graffiti removal services',
-  viewport: 'viewport-fit=cover, width=device-width, initial-scale=1.0',
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
@@ -27,6 +26,12 @@ export const metadata: Metadata = {
     shortcut: '/favicon.svg',
     apple: '/favicon.svg',
   },
+}
+
+export const viewport = {
+  viewportFit: 'cover',
+  width: 'device-width',
+  initialScale: 1.0,
 }
 
 export default function RootLayout({

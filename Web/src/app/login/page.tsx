@@ -20,15 +20,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-neutral-tone flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Link href="/" className="flex justify-center">
-          <h1 className="text-3xl font-bold text-blue-600">FreshWall</h1>
+        <Link href="/" className="flex justify-center items-center gap-2 group">
+          <div className="w-10 h-10 bg-freshwall-orange rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+            <span className="text-white text-xl font-bold">F</span>
+          </div>
+          <h1 className="text-h2 font-montserrat font-bold text-charcoal-navy">FreshWall</h1>
         </Link>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-8 text-center text-h2 font-montserrat font-semibold text-copy-black">
           Sign in to your account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-3 text-center text-body text-gray-600">
           Access your team's incident tracking dashboard
         </p>
       </div>
@@ -37,9 +40,9 @@ export default function LoginPage() {
         <LoginForm onSuccess={handleLoginSuccess} />
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-body-sm text-gray-600">
             Don't have an account?{' '}
-            <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+            <Link href="/signup" className="font-medium text-freshwall-orange hover:text-freshwall-orange/80 transition-colors">
               Sign up for free
             </Link>
           </p>
