@@ -155,6 +155,8 @@ The release script will:
 - **`main`** - Primary development branch. All PRs target this branch.
 - **`feature/*`** - Feature branches should PR to `main`
 
+**IMPORTANT: Never commit directly to `main`. Always create a feature branch (e.g., `feature/add-xyz`) before making changes, even for small fixes. All changes must go through the PR process.**
+
 ### Workflow
 1. Create feature branch from `main`
 2. Make changes and commit
@@ -188,6 +190,85 @@ git push origin ios/v1.0.0
 
 **Important**: AI agents should always create PRs targeting `main`. Production releases are controlled via tags.
 
+### Working with Git Worktrees
+
+FreshWall supports git worktrees to work on multiple features simultaneously without switching branches. This is especially useful when you need to:
+- Work on multiple features in parallel
+- Test different branches without stashing changes
+- Keep your main worktree clean and pristine
+
+#### Worktree Management Scripts
+
+**Interactive Manager (`Scripts/worktree-manager.sh`)** - Visual dashboard and interactive management:
+
+```bash
+# Launch interactive manager (recommended)
+./Scripts/worktree-manager.sh
+
+# Or show dashboard only
+./Scripts/worktree-manager.sh --dashboard
+```
+
+The interactive manager provides:
+- Visual dashboard showing all worktrees with status indicators
+- Git status for each worktree (modified, staged, ahead/behind remote)
+- Interactive menu to open, remove, or manage worktrees
+- Quick access to create new worktrees
+- Batch cleanup operations
+
+**Command-line Tool (`Scripts/worktree.sh`)** - Direct commands for scripts/automation:
+
+```bash
+# Create a new worktree (opens iTerm2 with 2 tabs)
+./Scripts/worktree.sh create feature/new-dashboard
+
+# Create with Claude Code prompt (auto-runs in tab 2)
+./Scripts/worktree.sh create feature/new-dashboard "Implement the dashboard UI"
+
+# List all active worktrees
+./Scripts/worktree.sh list
+
+# Open a worktree in Xcode
+./Scripts/worktree.sh open feature/new-dashboard
+
+# Remove a worktree when done
+./Scripts/worktree.sh remove feature/new-dashboard
+
+# Clean up all worktrees
+./Scripts/worktree.sh cleanup
+```
+
+#### Worktree Structure
+
+Worktrees are created in `.worktrees/` directory:
+```
+FreshWall/
+├── .worktrees/
+│   ├── feature-new-dashboard/    # Full project copy on feature/new-dashboard
+│   ├── feature-api-refactor/     # Full project copy on feature/api-refactor
+│   └── bugfix-login-issue/       # Full project copy on bugfix/login-issue
+├── App/                           # Main worktree (typically on main branch)
+├── Firebase/
+└── Scripts/
+```
+
+#### Best Practices
+
+1. **Main worktree stays clean**: Keep your primary FreshWall directory on `main` branch without local changes
+2. **One worktree per feature**: Create a worktree for each feature branch you're actively working on
+3. **Clean up when done**: Remove worktrees after PRs are merged to avoid clutter
+4. **Xcode conflicts**: Each worktree has its own derived data, avoiding Xcode workspace conflicts
+5. **Firebase emulator**: You can run Firebase emulators from different worktrees simultaneously (use different ports)
+
+#### AI Agent Usage
+
+When AI agents need to work on a new feature:
+1. Check current branch with `git branch --show-current`
+2. If on `main`, create a new worktree: `./Scripts/worktree.sh create feature/xyz`
+3. Work in the worktree directory: `cd .worktrees/feature-xyz`
+4. When done, return to main worktree and remove: `./Scripts/worktree.sh remove feature/xyz`
+
+---
 
 🔐 Firebase Auth + Firestore Rules Summary
 	•	Users must authenticate before accessing any data

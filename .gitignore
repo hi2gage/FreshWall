@@ -100,6 +100,7 @@ App/FreshWall/FreshWallApp/GoogleService-Info.plist
 
 # Git worktrees
 worktrees/
+.worktrees/
 .vercel
 
 # Environment variable files with secrets (keep local only)
