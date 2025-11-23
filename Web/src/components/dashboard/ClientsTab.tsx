@@ -182,7 +182,7 @@ export default function ClientsTab() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-seafoam-teal"></div>
         <span className="ml-2 text-gray-600 dark:text-gray-400">Loading clients...</span>
       </div>
     );
@@ -204,7 +204,7 @@ export default function ClientsTab() {
               onClick={() => setFilter(status)}
               className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                 filter === status
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-seafoam-teal text-white'
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
               }`}
             >
@@ -226,7 +226,7 @@ export default function ClientsTab() {
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             Start by adding your first client to track incidents and generate reports.
           </p>
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+          <button className="bg-seafoam-teal text-white px-6 py-2 rounded-md hover:bg-seafoam-teal/90 font-medium">
             Add First Client
           </button>
         </div>
@@ -301,8 +301,8 @@ export default function ClientsTab() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         client.isDeleted
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-green-100 text-green-800'
+                          ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                          : 'bg-seafoam-teal/10 text-seafoam-teal dark:bg-seafoam-teal/20'
                       }`}>
                         {client.isDeleted ? 'Deleted' : 'Active'}
                       </span>
@@ -313,7 +313,7 @@ export default function ClientsTab() {
                           e.stopPropagation();
                           handleViewClient(client);
                         }}
-                        className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mr-3"
+                        className="text-charcoal-navy dark:text-seafoam-teal hover:text-seafoam-teal dark:hover:text-seafoam-teal/80 mr-3"
                       >
                         View
                       </button>
@@ -341,14 +341,14 @@ export default function ClientsTab() {
           </div>
           {canViewBilling && (
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-seafoam-teal">
                 {clients.filter(c => c.defaults?.billingMethod).length}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">With Billing Setup</div>
             </div>
           )}
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/20">
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-charcoal-navy dark:text-seafoam-teal">
               {clients.filter(c => c.lastIncidentAt).length}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">With Incidents</div>
