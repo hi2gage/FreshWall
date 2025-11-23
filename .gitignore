@@ -122,3 +122,4 @@ Firebase/functions/node_modules/
 Firebase/prod-service-account.json
 Firebase/staging-service-account.json
 *-service-account.json
+.vercel
