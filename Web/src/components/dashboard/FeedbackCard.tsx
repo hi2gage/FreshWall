@@ -85,37 +85,6 @@ export default function FeedbackCard() {
         </form>
       )}
 
-      {/* Quick feedback options */}
-      {!submitted && (
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500 mb-3">
-            Quick actions:
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setFeedback('I found a bug: ')}
-              className="text-xs px-3 py-1 border border-gray-300 rounded-full hover:border-seafoam-teal text-gray-700 hover:text-seafoam-teal transition-colors"
-            >
-              🐛 Report Bug
-            </button>
-            <button
-              type="button"
-              onClick={() => setFeedback('Feature request: ')}
-              className="text-xs px-3 py-1 border border-gray-300 rounded-full hover:border-seafoam-teal text-gray-700 hover:text-seafoam-teal transition-colors"
-            >
-              💡 Suggest Feature
-            </button>
-            <button
-              type="button"
-              onClick={() => setFeedback('I love FreshWall! ')}
-              className="text-xs px-3 py-1 border border-gray-300 rounded-full hover:border-seafoam-teal text-gray-700 hover:text-seafoam-teal transition-colors"
-            >
-              ❤️ General Praise
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
