@@ -33,10 +33,10 @@ export const Header: React.FC<HeaderProps> = ({ background = 'navy' }) => {
     <header className={`${bgStyles[background]} fixed top-0 left-0 right-0 z-50 transition-all`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo - fades in when scrolled */}
-          <div className={`flex-shrink-0 transition-opacity duration-300 ${scrolled ? 'opacity-100' : 'opacity-0'}`}>
+          {/* Logo */}
+          <div className="flex-shrink-0">
             <a href="/">
-              <Logo height={40} variant={logoVariant} priority />
+              <Logo height={52} variant={logoVariant} priority />
             </a>
           </div>
 
@@ -46,6 +46,7 @@ export const Header: React.FC<HeaderProps> = ({ background = 'navy' }) => {
               <Button
                 variant="primary"
                 size="md"
+                colorScheme="dark"
                 onClick={() => {
                   window.location.href = '/demo'
                 }}
@@ -56,7 +57,7 @@ export const Header: React.FC<HeaderProps> = ({ background = 'navy' }) => {
             <Button
               variant="secondary"
               size="md"
-              className="border-white text-white hover:bg-white hover:text-charcoal-navy"
+              colorScheme="dark"
               onClick={() => {
                 window.location.href = '/login'
               }}
