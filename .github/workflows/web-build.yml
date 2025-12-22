@@ -13,12 +13,17 @@ jobs:
       run:
         working-directory: Web
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci
-      - run: npm run build
+          cache: 'pnpm'
+          cache-dependency-path: 'Web/pnpm-lock.yaml'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
         env:
           NEXT_PUBLIC_FIREBASE_API_KEY: "fake-api-key-for-build"
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "fake-project.firebaseapp.com"
