@@ -29,6 +29,7 @@ export const CTASection = () => {
             <Button
               variant="primary"
               size="lg"
+              colorScheme="dark"
               onClick={() => {
                 // TODO: Link to demo booking
                 window.location.href = '/demo'

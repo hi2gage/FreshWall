@@ -13,12 +13,12 @@ export const Logo: React.FC<LogoProps> = ({
   priority = false,
   variant = 'light',
 }) => {
-  // Logo aspect ratio is approximately 272:123 (2.21:1)
-  const width = Math.round(height * 2.21)
+  // Logo aspect ratio is 364:84 (4.33:1)
+  const width = Math.round(height * 4.33)
 
   const logoSrc = variant === 'light'
-    ? '/freshwall-logo-light.svg'  // White text, for dark backgrounds
-    : '/freshwall-logo-dark.svg'   // Dark text, for light backgrounds
+    ? '/logo/primary-horizontal-logo-dark.svg'   // For dark backgrounds
+    : '/logo/primary-horizontal-logo-light.svg'  // For light backgrounds
 
   return (
     <Image

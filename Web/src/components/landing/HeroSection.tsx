@@ -9,21 +9,6 @@ export const HeroSection = () => {
   return (
     <Section background="navy" className="pt-24 md:pt-32 pb-16 md:pb-24">
       <div className="text-center">
-        {/* Logo - Icon and Text */}
-        <div className="flex flex-col items-center mb-16">
-          <Image
-            src="/freshwall-icon.svg"
-            alt="FreshWall Icon"
-            width={80}
-            height={88}
-            className="mb-4"
-            priority
-          />
-          <h2 className="font-montserrat text-5xl md:text-6xl font-bold text-white">
-            Fresh Wall
-          </h2>
-        </div>
-
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left Column - Text Content */}
           <div className="text-white text-left">
@@ -43,6 +28,7 @@ export const HeroSection = () => {
             <Button
               variant="primary"
               size="lg"
+              colorScheme="dark"
               onClick={() => {
                 // TODO: Link to demo booking
                 window.location.href = '/demo'

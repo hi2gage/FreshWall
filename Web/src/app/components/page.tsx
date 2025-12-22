@@ -129,30 +129,96 @@ export default function ComponentsPage() {
           <h2 className="font-montserrat text-h2 text-copy-black mb-6">
             Buttons
           </h2>
-          <div className="space-y-8">
-            <div>
-              <p className="font-inter text-body text-gray-600 mb-4">Primary Button</p>
-              <div className="flex flex-wrap gap-4">
-                <Button variant="primary" size="sm">Book a Demo</Button>
-                <Button variant="primary" size="md">Book a 15-Minute Demo</Button>
-                <Button variant="primary" size="lg">Get Started</Button>
+
+          <div className="grid md:grid-cols-2 gap-8">
+          {/* Light Background */}
+          <div className="bg-white border border-gray-200 rounded-lg p-8">
+            <h3 className="font-montserrat text-h3 text-copy-black mb-6">Light Background</h3>
+            <div className="space-y-8">
+              {/* Primary Buttons */}
+              <div>
+                <p className="font-inter text-body-sm text-gray-500 mb-2">Primary - Current (Orange → Darker Orange)</p>
+                <div className="flex flex-wrap gap-4 mb-4">
+                  <Button variant="primary" size="md">Book a 15-Minute Demo</Button>
+                </div>
+
+                <p className="font-inter text-body-sm text-gray-500 mb-2">Primary - Option A (Orange → Teal)</p>
+                <div className="flex flex-wrap gap-4 mb-4">
+                  <Button variant="primary" size="md" className="hover:bg-seafoam-teal">Book a 15-Minute Demo</Button>
+                </div>
+
+                <p className="font-inter text-body-sm text-gray-500 mb-2">Primary - Option B (Orange → Navy)</p>
+                <div className="flex flex-wrap gap-4">
+                  <Button variant="primary" size="md" className="hover:bg-charcoal-navy">Book a 15-Minute Demo</Button>
+                </div>
+              </div>
+
+              {/* Secondary Buttons */}
+              <div>
+                <p className="font-inter text-body-sm text-gray-500 mb-2">Secondary - Current (Navy border → Navy fill)</p>
+                <div className="flex flex-wrap gap-4 mb-4">
+                  <Button variant="secondary" size="md">Existing Customers</Button>
+                </div>
+
+                <p className="font-inter text-body-sm text-gray-500 mb-2">Secondary - Option A (Navy border → Teal fill)</p>
+                <div className="flex flex-wrap gap-4 mb-4">
+                  <Button variant="secondary" size="md" className="hover:bg-seafoam-teal hover:border-seafoam-teal hover:text-charcoal-navy">Existing Customers</Button>
+                </div>
+
+                <p className="font-inter text-body-sm text-gray-500 mb-2">Secondary - Option B (Navy border → Orange fill)</p>
+                <div className="flex flex-wrap gap-4">
+                  <Button variant="secondary" size="md" className="hover:bg-freshwall-orange hover:border-freshwall-orange hover:text-white">Existing Customers</Button>
+                </div>
               </div>
             </div>
-            <div>
-              <p className="font-inter text-body text-gray-600 mb-4">Secondary Button</p>
-              <div className="flex flex-wrap gap-4">
-                <Button variant="secondary" size="sm">Learn More</Button>
-                <Button variant="secondary" size="md">Contact Us</Button>
-                <Button variant="secondary" size="lg">View Pricing</Button>
+          </div>
+
+          {/* Dark Background */}
+          <div className="bg-charcoal-navy rounded-lg p-8 h-fit">
+            <h3 className="font-montserrat text-h3 text-white mb-6">Dark Background</h3>
+            <div className="space-y-8">
+              {/* Primary Buttons on Dark */}
+              <div>
+                <p className="font-inter text-body-sm text-gray-400 mb-2">Primary - Current (Orange → Darker Orange)</p>
+                <div className="flex flex-wrap gap-4 mb-4">
+                  <Button variant="primary" size="md">Book a 15-Minute Demo</Button>
+                </div>
+
+                <p className="font-inter text-body-sm text-gray-400 mb-2">Primary - Option A (Orange → Teal)</p>
+                <div className="flex flex-wrap gap-4 mb-4">
+                  <Button variant="primary" size="md" className="hover:bg-seafoam-teal hover:text-charcoal-navy">Book a 15-Minute Demo</Button>
+                </div>
+
+                <p className="font-inter text-body-sm text-gray-400 mb-2">Primary - Option B (Orange → White)</p>
+                <div className="flex flex-wrap gap-4">
+                  <Button variant="primary" size="md" className="hover:bg-white hover:text-charcoal-navy">Book a 15-Minute Demo</Button>
+                </div>
+              </div>
+
+              {/* Secondary Buttons on Dark */}
+              <div>
+                <p className="font-inter text-body-sm text-gray-400 mb-2">Secondary - Option A (White border → White fill, dark text)</p>
+                <div className="flex flex-wrap gap-4 mb-4">
+                  <Button variant="secondary" size="md" className="border-white text-white hover:bg-white hover:!text-charcoal-navy">Existing Customers</Button>
+                </div>
+
+                <p className="font-inter text-body-sm text-gray-400 mb-2">Secondary - Option B (White border → Teal fill) ✓ Current Header</p>
+                <div className="flex flex-wrap gap-4 mb-4">
+                  <Button variant="secondary" size="md" className="border-white text-white hover:bg-seafoam-teal hover:border-seafoam-teal hover:text-charcoal-navy">Existing Customers</Button>
+                </div>
+
+                <p className="font-inter text-body-sm text-gray-400 mb-2">Secondary - Option C (White border → Orange fill)</p>
+                <div className="flex flex-wrap gap-4 mb-4">
+                  <Button variant="secondary" size="md" className="border-white text-white hover:bg-freshwall-orange hover:border-freshwall-orange">Existing Customers</Button>
+                </div>
+
+                <p className="font-inter text-body-sm text-gray-400 mb-2">Secondary - Option D (Teal border → Teal fill)</p>
+                <div className="flex flex-wrap gap-4">
+                  <Button variant="secondary" size="md" className="border-seafoam-teal text-seafoam-teal hover:bg-seafoam-teal hover:text-charcoal-navy">Existing Customers</Button>
+                </div>
               </div>
             </div>
-            <div>
-              <p className="font-inter text-body text-gray-600 mb-4">Text Button</p>
-              <div className="flex flex-wrap gap-4">
-                <Button variant="text" size="sm">Read more</Button>
-                <Button variant="text" size="md">Learn about features</Button>
-              </div>
-            </div>
+          </div>
           </div>
         </section>
 
