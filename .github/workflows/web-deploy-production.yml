@@ -43,6 +43,9 @@ jobs:
           URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
           echo "deployment_url=$URL" >> $GITHUB_ENV
 
+      - name: Alias to production domain
+        run: vercel alias set ${{ env.deployment_url }} www.freshwall.app --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }}
+
       - name: Get tag name
         run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
