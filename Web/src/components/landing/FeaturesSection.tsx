@@ -13,9 +13,11 @@ export const FeaturesSection = () => {
           <br />
           <span className="text-copy-black">Everything in One Place</span>
         </h2>
-        <p className="font-inter text-lg md:text-xl text-copy-black max-w-3xl mx-auto">
-          FreshWall is built specifically for graffiti removal professionals. It&apos;s not another generic job tracker. It&apos;s your entire business command center.
-        </p>
+        <div className="font-montserrat text-lg md:text-xl text-copy-black max-w-3xl mx-auto space-y-1">
+          <p>FreshWall is built specifically for graffiti removal professionals.</p>
+          <p >It&apos;s not another generic job tracker.</p>
+          <p>It&apos;s your entire business command center.</p>
+        </div>
       </div>
 
       {/* Feature Cards */}
