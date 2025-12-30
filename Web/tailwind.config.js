@@ -12,7 +12,7 @@ module.exports = {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         // FreshWall Brand Colors from Design System
-        'charcoal-navy': '#334155',
+        'charcoal-navy': '#1B2E40',
         'freshwall-orange': '#F37335',
         'seafoam-teal': '#73C5B6',
         'bright-highlight': '#D1D5DB',

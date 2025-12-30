@@ -28,7 +28,7 @@ export default function DemoPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center">
             <Image
-              src="/freshwall-logo-dark.svg"
+              src="/logo/primary-horizontal-logo-light.svg"
               alt="FreshWall"
               width={150}
               height={68}

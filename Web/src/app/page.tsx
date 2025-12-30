@@ -7,6 +7,7 @@ import {
   FeaturesSection,
   WhyFreshWallSection,
   CTASection,
+  Footer,
 } from '@/components/landing'
 
 export default function Home() {
@@ -20,6 +21,7 @@ export default function Home() {
         <WhyFreshWallSection />
         <CTASection />
       </main>
+      <Footer />
     </>
   )
 }
