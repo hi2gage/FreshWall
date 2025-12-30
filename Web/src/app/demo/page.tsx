@@ -68,6 +68,7 @@ export default function DemoPage() {
             title="Demo Request"
             className="border-0"
             style={{ overflow: 'hidden' }}
+            suppressHydrationWarning
           />
         </div>
       </div>
