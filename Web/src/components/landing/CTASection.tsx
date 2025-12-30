@@ -7,15 +7,16 @@ import Image from 'next/image'
 export const CTASection = () => {
   return (
     <Section background="navy" className="py-16 md:py-24">
+      {/* Title - Centered above both columns */}
+      <h2 className="font-montserrat text-3xl md:text-4xl lg:text-5xl font-bold mb-12 text-white text-center">
+        Take the first step
+        <br />
+        toward a smoother business
+      </h2>
+
       <div className="grid md:grid-cols-2 gap-12 items-center">
         {/* Left Column - Text Content */}
         <div className="text-white">
-          <h2 className="font-montserrat text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-            Take the first step
-            <br />
-            toward a smoother business
-          </h2>
-
           <div className="space-y-6 mb-8">
             <p className="font-montserrat text-xl md:text-2xl font-semibold">
               In just 15 minutes

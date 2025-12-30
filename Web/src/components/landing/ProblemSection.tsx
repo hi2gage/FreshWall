@@ -23,10 +23,10 @@ export const ProblemSection = () => {
             </h2>
 
             {/* Subheading */}
-            <p className="font-inter text-lg md:text-xl text-copy-black">
-              <span className="text-freshwall-orange font-semibold">Every day you&apos;re managing a dozen moving parts</span>
-              {' '}and it&apos;s too easy for things to slip through the cracks.
-            </p>
+            <div className="font-inter text-lg md:text-xl text-copy-black space-y-1">
+              <p className="text-freshwall-orange font-semibold">Every day you&apos;re managing a dozen moving parts</p>
+              <p>and it&apos;s too easy for things to slip through the cracks.</p>
+            </div>
           </div>
 
           {/* Right Column - Problem List */}
