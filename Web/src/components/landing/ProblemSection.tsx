@@ -31,7 +31,7 @@ export const ProblemSection = () => {
 
           {/* Right Column - Problem List */}
           <div
-            className="bg-white rounded-xl px-8 py-6 space-y-5"
+            className="bg-white rounded-xl px-8 py-6 space-y-5 w-fit md:ml-auto"
             style={{
               boxShadow: '-4px -5px 9px rgba(255, 255, 255, 1), 0px 4px 9px rgba(217, 217, 217, 1)'
             }}
