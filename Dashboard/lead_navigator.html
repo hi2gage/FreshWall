@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshWall Lead Navigator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1800px;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            flex: 1;
+            max-width: 650px;
+            padding: 40px;
+        }
+
+        .script-panel {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 380px;
+            padding: 30px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 20px;
+        }
+
+        .script-box {
+            padding: 20px;
+            border-radius: 12px;
+            border: 3px solid;
+        }
+
+        .script-box-answer {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+
+        .script-box-voicemail {
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+
+        .script-box h2 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+        }
+
+        .script-box-answer h2 {
+            color: #2e7d32;
+        }
+
+        .script-box-voicemail h2 {
+            color: #e65100;
+        }
+
+        .script-panel h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .script-section {
+            margin-bottom: 25px;
+        }
+
+        .script-section h3 {
+            color: #667eea;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .script-section p {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .script-section strong {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .script-divider {
+            border: 0;
+            border-top: 2px solid #e9ecef;
+            margin: 20px 0;
+        }
+
+        .script-highlight {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 1400px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .script-panel {
+                width: 100%;
+                max-width: 800px;
+                position: relative;
+                top: 0;
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .progress {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .lead-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .lead-card h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .lead-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .info-value a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .info-value a:hover {
+            text-decoration: underline;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stars {
+            color: #ffc107;
+            font-size: 18px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-primary {
+            background: #28a745;
+        }
+
+        .btn-primary:hover {
+            background: #218838;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .shortcuts {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .shortcuts kbd {
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Lead Navigator</h1>
+            <div class="progress" id="progress">Loading...</div>
+        </div>
+
+        <div id="content">
+            <div class="loading">Loading leads...</div>
+        </div>
+    </div>
+
+        <!-- THEY ANSWER PANEL -->
+        <div class="script-panel">
+            <h2>✅ If They Answer</h2>
+
+            <div class="script-section">
+                <h3>Opener</h3>
+                <p><strong>You:</strong> "Hi, is this [Name]?"</p>
+                <p>"Hey, I'm Gage. I'm working with a graffiti cleanup crew here in Montana. We built a tool that makes documenting jobs way faster.</p>
+                <p>Quick question — how are you currently tracking your graffiti jobs? Photos? Notes?"</p>
+                <div class="script-highlight">
+                    <strong>Stop. Listen.</strong>
+                </div>
+            </div>
+
+            <hr class="script-divider">
+
+            <div class="script-section">
+                <h3>Responses</h3>
+                <p><strong>Photos in phone:</strong><br>"The pain was matching photos to locations at invoice time. Does that get messy for you?"</p>
+
+                <p><strong>Google Drive:</strong><br>"How long does it take to pull everything together for billing?"</p>
+
+                <p><strong>We just bill:</strong><br>"When clients ask for proof, what do you send them?"</p>
+            </div>
+
+            <hr class="script-divider">
+
+            <div class="script-section">
+                <h3>If Pain</h3>
+                <p>"That's what FreshWall fixes. Your crew logs the job in 15 seconds, photos auto-tie to location, invoice builds itself.</p>
+                <p>10-15 min demo? Today afternoon or tomorrow morning?"</p>
+            </div>
+
+            <hr class="script-divider">
+
+            <div class="script-section">
+                <h3>"What is it?"</h3>
+                <p>"Phone app your crew uses on-site. Before/after photos automatically attach to the right job. Clean invoice record at month end."</p>
+                <div class="script-highlight">
+                    <strong>Stop.</strong>
+                </div>
+            </div>
+
+            <hr class="script-divider">
+
+            <div class="script-section">
+                <h3>"We're fine"</h3>
+                <p>"Totally fair. If a client ever challenges an invoice, want me to send you a 2-min walkthrough?"</p>
+            </div>
+
+            <hr class="script-divider">
+
+            <div class="script-section">
+                <h3>Wrong person</h3>
+                <p>"Who handles invoicing on your side? I can reach out directly."</p>
+            </div>
+
+            <hr class="script-divider">
+
+            <div class="script-section">
+                <h3>Close</h3>
+                <p>"Great — what's your email? Does [time 1] or [time 2] work?"</p>
+                <p><em>→ Demo Scheduled</em></p>
+            </div>
+
+            <div class="script-highlight" style="margin-top: 15px;">
+                <strong>Process:</strong>
+                <ul style="margin: 10px 0 0 20px; line-height: 1.8;">
+                    <li>Ask one question</li>
+                    <li>Listen</li>
+                    <li>Offer demo when pain</li>
+                    <li>Two time options</li>
+                    <li>Log result</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- VOICEMAIL PANEL -->
+        <div class="script-panel">
+            <h2>📞 If Voicemail</h2>
+
+            <div class="script-section">
+                <h3>The Message</h3>
+                <p style="font-size: 15px; line-height: 1.8; font-weight: 500;">
+                    "Hey, this is Gage with FreshWall. We help graffiti crews package photo proof into month-end invoices automatically. I'll text you a 2-minute demo. Thanks."
+                </p>
+            </div>
+
+            <hr class="script-divider">
+
+            <div class="script-highlight" style="background: #ffe0b2; border-color: #ff9800;">
+                <strong>After Voicemail:</strong>
+                <ul style="margin: 10px 0 0 20px; line-height: 1.8;">
+                    <li>Increment Call Attempts</li>
+                    <li>Next Follow-up: 2-3 days</li>
+                    <li>Status: "Called - No Contact"</li>
+                    <li>Save notes</li>
+                    <li>Next call</li>
+                </ul>
+            </div>
+
+            <hr class="script-divider">
+
+            <div class="script-section">
+                <h3>Remember</h3>
+                <ul style="margin: 5px 0 0 20px; line-height: 1.8;">
+                    <li>Keep it short</li>
+                    <li>Say who you are</li>
+                    <li>What you solve</li>
+                    <li>Promise to follow up</li>
+                    <li>Don't ask for callback</li>
+                </ul>
+            </div>
+
+            <hr class="script-divider">
+
+            <div style="text-align: center;">
+                <button onclick="changeStatus('Called – No Contact')" style="background: #ff9800; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.3s;">
+                    📞 Mark as No Answer
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_TOKEN = 'zVmKmhAOgE2zftUAN640P6liBGfReWm7uqIoQSrw';
+        const BASE_URL = 'http://nocodb.nas.lan';
+        const TABLE_ID = 'mjx6wj53lvdqtur';
+        const VIEW_ID = 'vwd20pbc7eu97hcy';
+        const BASE_ID = 'pqnaslwjzaqoora';
+
+        let leads = [];
+        let currentIndex = 0;
+
+        async function fetchLeads() {
+            try {
+                let allLeads = [];
+                let offset = 0;
+                const limit = 100;
+                let hasMore = true;
+
+                while (hasMore) {
+                    const url = `${BASE_URL}/api/v2/tables/${TABLE_ID}/records?limit=${limit}&offset=${offset}&where=(status,eq,Ready%20to%20Call)`;
+
+                    const response = await fetch(url, {
+                        headers: {
+                            'xc-token': API_TOKEN,
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch leads: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    allLeads = allLeads.concat(data.list || []);
+
+                    hasMore = !data.pageInfo.isLastPage;
+                    offset += limit;
+                }
+
+                return allLeads;
+            } catch (error) {
+                console.error('Error fetching leads:', error);
+                throw error;
+            }
+        }
+
+        function renderLead(lead) {
+            if (!lead) return;
+
+            const stars = '⭐'.repeat(Math.round(lead.rating_value || 0));
+            const phone = lead.phone || 'No phone';
+            const email = lead.email || 'No email';
+            const url = lead.url || '#';
+            const hasUrl = lead.url && lead.url !== '';
+
+            return `
+                <div class="lead-card">
+                    <h2>${lead.company_name || 'Unknown Company'}</h2>
+
+                    <div class="lead-info">
+                        <div class="info-item">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value">${phone}</span>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">${email}</span>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Location</span>
+                            <span class="info-value">${lead.location_name || 'Unknown'}</span>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-label">Rating</span>
+                            <div class="rating">
+                                <span class="stars">${stars}</span>
+                                <span class="info-value">${lead.rating_value || 'N/A'} (${lead.rating_count || 0} reviews)</span>
+                            </div>
+                        </div>
+
+                        <div class="info-item" style="grid-column: 1 / -1;">
+                            <span class="info-label">Website</span>
+                            <span class="info-value">
+                                ${hasUrl ? `<a href="${url}" target="_blank">${url}</a>` : 'No website'}
+                            </span>
+                        </div>
+
+                        <div class="info-item" style="grid-column: 1 / -1;">
+                            <span class="info-label">Call Notes</span>
+                            <textarea id="callNotes" style="width: 100%; min-height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px; margin-top: 5px;">${lead.user_notes || ''}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button onclick="previousLead()" ${currentIndex === 0 ? 'disabled' : ''} class="btn-secondary">
+                        ← Previous
+                    </button>
+                    <button onclick="callLead()" class="btn-primary" ${!lead.phone ? 'disabled' : ''}>
+                        📞 Call
+                    </button>
+                    ${hasUrl ? '<button onclick="openWebsite()" class="btn-primary">🌐 Open Website</button>' : ''}
+                    <button onclick="saveNotes()" class="btn-primary">
+                        💾 Save Notes
+                    </button>
+                    <button onclick="openNocoDB()" class="btn-primary">
+                        📋 Open in NocoDB
+                    </button>
+                    <button onclick="nextLead()" ${currentIndex >= leads.length - 1 ? 'disabled' : ''}>
+                        Next →
+                    </button>
+                </div>
+
+                <div class="shortcuts">
+                    Keyboard: <kbd>←</kbd> Previous | <kbd>→</kbd> Next | <kbd>Space</kbd> Call + Website | <kbd>S</kbd> Save Notes | <kbd>N</kbd> NocoDB
+                </div>
+            `;
+        }
+
+        function updateDisplay() {
+            const lead = leads[currentIndex];
+            const progress = document.getElementById('progress');
+            const content = document.getElementById('content');
+
+            if (!lead) {
+                content.innerHTML = '<div class="empty">No leads found with status "Ready to Call"</div>';
+                progress.textContent = 'No leads';
+                return;
+            }
+
+            progress.textContent = `Lead ${currentIndex + 1} of ${leads.length}`;
+            content.innerHTML = renderLead(lead);
+        }
+
+        async function nextLead() {
+            // Auto-save notes before moving
+            await saveNotes(true); // Pass true to suppress visual feedback
+
+            if (currentIndex < leads.length - 1) {
+                currentIndex++;
+                updateDisplay();
+            }
+        }
+
+        async function previousLead() {
+            // Auto-save notes before moving
+            await saveNotes(true); // Pass true to suppress visual feedback
+
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateDisplay();
+            }
+        }
+
+        async function changeStatus(newStatus) {
+            const lead = leads[currentIndex];
+            if (!lead) return;
+
+            try {
+                // Increment call_attempt_count
+                const currentAttempts = lead.call_attempt_count || 0;
+                const newAttempts = currentAttempts + 1;
+
+                // Get current date in YYYY-MM-DD format
+                const today = new Date().toISOString().split('T')[0];
+
+                const url = `${BASE_URL}/api/v2/tables/${TABLE_ID}/records`;
+                const response = await fetch(url, {
+                    method: 'PATCH',
+                    headers: {
+                        'xc-token': API_TOKEN,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify([{
+                        Id: lead.Id,
+                        status: newStatus,
+                        call_attempt_count: newAttempts,
+                        Last_Contact_Date: today
+                    }])
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to update status: ${response.status}`);
+                }
+
+                // Update local copy
+                leads[currentIndex].status = newStatus;
+                leads[currentIndex].call_attempt_count = newAttempts;
+                leads[currentIndex].Last_Contact_Date = today;
+
+                // Move to next lead
+                await nextLead();
+
+            } catch (error) {
+                alert('Error updating status: ' + error.message);
+            }
+        }
+
+        async function saveNotes(silent = false) {
+            const lead = leads[currentIndex];
+            const notesTextarea = document.getElementById('callNotes');
+
+            if (!lead || !notesTextarea) return;
+
+            const notes = notesTextarea.value;
+
+            // Skip if notes haven't changed
+            if (notes === (lead.user_notes || '')) return;
+
+            // Find the save button for visual feedback
+            let saveButton = null;
+            if (!silent) {
+                const buttons = document.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    if (btn.textContent.includes('Save Notes') || btn.textContent.includes('Saved!')) {
+                        saveButton = btn;
+                    }
+                });
+            }
+
+            try {
+                const url = `${BASE_URL}/api/v2/tables/${TABLE_ID}/records`;
+                const response = await fetch(url, {
+                    method: 'PATCH',
+                    headers: {
+                        'xc-token': API_TOKEN,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify([{
+                        Id: lead.Id,
+                        user_notes: notes
+                    }])
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to save notes: ${response.status}`);
+                }
+
+                // Update local copy
+                leads[currentIndex].user_notes = notes;
+
+                // Visual feedback (only if not silent)
+                if (!silent && saveButton) {
+                    const originalText = saveButton.textContent;
+                    const originalBg = saveButton.style.background;
+                    saveButton.textContent = '✅ Saved!';
+                    saveButton.style.background = '#28a745';
+
+                    setTimeout(() => {
+                        saveButton.textContent = originalText;
+                        saveButton.style.background = originalBg;
+                    }, 2000);
+                }
+
+            } catch (error) {
+                if (!silent) {
+                    alert('Error saving notes: ' + error.message);
+                }
+            }
+        }
+
+        function openNocoDB() {
+            const lead = leads[currentIndex];
+            if (lead) {
+                const url = `${BASE_URL}/dashboard/#/nc/${BASE_ID}/${TABLE_ID}/${VIEW_ID}/crm-kanban?rowId=${lead.Id}`;
+                window.open(url, '_blank');
+            }
+        }
+
+        function callLead() {
+            const lead = leads[currentIndex];
+
+            // Open website first
+            if (lead && lead.url) {
+                window.open(lead.url, '_blank');
+            }
+
+            // Then open tel: link
+            if (lead && lead.phone) {
+                const phoneNumber = lead.phone.replace(/[^0-9+]/g, '');
+                window.open(`tel:${phoneNumber}`, '_blank');
+            }
+        }
+
+        function openWebsite() {
+            const lead = leads[currentIndex];
+            if (lead && lead.url) {
+                window.open(lead.url, '_blank');
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            switch(e.key) {
+                case 'ArrowRight':
+                    e.preventDefault();
+                    nextLead();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    previousLead();
+                    break;
+                case ' ':
+                    e.preventDefault();
+                    callLead();
+                    break;
+                case 's':
+                case 'S':
+                    e.preventDefault();
+                    saveNotes();
+                    break;
+                case 'n':
+                case 'N':
+                    e.preventDefault();
+                    openNocoDB();
+                    break;
+            }
+        });
+
+        // Initialize
+        async function init() {
+            try {
+                leads = await fetchLeads();
+                console.log(`Loaded ${leads.length} leads`);
+                updateDisplay();
+            } catch (error) {
+                document.getElementById('content').innerHTML = `
+                    <div class="error">
+                        <strong>Error loading leads:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
