@@ -219,65 +219,94 @@
 
         .controls {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: center;
-            margin-bottom: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
         }
 
         button {
             background: #667eea;
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 12px 20px;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         button:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         button:disabled {
-            background: #ccc;
+            background: #e9ecef;
+            color: #adb5bd;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
 
-        .btn-primary {
+        .btn-nav {
+            background: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            background: #e9ecef;
+            border-color: #ced4da;
+        }
+
+        .btn-next {
+            background: #667eea;
+            color: white;
+            border: none;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: #5568d3;
+        }
+
+        .btn-action {
+            background: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-action:hover:not(:disabled) {
+            background: #e9ecef;
+            border-color: #ced4da;
+        }
+
+        .btn-call {
             background: #28a745;
+            color: white;
+            border: none;
         }
 
-        .btn-primary:hover {
+        .btn-call:hover:not(:disabled) {
             background: #218838;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
         }
 
         .shortcuts {
             text-align: center;
-            color: #666;
-            font-size: 14px;
-            margin-top: 20px;
+            color: #999;
+            font-size: 12px;
+            margin-top: 15px;
         }
 
         .shortcuts kbd {
             background: #e9ecef;
-            padding: 3px 8px;
-            border-radius: 4px;
+            padding: 2px 6px;
+            border-radius: 3px;
             font-family: monospace;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .loading {
@@ -608,29 +637,29 @@
                             <textarea id="callNotes" style="width: 100%; min-height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px; margin-top: 5px;">${lead.user_notes || ''}</textarea>
                         </div>
                     </div>
-                </div>
 
-                <div class="controls">
-                    <button onclick="previousLead()" ${currentIndex === 0 ? 'disabled' : ''} class="btn-secondary">
-                        ← Previous
-                    </button>
-                    <button onclick="callLead()" class="btn-primary" ${!lead.phone ? 'disabled' : ''}>
-                        📞 Call
-                    </button>
-                    ${hasUrl ? '<button onclick="openWebsite()" class="btn-primary">🌐 Open Website</button>' : ''}
-                    <button onclick="saveNotes()" class="btn-primary">
-                        💾 Save Notes
-                    </button>
-                    <button onclick="openNocoDB()" class="btn-primary">
-                        📋 Open in NocoDB
-                    </button>
-                    <button onclick="nextLead()" ${currentIndex >= leads.length - 1 ? 'disabled' : ''}>
-                        Next →
-                    </button>
-                </div>
+                    <div class="controls">
+                        <button onclick="previousLead()" ${currentIndex === 0 ? 'disabled' : ''} class="btn-nav">
+                            ← Previous
+                        </button>
+                        <button onclick="callLead()" class="btn-action btn-call" ${!lead.phone ? 'disabled' : ''}>
+                            📞 Call
+                        </button>
+                        ${hasUrl ? '<button onclick="openWebsite()" class="btn-action">🌐 Website</button>' : ''}
+                        <button onclick="saveNotes()" class="btn-action">
+                            💾 Save
+                        </button>
+                        <button onclick="openNocoDB()" class="btn-action">
+                            📋 NocoDB
+                        </button>
+                        <button onclick="nextLead()" ${currentIndex >= leads.length - 1 ? 'disabled' : ''} class="btn-nav btn-next">
+                            Next →
+                        </button>
+                    </div>
 
-                <div class="shortcuts">
-                    Keyboard: <kbd>←</kbd> Previous | <kbd>→</kbd> Next | <kbd>Space</kbd> Call + Website | <kbd>S</kbd> Save Notes | <kbd>N</kbd> NocoDB
+                    <div class="shortcuts">
+                        <kbd>←</kbd> Previous | <kbd>→</kbd> Next | <kbd>Space</kbd> Call | <kbd>S</kbd> Save | <kbd>N</kbd> NocoDB
+                    </div>
                 </div>
             `;
         }
