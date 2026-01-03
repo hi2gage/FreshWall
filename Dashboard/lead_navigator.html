@@ -816,16 +816,21 @@
 
         function callLead() {
             const lead = leads[currentIndex];
+            if (!lead || !lead.phone) return;
 
-            // Open website first
-            if (lead && lead.url) {
-                window.open(lead.url, '_blank');
-            }
+            // Clean the phone number
+            const phoneNumber = lead.phone.replace(/[^0-9+]/g, '');
 
-            // Then open tel: link
-            if (lead && lead.phone) {
-                const phoneNumber = lead.phone.replace(/[^0-9+]/g, '');
-                window.open(`tel:${phoneNumber}`, '_blank');
+            // Use an anchor element to trigger tel: link (more reliable than window.open)
+            const telLink = document.createElement('a');
+            telLink.href = `tel:${phoneNumber}`;
+            telLink.click();
+
+            // Open website after a short delay so call initiates first
+            if (lead.url) {
+                setTimeout(() => {
+                    window.open(lead.url, '_blank');
+                }, 500);
             }
         }
 
