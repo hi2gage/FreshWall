@@ -824,6 +824,7 @@
             // Use an anchor element to trigger tel: link (more reliable than window.open)
             const telLink = document.createElement('a');
             telLink.href = `tel:${phoneNumber}`;
+            telLink.target = '_blank';
             telLink.click();
 
             // Open website after a short delay so call initiates first
