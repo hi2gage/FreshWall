@@ -12,6 +12,52 @@ Two files form the cornerstone of the entire documentation system:
 
 These foundation files ensure AI agents always have the essential context needed to understand your project and navigate to relevant documentation.
 
+## Documentation Structure
+
+```
+docs/
+├── README.md                    # This file - documentation system guide
+├── CLAUDE.md                    # AI context template (Tier 1)
+├── claude-tier2-component.md    # Component context template
+├── claude-tier3-feature.md      # Feature context template
+│
+├── ai-context/                  # Foundation files for AI agents
+│   ├── docs-overview.md
+│   ├── project-structure.md
+│   ├── system-integration.md
+│   ├── deployment-infrastructure.md
+│   └── handoff.md
+│
+├── deployment/                  # CI/CD and release documentation
+│   ├── DEPLOYMENT.md            # General deployment guide
+│   ├── GITHUB-ACTIONS-SETUP.md  # GitHub Actions configuration
+│   └── XCODE_CLOUD_SETUP.md     # Xcode Cloud setup
+│
+├── staging/                     # Staging environment documentation
+│   ├── STAGING-SETUP.md         # General staging setup
+│   ├── STAGING-CLOUD-RUN-GUIDE.md
+│   ├── STAGING-IOS-SETUP.md
+│   └── VERCEL-STAGING.md
+│
+├── setup/                       # Initial setup and configuration
+│   ├── CLOUDFLARE-VERCEL-SETUP.md
+│   ├── VERCEL-ENV-SETUP.md
+│   ├── SETUP-MIGRATION.md
+│   └── CLONE-DATA-GUIDE.md
+│
+├── guides/                      # Conceptual guides and troubleshooting
+│   ├── CLOUD-RUN-AUTH-VISUAL-GUIDE.md
+│   ├── TEAM-CODE-VS-INVITE-CODE.md
+│   └── WEB-AUTH-TROUBLESHOOTING.md
+│
+├── open-issues/                 # Tracked issues and investigations
+│   └── example-api-performance-issue.md
+│
+└── specs/                       # Feature specifications
+    ├── example-feature-specification.md
+    └── example-api-integration-spec.md
+```
+
 ## Why the 3-Tier System
 
 ### Traditional Documentation Problems
