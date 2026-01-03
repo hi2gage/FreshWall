@@ -762,18 +762,86 @@
             }
         });
 
+        // Mock data for testing/demo
+        const MOCK_LEADS = [
+            {
+                Id: 1,
+                company_name: 'ABC Graffiti Removal',
+                phone: '(406) 555-1234',
+                email: 'info@abcgraffiti.com',
+                url: 'https://abcgraffiti.com',
+                location_name: 'Billings, MT',
+                rating_value: 4.8,
+                rating_count: 127,
+                status: 'Ready to Call',
+                user_notes: '',
+                call_attempt_count: 0
+            },
+            {
+                Id: 2,
+                company_name: 'Montana Clean Walls LLC',
+                phone: '(406) 555-5678',
+                email: 'contact@mtcleanwalls.com',
+                url: 'https://montanacleanwalls.com',
+                location_name: 'Missoula, MT',
+                rating_value: 4.5,
+                rating_count: 89,
+                status: 'Ready to Call',
+                user_notes: 'Spoke with receptionist last week',
+                call_attempt_count: 1
+            },
+            {
+                Id: 3,
+                company_name: 'Big Sky Property Services',
+                phone: '(406) 555-9012',
+                email: 'hello@bigskyproperty.com',
+                url: 'https://bigskyproperty.com',
+                location_name: 'Bozeman, MT',
+                rating_value: 4.2,
+                rating_count: 56,
+                status: 'Ready to Call',
+                user_notes: '',
+                call_attempt_count: 0
+            },
+            {
+                Id: 4,
+                company_name: 'Helena Exterior Cleaning',
+                phone: '(406) 555-3456',
+                email: null,
+                url: null,
+                location_name: 'Helena, MT',
+                rating_value: 3.9,
+                rating_count: 23,
+                status: 'Ready to Call',
+                user_notes: 'No website - may need to research more',
+                call_attempt_count: 0
+            },
+            {
+                Id: 5,
+                company_name: 'Great Falls Graffiti Solutions',
+                phone: '(406) 555-7890',
+                email: 'service@gfgraffiti.com',
+                url: 'https://greatfallsgraffiti.com',
+                location_name: 'Great Falls, MT',
+                rating_value: 5.0,
+                rating_count: 42,
+                status: 'Ready to Call',
+                user_notes: '',
+                call_attempt_count: 0
+            }
+        ];
+
         // Initialize
         async function init() {
             try {
                 leads = await fetchLeads();
-                console.log(`Loaded ${leads.length} leads`);
+                console.log(`Loaded ${leads.length} leads from API`);
                 updateDisplay();
             } catch (error) {
-                document.getElementById('content').innerHTML = `
-                    <div class="error">
-                        <strong>Error loading leads:</strong> ${error.message}
-                    </div>
-                `;
+                console.warn('API failed, using mock data:', error.message);
+                leads = MOCK_LEADS;
+                console.log(`Loaded ${leads.length} mock leads`);
+                updateDisplay();
             }
         }
 
