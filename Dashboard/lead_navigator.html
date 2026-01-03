@@ -821,11 +821,8 @@
             // Clean the phone number
             const phoneNumber = lead.phone.replace(/[^0-9+]/g, '');
 
-            // Use an anchor element to trigger tel: link (more reliable than window.open)
-            const telLink = document.createElement('a');
-            telLink.href = `tel:${phoneNumber}`;
-            telLink.target = '_blank';
-            telLink.click();
+            // Open tel: link in a new window
+            window.open(`tel:${phoneNumber}`, '_blank', 'width=400,height=300');
 
             // Open website after a short delay so call initiates first
             if (lead.url) {
