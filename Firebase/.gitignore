@@ -67,3 +67,7 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# Migration backup data (contains sensitive user data)
+backup/
+backup-scripts/

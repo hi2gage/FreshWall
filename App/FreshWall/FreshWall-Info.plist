@@ -23,7 +23,8 @@
 			<string>GoogleSignIn</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.526475481183-3cm39e7edjspi1q7atmr35uqlchqnev8</string>
+				<string>com.googleusercontent.apps.1037858849050-j3nmpaqniah6kehfsqk02u6k0n5l59er</string>
+				<string>com.googleusercontent.apps.473800449577-smug0svjmp054mn71sh3h12rffo06dhg</string>
 			</array>
 		</dict>
 	</array>

@@ -1,15 +1,9 @@
 {
   "projects": {
-    "default": "freshwall-30afe",
+    "default": "freshwall-app",
     "staging": "freshwall-staging",
-    "production": "freshwall-30afe"
+    "production": "freshwall-app"
   },
   "targets": {},
-  "etags": {
-    "freshwall-30afe": {
-      "extensionInstances": {
-        "storage-resize-images": "a7546d4395ac4630e4ef963e76d53cf32654fad47581472a873511493c908e3c"
-      }
-    }
-  }
+  "etags": {}
 }
