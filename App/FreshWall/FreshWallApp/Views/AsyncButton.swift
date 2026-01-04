@@ -1,8 +1,10 @@
 import SwiftUI
+import os
 
 // MARK: - AsyncButton
 
 struct AsyncButton<Label: View>: View {
+    private let logger = Logger.freshWall(category: "AsyncButton")
     private let action: () async throws -> Void
     private let label: () -> Label
     private let role: ButtonRole?
@@ -32,7 +34,7 @@ struct AsyncButton<Label: View>: View {
                 do {
                     try await action()
                 } catch {
-                    print("AsyncButton error: \(error)")
+                    logger.error("AsyncButton error: \(error.localizedDescription)")
                 }
             }
         } label: {
@@ -107,30 +109,32 @@ extension AsyncButton where Label == SwiftUI.Label<Text, Image> {
 }
 
 #Preview {
+    let previewLogger = Logger.freshWall(category: "AsyncButton.Preview")
+
     FreshWallPreview {
         VStack(spacing: 20) {
             // Simple string label
             AsyncButton("Save Incident") {
                 try await Task.sleep(for: .seconds(2))
-                print("Saved!")
+                previewLogger.info("Saved!")
             }
 
             // With system image
             AsyncButton("Upload", systemImage: "arrow.up.circle") {
                 try await Task.sleep(for: .seconds(3))
-                print("Uploaded!")
+                previewLogger.info("Uploaded!")
             }
 
             // Destructive role
             AsyncButton("Delete", role: .destructive) {
                 try await Task.sleep(for: .seconds(1))
-                print("Deleted!")
+                previewLogger.info("Deleted!")
             }
 
             // Custom label
             AsyncButton {
                 try await Task.sleep(for: .seconds(1))
-                print("Custom action!")
+                previewLogger.info("Custom action!")
             } label: {
                 HStack {
                     Image(systemName: "checkmark.circle")

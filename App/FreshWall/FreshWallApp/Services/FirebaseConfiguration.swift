@@ -5,6 +5,7 @@ import FirebaseCore
 @preconcurrency import FirebaseStorage
 import Foundation
 import TinyStorage
+import os
 
 // MARK: - FirebaseStorageKeys
 
@@ -51,6 +52,7 @@ enum EnvironmentMode: String, CaseIterable, Codable {
 
 /// Handles Firebase environment setup and switching.
 enum FirebaseConfiguration {
+    private static let logger = Logger.freshWall(category: "FirebaseConfiguration")
     /// Default IP address for Firebase emulators when testing on device.
     private static let defaultDeviceHostIP = "192.168.0.99"
 
@@ -132,7 +134,7 @@ enum FirebaseConfiguration {
         switch currentMode {
         case .firebase:
             // Use Firebase backend - no emulator configuration needed
-            print("🚀 Using Firebase \(currentFirebaseEnvironment.description)")
+            logger.info("🚀 Using Firebase \(currentFirebaseEnvironment.description)")
 
             // Clear network caches on simulator to avoid stale QUIC connections
             #if targetEnvironment(simulator)
@@ -151,7 +153,7 @@ enum FirebaseConfiguration {
             Auth.auth().useEmulator(withHost: host, port: 9099)
             Storage.storage().useEmulator(withHost: host, port: 9199)
 
-            print("🔧 Using Firebase Emulator at \(host) (\(currentEmulatorEnvironment.description))")
+            logger.info("🔧 Using Firebase Emulator at \(host) (\(currentEmulatorEnvironment.description))")
         }
     }
 
@@ -164,7 +166,7 @@ enum FirebaseConfiguration {
             // Invalidate the default URLSession to force new connections
             URLSession.shared.invalidateAndCancel()
 
-            print("🧹 Simulator: Cleared network cache to avoid stale QUIC connections")
+            logger.info("🧹 Simulator: Cleared network cache to avoid stale QUIC connections")
         }
     #endif
 
@@ -208,7 +210,7 @@ enum FirebaseConfiguration {
         }
 
         FirebaseApp.configure(options: options)
-        print("✅ Firebase configured using: \(plistName) from GoogleConfigs")
+        logger.info("✅ Firebase configured using: \(plistName) from GoogleConfigs")
 
         FirebaseConfiguration.configureEnvironment()
     }
@@ -232,13 +234,13 @@ enum FirebaseConfiguration {
     static func switchToFirebase(environment: FirebaseEnvironment) {
         currentMode = .firebase
         currentFirebaseEnvironment = environment
-        print("⚠️ Environment switched to Firebase \(environment.rawValue). App restart required for changes to take effect.")
+        logger.info("⚠️ Environment switched to Firebase \(environment.rawValue). App restart required for changes to take effect.")
     }
 
     /// Switch to emulator mode with specific environment
     static func switchToEmulator(environment: EmulatorEnvironment) {
         currentMode = .emulator
         currentEmulatorEnvironment = environment
-        print("⚠️ Environment switched to \(environment.rawValue). App restart required for changes to take effect.")
+        logger.info("⚠️ Environment switched to \(environment.rawValue). App restart required for changes to take effect.")
     }
 }

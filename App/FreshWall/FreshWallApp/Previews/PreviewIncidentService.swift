@@ -1,18 +1,20 @@
 import CoreLocation
 @preconcurrency import FirebaseFirestore
 import Foundation
+import os
 
 // MARK: - PreviewIncidentService
 
 @MainActor
 final class PreviewIncidentService: IncidentServiceProtocol {
+    private let logger = Logger.freshWall(category: "PreviewIncidentService")
     func fetchIncidents() async throws -> [Incident] {
         [Incident].preview
     }
 
     func fetchIncident(id: String) async throws -> Incident? {
         // Return nil for previews - could be enhanced with mock data if needed
-        print("🎭 PreviewIncidentService.fetchIncident called with id: \(id)")
+        logger.info("🎭 PreviewIncidentService.fetchIncident called with id: \(id)")
         return nil
     }
 

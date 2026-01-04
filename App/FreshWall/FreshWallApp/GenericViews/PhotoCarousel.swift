@@ -1,11 +1,13 @@
 import NukeUI
 import SwiftUI
+import os
 
 // MARK: - PhotoCarousel
 
 /// A horizontally scrollable carousel of photos that can launch a full-screen photo viewer.
 struct PhotoCarousel: View {
     let photos: [IncidentPhoto]
+    private let logger = Logger.freshWall(category: "PhotoCarousel")
 
     @Environment(RouterPath.self) private var routerPath
 
@@ -20,7 +22,7 @@ struct PhotoCarousel: View {
                         if let url = URL(string: photo.thumbnailUrl ?? photo.url) {
                             LazyImage(url: url) { state in
                                 if let image = state.image {
-                                    let _ = print("🎠 Carousel thumbnail loaded: \(url.lastPathComponent)")
+                                    logger.info("🎠 Carousel thumbnail loaded: \(url.lastPathComponent)")
                                     image
                                         .resizable()
                                         .scaledToFill()

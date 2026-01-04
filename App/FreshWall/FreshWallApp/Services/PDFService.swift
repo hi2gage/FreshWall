@@ -1,11 +1,13 @@
 import Foundation
 import TPPDF
 import UIKit
+import os
 
 // MARK: - PDFService
 
 /// Service for generating PDF reports and invoices from incident and client data.
 enum PDFService {
+    private static let logger = Logger.freshWall(category: "PDFService")
     /// Generates a monthly client invoice PDF.
     static func generateClientInvoice(
         client: Client,
@@ -29,7 +31,7 @@ enum PDFService {
                 companyInfo: companyInfo
             )
         } catch {
-            print("Error generating invoice PDF: \(error)")
+            logger.error("Error generating invoice PDF: \(error.localizedDescription)")
             return Data()
         }
     }
@@ -56,7 +58,7 @@ enum PDFService {
                 companyInfo: companyInfo
             )
         } catch {
-            print("Error generating incident report PDF: \(error)")
+            logger.error("Error generating incident report PDF: \(error.localizedDescription)")
             return Data()
         }
     }

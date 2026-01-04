@@ -1,6 +1,7 @@
 import Nuke
 import NukeUI
 import SwiftUI
+import os
 
 // MARK: - PhotoViewer
 
@@ -9,6 +10,7 @@ struct PhotoViewer: View {
     let photos: [IncidentPhoto]
     @State private var index: Int
     @State private var isZoomed = false
+    private let logger = Logger.freshWall(category: "PhotoViewer")
 
     init(photos: [IncidentPhoto], selectedPhoto: IncidentPhoto?) {
         self.photos = photos
@@ -29,7 +31,7 @@ struct PhotoViewer: View {
                     if let url = URL(string: photo.url) {
                         LazyImage(url: url) { state in
                             if let image = state.image {
-                                let _ = print("🖼️ [INSTANT] Photo \(idx + 1) at \(Date().timeIntervalSince1970) loaded from cache: \(url.lastPathComponent)")
+                                logger.info("🖼️ [INSTANT] Photo \(idx + 1) at \(Date().timeIntervalSince1970) loaded from cache: \(url.lastPathComponent)")
                                 image
                                     .resizable()
                                     .scaledToFit()
@@ -38,7 +40,7 @@ struct PhotoViewer: View {
                                         doubleTapZoomScale: 3
                                     )
                             } else if state.error != nil {
-                                let _ = print("❌ [ERROR] Photo \(idx + 1) failed to load: \(url.lastPathComponent)")
+                                logger.error("❌ [ERROR] Photo \(idx + 1) failed to load: \(url.lastPathComponent)")
                                 ZStack {
                                     Color.black
                                     Image(systemName: "photo")
@@ -48,7 +50,7 @@ struct PhotoViewer: View {
                                         .foregroundColor(.white.opacity(0.5))
                                 }
                             } else {
-                                let _ = print("⏳ [LOADING] Photo \(idx + 1) at \(Date().timeIntervalSince1970): \(url.lastPathComponent)")
+                                logger.info("⏳ [LOADING] Photo \(idx + 1) at \(Date().timeIntervalSince1970): \(url.lastPathComponent)")
                                 ZStack {
                                     Color.black
                                     ProgressView()

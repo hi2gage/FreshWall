@@ -1,5 +1,6 @@
 @preconcurrency import FirebaseAuth
 @preconcurrency import FirebaseFirestore
+import os
 import SwiftUI
 
 // MARK: - DebugMenuViewModel
@@ -48,6 +49,7 @@ class DebugMenuViewModel {
 // MARK: - DebugMenuView
 
 struct DebugMenuView: View {
+    private let logger = Logger.freshWall(category: "DebugMenuView")
     @State private var viewModel = DebugMenuViewModel()
     @Environment(\.dismiss) private var dismiss
     @Environment(RouterPath.self) private var routerPath
@@ -216,42 +218,42 @@ struct DebugMenuView: View {
             do {
                 // Clear auth state
                 try Auth.auth().signOut()
-                print("🧹 Signed out user")
+                logger.info("🧹 Signed out user")
 
                 // Clear Firestore cache
                 let db = Firestore.firestore()
                 try await db.clearPersistence()
-                print("🧹 Firestore cache cleared")
+                logger.info("🧹 Firestore cache cleared")
 
-                print("✅ All caches cleared - restart app recommended")
+                logger.info("✅ All caches cleared - restart app recommended")
             } catch {
-                print("❌ Error clearing cache: \(error)")
+                logger.error("❌ Error clearing cache: \(error.localizedDescription)")
             }
         }
     }
 
     private func enableFirebaseDebugLogging() {
 //        FirebaseConfiguration.shared.setLoggerLevel(.debug)
-        print("🔍 Firebase debug logging enabled")
+        logger.info("🔍 Firebase debug logging enabled")
     }
 
     private func showCurrentUserInfo() {
         if let user = Auth.auth().currentUser {
-            print("👤 Current UID: \(user.uid)")
-            print("👤 Email: \(user.email ?? "none")")
-            print("👤 Display Name: \(user.displayName ?? "none")")
-            print("👤 Provider: \(user.providerData.map(\.providerID).joined(separator: ", "))")
+            logger.info("👤 Current UID: \(user.uid)")
+            logger.info("👤 Email: \(user.email ?? "none")")
+            logger.info("👤 Display Name: \(user.displayName ?? "none")")
+            logger.info("👤 Provider: \(user.providerData.map(\.providerID).joined(separator: ", "))")
 
             // Show custom claims
             user.getIDTokenResult { result, error in
                 if let claims = result?.claims {
-                    print("👤 Custom Claims: \(claims)")
+                    logger.info("👤 Custom Claims: \(claims)")
                 } else if let error {
-                    print("❌ Error getting claims: \(error)")
+                    logger.error("❌ Error getting claims: \(error.localizedDescription)")
                 }
             }
         } else {
-            print("❌ No user signed in")
+            logger.info("❌ No user signed in")
         }
     }
 

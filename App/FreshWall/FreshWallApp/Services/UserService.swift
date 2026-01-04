@@ -2,11 +2,13 @@
 @preconcurrency import FirebaseFirestore
 @preconcurrency import FirebaseFunctions
 import Foundation
+import os
 
 /// Service handling user creation, team creation/joining, and user record retrieval.
 struct UserService {
     private let auth = Auth.auth()
     private let functions = Functions.functions()
+    private let logger = Logger.freshWall(category: "UserService")
 
     init() {}
 
@@ -62,7 +64,7 @@ struct UserService {
                 try await user.delete()
             } catch {
                 // Log the cleanup failure but still throw the original error
-                print("Warning: Failed to delete user after team creation failure: \(error)")
+                logger.error("Warning: Failed to delete user after team creation failure: \(error.localizedDescription)")
             }
 
             // Re-throw the original error
@@ -119,7 +121,7 @@ struct UserService {
                 try await user.delete()
             } catch {
                 // Log the cleanup failure but still throw the original error
-                print("Warning: Failed to delete user after team joining failure: \(error)")
+                logger.error("Warning: Failed to delete user after team joining failure: \(error.localizedDescription)")
             }
 
             // Re-throw the original error

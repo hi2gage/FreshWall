@@ -1,5 +1,6 @@
 @preconcurrency import FirebaseFirestore
 import Foundation
+import os
 
 // MARK: - ClientServiceProtocol
 
@@ -29,6 +30,7 @@ protocol ClientServiceProtocol: Sendable {
 struct ClientService: ClientServiceProtocol {
     private let modelService: ClientModelServiceProtocol
     private let session: UserSession
+    private let logger = Logger.freshWall(category: "ClientService")
 
     /// Initializes the service.
     /// - Parameters:
@@ -56,11 +58,11 @@ struct ClientService: ClientServiceProtocol {
 
         // Try cache first
         if let cachedClient = await cache.getClient(id: id) {
-            print("⚡ Found client in cache: \(cachedClient.name)")
+            logger.info("⚡ Found client in cache: \(cachedClient.name)")
             return cachedClient
         }
 
-        print("💾 Cache miss for client \(id), fetching from Firestore...")
+        logger.info("💾 Cache miss for client \(id), fetching from Firestore...")
 
         // Cache miss - fetch from Firestore using document reference
         let teamId = session.teamId
@@ -74,14 +76,14 @@ struct ClientService: ClientServiceProtocol {
                 let dto = try document.data(as: ClientDTO.self)
                 let client = Client(dto: dto)
                 await cache.updateClient(client)
-                print("✅ Fetched client from Firestore: \(client.name)")
+                logger.info("✅ Fetched client from Firestore: \(client.name)")
                 return client
             } else {
-                print("⚠️ Client document doesn't exist: \(id)")
+                logger.error("⚠️ Client document doesn't exist: \(id)")
                 return nil
             }
         } catch {
-            print("⚠️ Failed to fetch client \(id): \(error)")
+            logger.error("⚠️ Failed to fetch client \(id): \(error.localizedDescription)")
             return nil
         }
     }
@@ -98,12 +100,12 @@ struct ClientService: ClientServiceProtocol {
 
         // If we have both cached clients and priority client, use cache
         if let cachedClients, let priorityClientId, let cachedPriorityClient {
-            print("⚡ Using cached client data for priority client: \(cachedPriorityClient.name)")
+            logger.info("⚡ Using cached client data for priority client: \(cachedPriorityClient.name)")
             let orderedClients = [cachedPriorityClient] + cachedClients.filter { $0.id != priorityClientId }
             return (cachedPriorityClient, orderedClients)
         }
 
-        print("💾 Cache miss - fetching clients from Firestore...")
+        logger.info("💾 Cache miss - fetching clients from Firestore...")
 
         // Cache miss - fetch from Firestore
         async let allClientsTask = try? fetchClients()
@@ -119,14 +121,14 @@ struct ClientService: ClientServiceProtocol {
             await cache.updateClient(priorityClient)
         }
 
-        print("✅ Fetched \(allClientsResult.count) clients from service")
+        logger.info("✅ Fetched \(allClientsResult.count) clients from service")
         if let priorityClient {
-            print("✅ Priority client: \(priorityClient.name)")
+            logger.info("✅ Priority client: \(priorityClient.name)")
             // Put priority client first, then all others
             let orderedClients = [priorityClient] + allClientsResult.filter { $0.id != priorityClient.id }
             return (priorityClient, orderedClients)
         } else {
-            print("✅ No priority client specified")
+            logger.info("✅ No priority client specified")
             return (nil, allClientsResult)
         }
     }

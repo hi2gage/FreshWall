@@ -1,6 +1,7 @@
 import CoreLocation
 @preconcurrency import FirebaseFirestore
 import Foundation
+import os
 
 // MARK: - AddressResolutionService
 
@@ -11,6 +12,7 @@ final class AddressResolutionService: @unchecked Sendable {
     private let userDefaults = UserDefaults.standard
     private let pendingTasksKey = "AddressResolutionPendingTasks"
     private var isProcessingQueue = false
+    private let logger = Logger.freshWall(category: "AddressResolutionService")
 
     init(locationCache: LocationCacheProtocol) {
         self.locationCache = locationCache
@@ -67,7 +69,7 @@ final class AddressResolutionService: @unchecked Sendable {
         let pendingTasks = getPendingTasks()
         guard !pendingTasks.isEmpty else { return }
 
-        print("📍 Processing \(pendingTasks.count) pending address resolution tasks")
+        logger.info("📍 Processing \(pendingTasks.count) pending address resolution tasks")
 
         var completedTasks: Set<String> = []
         var failedTasks: [String: AddressResolutionTask] = [:]
@@ -88,13 +90,13 @@ final class AddressResolutionService: @unchecked Sendable {
                 await updateIncidentAddress(incidentId: task.incidentId, coordinates: task.coordinates)
 
                 completedTasks.insert(task.id)
-                print("✅ Resolved address for incident \(task.incidentId): \(address)")
+                logger.info("✅ Resolved address for incident \(task.incidentId): \(address)")
 
                 // Add small delay to avoid rate limiting
                 try await Task.sleep(for: .milliseconds(200))
 
             } catch {
-                print("❌ Failed to resolve address for incident \(task.incidentId): \(error)")
+                logger.error("❌ Failed to resolve address for incident \(task.incidentId): \(error.localizedDescription)")
 
                 // Handle retry logic
                 var retryTask = task
@@ -104,7 +106,7 @@ final class AddressResolutionService: @unchecked Sendable {
                 if retryTask.retryCount < 3, !retryTask.isExpired {
                     failedTasks[task.id] = retryTask
                 } else {
-                    print("🚫 Giving up on address resolution for incident \(task.incidentId) after \(retryTask.retryCount) attempts")
+                    logger.error("🚫 Giving up on address resolution for incident \(task.incidentId) after \(retryTask.retryCount) attempts")
                     completedTasks.insert(task.id)
                 }
             }
@@ -122,7 +124,7 @@ final class AddressResolutionService: @unchecked Sendable {
         savePendingTasks(updatedTasks)
 
         if !updatedTasks.isEmpty {
-            print("📋 \(updatedTasks.count) address resolution tasks remaining")
+            logger.info("📋 \(updatedTasks.count) address resolution tasks remaining")
         }
     }
 
@@ -143,10 +145,10 @@ final class AddressResolutionService: @unchecked Sendable {
             // For now, we'll just update the cache and let the real-time listeners handle it
             // In a full implementation, you'd update the Firestore document here
 
-            print("📝 Would update incident \(incidentId) with address: \(cachedAddress)")
+            logger.info("📝 Would update incident \(incidentId) with address: \(cachedAddress)")
 
         } catch {
-            print("❌ Failed to update incident \(incidentId) with address: \(error)")
+            logger.error("❌ Failed to update incident \(incidentId) with address: \(error.localizedDescription)")
         }
     }
 
@@ -167,7 +169,7 @@ final class AddressResolutionService: @unchecked Sendable {
             let data = try JSONEncoder().encode(tasks)
             userDefaults.set(data, forKey: pendingTasksKey)
         } catch {
-            print("❌ Failed to save pending address resolution tasks: \(error)")
+            logger.error("❌ Failed to save pending address resolution tasks: \(error.localizedDescription)")
         }
     }
 

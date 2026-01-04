@@ -1,8 +1,10 @@
 @preconcurrency import FirebaseFirestore
 @preconcurrency import FirebaseFunctions
+import os
 import SwiftUI
 
 struct MainAppView: View {
+    private let logger = Logger.freshWall(category: "MainAppView")
     @State private var routerPath = RouterPath()
 
     /// Authenticated user session with team context.
@@ -66,7 +68,7 @@ struct MainAppView: View {
         }
         .taskOnce {
             _ = try? await incidentService.fetchIncidents()
-            print("✅ Incidents prefetched on first appear")
+            logger.info("✅ Incidents prefetched on first appear")
         }
 //        .environment(BackgroundUploadService.shared)
     }

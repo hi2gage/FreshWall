@@ -1,6 +1,7 @@
 import FirebaseAuth
 @preconcurrency import FirebaseFirestore
 import Foundation
+import os
 
 // MARK: - IncidentServiceProtocol
 
@@ -44,6 +45,7 @@ final class IncidentService: IncidentServiceProtocol {
     // Cache
     private var cachedIncidents: [Incident] = []
     private var listenerRegistration: ListenerRegistration?
+    private let logger = Logger.freshWall(category: "IncidentService")
 
     /// Initializes the service with a `Firestore` instance and `UserSession` for team context.
     init(
@@ -97,7 +99,7 @@ final class IncidentService: IncidentServiceProtocol {
             guard let self else { return }
 
             if let error {
-                print("❌ Incidents listener error: \(error)")
+                logger.error("❌ Incidents listener error: \(error.localizedDescription)")
                 return
             }
 
@@ -107,7 +109,7 @@ final class IncidentService: IncidentServiceProtocol {
                 self.cachedIncidents = documents.compactMap { doc in
                     try? Incident(dto: doc.data(as: IncidentDTO.self))
                 }
-                print("🔄 Incidents cache updated: \(self.cachedIncidents.count) incidents")
+                logger.info("🔄 Incidents cache updated: \(self.cachedIncidents.count) incidents")
             }
         }
     }
@@ -123,12 +125,12 @@ final class IncidentService: IncidentServiceProtocol {
         let document = try await docRef.getDocument()
 
         guard document.exists else {
-            print("ℹ️ Incident document \(id) doesn't exist")
+            logger.info("ℹ️ Incident document \(id) doesn't exist")
             return nil
         }
 
         let dto = try document.data(as: IncidentDTO.self)
-        print("✅ Fetched specific incident: \(dto.description)")
+        logger.info("✅ Fetched specific incident: \(dto.description)")
         return Incident(dto: dto)
     }
 

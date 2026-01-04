@@ -1,11 +1,13 @@
 import FirebaseFirestore
 import Shimmer
 import SwiftUI
+import os
 
 // MARK: - ClientDetailView
 
 /// A view displaying detailed information for a specific client.
 struct ClientDetailView: View {
+    private let logger = Logger.freshWall(category: "ClientDetailView")
     @State private var client: Client
     let incidentService: IncidentServiceProtocol
     let clientService: ClientServiceProtocol
@@ -81,7 +83,7 @@ struct ClientDetailView: View {
                 window.rootViewController?.present(activityViewController, animated: true)
             }
         } catch {
-            print("Error sharing PDF: \(error)")
+            logger.error("Error sharing PDF: \(error.localizedDescription)")
         }
     }
 
@@ -100,7 +102,7 @@ struct ClientDetailView: View {
             try await clientService.deleteClient(id)
             routerPath.pop()
         } catch {
-            print("Failed to delete client: \(error)")
+            logger.error("Failed to delete client: \(error.localizedDescription)")
         }
     }
 

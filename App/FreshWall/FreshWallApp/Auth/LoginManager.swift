@@ -1,5 +1,6 @@
 @preconcurrency import FirebaseAuth
 import Foundation
+import os
 
 // MARK: - GoogleSignInOnboardingError
 
@@ -55,6 +56,7 @@ protocol LoginManaging: Sendable {
 
 struct LoginManager: LoginManaging {
     /// Called when authentication completes with valid userId and teamId.
+    private let logger = Logger.freshWall(category: "LoginManager")
     private let sessionStore: SessionStore
     private let authService: AuthService
     private let userService: UserService
@@ -81,7 +83,7 @@ struct LoginManager: LoginManaging {
             let session = try await sessionService.fetchUserRecord(for: user)
             await sessionStore.startSession(session)
         } catch {
-            print("🔒 Failed to restore session:", error)
+            logger.error("🔒 Failed to restore session: \(error.localizedDescription)")
             // Optionally, sign out if invalid
             try? authService.signOut()
         }
