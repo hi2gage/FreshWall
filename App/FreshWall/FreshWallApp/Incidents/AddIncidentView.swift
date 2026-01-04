@@ -1,11 +1,13 @@
 import PhotosUI
 import SwiftUI
+import os
 
 // MARK: - AddIncidentView
 
 /// View for adding a new incident, injecting a service conforming to `IncidentServiceProtocol`.
 
 struct AddIncidentView: View {
+    private let logger = Logger.freshWall(category: "AddIncidentView")
     @Environment(\.dismiss) private var dismiss
     @Environment(RouterPath.self) private var routerPath
     @State var viewModel: AddIncidentViewModel
@@ -57,13 +59,13 @@ struct AddIncidentView: View {
                 clientId: $viewModel.input.clientId,
                 validClients: viewModel.validClients,
                 onClientChange: { newValue in
-                    print("🔄 ClientSelectionSection.onClientChange called with: '\(newValue ?? "nil")'")
+                    logger.info("🔄 ClientSelectionSection.onClientChange called with: '\(newValue ?? "nil")'")
                     if newValue == IncidentFormConstants.addNewClientTag {
-                        print("🔄 Add new client selected, navigating to add client")
+                        logger.info("🔄 Add new client selected, navigating to add client")
                         routerPath.push(.addClient())
                         viewModel.input.clientId = nil
                     } else {
-                        print("🔄 Client selected: '\(newValue ?? "nil")', updating billing")
+                        logger.info("🔄 Client selected: '\(newValue ?? "nil")', updating billing")
                         viewModel.updateBillingFromClient()
                     }
                 }
@@ -116,14 +118,14 @@ struct AddIncidentView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 AsyncButton("Save") {
-                    print("🚀 Save button pressed - starting incident creation")
-                    print("📊 Form data: clientId=\(viewModel.input.clientId), area=\(viewModel.input.areaText)")
-                    print("📸 Photos: before=\(beforePhotos.count), after=\(afterPhotos.count)")
-                    print("📍 Location: \(viewModel.input.enhancedLocation?.address ?? "None")")
+                    logger.info("🚀 Save button pressed - starting incident creation")
+                    logger.info("📊 Form data: clientId=\(viewModel.input.clientId), area=\(viewModel.input.areaText)")
+                    logger.info("📸 Photos: before=\(beforePhotos.count), after=\(afterPhotos.count)")
+                    logger.info("📍 Location: \(viewModel.input.enhancedLocation?.address ?? "None")")
 
                     try await viewModel.save(beforePhotos: beforePhotos, afterPhotos: afterPhotos)
 
-                    print("✅ Incident saved successfully, dismissing view")
+                    logger.info("✅ Incident saved successfully, dismissing view")
                     dismiss()
                 }
             }

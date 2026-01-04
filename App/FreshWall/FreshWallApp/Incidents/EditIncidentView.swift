@@ -1,11 +1,13 @@
 @preconcurrency import FirebaseFirestore
 import PhotosUI
 import SwiftUI
+import os
 
 // MARK: - EditIncidentView
 
 /// View for editing an existing incident.
 struct EditIncidentView: View {
+    private let logger = Logger.freshWall(category: "EditIncidentView")
     @Environment(\.dismiss) private var dismiss
     @Environment(RouterPath.self) private var routerPath
     @State private var viewModel: EditIncidentViewModel
@@ -128,7 +130,7 @@ struct EditIncidentView: View {
                             try await viewModel.save()
                             dismiss()
                         } catch {
-                            print("❌ Error saving incident: \(error)")
+                            logger.error("❌ Error saving incident: \(error.localizedDescription)")
                         }
                     }
                 }

@@ -1,5 +1,6 @@
 import PhotosUI
 import SwiftUI
+import os
 
 /// A button that presents a menu allowing the user to choose the camera or the photo library.
 struct PhotoSourcePicker<Label: View>: View {
@@ -12,6 +13,7 @@ struct PhotoSourcePicker<Label: View>: View {
     private let photoLibrary: PHPhotoLibrary
     private let onCameraSelected: (() -> Void)?
     private let label: () -> Label
+    private let logger = Logger.freshWall(category: "PhotoSourcePicker")
 
     @State private var showDialog = false
     @State private var showCamera = false
@@ -73,7 +75,7 @@ struct PhotoSourcePicker<Label: View>: View {
                         )
 
                         // Camera photos always get unique IDs, so no deduplication needed
-                        print("✅ PhotoSourcePicker: Adding camera photo")
+                        logger.info("✅ PhotoSourcePicker: Adding camera photo")
                         selection.append(photo)
                     }
                     showCamera = false
@@ -86,7 +88,7 @@ struct PhotoSourcePicker<Label: View>: View {
 
                 // Prevent concurrent processing
                 guard !isProcessingPhotos else {
-                    print("⚠️ PhotoSourcePicker: Already processing photos, ignoring duplicate onChange")
+                    logger.info("⚠️ PhotoSourcePicker: Already processing photos, ignoring duplicate onChange")
                     return
                 }
 
@@ -107,13 +109,13 @@ struct PhotoSourcePicker<Label: View>: View {
                             if !selection.contains(where: { $0.id == photo.id }) {
                                 newPhotos.append(photo)
                             } else {
-                                print("⚠️ PhotoSourcePicker: Skipping duplicate photo with ID: \(photo.id)")
+                                logger.info("⚠️ PhotoSourcePicker: Skipping duplicate photo with ID: \(photo.id)")
                             }
                         }
                     }
 
                     if !newPhotos.isEmpty {
-                        print("✅ PhotoSourcePicker: Adding \(newPhotos.count) new photo(s)")
+                        logger.info("✅ PhotoSourcePicker: Adding \(newPhotos.count) new photo(s)")
                         selection.append(contentsOf: newPhotos)
                     }
 

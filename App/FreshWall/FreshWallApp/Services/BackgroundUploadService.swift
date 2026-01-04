@@ -1,10 +1,12 @@
 @preconcurrency import FirebaseAuth
 @preconcurrency import FirebaseFirestore
 import Foundation
+import os
 
 // @Observable
 actor BackgroundUploadService {
     static let shared = BackgroundUploadService()
+    private let logger = Logger.freshWall(category: "BackgroundUploadService")
 
     struct UploadTask {
         let id = UUID()
@@ -50,8 +52,8 @@ actor BackgroundUploadService {
         beforePhotos: [PickedPhoto],
         afterPhotos: [PickedPhoto]
     ) {
-        print("🚀 BackgroundUploadService: Starting upload for incident \(incidentId)")
-        print("📸 Before photos: \(beforePhotos.count), After photos: \(afterPhotos.count)")
+        logger.info("🚀 BackgroundUploadService: Starting upload for incident \(incidentId)")
+        logger.info("📸 Before photos: \(beforePhotos.count), After photos: \(afterPhotos.count)")
 
         // Cache UIImages for immediate display in the list
         Task { @MainActor in
@@ -70,7 +72,7 @@ actor BackgroundUploadService {
                 isBeforePhotos: true
             )
             uploadTasks[beforeTask.id] = beforeTask
-            print("📝 Created before photos task: \(beforeTask.id)")
+            logger.info("📝 Created before photos task: \(beforeTask.id)")
 
             Task {
                 await uploadPhotos(taskId: beforeTask.id)
@@ -85,7 +87,7 @@ actor BackgroundUploadService {
                 isBeforePhotos: false
             )
             uploadTasks[afterTask.id] = afterTask
-            print("📝 Created after photos task: \(afterTask.id)")
+            logger.info("📝 Created after photos task: \(afterTask.id)")
 
             Task {
                 await uploadPhotos(taskId: afterTask.id)
@@ -95,26 +97,26 @@ actor BackgroundUploadService {
 
     private func uploadPhotos(taskId: UUID) async {
         guard var task = uploadTasks[taskId] else {
-            print("❌ Upload task \(taskId) not found")
+            logger.error("❌ Upload task \(taskId) not found")
             return
         }
 
-        print("⏳ Starting upload for task \(taskId) - \(task.isBeforePhotos ? "before" : "after") photos")
+        logger.info("⏳ Starting upload for task \(taskId) - \(task.isBeforePhotos ? "before" : "after") photos")
 
         do {
             let imageData = task.photos.compactMap { $0.image.jpegData(compressionQuality: 0.8) }
-            print("📱 Converted \(imageData.count) images to data")
+            logger.info("📱 Converted \(imageData.count) images to data")
 
             let urls: [String]
             if task.isBeforePhotos {
-                print("📤 Uploading before photos...")
+                logger.info("📤 Uploading before photos...")
                 urls = try await photoService.uploadBeforePhotos(
                     teamId: task.teamId,
                     incidentId: task.incidentId,
                     images: imageData
                 )
             } else {
-                print("📤 Uploading after photos...")
+                logger.info("📤 Uploading after photos...")
                 urls = try await photoService.uploadAfterPhotos(
                     teamId: task.teamId,
                     incidentId: task.incidentId,
@@ -122,7 +124,7 @@ actor BackgroundUploadService {
                 )
             }
 
-            print("✅ Photos uploaded successfully. URLs: \(urls)")
+            logger.info("✅ Photos uploaded successfully. URLs: \(urls)")
             await updateProgress(taskId: taskId, progress: 0.8)
 
             let photoDTOs = task.photos.toIncidentPhotoDTOs(urls: urls)
@@ -138,8 +140,8 @@ actor BackgroundUploadService {
                 "lastModifiedBy": modifiedByRef,
             ]
 
-            print("💾 Updating incident \(task.incidentId) with \(fieldName)")
-            print("🔐 User: \(uid)")
+            logger.info("💾 Updating incident \(task.incidentId) with \(fieldName)")
+            logger.info("🔐 User: \(uid)")
 
             try await modelService.updateIncident(
                 id: task.incidentId,
@@ -147,11 +149,11 @@ actor BackgroundUploadService {
                 data: data
             )
 
-            print("✅ Incident updated successfully")
+            logger.info("✅ Incident updated successfully")
             await completeUpload(taskId: taskId)
 
         } catch {
-            print("❌ Upload failed for task \(taskId): \(error)")
+            logger.error("❌ Upload failed for task \(taskId): \(error.localizedDescription)")
             await failUpload(taskId: taskId, error: error)
         }
     }
@@ -180,7 +182,7 @@ actor BackgroundUploadService {
     private func failUpload(taskId: UUID, error: Error) {
         uploadTasks[taskId]?.error = error
         uploadTasks[taskId]?.isCompleted = true
-        print("Upload failed for task \(taskId): \(error.localizedDescription)")
+        logger.error("Upload failed for task \(taskId): \(error.localizedDescription)")
     }
 
     func retryFailedUpload(taskId: UUID) {

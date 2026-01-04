@@ -4,6 +4,7 @@ import Foundation
 import Observation
 import Photos
 import UniformTypeIdentifiers
+import os
 
 // MARK: - IncidentValidationError
 
@@ -27,10 +28,12 @@ enum IncidentValidationError: LocalizedError {
 final class AddIncidentViewModel {
     /// Container for all editable incident fields.
     struct Input {
+        private static let logger = Logger.freshWall(category: "AddIncidentViewModel.Input")
+
         /// Selected client document ID or tag for add-new.
         var clientId: String? {
             didSet {
-                print("🔄 AddIncidentViewModel.Input.clientId changed from '\(oldValue ?? "nil")' to '\(clientId ?? "nil")'")
+                Input.logger.info("🔄 AddIncidentViewModel.Input.clientId changed from '\(oldValue ?? "nil")' to '\(clientId ?? "nil")'")
             }
         }
 
@@ -86,6 +89,7 @@ final class AddIncidentViewModel {
     var pendingCameraLocation: IncidentLocation?
     private let clientService: ClientServiceProtocol
     private let service: IncidentServiceProtocol
+    private let logger = Logger.freshWall(category: "AddIncidentViewModel")
 
     /// Validation: requires at least photos, location, or enhanced notes.
     var isValid: Bool {
@@ -149,27 +153,27 @@ final class AddIncidentViewModel {
         )
 
         // Create the incident first
-        print("🚀 Starting incident creation process...")
-        print("📝 Input data: clientId=\(input.clientId ?? "nil"), area=\(input.area), photos: before=\(beforePhotos.count), after=\(afterPhotos.count)")
+        logger.info("🚀 Starting incident creation process...")
+        logger.info("📝 Input data: clientId=\(input.clientId ?? "nil"), area=\(input.area), photos: before=\(beforePhotos.count), after=\(afterPhotos.count)")
 
         let incidentId: String
         do {
-            print("⏳ Calling service.addIncident...")
+            logger.info("⏳ Calling service.addIncident...")
             incidentId = try await service.addIncident(
                 input,
                 beforePhotos: beforePhotos,
                 afterPhotos: afterPhotos
             )
-            print("✅ Incident created successfully with ID: \(incidentId)")
+            logger.info("✅ Incident created successfully with ID: \(incidentId)")
         } catch {
-            print("❌ Failed to create incident: \(error)")
-            print("📊 Error type: \(type(of: error))")
-            print("📊 Error description: \(error.localizedDescription)")
+            logger.error("❌ Failed to create incident: \(error.localizedDescription)")
+            logger.error("📊 Error type: \(String(describing: type(of: error)))")
+            logger.error("📊 Error description: \(error.localizedDescription)")
 
             if let nsError = error as NSError? {
-                print("🔍 NSError domain: \(nsError.domain)")
-                print("🔍 NSError code: \(nsError.code)")
-                print("🔍 NSError userInfo: \(nsError.userInfo)")
+                logger.error("🔍 NSError domain: \(nsError.domain)")
+                logger.error("🔍 NSError code: \(nsError.code)")
+                logger.error("🔍 NSError userInfo: \(nsError.userInfo)")
             }
 
             // Re-throw the error so the UI can handle it
@@ -217,17 +221,17 @@ final class AddIncidentViewModel {
 
     /// Auto-populate billing from client defaults when client is selected
     func updateBillingFromClient() {
-        print("🔄 updateBillingFromClient called - input.clientId: '\(input.clientId ?? "nil")'")
-        print("🔄 selectedClient: \(selectedClient?.name ?? "nil")")
+        logger.info("🔄 updateBillingFromClient called - input.clientId: '\(input.clientId ?? "nil")'")
+        logger.info("🔄 selectedClient: \(selectedClient?.name ?? "nil")")
 
         guard let client = selectedClient,
               let defaults = client.defaults else {
-            print("🔄 No client or defaults found, disabling billing configuration")
+            logger.info("🔄 No client or defaults found, disabling billing configuration")
             input.hasBillingConfiguration = false
             return
         }
 
-        print("🔄 Setting billing from client defaults: \(defaults.billingMethod)")
+        logger.info("🔄 Setting billing from client defaults: \(defaults.billingMethod)")
 
         // Convert client billing method to incident billing method
         input.billingMethod = IncidentBilling.BillingMethod(from: defaults.billingMethod)

@@ -1,11 +1,13 @@
 @preconcurrency import FirebaseFirestore
 import Nuke
 import SwiftUI
+import os
 
 // MARK: - IncidentDetailView
 
 /// A view displaying detailed information for a specific incident.
 struct IncidentDetailView: View {
+    private let logger = Logger.freshWall(category: "IncidentDetailView")
     @State private var viewModel: IncidentDetailViewModel
     @State private var showingDeleteConfirmation = false
     @State private var prefetcher = ImagePrefetcher()
@@ -28,7 +30,7 @@ struct IncidentDetailView: View {
             try await viewModel.deleteIncident()
             routerPath.pop()
         } catch {
-            print("Failed to delete incident: \(error)")
+            logger.error("Failed to delete incident: \(error.localizedDescription)")
         }
     }
 
@@ -148,9 +150,9 @@ struct IncidentDetailView: View {
             Text("Are you sure you want to delete this incident? This action cannot be undone.")
         }
         .task {
-            print("🔄 Task starting - about to reload incident")
+            logger.info("🔄 Task starting - about to reload incident")
             await viewModel.reloadIncident()
-            print("✅ Task completed - incident reloaded, now prefetching images")
+            logger.info("✅ Task completed - incident reloaded, now prefetching images")
 
             // Prefetch full-size images AFTER incident is reloaded
             var urls: [URL] = []
@@ -162,14 +164,14 @@ struct IncidentDetailView: View {
 
             if !urls.isEmpty {
                 let startTime = Date()
-                print("🚀 Starting prefetch for incident: \(viewModel.incident.id ?? "unknown")")
-                print("📸 Prefetching \(urls.count) full-size images:")
+                logger.info("🚀 Starting prefetch for incident: \(viewModel.incident.id ?? "unknown")")
+                logger.info("📸 Prefetching \(urls.count) full-size images:")
                 for (index, url) in urls.enumerated() {
-                    print("   [\(index + 1)] \(url.lastPathComponent)")
+                    logger.info("   [\(index + 1)] \(url.lastPathComponent)")
                 }
                 prefetcher.didComplete = {
                     let elapsed = Date().timeIntervalSince(startTime)
-                    print("✅ Prefetching completed for incident: \(viewModel.incident.id ?? "unknown") in \(String(format: "%.2f", elapsed))s")
+                    logger.info("✅ Prefetching completed for incident: \(viewModel.incident.id ?? "unknown") in \(String(format: "%.2f", elapsed))s")
                 }
                 prefetcher.startPrefetching(with: urls)
             }

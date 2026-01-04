@@ -2,11 +2,13 @@ import CoreLocation
 import Foundation
 import Photos
 import UniformTypeIdentifiers
+import os
 
 /// Helper class for saving photos to the device's Photo Library
 enum PhotoLibraryHelper {
     /// Album name for organizing FreshWall photos
     private static let albumTitle = "FreshWall"
+    private static let logger = Logger.freshWall(category: "PhotoLibraryHelper")
 
     /// Saves photos to Camera Roll with location metadata in a dedicated FreshWall album
     static func savePhotosToLibrary(
@@ -17,7 +19,7 @@ enum PhotoLibraryHelper {
         let allPhotos = beforePhotos + afterPhotos
         guard !allPhotos.isEmpty else { return }
 
-        print("📸 Saving \(allPhotos.count) photos to Camera Roll with location: \(location?.coordinates != nil)")
+        logger.info("📸 Saving \(allPhotos.count) photos to Camera Roll with location: \(location?.coordinates != nil)")
 
         // Convert IncidentLocation to CLLocation if coordinates available
         let clLocation: CLLocation? = {
@@ -34,7 +36,7 @@ enum PhotoLibraryHelper {
                 }
             }
         }
-        print("✅ All \(allPhotos.count) photos saved to Camera Roll")
+        logger.info("✅ All \(allPhotos.count) photos saved to Camera Roll")
     }
 
     /// Saves a single photo to the library
@@ -42,7 +44,7 @@ enum PhotoLibraryHelper {
         await withCheckedContinuation { continuation in
             DispatchQueue.global(qos: .utility).async {
                 guard let imageData = photo.image.jpegData(compressionQuality: 0.9) else {
-                    print("❌ Failed to convert image \(index) to JPEG")
+                    logger.error("❌ Failed to convert image \(index) to JPEG")
                     continuation.resume()
                     return
                 }
@@ -84,9 +86,9 @@ enum PhotoLibraryHelper {
                     }
                 }) { success, error in
                     if success {
-                        print("✅ Photo \(index)/\(totalCount) saved to Camera Roll with location: \(location != nil)")
+                        logger.info("✅ Photo \(index)/\(totalCount) saved to Camera Roll with location: \(location != nil)")
                     } else {
-                        print("❌ Failed to save photo \(index): \(error?.localizedDescription ?? "unknown")")
+                        logger.error("❌ Failed to save photo \(index): \(error?.localizedDescription ?? "unknown")")
                     }
                     continuation.resume()
                 }

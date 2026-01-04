@@ -1,11 +1,13 @@
 import CoreLocation
 @preconcurrency import FirebaseFirestore
 import MapKit
+import os
 import SwiftUI
 
 // MARK: - MapLocationPickerView
 
 struct MapLocationPickerView: View {
+    private let logger = Logger.freshWall(category: "MapLocationPickerView")
     let initialLocation: IncidentLocation?
     let onLocationSelected: (IncidentLocation) -> Void
     @Environment(\.dismiss) private var dismiss
@@ -192,7 +194,7 @@ struct MapLocationPickerView: View {
         } catch {
             // If geocoding fails, keep coordinates visible
             selectedAddress = nil
-            print("Failed to geocode coordinate: \(error)")
+            logger.error("Failed to geocode coordinate: \(error.localizedDescription)")
         }
     }
 
@@ -219,7 +221,7 @@ struct MapLocationPickerView: View {
             }
         } catch {
             // If we can't get current location, keep the default (San Francisco)
-            print("Failed to get current location: \(error)")
+            logger.error("Failed to get current location: \(error.localizedDescription)")
         }
     }
 

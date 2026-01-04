@@ -1,10 +1,12 @@
 import UIKit
+import os
 
 /// In-memory cache for storing temporary UIImages during photo upload
 /// Photos are stored by incident ID and cleared once uploaded to Firebase Storage
 @MainActor
 final class LocalPhotoCache {
     static let shared = LocalPhotoCache()
+    private let logger = Logger.freshWall(category: "LocalPhotoCache")
 
     /// Storage for temporary photos keyed by incident ID
     /// Value is a tuple of (beforePhotos, afterPhotos)
@@ -22,7 +24,7 @@ final class LocalPhotoCache {
         beforePhotos: [UIImage],
         afterPhotos: [UIImage]
     ) {
-        print("📸 LocalPhotoCache: Storing \(beforePhotos.count) before + \(afterPhotos.count) after photos for incident \(incidentId)")
+        logger.info("📸 LocalPhotoCache: Storing \(beforePhotos.count) before + \(afterPhotos.count) after photos for incident \(incidentId)")
         cache[incidentId] = (before: beforePhotos, after: afterPhotos)
     }
 
@@ -61,13 +63,13 @@ final class LocalPhotoCache {
     /// Clear cached photos for an incident after upload completes
     /// - Parameter incidentId: The incident ID
     func clearPhotos(for incidentId: String) {
-        print("🗑️ LocalPhotoCache: Clearing cached photos for incident \(incidentId)")
+        logger.info("🗑️ LocalPhotoCache: Clearing cached photos for incident \(incidentId)")
         cache.removeValue(forKey: incidentId)
     }
 
     /// Clear all cached photos (useful for memory pressure or logout)
     func clearAll() {
-        print("🗑️ LocalPhotoCache: Clearing all cached photos")
+        logger.info("🗑️ LocalPhotoCache: Clearing all cached photos")
         cache.removeAll()
     }
 }

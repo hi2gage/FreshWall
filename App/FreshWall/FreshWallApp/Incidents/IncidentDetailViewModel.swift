@@ -1,6 +1,7 @@
 import _PhotosUI_SwiftUI
 import Foundation
 import Observation
+import os
 
 /// ViewModel for displaying and managing incident details.
 @MainActor
@@ -15,7 +16,7 @@ final class IncidentDetailViewModel {
     /// Currently selected client ID for editing.
     var selectedClientId: String? {
         didSet {
-            print("changed to: \(selectedClientId ?? "nil")")
+            logger.info("changed to: \(selectedClientId ?? "nil")")
         }
     }
 
@@ -26,6 +27,7 @@ final class IncidentDetailViewModel {
 
     private let incidentService: IncidentServiceProtocol
     private let clientService: ClientServiceProtocol
+    private let logger = Logger.freshWall(category: "IncidentDetailViewModel")
 
     /// Initializes the view model with an incident and required services.
     init(incident: Incident, incidentService: IncidentServiceProtocol, clientService: ClientServiceProtocol) {
@@ -46,7 +48,7 @@ final class IncidentDetailViewModel {
 
     /// Loads the client associated with this incident and all available clients.
     func loadClient() async {
-        print("🔄 Loading client data...")
+        logger.info("🔄 Loading client data...")
 
         // Set the selected client ID from the incident first
         selectedClientId = incident.clientRef?.documentID
@@ -57,11 +59,11 @@ final class IncidentDetailViewModel {
         client = result.priorityClient
         clients = result.allClients
 
-        print("✅ Client loading complete - loaded \(clients.count) clients")
+        logger.info("✅ Client loading complete - loaded \(clients.count) clients")
         if let client {
-            print("✅ Priority client: \(client.name)")
+            logger.info("✅ Priority client: \(client.name)")
         } else {
-            print("✅ No client associated with incident")
+            logger.info("✅ No client associated with incident")
         }
     }
 
@@ -115,7 +117,7 @@ final class IncidentDetailViewModel {
                 await reloadIncident()
             }
         } catch {
-            print("Failed to update incident: \(error)")
+            logger.error("Failed to update incident: \(error.localizedDescription)")
         }
     }
 

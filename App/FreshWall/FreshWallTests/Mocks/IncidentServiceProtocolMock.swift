@@ -1,6 +1,8 @@
 @testable import FreshWall
+import os
 
 final class IncidentServiceProtocolMock: IncidentServiceProtocol {
+    private let logger = Logger.freshWall(category: "IncidentServiceProtocolMock")
     var updateArgs: (String, UpdateIncidentInput)?
     var addIncidentWithInputResult: String = "mock-id"
     var fetchIncidentResult: Incident?
@@ -10,7 +12,7 @@ final class IncidentServiceProtocolMock: IncidentServiceProtocol {
     }
 
     func fetchIncident(id: String) async throws -> Incident? {
-        print("🧪 IncidentServiceProtocolMock.fetchIncident called with id: \(id)")
+        logger.info("🧪 IncidentServiceProtocolMock.fetchIncident called with id: \(id)")
         return fetchIncidentResult
     }
 
