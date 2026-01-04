@@ -286,6 +286,21 @@ struct DetailTimelineSection: View {
     let startTime: Timestamp
     let endTime: Timestamp
 
+    private var durationText: String {
+        let duration = max(0, endTime.dateValue().timeIntervalSince(startTime.dateValue()))
+        let minutes = duration / 60
+
+        if minutes < 1 {
+            return "Less than a minute"
+        } else if minutes < 60 {
+            let roundedMinutes = Int(minutes.rounded())
+            return "\(roundedMinutes) minute\(roundedMinutes == 1 ? "" : "s")"
+        } else {
+            let hours = duration / 3600
+            return String(format: "%.1f hours", hours)
+        }
+    }
+
     var body: some View {
         Section("Timeline") {
             HStack {
@@ -304,8 +319,7 @@ struct DetailTimelineSection: View {
                 Text("Duration")
                     .font(.headline)
                 Spacer()
-                let hours = endTime.dateValue().timeIntervalSince(startTime.dateValue()) / 3600
-                Text(String(format: "%.1f hours", hours))
+                Text(durationText)
                     .font(.subheadline)
                     .foregroundColor(.green)
             }
