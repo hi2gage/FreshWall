@@ -207,8 +207,12 @@ enum FirebaseConfiguration {
             fatalError("❌ Missing or invalid Firebase plist: \(plistName)")
         }
 
+        let resolvedLocation = validPath.contains("GoogleConfigs") ? "GoogleConfigs" : "main bundle"
+        let analyticsAppID = options.googleAppID
+        let measurementID = options.trackingID ?? "Unknown"
+
         FirebaseApp.configure(options: options)
-        print("✅ Firebase configured using: \(plistName) from GoogleConfigs")
+        print("✅ Firebase configured using: \(plistName) from \(resolvedLocation) (App ID: \(analyticsAppID), Measurement ID: \(measurementID))")
 
         FirebaseConfiguration.configureEnvironment()
     }
