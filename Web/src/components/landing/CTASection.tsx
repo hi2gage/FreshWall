@@ -3,8 +3,17 @@
 import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { logDemoClick } from '@/lib/analytics'
 
 export const CTASection = () => {
+  const router = useRouter()
+
+  const handleDemoClick = () => {
+    void logDemoClick('cta')
+    router.push('/demo?source=cta')
+  }
+
   return (
     <Section background="navy" className="py-16 md:py-24">
       {/* Title - Centered above both columns */}
@@ -31,10 +40,7 @@ export const CTASection = () => {
               variant="primary"
               size="lg"
               colorScheme="dark"
-              onClick={() => {
-                // TODO: Link to demo booking
-                window.location.href = '/demo'
-              }}
+              onClick={handleDemoClick}
             >
               Book a Demo
             </Button>

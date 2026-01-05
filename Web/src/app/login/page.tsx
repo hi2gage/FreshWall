@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import LoginForm from '@/components/auth/LoginForm';
 import Link from 'next/link';
 import Image from 'next/image';
+import { logDemoClick } from '@/lib/analytics';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,7 +48,13 @@ export default function LoginPage() {
         <div className="mt-6 text-center">
           <p className="text-body-sm text-gray-600">
             Don't have an account?{' '}
-            <Link href="/demo" className="font-medium text-freshwall-orange hover:text-freshwall-orange/80 transition-colors">
+            <Link
+              href={{ pathname: '/demo', query: { source: 'login-page' } }}
+              onClick={() => {
+                void logDemoClick('login-page')
+              }}
+              className="font-medium text-freshwall-orange hover:text-freshwall-orange/80 transition-colors"
+            >
               Book a demo
             </Link>
           </p>

@@ -2,10 +2,18 @@
 
 import { Section } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
-import { Logo } from '@/components/ui/Logo'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { logDemoClick } from '@/lib/analytics'
 
 export const HeroSection = () => {
+  const router = useRouter()
+
+  const handleDemoClick = () => {
+    void logDemoClick('hero')
+    router.push('/demo?source=hero')
+  }
+
   return (
     <Section background="navy" className="pt-24 md:pt-32 pb-16 md:pb-24">
       <div className="text-center">
@@ -29,10 +37,7 @@ export const HeroSection = () => {
               variant="primary"
               size="lg"
               colorScheme="dark"
-              onClick={() => {
-                // TODO: Link to demo booking
-                window.location.href = '/demo'
-              }}
+              onClick={handleDemoClick}
             >
               Book a 15-Minute Demo
             </Button>

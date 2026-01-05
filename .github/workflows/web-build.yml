@@ -2,14 +2,8 @@ name: Web Build
 
 on:
   pull_request:
-    paths:
-      - 'Web/**'
-      - '.github/workflows/web-build.yml'
   push:
     branches: [main]
-    paths:
-      - 'Web/**'
-      - '.github/workflows/web-build.yml'
 
 jobs:
   build:
@@ -20,16 +14,22 @@ jobs:
         working-directory: Web
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
         with:
           version: 9
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
           cache-dependency-path: 'Web/pnpm-lock.yaml'
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build
         env:
           NEXT_PUBLIC_FIREBASE_API_KEY: "fake-api-key-for-build"
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "fake-project.firebaseapp.com"
