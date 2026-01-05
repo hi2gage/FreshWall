@@ -56,14 +56,21 @@ generate_plist() {
     local reversed_client_id="${!reversed_client_id_var}"
     local measurement_id="${!measurement_id_var}"
 
-    if [[ -z "$api_key" || -z "$gcm_sender_id" || -z "$project_id" || -z "$storage_bucket" || -z "$google_app_id" || -z "$client_id" || -z "$reversed_client_id" || -z "$measurement_id" ]]; then
+    if [[ -z "$api_key" || -z "$gcm_sender_id" || -z "$project_id" || -z "$storage_bucket" || -z "$google_app_id" || -z "$client_id" || -z "$reversed_client_id" ]]; then
         echo "❌ Missing required environment variables for $env_name environment"
-        echo "Required variables: ${api_key_var}, ${gcm_sender_id_var}, ${project_id_var}, ${storage_bucket_var}, ${google_app_id_var}, ${client_id_var}, ${reversed_client_id_var}, ${measurement_id_var}"
+        echo "Required variables: ${api_key_var}, ${gcm_sender_id_var}, ${project_id_var}, ${storage_bucket_var}, ${google_app_id_var}, ${client_id_var}, ${reversed_client_id_var}"
         return 1
     fi
     
     echo "📝 Generating $output_file..."
     
+    # Build optional GA_MEASUREMENT_ID entry
+    local measurement_entry=""
+    if [[ -n "$measurement_id" ]]; then
+        measurement_entry="	<key>GA_MEASUREMENT_ID</key>
+	<string>$measurement_id</string>"
+    fi
+
     cat > "$output_file" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -88,7 +95,7 @@ generate_plist() {
 	<key>IS_ADS_ENABLED</key>
 	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<true/>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
 	<true/>
 	<key>IS_GCM_ENABLED</key>
@@ -97,8 +104,7 @@ generate_plist() {
 	<true/>
 	<key>GOOGLE_APP_ID</key>
 	<string>$google_app_id</string>
-	<key>GA_MEASUREMENT_ID</key>
-	<string>$measurement_id</string>
+$measurement_entry
 </dict>
 </plist>
 EOF

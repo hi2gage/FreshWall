@@ -6,17 +6,13 @@ on:
     branches: [main]
 
 jobs:
-  build:
-    name: Functions Build
+  changes:
+    name: Check Changes
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: Firebase/functions
+    outputs:
+      firebase: ${{ steps.filter.outputs.firebase }}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Check for Firebase changes
-        uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -24,19 +20,23 @@ jobs:
               - 'Firebase/**'
               - '.github/workflows/functions-build.yml'
 
+  build:
+    name: Functions Build
+    needs: changes
+    if: needs.changes.outputs.firebase == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Firebase/functions
+    steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
-        if: steps.filter.outputs.firebase == 'true'
         with:
           node-version: 18
 
       - name: Install dependencies
-        if: steps.filter.outputs.firebase == 'true'
         run: npm ci
 
       - name: Build functions
-        if: steps.filter.outputs.firebase == 'true'
         run: npm run build
-
-      - name: Skip build (no Firebase changes)
-        if: steps.filter.outputs.firebase != 'true'
-        run: echo "No Firebase changes detected, skipping build"
