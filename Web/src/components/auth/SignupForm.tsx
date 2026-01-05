@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '@/lib/firebase';
@@ -17,6 +18,7 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [suggestDemo, setSuggestDemo] = useState(false);
 
   const createTeamCreateUser = httpsCallable(functions, 'createTeamCreateUser');
 
@@ -24,13 +26,15 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuggestDemo(false);
 
     try {
       // First create Firebase auth account
-      const { user, error: authError } = await signUpWithEmail(email, password);
+      const { user, error: authError, suggestDemo: shouldSuggestDemo } = await signUpWithEmail(email, password);
 
       if (authError || !user) {
         setError(authError || 'Failed to create account');
+        setSuggestDemo(shouldSuggestDemo || false);
         setLoading(false);
         return;
       }
@@ -47,6 +51,7 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
 
     } catch (error: any) {
       setError(error.message || 'Failed to create team account');
+      setSuggestDemo(false);
     } finally {
       setLoading(false);
     }
@@ -55,12 +60,14 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
   const handleGoogleSignup = async () => {
     setLoading(true);
     setError('');
+    setSuggestDemo(false);
 
     try {
-      const { user, error: authError } = await signInWithGoogle();
+      const { user, error: authError, suggestDemo: shouldSuggestDemo } = await signInWithGoogle();
 
       if (authError || !user) {
         setError(authError || 'Failed to sign in with Google');
+        setSuggestDemo(shouldSuggestDemo || false);
         setLoading(false);
         return;
       }
@@ -77,6 +84,7 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
 
     } catch (error: any) {
       setError(error.message || 'Failed to create team account');
+      setSuggestDemo(false);
     } finally {
       setLoading(false);
     }
@@ -89,6 +97,16 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
+          {suggestDemo && (
+            <div className="mt-2">
+              <Link
+                href="/demo"
+                className="text-freshwall-orange hover:text-freshwall-orange/80 font-medium underline transition-colors"
+              >
+                Try our demo instead →
+              </Link>
+            </div>
+          )}
         </div>
       )}
 

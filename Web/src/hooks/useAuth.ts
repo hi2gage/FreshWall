@@ -8,6 +8,7 @@ import {
   sendPasswordResetEmail
 } from 'firebase/auth';
 import { googleProvider } from '@/lib/firebase';
+import { getAuthErrorMessage } from '@/lib/errorMessages';
 
 export function useAuth() {
   const [user, loading, error] = useAuthState(auth);
@@ -15,27 +16,30 @@ export function useAuth() {
   const signInWithEmail = async (email: string, password: string) => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
-      return { user: result.user, error: null };
+      return { user: result.user, error: null, suggestDemo: false };
     } catch (error: any) {
-      return { user: null, error: error.message };
+      const { message, suggestDemo } = getAuthErrorMessage(error);
+      return { user: null, error: message, suggestDemo };
     }
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      return { user: result.user, error: null };
+      return { user: result.user, error: null, suggestDemo: false };
     } catch (error: any) {
-      return { user: null, error: error.message };
+      const { message, suggestDemo } = getAuthErrorMessage(error);
+      return { user: null, error: message, suggestDemo };
     }
   };
 
   const signInWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      return { user: result.user, error: null };
+      return { user: result.user, error: null, suggestDemo: false };
     } catch (error: any) {
-      return { user: null, error: error.message };
+      const { message, suggestDemo } = getAuthErrorMessage(error);
+      return { user: null, error: message, suggestDemo };
     }
   };
 
@@ -51,9 +55,10 @@ export function useAuth() {
   const resetPassword = async (email: string) => {
     try {
       await sendPasswordResetEmail(auth, email);
-      return { error: null };
+      return { error: null, suggestDemo: false };
     } catch (error: any) {
-      return { error: error.message };
+      const { message, suggestDemo } = getAuthErrorMessage(error);
+      return { error: message, suggestDemo };
     }
   };
 
