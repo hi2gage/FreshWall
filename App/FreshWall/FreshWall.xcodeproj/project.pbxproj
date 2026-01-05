@@ -22,6 +22,7 @@
 		1CA0F2432E7BE04800AC3F88 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 1CA0F2422E7BE04800AC3F88 /* GoogleSignIn */; };
 		1CA0F2452E7BE04800AC3F88 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1CA0F2442E7BE04800AC3F88 /* GoogleSignInSwift */; };
 		1CA3B46A2E0281F200A04DB7 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */; };
+		1CBAFDF82F0E1B6C00C6E47B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 1CBAFDF62F0E1B6C00C6E47B /* FirebaseAnalytics */; };
 		1CDFBCFA2EC2BE3F0095836A /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 1CDFBCF92EC2BE3F0095836A /* AppIcon.icon */; };
 		1CE7DC352E76B4EF0088910A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC342E76B4EF0088910A /* Nuke */; };
 		1CE7DC372E76B4EF0088910A /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC362E76B4EF0088910A /* NukeExtensions */; };
@@ -99,6 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1CBAFDF82F0E1B6C00C6E47B /* FirebaseAnalytics in Frameworks */,
 				1C4FC57D2E5FF37B004C158A /* TPPDF in Frameworks */,
 				1CE7DC372E76B4EF0088910A /* NukeExtensions in Frameworks */,
 				1CA0F2432E7BE04800AC3F88 /* GoogleSignIn in Frameworks */,
@@ -206,6 +208,7 @@
 			);
 			name = FreshWall;
 			packageProductDependencies = (
+				1CBAFDF62F0E1B6C00C6E47B /* FirebaseAnalytics */,
 				1C54365C2DE224C600153F4F /* FirebaseAuth */,
 				1C54365E2DE224C600153F4F /* FirebaseFirestore */,
 				1C5436602DE224C600153F4F /* FirebaseStorage */,
@@ -1017,6 +1020,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1CA0F2412E7BE04800AC3F88 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		1CBAFDF62F0E1B6C00C6E47B /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
 		};
 		1CE7DC342E76B4EF0088910A /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

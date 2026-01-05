@@ -143,6 +143,9 @@ struct LoginManager: LoginManaging {
 
         let session = try await sessionService.fetchUserRecord(for: user)
         await sessionStore.startSession(session)
+
+        FWAnalytics.log(.signUp(method: .email))
+        FWAnalytics.log(.teamCreated)
     }
 
     func signUp(
@@ -168,6 +171,9 @@ struct LoginManager: LoginManaging {
 
         let session = try await sessionService.fetchUserRecord(for: user)
         await sessionStore.startSession(session)
+
+        FWAnalytics.log(.signUp(method: .email))
+        FWAnalytics.log(.teamJoined)
     }
 
     func createTeamForGoogleUser(
@@ -189,6 +195,9 @@ struct LoginManager: LoginManaging {
 
         let session = try await sessionService.fetchUserRecord(for: user)
         await sessionStore.startSession(session)
+
+        FWAnalytics.log(.signUp(method: .google))
+        FWAnalytics.log(.teamCreated)
     }
 
     func joinTeamForGoogleUser(
@@ -210,5 +219,8 @@ struct LoginManager: LoginManaging {
 
         let session = try await sessionService.fetchUserRecord(for: user)
         await sessionStore.startSession(session)
+
+        FWAnalytics.log(.signUp(method: .google))
+        FWAnalytics.log(.teamJoined)
     }
 }

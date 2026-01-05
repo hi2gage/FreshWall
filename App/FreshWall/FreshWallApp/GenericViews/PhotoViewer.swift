@@ -1,7 +1,7 @@
 import Nuke
 import NukeUI
-import SwiftUI
 import os
+import SwiftUI
 
 // MARK: - PhotoViewer
 
@@ -31,7 +31,7 @@ struct PhotoViewer: View {
                     if let url = URL(string: photo.url) {
                         LazyImage(url: url) { state in
                             if let image = state.image {
-                                logger.info("🖼️ [INSTANT] Photo \(idx + 1) at \(Date().timeIntervalSince1970) loaded from cache: \(url.lastPathComponent)")
+                                let _ = logger.info("🖼️ [INSTANT] Photo \(idx + 1) at \(Date().timeIntervalSince1970) loaded from cache: \(url.lastPathComponent)")
                                 image
                                     .resizable()
                                     .scaledToFit()
@@ -40,7 +40,7 @@ struct PhotoViewer: View {
                                         doubleTapZoomScale: 3
                                     )
                             } else if state.error != nil {
-                                logger.error("❌ [ERROR] Photo \(idx + 1) failed to load: \(url.lastPathComponent)")
+                                let _ = logger.error("❌ [ERROR] Photo \(idx + 1) failed to load: \(url.lastPathComponent)")
                                 ZStack {
                                     Color.black
                                     Image(systemName: "photo")
@@ -50,7 +50,7 @@ struct PhotoViewer: View {
                                         .foregroundColor(.white.opacity(0.5))
                                 }
                             } else {
-                                logger.info("⏳ [LOADING] Photo \(idx + 1) at \(Date().timeIntervalSince1970): \(url.lastPathComponent)")
+                                let _ = logger.info("⏳ [LOADING] Photo \(idx + 1) at \(Date().timeIntervalSince1970): \(url.lastPathComponent)")
                                 ZStack {
                                     Color.black
                                     ProgressView()

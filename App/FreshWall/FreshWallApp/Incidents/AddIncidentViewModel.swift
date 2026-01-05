@@ -2,9 +2,9 @@ import CoreLocation
 @preconcurrency import FirebaseFirestore
 import Foundation
 import Observation
+import os
 import Photos
 import UniformTypeIdentifiers
-import os
 
 // MARK: - IncidentValidationError
 
@@ -33,6 +33,7 @@ final class AddIncidentViewModel {
         /// Selected client document ID or tag for add-new.
         var clientId: String? {
             didSet {
+                let clientId = clientId
                 Input.logger.info("🔄 AddIncidentViewModel.Input.clientId changed from '\(oldValue ?? "nil")' to '\(clientId ?? "nil")'")
             }
         }
@@ -165,6 +166,16 @@ final class AddIncidentViewModel {
                 afterPhotos: afterPhotos
             )
             logger.info("✅ Incident created successfully with ID: \(incidentId)")
+
+            // Track analytics
+            let photoCount = beforePhotos.count + afterPhotos.count
+            FWAnalytics.log(.incidentCreated(
+                hasClient: input.clientId != nil,
+                hasPhotos: photoCount > 0,
+                photoCount: photoCount,
+                hasLocation: input.enhancedLocation != nil,
+                billingMethod: billingConfig?.billingMethod.rawValue
+            ))
         } catch {
             logger.error("❌ Failed to create incident: \(error.localizedDescription)")
             logger.error("📊 Error type: \(String(describing: type(of: error)))")
@@ -221,8 +232,8 @@ final class AddIncidentViewModel {
 
     /// Auto-populate billing from client defaults when client is selected
     func updateBillingFromClient() {
-        logger.info("🔄 updateBillingFromClient called - input.clientId: '\(input.clientId ?? "nil")'")
-        logger.info("🔄 selectedClient: \(selectedClient?.name ?? "nil")")
+        logger.info("🔄 updateBillingFromClient called - input.clientId: '\(self.input.clientId ?? "nil")'")
+        logger.info("🔄 selectedClient: \(self.selectedClient?.name ?? "nil")")
 
         guard let client = selectedClient,
               let defaults = client.defaults else {
@@ -231,7 +242,7 @@ final class AddIncidentViewModel {
             return
         }
 
-        logger.info("🔄 Setting billing from client defaults: \(defaults.billingMethod)")
+        logger.info("🔄 Setting billing from client defaults: \(defaults.billingMethod.displayName)")
 
         // Convert client billing method to incident billing method
         input.billingMethod = IncidentBilling.BillingMethod(from: defaults.billingMethod)

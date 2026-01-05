@@ -23,7 +23,9 @@ struct AuthService {
         email: String,
         password: String
     ) async throws -> FirebaseAuth.User {
-        try await auth.signIn(withEmail: email, password: password).user
+        let user = try await auth.signIn(withEmail: email, password: password).user
+        FWAnalytics.log(.login(method: .email))
+        return user
     }
 
     /// Signs out the current user from both Firebase and Google.
@@ -35,6 +37,8 @@ struct AuthService {
 
         // Then sign out from Firebase
         try auth.signOut()
+
+        FWAnalytics.log(.logout)
     }
 
     func getCurrentUser() -> FirebaseAuth.User? {
@@ -97,6 +101,7 @@ struct AuthService {
                             return
                         }
 
+                        FWAnalytics.log(.login(method: .google))
                         continuation.resume(returning: firebaseUser)
                     } catch {
                         continuation.resume(throwing: error)

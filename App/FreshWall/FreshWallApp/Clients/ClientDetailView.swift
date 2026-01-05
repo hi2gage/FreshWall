@@ -1,7 +1,7 @@
 import FirebaseFirestore
+import os
 import Shimmer
 import SwiftUI
-import os
 
 // MARK: - ClientDetailView
 
@@ -48,6 +48,7 @@ struct ClientDetailView: View {
             reportPeriod: reportPeriod
         )
 
+        FWAnalytics.log(.reportGenerated(incidentCount: billableIncidents.count, format: .pdf))
         sharePDF(data: pdfData, filename: "\(client.name) Invoice \(reportPeriod)")
     }
 
@@ -61,6 +62,7 @@ struct ClientDetailView: View {
             reportPeriod: reportPeriod
         )
 
+        FWAnalytics.log(.reportGenerated(incidentCount: incidents.count, format: .pdf))
         sharePDF(data: pdfData, filename: "\(client.name) Incident Report \(reportPeriod)")
     }
 
@@ -159,6 +161,7 @@ struct ClientDetailView: View {
         .listStyle(.insetGrouped)
         .navigationTitle("Client Details")
         .task {
+            FWAnalytics.log(.clientViewed)
             let all = await (try? incidentService.fetchIncidents()) ?? []
             withAnimation(.easeInOut(duration: 0.3)) {
                 incidents = all.filter {

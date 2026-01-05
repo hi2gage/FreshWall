@@ -1,7 +1,7 @@
 @preconcurrency import FirebaseFirestore
 import Nuke
-import SwiftUI
 import os
+import SwiftUI
 
 // MARK: - IncidentDetailView
 
@@ -150,6 +150,7 @@ struct IncidentDetailView: View {
             Text("Are you sure you want to delete this incident? This action cannot be undone.")
         }
         .task {
+            FWAnalytics.log(.incidentViewed)
             logger.info("🔄 Task starting - about to reload incident")
             await viewModel.reloadIncident()
             logger.info("✅ Task completed - incident reloaded, now prefetching images")

@@ -1,6 +1,6 @@
+import os
 import PhotosUI
 import SwiftUI
-import os
 
 // MARK: - AddIncidentView
 
@@ -119,7 +119,7 @@ struct AddIncidentView: View {
             ToolbarItem(placement: .confirmationAction) {
                 AsyncButton("Save") {
                     logger.info("🚀 Save button pressed - starting incident creation")
-                    logger.info("📊 Form data: clientId=\(viewModel.input.clientId), area=\(viewModel.input.areaText)")
+                    logger.info("📊 Form data: clientId=\(viewModel.input.clientId ?? "nil"), area=\(viewModel.input.areaText)")
                     logger.info("📸 Photos: before=\(beforePhotos.count), after=\(afterPhotos.count)")
                     logger.info("📍 Location: \(viewModel.input.enhancedLocation?.address ?? "None")")
 
