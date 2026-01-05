@@ -2,8 +2,14 @@ name: Web Build
 
 on:
   pull_request:
+    paths:
+      - 'Web/**'
+      - '.github/workflows/web-build.yml'
   push:
     branches: [main]
+    paths:
+      - 'Web/**'
+      - '.github/workflows/web-build.yml'
 
 jobs:
   build:

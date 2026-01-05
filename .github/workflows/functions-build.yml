@@ -2,8 +2,14 @@ name: Functions Build
 
 on:
   pull_request:
+    paths:
+      - 'Firebase/functions/**'
+      - '.github/workflows/functions-build.yml'
   push:
     branches: [main]
+    paths:
+      - 'Firebase/functions/**'
+      - '.github/workflows/functions-build.yml'
 
 jobs:
   build:
