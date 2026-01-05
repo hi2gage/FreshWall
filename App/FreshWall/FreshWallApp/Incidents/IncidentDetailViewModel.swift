@@ -16,7 +16,7 @@ final class IncidentDetailViewModel {
     /// Currently selected client ID for editing.
     var selectedClientId: String? {
         didSet {
-            logger.info("changed to: \(selectedClientId ?? "nil")")
+            logger.info("changed to: \(self.selectedClientId ?? "nil")")
         }
     }
 
@@ -59,7 +59,7 @@ final class IncidentDetailViewModel {
         client = result.priorityClient
         clients = result.allClients
 
-        logger.info("✅ Client loading complete - loaded \(clients.count) clients")
+        logger.info("✅ Client loading complete - loaded \(self.clients.count) clients")
         if let client {
             logger.info("✅ Priority client: \(client.name)")
         } else {

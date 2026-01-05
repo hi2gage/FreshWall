@@ -1,6 +1,6 @@
 import NukeUI
-import SwiftUI
 import os
+import SwiftUI
 
 // MARK: - PhotoCarousel
 
@@ -22,7 +22,7 @@ struct PhotoCarousel: View {
                         if let url = URL(string: photo.thumbnailUrl ?? photo.url) {
                             LazyImage(url: url) { state in
                                 if let image = state.image {
-                                    logger.info("🎠 Carousel thumbnail loaded: \(url.lastPathComponent)")
+                                    let _ = logger.info("🎠 Carousel thumbnail loaded: \(url.lastPathComponent)")
                                     image
                                         .resizable()
                                         .scaledToFill()
