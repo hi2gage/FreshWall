@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1C4FC57D2E5FF37B004C158A /* TPPDF in Frameworks */ = {isa = PBXBuildFile; productRef = 1C4FC57C2E5FF37B004C158A /* TPPDF */; };
-		1CBAFDF82F0E1B6C00C6E47B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 1CBAFDF62F0E1B6C00C6E47B /* FirebaseAnalytics */; };
-		1CBAFDF92F0E1B6C00C6E47B /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1CBAFDF72F0E1B6C00C6E47B /* FirebaseAnalyticsSwift */; };
 		1C54365D2DE224C600153F4F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1C54365C2DE224C600153F4F /* FirebaseAuth */; };
 		1C54365F2DE224C600153F4F /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 1C54365E2DE224C600153F4F /* FirebaseFirestore */; };
 		1C5436612DE224C600153F4F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1C5436602DE224C600153F4F /* FirebaseStorage */; };
@@ -24,6 +22,7 @@
 		1CA0F2432E7BE04800AC3F88 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 1CA0F2422E7BE04800AC3F88 /* GoogleSignIn */; };
 		1CA0F2452E7BE04800AC3F88 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 1CA0F2442E7BE04800AC3F88 /* GoogleSignInSwift */; };
 		1CA3B46A2E0281F200A04DB7 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1CA3B4692E0281F200A04DB7 /* TestPlan.xctestplan */; };
+		1CBAFDF82F0E1B6C00C6E47B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 1CBAFDF62F0E1B6C00C6E47B /* FirebaseAnalytics */; };
 		1CDFBCFA2EC2BE3F0095836A /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 1CDFBCF92EC2BE3F0095836A /* AppIcon.icon */; };
 		1CE7DC352E76B4EF0088910A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC342E76B4EF0088910A /* Nuke */; };
 		1CE7DC372E76B4EF0088910A /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 1CE7DC362E76B4EF0088910A /* NukeExtensions */; };
@@ -107,7 +106,6 @@
 				1CA0F2432E7BE04800AC3F88 /* GoogleSignIn in Frameworks */,
 				1CA0F2452E7BE04800AC3F88 /* GoogleSignInSwift in Frameworks */,
 				1C54365D2DE224C600153F4F /* FirebaseAuth in Frameworks */,
-				1CBAFDF92F0E1B6C00C6E47B /* FirebaseAnalyticsSwift in Frameworks */,
 				1CE7DC352E76B4EF0088910A /* Nuke in Frameworks */,
 				1C783F3E2E71E17E008AFA63 /* TinyStorage in Frameworks */,
 				1C54365F2DE224C600153F4F /* FirebaseFirestore in Frameworks */,
@@ -215,7 +213,6 @@
 				1C54365E2DE224C600153F4F /* FirebaseFirestore */,
 				1C5436602DE224C600153F4F /* FirebaseStorage */,
 				1C5437172DE2558400153F4F /* FirebaseFunctions */,
-				1CBAFDF72F0E1B6C00C6E47B /* FirebaseAnalyticsSwift */,
 				1C4FC57C2E5FF37B004C158A /* TPPDF */,
 				1C783F3D2E71E17E008AFA63 /* TinyStorage */,
 				1CE7DC342E76B4EF0088910A /* Nuke */,
@@ -989,16 +986,6 @@
 			package = 1C4FC57B2E5FF37B004C158A /* XCRemoteSwiftPackageReference "TPPDF" */;
 			productName = TPPDF;
 		};
-		1CBAFDF62F0E1B6C00C6E47B /* FirebaseAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
-		};
-		1CBAFDF72F0E1B6C00C6E47B /* FirebaseAnalyticsSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalyticsSwift;
-		};
 		1C54365C2DE224C600153F4F /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -1033,6 +1020,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1CA0F2412E7BE04800AC3F88 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		1CBAFDF62F0E1B6C00C6E47B /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1C54365B2DE224C600153F4F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
 		};
 		1CE7DC342E76B4EF0088910A /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
