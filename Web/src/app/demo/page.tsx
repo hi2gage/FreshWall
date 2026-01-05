@@ -1,14 +1,23 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
 import { logDemoPageView } from '@/lib/analytics'
 
-export default function DemoPage() {
+function DemoAnalytics() {
   const searchParams = useSearchParams()
 
+  useEffect(() => {
+    const source = searchParams.get('source')
+    void logDemoPageView(source)
+  }, [searchParams])
+
+  return null
+}
+
+export default function DemoPage() {
   useEffect(() => {
     // Load Tally embed script
     const script = document.createElement('script')
@@ -25,13 +34,11 @@ export default function DemoPage() {
     }
   }, [])
 
-  useEffect(() => {
-    const source = searchParams.get('source')
-    void logDemoPageView(source)
-  }, [searchParams])
-
   return (
     <div className="min-h-screen bg-neutral-tone">
+      <Suspense fallback={null}>
+        <DemoAnalytics />
+      </Suspense>
       {/* Header with Logo and Back Link */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">

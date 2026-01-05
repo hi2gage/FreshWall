@@ -2,14 +2,8 @@ name: Functions Build
 
 on:
   pull_request:
-    paths:
-      - 'Firebase/**'
-      - '.github/workflows/functions-build.yml'
   push:
     branches: [main]
-    paths:
-      - 'Firebase/**'
-      - '.github/workflows/functions-build.yml'
 
 jobs:
   build:
@@ -19,9 +13,30 @@ jobs:
       run:
         working-directory: Firebase/functions
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+
+      - name: Check for Firebase changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            firebase:
+              - 'Firebase/**'
+              - '.github/workflows/functions-build.yml'
+
+      - uses: actions/setup-node@v4
+        if: steps.filter.outputs.firebase == 'true'
         with:
           node-version: 18
-      - run: npm ci
-      - run: npm run build
+
+      - name: Install dependencies
+        if: steps.filter.outputs.firebase == 'true'
+        run: npm ci
+
+      - name: Build functions
+        if: steps.filter.outputs.firebase == 'true'
+        run: npm run build
+
+      - name: Skip build (no Firebase changes)
+        if: steps.filter.outputs.firebase != 'true'
+        run: echo "No Firebase changes detected, skipping build"
