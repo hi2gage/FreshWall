@@ -4,7 +4,7 @@ Create a new iOS app release with proper versioning and tagging.
 
 ## Steps
 
-1. **Verify we're on main branch** - Start from main
+1. **Checkout main branch** - Run `git checkout main && git pull origin main` to ensure we're on the latest main
 2. **Get current iOS version** - Find latest `ios/v*` tag
 3. **Calculate next version** - Ask user for patch/minor/major/custom
 4. **Create release branch** - `release/ios-v{VERSION}` from main
@@ -56,7 +56,7 @@ Creating an `ios/v*` tag will trigger:
 ## Workflow Summary
 
 ```
-1. main → create release/ios-v1.3.2 branch
+1. checkout main && git pull → create release/ios-v1.3.2 branch
 2. Update version files → commit → push
 3. Create PR: release/ios-v1.3.2 → main
 4. Merge PR to main → auto-deploys to staging
