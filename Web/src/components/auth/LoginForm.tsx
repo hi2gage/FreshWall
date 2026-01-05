@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import type { AuthErrorDetails } from '@/lib/authErrors';
 import Link from 'next/link';
+import { logAnalyticsEvent, logDemoClick } from '@/lib/analytics';
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -30,15 +31,26 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       if (authError || !user) {
         setError(authError || 'Failed to sign in');
         setErrorDetails(details || null);
+        void logAnalyticsEvent('login_error', {
+          method: 'email',
+          error: authError || 'Failed to sign in',
+          errorTitle: details?.title,
+          showDemoLink: details?.showDemoLink
+        });
         setLoading(false);
         return;
       }
 
+      void logAnalyticsEvent('login_success', { method: 'email' });
       onSuccess?.();
 
     } catch (error: any) {
       setError(error.message || 'Failed to sign in');
       setErrorDetails(null);
+      void logAnalyticsEvent('login_error', {
+        method: 'email',
+        error: error.message || 'Failed to sign in'
+      });
     } finally {
       setLoading(false);
     }
@@ -55,15 +67,26 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       if (authError || !user) {
         setError(authError || 'Failed to sign in with Google');
         setErrorDetails(details || null);
+        void logAnalyticsEvent('login_error', {
+          method: 'google',
+          error: authError || 'Failed to sign in with Google',
+          errorTitle: details?.title,
+          showDemoLink: details?.showDemoLink
+        });
         setLoading(false);
         return;
       }
 
+      void logAnalyticsEvent('login_success', { method: 'google' });
       onSuccess?.();
 
     } catch (error: any) {
       setError(error.message || 'Failed to sign in with Google');
       setErrorDetails(null);
+      void logAnalyticsEvent('login_error', {
+        method: 'google',
+        error: error.message || 'Failed to sign in with Google'
+      });
     } finally {
       setLoading(false);
     }
@@ -137,7 +160,13 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
               <p className="text-charcoal-navy text-body-sm">
                 Not a customer yet?{' '}
                 <Link
-                  href="/demo"
+                  href={{ pathname: '/demo', query: { source: 'login-error' } }}
+                  onClick={() => {
+                    void logDemoClick('login-error', {
+                      errorTitle: errorDetails?.title,
+                      errorMessage: error
+                    });
+                  }}
                   className="text-freshwall-orange hover:text-freshwall-orange/80 font-medium underline transition-colors"
                 >
                   Sign up for a demo

@@ -3,8 +3,12 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useSearchParams } from 'next/navigation'
+import { logDemoPageView } from '@/lib/analytics'
 
 export default function DemoPage() {
+  const searchParams = useSearchParams()
+
   useEffect(() => {
     // Load Tally embed script
     const script = document.createElement('script')
@@ -20,6 +24,11 @@ export default function DemoPage() {
       }
     }
   }, [])
+
+  useEffect(() => {
+    const source = searchParams.get('source')
+    void logDemoPageView(source)
+  }, [searchParams])
 
   return (
     <div className="min-h-screen bg-neutral-tone">

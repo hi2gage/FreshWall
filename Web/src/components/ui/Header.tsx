@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Logo } from './Logo'
 import { Button } from './Button'
+import { useRouter } from 'next/navigation'
+import { logDemoClick } from '@/lib/analytics'
 
 export interface HeaderProps {
   background?: 'transparent' | 'white' | 'navy'
@@ -10,6 +12,7 @@ export interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ background = 'navy' }) => {
   const [scrolled, setScrolled] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,6 +32,15 @@ export const Header: React.FC<HeaderProps> = ({ background = 'navy' }) => {
 
   const logoVariant = background === 'white' ? 'dark' : 'light'
 
+  const handleDemoNavigation = () => {
+    void logDemoClick('header')
+    router.push('/demo?source=header')
+  }
+
+  const handleLoginNavigation = () => {
+    router.push('/login')
+  }
+
   return (
     <header className={`${bgStyles[background]} fixed top-0 left-0 right-0 z-50 transition-all`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,9 +59,7 @@ export const Header: React.FC<HeaderProps> = ({ background = 'navy' }) => {
                 variant="primary"
                 size="md"
                 colorScheme="dark"
-                onClick={() => {
-                  window.location.href = '/demo'
-                }}
+                onClick={handleDemoNavigation}
               >
                 Book a Demo
               </Button>
@@ -58,9 +68,7 @@ export const Header: React.FC<HeaderProps> = ({ background = 'navy' }) => {
               variant="secondary"
               size="md"
               colorScheme="dark"
-              onClick={() => {
-                window.location.href = '/login'
-              }}
+              onClick={handleLoginNavigation}
             >
               Existing Customers
             </Button>
