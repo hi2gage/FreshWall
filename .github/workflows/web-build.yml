@@ -2,14 +2,8 @@ name: Web Build
 
 on:
   pull_request:
-    paths:
-      - 'Web/**'
-      - '.github/workflows/web-build.yml'
   push:
     branches: [main]
-    paths:
-      - 'Web/**'
-      - '.github/workflows/web-build.yml'
 
 jobs:
   build:
@@ -19,17 +13,40 @@ jobs:
       run:
         working-directory: Web
     steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            web:
+              - 'Web/**'
+              - '.github/workflows/web-build.yml'
+
+      - name: Skip (no Web changes)
+        if: steps.filter.outputs.web != 'true'
+        run: echo "No Web changes detected, skipping build"
+
       - uses: actions/checkout@v4
+        if: steps.filter.outputs.web == 'true'
+
       - uses: pnpm/action-setup@v4
+        if: steps.filter.outputs.web == 'true'
         with:
           version: 9
+
       - uses: actions/setup-node@v4
+        if: steps.filter.outputs.web == 'true'
         with:
           node-version: 20
           cache: 'pnpm'
           cache-dependency-path: 'Web/pnpm-lock.yaml'
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
+
+      - name: Install dependencies
+        if: steps.filter.outputs.web == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        if: steps.filter.outputs.web == 'true'
+        run: pnpm run build
         env:
           NEXT_PUBLIC_FIREBASE_API_KEY: "fake-api-key-for-build"
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "fake-project.firebaseapp.com"
