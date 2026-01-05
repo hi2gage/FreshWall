@@ -61,6 +61,10 @@ final class AddClientViewModel {
             defaults: defaults,
             lastIncidentAt: .init()
         )
-        return try await service.addClient(input)
+        let clientId = try await service.addClient(input)
+
+        FWAnalytics.log(.clientCreated(hasBillingDefaults: includeDefaults))
+
+        return clientId
     }
 }

@@ -166,6 +166,16 @@ final class AddIncidentViewModel {
                 afterPhotos: afterPhotos
             )
             logger.info("✅ Incident created successfully with ID: \(incidentId)")
+
+            // Track analytics
+            let photoCount = beforePhotos.count + afterPhotos.count
+            FWAnalytics.log(.incidentCreated(
+                hasClient: input.clientId != nil,
+                hasPhotos: photoCount > 0,
+                photoCount: photoCount,
+                hasLocation: input.enhancedLocation != nil,
+                billingMethod: billingConfig?.billingMethod.rawValue
+            ))
         } catch {
             logger.error("❌ Failed to create incident: \(error.localizedDescription)")
             logger.error("📊 Error type: \(String(describing: type(of: error)))")

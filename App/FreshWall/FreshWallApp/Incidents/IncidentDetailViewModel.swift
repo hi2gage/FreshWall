@@ -108,6 +108,8 @@ final class IncidentDetailViewModel {
                 photosToDelete: []
             )
 
+            FWAnalytics.log(.incidentEdited)
+
             // Only reload if we updated photos or location
             // For simple client changes, avoid the full reload cycle
             let hasPhotos = !beforePhotos.isEmpty || !afterPhotos.isEmpty
@@ -152,5 +154,6 @@ final class IncidentDetailViewModel {
         }
 
         try await incidentService.deleteIncident(id)
+        FWAnalytics.log(.incidentDeleted)
     }
 }

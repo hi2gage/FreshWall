@@ -75,10 +75,12 @@ final class EditClientViewModel {
             defaults: defaults
         )
         try await service.updateClient(clientId, with: input)
+        FWAnalytics.log(.clientEdited)
     }
 
     /// Deletes the client via the service.
     func delete() async throws {
         try await service.deleteClient(clientId)
+        FWAnalytics.log(.clientDeleted)
     }
 }
