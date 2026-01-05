@@ -21,7 +21,6 @@ generate_plist() {
     local project_id_var="${env_name_upper}_FIREBASE_PROJECT_ID"
     local storage_bucket_var="${env_name_upper}_FIREBASE_STORAGE_BUCKET"
     local google_app_id_var="${env_name_upper}_FIREBASE_GOOGLE_APP_ID"
-    local measurement_id_var="${env_name_upper}_FIREBASE_MEASUREMENT_ID"
     local client_id_var="${env_name_upper}_FIREBASE_CLIENT_ID"
     local reversed_client_id_var="${env_name_upper}_FIREBASE_REVERSED_CLIENT_ID"
     
@@ -54,7 +53,6 @@ generate_plist() {
     local google_app_id="${!google_app_id_var}"
     local client_id="${!client_id_var}"
     local reversed_client_id="${!reversed_client_id_var}"
-    local measurement_id="${!measurement_id_var}"
 
     if [[ -z "$api_key" || -z "$gcm_sender_id" || -z "$project_id" || -z "$storage_bucket" || -z "$google_app_id" || -z "$client_id" || -z "$reversed_client_id" ]]; then
         echo "❌ Missing required environment variables for $env_name environment"
@@ -63,13 +61,6 @@ generate_plist() {
     fi
     
     echo "📝 Generating $output_file..."
-    
-    # Build optional GA_MEASUREMENT_ID entry
-    local measurement_entry=""
-    if [[ -n "$measurement_id" ]]; then
-        measurement_entry="	<key>GA_MEASUREMENT_ID</key>
-	<string>$measurement_id</string>"
-    fi
 
     cat > "$output_file" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -95,7 +86,7 @@ generate_plist() {
 	<key>IS_ADS_ENABLED</key>
 	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false/>
+	<true/>
 	<key>IS_APPINVITE_ENABLED</key>
 	<true/>
 	<key>IS_GCM_ENABLED</key>
@@ -104,7 +95,6 @@ generate_plist() {
 	<true/>
 	<key>GOOGLE_APP_ID</key>
 	<string>$google_app_id</string>
-$measurement_entry
 </dict>
 </plist>
 EOF
