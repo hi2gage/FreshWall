@@ -13,30 +13,14 @@ jobs:
       run:
         working-directory: Firebase/functions
     steps:
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            firebase:
-              - 'Firebase/**'
-              - '.github/workflows/functions-build.yml'
-
-      - name: Skip (no Firebase changes)
-        if: steps.filter.outputs.firebase != 'true'
-        run: echo "No Firebase changes detected, skipping build"
-
       - uses: actions/checkout@v4
-        if: steps.filter.outputs.firebase == 'true'
 
       - uses: actions/setup-node@v4
-        if: steps.filter.outputs.firebase == 'true'
         with:
           node-version: 18
 
       - name: Install dependencies
-        if: steps.filter.outputs.firebase == 'true'
         run: npm ci
 
       - name: Build functions
-        if: steps.filter.outputs.firebase == 'true'
         run: npm run build
